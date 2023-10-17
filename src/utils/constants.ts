@@ -9,3 +9,13 @@ export enum RolesTypes {
     USER_ADMIN = 'USER_ADMIN',
     OWNER = 'OWNER',
 }
+
+export enum LOCATION_ERRORS {
+    NO_ERROR = 0,
+    POINT_NOT_FOUND = 1,
+    WATER_BODY_NOT_FOUND = 2,
+    API_ERROR = 3,
+    GEOLOCATION_NOT_SUPPORTE = 4,
+    PERMISSION_REQUIRED = 5,
+    OTHER = 6,
+}

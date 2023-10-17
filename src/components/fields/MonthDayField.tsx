@@ -152,7 +152,7 @@ const TextInput = styled.input<{ readOnly: boolean }>`
 
   background-color: white;
   font-size: 1.6rem;
-  color: ${({ theme }) => theme.colors.label};
+  color: ${({ theme }) => theme.colors.text.label};
 
   &:focus {
     outline: none;
@@ -167,23 +167,23 @@ const TextInput = styled.input<{ readOnly: boolean }>`
     margin: 0;
   }
   ::-webkit-input-placeholder {
-    color: ${({ theme }) => theme.colors.label + "8F"};
+    color: ${({ theme }) => theme.colors.text.label + "8F"};
   }
   ::-moz-placeholder {
-    color: ${({ theme }) => theme.colors.label + "8F"};
+    color: ${({ theme }) => theme.colors.text.label + "8F"};
   }
   ::-ms-placeholder {
-    color: ${({ theme }) => theme.colors.label + "8F"};
+    color: ${({ theme }) => theme.colors.text.label + "8F"};
   }
   ::placeholder {
-    color: ${({ theme }) => theme.colors.label + "8F"};
+    color: ${({ theme }) => theme.colors.text.label + "8F"};
   }
 `;
 
 const Label = styled.label`
   text-align: left;
   font-size: 1.4rem;
-  color: ${({ theme }) => theme.colors.label};
+  color: ${({ theme }) => theme.colors.text.label};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

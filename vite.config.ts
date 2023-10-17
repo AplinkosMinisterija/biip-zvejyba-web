@@ -10,10 +10,11 @@ export default defineConfig({
     open: '/app',
     proxy: {
       '/api': {
-        target: 'localhost:3000/api',
+        target: 'http://192.168.1.21:3000/zvejyba/api/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },
+  assetsInclude: ['**/*.png'],
 })

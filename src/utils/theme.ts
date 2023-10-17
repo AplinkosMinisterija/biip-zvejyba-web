@@ -6,7 +6,7 @@ export interface Theme {
         secondary: string;
         tertiary: string;
         transparent: string;
-        danger: string;
+        error: string;
         success: string;
         hover: {
             primary: string;
@@ -25,60 +25,61 @@ export interface Theme {
             error: string;
             input: string;
         };
-        input: string;
         border: string;
-        label: string;
-        error: string;
-        light: string;
-        white: string;
-        darkerWhite: string;
-        pending: string;
-        grey: string;
+        largeButton: {
+            FLORAL_WHITE: string;
+            GHOST_WHITE: string;
+            AZURE: string;
+            HONEY_DEW: string;
+            ALICE_BLUE: string;
+            GREY: string;
+        };
     };
 }
 
 export const theme: Theme = {
     colors: {
-        primary: '#667302',
-        secondary: '#f89572',
-        tertiary: '#919f7a',
+        primary: '#102EB1',
+        secondary: '#121A55',
+        tertiary: '#101010',
         transparent: 'transparent',
-        danger: '#FE5B78',
+        error: '#FE5B78',
         success: '#4FB922',
         hover: {
-            primary: '#859122',
-            secondary: '#f8ad93',
-            tertiary: '#a4af92',
+            primary: '#102EB1',
+            secondary: '#121A55',
+            tertiary: '#F7F7F7',
             transparent: 'transparent',
             danger: '#FE5B78E6',
             success: '#4FB922B3',
         },
         text: {
-            primary: '#231F20',
-            secondary: '#121926',
+            primary: '#2C2C2C',
+            secondary: '#525252',
             tertiary: '#4B5565',
             labels: '#697586',
-            accent: '#667302',
+            accent: '#102EB1',
             error: '#FE5B78',
             input: '#231f20',
         },
-        input: '#F3F3F7',
         border: '#CDD5DF',
-        label: '#0B1F51',
-        error: '#FE5B78',
-        light: '#f3f3f7',
-        white: '#ffffff',
-        darkerWhite: '#A4A7BD',
-        pending: '#fea700',
-        grey: '#B3B5C4',
+        largeButton: {
+            FLORAL_WHITE: '#FFF5E8',
+            GHOST_WHITE: '#EBEDFD', //'#F0F0FF'
+            AZURE: '#EAFBF6',
+            HONEY_DEW: '#E3F5E1',
+            ALICE_BLUE: '#E6F4FF',
+            GREY: '#f7f7f7',
+        },
     },
 };
 
 export const GlobalStyle = createGlobalStyle`
-  
+
   * {
     box-sizing: border-box;
-    font-family: "Atkinson Hyperlegible";
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #2C2C2C;
   }
 
   html {
@@ -90,7 +91,7 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background-color: #ffffff;
+    background-color: #f7f7f7;
     font-size: 1.6rem;
     overflow: hidden;
     justify-content: center;
@@ -98,7 +99,7 @@ export const GlobalStyle = createGlobalStyle`
 
   h1 {
     font-size: 3.2rem;
-    color: #22231f;
+    color: #2C2C2C;
   }
 
   a {

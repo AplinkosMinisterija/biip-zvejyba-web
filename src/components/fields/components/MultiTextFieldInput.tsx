@@ -128,15 +128,15 @@ const Input = styled.input`
   flex: 1;
   background-color: transparent;
   font-size: 1.6rem;
-  color: ${({ theme }) => theme.colors.label};
+  color: ${({ theme }) => theme.colors.text.label};
   ::-webkit-input-placeholder {
-    color: ${({ theme }) => theme.colors.label + "8F"};
+    color: ${({ theme }) => theme.colors.text.label + "8F"};
   }
   ::-moz-placeholder {
-    color: ${({ theme }) => theme.colors.label + "8F"};
+    color: ${({ theme }) => theme.colors.text.label + "8F"};
   }
   ::placeholder {
-    color: ${({ theme }) => theme.colors.label + "8F"};
+    color: ${({ theme }) => theme.colors.text.label + "8F"};
   }
   :focus {
     outline: none;

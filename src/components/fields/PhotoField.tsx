@@ -89,7 +89,7 @@ const ImageLayer = styled.div`
 
 const StyledCloseIcon = styled(Icon)`
   font-size: 2.4rem;
-  color: ${({ theme }) => theme.colors.danger};
+  color: ${({ theme }) => theme.colors.error};
 `;
 const StyledCloseIconContainer = styled.div`
   position: absolute;

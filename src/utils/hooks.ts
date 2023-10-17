@@ -65,3 +65,19 @@ export const useFilteredRoutes = () => {
         return true;
     });
 };
+
+export const useLogoutMutation = () => {
+    const dispatch = useDispatch();
+
+    const { mutateAsync } = useMutation(() => api.logout(), {
+        onError: () => {
+            handleAlert();
+        },
+        onSuccess: () => {
+            clearCookies();
+            dispatch(actions.setUser(initialState));
+        }
+    });
+
+    return { mutateAsync };
+};

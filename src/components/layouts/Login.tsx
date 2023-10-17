@@ -1,19 +1,25 @@
 import React from 'react';
 import Div100vh from 'react-div-100vh';
 import styled from 'styled-components';
+import {device} from "../../utils/theme.ts";
 
 export const LoginLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Div100vh>
-      <Container>
+    <Container>
+      <InnerContainer>
         <Image />
         <Box>{children}</Box>
-      </Container>
-    </Div100vh>
+      </InnerContainer>
+    </Container>
   );
 };
 
-export const Container = styled.div`
+
+const Container = styled(Div100vh)`
+  width: 100vw;
+`;
+
+const InnerContainer = styled.div`
   background-color: white;
   display: flex;
   width: 100%;
@@ -46,12 +52,12 @@ const Image = styled.div`
   width: 100%;
   background-repeat: no-repeat;
   background-size: cover;
-  background-image: url(${`/background.jpg`});
-  background-position: center;
+  background-image: url(/background.png);
+  background-position: left;
   position: sticky;
   object-fit: cover;
   top: 0;
-  @media only screen and (max-width: 1000px) {
+  @media ${device.mobileL} {
     display: none;
   }
 `;

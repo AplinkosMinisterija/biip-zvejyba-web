@@ -1,9 +1,10 @@
-import Cookies from "universal-cookie";
-import {initialState} from "../state/user/reducer.ts";
-import api from "./api.ts";
-import {toast} from "react-toastify";
-import {validationTexts} from "./texts.ts";
-import {Profile, ProfileId, ResponseProps, UpdateTokenProps} from "./types.ts";
+import Cookies from 'universal-cookie';
+import { initialState } from '../state/user/reducer.ts';
+import api from './api.ts';
+import { toast } from 'react-toastify';
+import { validationTexts } from './texts.ts';
+import { Profile, ProfileId, ResponseProps, UpdateTokenProps } from './types.ts';
+import { LOCATION_ERRORS } from './constants.ts';
 
 const cookies = new Cookies();
 
@@ -21,22 +22,18 @@ export const handleGetCurrentUser = async () => {
 
 export const handleAlert = (responseError: string = 'error') => {
     toast.error(
-        validationTexts[responseError as keyof typeof validationTexts] ||
-        validationTexts.error,
+        validationTexts[responseError as keyof typeof validationTexts] || validationTexts.error,
         {
             position: 'top-center',
             autoClose: 5000,
             hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
-        },
+        }
     );
 };
 
-export const handleSetProfile = (
-    profiles?: Profile[],
-    justLoggedIn: boolean = false,
-) => {
+export const handleSetProfile = (profiles?: Profile[], justLoggedIn: boolean = false) => {
     const isOneProfile = profiles?.length === 1;
     const profileId = cookies.get('profileId');
 
@@ -80,19 +77,19 @@ export const handleUpdateTokens = (data: UpdateTokenProps) => {
 };
 
 export const handleResponse = async ({
-                                         endpoint,
-                                         onSuccess,
-                                         onError,
-                                         onOffline = () => {},
-                                     }: ResponseProps) => {
+    endpoint,
+    onSuccess,
+    onError,
+    onOffline = () => {},
+}: ResponseProps) => {
     const isOnline = getOnLineStatus();
     if (isOnline) {
         const response: any = await endpoint();
         if (onError && response?.error) {
             return onError(
                 validationTexts[response.error.type!] ||
-                validationTexts[response.error.message!] ||
-                validationTexts.error,
+                    validationTexts[response.error.message!] ||
+                    validationTexts.error
             );
         }
 
@@ -110,3 +107,46 @@ export const getOnLineStatus = () =>
     typeof navigator !== 'undefined' && typeof navigator.onLine === 'boolean'
         ? navigator.onLine
         : true;
+
+export const getCurrentLocation = ({
+    onSuccess,
+    onError,
+}: {
+    onSuccess: (position: { lat: number; lng: number }) => void;
+    onError: (e: LOCATION_ERRORS, data?: any) => void;
+}) => {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(() => {});
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                if (position?.coords) {
+                    onSuccess({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    });
+                }
+            },
+            (e) => {
+                onError(LOCATION_ERRORS.POINT_NOT_FOUND, e);
+            },
+            { enableHighAccuracy: true }
+        );
+    } else {
+        onError(LOCATION_ERRORS.GEOLOCATION_NOT_SUPPORTE);
+    }
+};
+
+export const watchLocation = (): any => {
+    navigator.geolocation.getCurrentPosition(() => {});
+    return navigator.geolocation.watchPosition(
+        (position) => {
+            if (position?.coords) {
+                //TODO: set state
+            }
+        },
+        () => {
+            //TODO: set state
+        },
+        { enableHighAccuracy: true, timeout: 100000 }
+    );
+};
