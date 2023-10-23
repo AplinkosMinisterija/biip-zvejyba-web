@@ -1,33 +1,58 @@
-import DefaultLayout from '../components/layouts/DefaultLayout.tsx';
-import FishingAction from '../components/containers/FishingAction.tsx';
-import { useEffect, useState } from 'react';
-import FishingLocation from '../components/containers/FishingLocation.tsx';
-import { watchLocation } from '../utils/functions.ts';
-
-const contentConfig: any = {
-    location: {
-        title: 'Kur žvejosite?',
-        subtitle: 'Pasirinkite žvejybos vietą',
-        container: <FishingLocation />,
-    },
-    action: {
-        title: 'Mano žvejyba',
-        subtitle: 'Pasirinkite žvejybos veiksmą',
-        container: <FishingAction />,
-    },
-};
+import DefaultLayout from '../components/layouts/DefaultLayout';
+import FishingAction from '../components/containers/FishingAction';
+import { useEffect } from 'react';
+import FishingLocation from '../components/containers/FishingLocation';
+import { useGeolocationWatcher } from '../utils/hooks';
+import { getCurrentRoute } from '../utils/functions.ts';
+import { useNavigate } from 'react-router-dom';
+import { slugs } from '../utils/routes.tsx';
+import { useQuery } from 'react-query';
+import api from '../utils/api.ts';
+import LoaderComponent from '../components/other/LoaderComponent';
+import FishingTools from '../components/containers/FishingTools';
+import FishingWeight from '../components/containers/FishingWeight';
 export const Fishing = () => {
-    const [content] = useState('action');
-    const page = contentConfig[content];
+    const navigate = useNavigate();
+    const currentRoute = getCurrentRoute(window.location.pathname);
+
+    const { data: currentFishing, isLoading: currentFishingLoading } = useQuery(
+        ['currentFishing'],
+        () => api.getCurrentFishing(),
+        {}
+    );
 
     useEffect(() => {
-        const watchId = watchLocation();
-        return navigator.geolocation.clearWatch(watchId);
-    }, []);
+        if (!currentFishingLoading) {
+            if (currentFishing && currentRoute?.slug === slugs.fishingLocation) {
+                navigate(slugs.fishing(currentFishing.id));
+            } else if (!currentFishing && currentRoute?.slug !== slugs.fishingLocation) {
+                navigate(slugs.fishingLocation);
+            }
+        }
+    }, [currentFishing, window.location.pathname]);
+
+    useGeolocationWatcher();
+
+    if (currentFishingLoading) {
+        return <LoaderComponent />;
+    }
 
     return (
-        <DefaultLayout title={page.title} subtitle={page.subtitle}>
-            {page.container}
+        <DefaultLayout
+            title={currentRoute?.title || ''}
+            subtitle={currentRoute?.subtitle || ''}
+            back={currentRoute?.back}
+        >
+            {currentRoute?.slug === slugs.fishingLocation && <FishingLocation />}
+            {currentRoute?.slug === slugs.fishing(':fishingId') && (
+                <FishingAction fishing={currentFishing} />
+            )}
+            {currentRoute?.slug === slugs.fishingTools(':fishingId') && (
+                <FishingTools fishing={currentFishing} />
+            )}
+            {currentRoute?.slug === slugs.fishingWeight(':fishingId') && (
+                <FishingWeight fishing={currentFishing} />
+            )}
         </DefaultLayout>
     );
 };

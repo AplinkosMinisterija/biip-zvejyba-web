@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { device } from '../../utils/theme';
+import Div100vh from 'react-div-100vh';
+
 interface ModalProps {
     visible: boolean;
     onClose?: () => void;
@@ -38,9 +40,8 @@ const Modal = ({ visible, children, onClose }: ModalProps) => {
     );
 };
 
-const ModalContainer = styled.div`
-    width: 100%;
-    height: 100%;
+const ModalContainer = styled(Div100vh)`
+    width: 100vw;
     position: fixed;
     top: 0;
     left: 0;

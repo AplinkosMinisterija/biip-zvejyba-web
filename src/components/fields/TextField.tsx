@@ -22,6 +22,7 @@ export interface TextFieldProps {
   type?: string;
   secondLabel?: JSX.Element;
   selectedValue?: boolean;
+  [key:string] : any;
 }
 
 const TextField = ({
@@ -39,11 +40,11 @@ const TextField = ({
   subLabel,
   placeholder,
   bottomLabel,
-  type,
   disabled,
   height,
   secondLabel,
   onInputClick,
+  ...rest
 }: TextFieldProps) => {
   return (
     <FieldWrapper
@@ -68,7 +69,7 @@ const TextField = ({
         readOnly={readOnly}
         onInputClick={onInputClick}
         placeholder={placeholder}
-        type={type}
+        {...rest}
       />
     </FieldWrapper>
   );

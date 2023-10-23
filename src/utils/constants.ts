@@ -19,3 +19,13 @@ export enum LOCATION_ERRORS {
     PERMISSION_REQUIRED = 5,
     OTHER = 6,
 }
+
+export enum LocationType {
+    ESTUARY = 'ESTUARY',
+    POLDERS = 'POLDERS',
+    INLAND_WATERS = 'INLAND_WATERS',
+}
+export enum ToolType {
+    NET = 'NET',
+    CATCHER = 'CATCHER',
+}

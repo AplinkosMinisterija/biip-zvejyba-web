@@ -10,9 +10,9 @@ enum Variant {
     GREY = 'GREY',
 }
 
-const LargeButton = ({ variant = Variant.GREY, title, subtitle, buttonLabel }: any) => {
+const LargeButton = ({ variant = Variant.GREY, title, subtitle, buttonLabel, onClick }: any) => {
     return (
-        <Container $variant={variant}>
+        <Container $variant={variant} onClick={onClick}>
             <Title dangerouslySetInnerHTML={{ __html: title }} />
             <Row>
                 <Subtitle>{subtitle}</Subtitle>

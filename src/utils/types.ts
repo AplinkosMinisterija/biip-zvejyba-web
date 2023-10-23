@@ -1,4 +1,4 @@
-import {RolesTypes} from "./constants.ts";
+import { RolesTypes } from './constants.ts';
 
 export type ProfileId = 'personal' | string;
 export interface Profile {

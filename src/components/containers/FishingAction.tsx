@@ -1,8 +1,31 @@
 import styled from 'styled-components';
 import LargeButton from '../buttons/LargeButton.tsx';
 import { Variant } from '../buttons/FishingLocationButton.tsx';
+import { useMutation, useQueryClient } from 'react-query';
+import api from '../../utils/api.ts';
+import { useNavigate } from 'react-router-dom';
+import { slugs } from '../../utils/routes';
 
-const FishingAction = () => {
+const FishingAction = ({ fishing }: any) => {
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
+    const { mutateAsync: finishFishing } = useMutation(api.finishFishing, {
+        onError: () => {
+            //TODO: display error
+        },
+        onSuccess: () => {
+            //TODO: display confirmation message
+            queryClient.invalidateQueries('currentFishing');
+        },
+        retry: false,
+    });
+
+    const handleFinishFishing = () => {
+        if (fishing?.id) {
+            finishFishing(fishing.id);
+        }
+    };
+
     return (
         <>
             <Container>
@@ -11,18 +34,27 @@ const FishingAction = () => {
                     title="Tikrinkite arba</br>statykite įrankius"
                     subtitle="Esate žvejybos vietoje"
                     buttonLabel="Atidaryti"
+                    onClick={() => {
+                        const location = slugs.fishingTools(fishing?.id);
+                        navigate(location);
+                    }}
                 />
                 <LargeButton
                     variant={Variant.GHOST_WHITE}
                     title="Žuvies svoris</br>krante"
                     subtitle="Pasverkite bendrą svorį"
                     buttonLabel="Sverti"
+                    onClick={() => {
+                        const location = slugs.fishingWeight(fishing?.id);
+                        navigate(location);
+                    }}
                 />
                 <LargeButton
                     variant={Variant.AZURE}
                     title="Žvejybos baigimo</br>nustatymas"
                     subtitle="Užbaikite žvejybą"
                     buttonLabel="Baigti"
+                    onClick={handleFinishFishing}
                 />
             </Container>
         </>
@@ -34,6 +66,7 @@ const Container = styled.div`
     flex-direction: column;
     gap: 16px;
     width: 100%;
+    margin-bottom: 40px;
 `;
 
 export default FishingAction;

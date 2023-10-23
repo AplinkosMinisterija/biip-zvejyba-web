@@ -21,19 +21,22 @@ const StyledIcon = styled(Icon)`
     font-size: 2.4rem;
 `;
 
-const Container = styled.div<{ width?: string }>`
+const Container = styled.div<{ width?: string; $backgroundImg?: boolean }>`
     background-color: white;
     position: relative;
     width: 100%;
     height: 100%;
-    background-image: url('/empty-bg.svg');
-    background-repeat: no-repeat;
-    background-position: 50%;
-    background-size: cover;
+    ${({ $backgroundImg }) =>
+        $backgroundImg
+            ? ` background-image: url('/empty-bg.svg');
+                background-repeat: no-repeat;
+                background-position: 50%;
+                background-size: cover;`
+            : ''}
     padding: 0 16px;
+    overflow-y: scroll;
     @media ${device.desktop} {
         max-width: 700px;
-        margin: 40px auto;
         padding: 40px;
         flex-basis: auto;
         border-radius: 16px;

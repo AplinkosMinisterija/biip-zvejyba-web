@@ -3,16 +3,17 @@ import { device } from '../../utils/theme.ts';
 import Div100vh from 'react-div-100vh';
 import LogoHeader from '../headers/LogoHeader.tsx';
 
-const DefaultLayout = ({ children, title, subtitle }: any) => {
+const DefaultLayout = ({ children, title, subtitle, footer = null, back }: any) => {
     return (
         <Container>
             <SideBar></SideBar>
             <InnerContainer>
-                <LogoHeader />
+                <LogoHeader back={back} />
                 <Content>
-                    <Title>{title}</Title>
-                    <Subtitle>{subtitle}</Subtitle>
+                    {title && <Title>{title}</Title>}
+                    {subtitle && <Subtitle>{subtitle}</Subtitle>}
                     {children}
+                    {footer}
                 </Content>
             </InnerContainer>
         </Container>
@@ -33,7 +34,7 @@ const Content = styled.div`
     background-color: white;
     align-self: center;
     align-items: center;
-    padding: 0 16px 40px 16px;
+    padding: 0 16px 0 16px;
     @media ${device.desktop} {
         max-width: 800px;
         height: fit-content;

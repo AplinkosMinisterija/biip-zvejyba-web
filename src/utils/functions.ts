@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { validationTexts } from './texts.ts';
 import { Profile, ProfileId, ResponseProps, UpdateTokenProps } from './types.ts';
 import { LOCATION_ERRORS } from './constants.ts';
+import { routes } from './routes.tsx';
 
 const cookies = new Cookies();
 
@@ -136,17 +137,6 @@ export const getCurrentLocation = ({
     }
 };
 
-export const watchLocation = (): any => {
-    navigator.geolocation.getCurrentPosition(() => {});
-    return navigator.geolocation.watchPosition(
-        (position) => {
-            if (position?.coords) {
-                //TODO: set state
-            }
-        },
-        () => {
-            //TODO: set state
-        },
-        { enableHighAccuracy: true, timeout: 100000 }
-    );
+export const getCurrentRoute = (pathname: any) => {
+    return routes?.find((route: any) => route.regExp.test(pathname));
 };

@@ -1,12 +1,15 @@
-import {useDispatch, useSelector} from "react-redux";
-import {useMutation} from "react-query";
-import api from "./api.ts";
-import {RolesTypes, ServerErrors} from "./constants.ts";
-import {clearCookies, handleAlert, handleGetCurrentUser, handleSetProfile} from "./functions.ts";
-import {actions, initialState, UserReducerProps} from "../state/user/reducer.ts";
-import {RootState} from "../state/store.ts";
-import Cookies from "universal-cookie";
-import {routes} from "./routes.tsx";
+import { useDispatch, useSelector } from 'react-redux';
+import { useMutation } from 'react-query';
+import api from './api.ts';
+import { LOCATION_ERRORS, RolesTypes, ServerErrors } from './constants.ts';
+import { clearCookies, handleAlert, handleGetCurrentUser, handleSetProfile } from './functions.ts';
+import { actions, initialState, UserReducerProps } from '../state/user/reducer';
+import { actions as fishingActions } from '../state/fishing/reducer';
+
+import { RootState } from '../state/store.ts';
+import Cookies from 'universal-cookie';
+import { routes } from './routes.tsx';
+import { useEffect } from 'react';
 
 const cookies = new Cookies();
 
@@ -58,9 +61,7 @@ export const useFilteredRoutes = () => {
         if (!route?.slug) return false;
 
         if (route.tenantOwner) {
-            return [RolesTypes.USER_ADMIN, RolesTypes.OWNER].some(
-                (r) => r === profile?.role,
-            );
+            return [RolesTypes.USER_ADMIN, RolesTypes.OWNER].some((r) => r === profile?.role);
         }
         return true;
     });
@@ -76,8 +77,34 @@ export const useLogoutMutation = () => {
         onSuccess: () => {
             clearCookies();
             dispatch(actions.setUser(initialState));
-        }
+        },
     });
 
     return { mutateAsync };
+};
+
+export const useGeolocationWatcher = () => {
+    const options = {
+        enableHighAccuracy: true,
+        timeout: 100000,
+    };
+    const dispatch = useDispatch();
+    useEffect(() => {
+        const successHandler = (position: any) => {
+            dispatch(fishingActions.setError(null));
+            dispatch(
+                fishingActions.setCoordinates({
+                    y: position.coords.latitude,
+                    x: position.coords.longitude,
+                })
+            );
+        };
+        const errorHandler = () => {
+            dispatch(fishingActions.setError(LOCATION_ERRORS.POINT_NOT_FOUND));
+        };
+        navigator.geolocation.getCurrentPosition(successHandler, errorHandler, options);
+        const id = navigator.geolocation.watchPosition(successHandler, errorHandler, options);
+        return () => navigator.geolocation.clearWatch(id);
+    }, []);
+    return {};
 };
