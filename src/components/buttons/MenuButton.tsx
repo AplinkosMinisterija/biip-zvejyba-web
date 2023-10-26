@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Icon, { IconName } from '../other/Icon.tsx';
 
 const MenuButton = ({ label, icon, onClick }: any) => {
+    //TODO: disable option
     return (
         <Container onClick={onClick}>
             <IconContainer>

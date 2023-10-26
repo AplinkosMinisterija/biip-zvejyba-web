@@ -14,7 +14,7 @@ const FishingAction = ({ fishing }: any) => {
             //TODO: display error
         },
         onSuccess: () => {
-            //TODO: display confirmation message
+            //TODO: display success message
             queryClient.invalidateQueries('currentFishing');
         },
         retry: false,

@@ -311,6 +311,47 @@ class Api {
             params,
         });
     };
+
+    getLocation = async (params: any) => {
+        return this.get({
+            resource: 'locations',
+            ...params,
+        });
+    };
+    getAvailableTools = async () => {
+        return this.get({
+            resource: 'tools/available',
+        });
+    };
+
+    buildTools = async (params: {
+        tools: number[];
+        coordinates: { x: number; y: number };
+        location: number;
+        locationName: string;
+    }) => {
+        return this.create({
+            resource: 'toolGroups',
+            params,
+        });
+    };
+
+    returnTools = async (id: number) => {
+        return this.update({
+            resource: 'toolGroups/return',
+            id: id.toString(),
+            params: null,
+        });
+    };
+
+    getBuiltTools = async (params: { locationId: number }) => {
+        console.log('params', params);
+        return this.get({
+            resource: 'toolGroups/current',
+            query: JSON.stringify(params),
+            // populate: ['tools'],
+        });
+    };
 }
 
 export default new Api();

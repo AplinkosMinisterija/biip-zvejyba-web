@@ -33,7 +33,7 @@ const FishingLocation = () => {
             //TODO: display error
         },
         onSuccess: () => {
-            //TODO: display confirmation message
+            //TODO: display success message
         },
         retry: false,
     });

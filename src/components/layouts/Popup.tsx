@@ -37,7 +37,7 @@ const Container = styled.div<{ width?: string; $backgroundImg?: boolean }>`
     overflow-y: scroll;
     @media ${device.desktop} {
         max-width: 700px;
-        padding: 40px;
+        padding: 40px 40px 0 40px;
         flex-basis: auto;
         border-radius: 16px;
     }

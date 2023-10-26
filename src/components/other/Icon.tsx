@@ -24,7 +24,10 @@ import React from 'react';
 import { CgClose } from 'react-icons/cg';
 import { LuHome } from 'react-icons/lu';
 import { AiFillHome } from 'react-icons/ai';
-import { FaAnchor } from 'react-icons/fa';
+import { FaAnchor, FaCheck } from 'react-icons/fa';
+import { retry } from '@reduxjs/toolkit/query';
+import { LiaBalanceScaleSolid } from 'react-icons/lia';
+import { PiArrowBendDownLeftBold } from 'react-icons/pi';
 
 export enum IconName {
     logout = 'logout',
@@ -55,6 +58,9 @@ export enum IconName {
     anchor = 'anchor',
     hook = 'hook',
     right = 'right',
+    check = 'check',
+    scales = 'scales',
+    return = 'return',
 }
 export interface IconProps {
     name: IconName | string;
@@ -63,63 +69,50 @@ export interface IconProps {
 
 const Icon = ({ name, className }: IconProps) => {
     switch (name) {
-        case 'logout':
+        case IconName.logout:
             return <MdLogout className={className} />;
-        case 'back':
+        case IconName.back:
             return <FiArrowLeft className={className} />;
-        case 'burger':
+        case IconName.burger:
             return <FiMenu className={className} />;
-        case 'showMore':
+        case IconName.showMore:
             return <MdUnfoldMore className={className} />;
-        case 'edit':
+        case IconName.edit:
             return <MdOutlineEdit className={className} />;
-        case 'deleteItem':
+        case IconName.deleteItem:
             return <MdOutlineDelete className={className} />;
-        case 'time':
+        case IconName.time:
             return <FiClock className={className} />;
-        case 'calendar':
+        case IconName.calendar:
             return <IoMdCalendar className={className} />;
-        case 'exit':
+        case IconName.exit:
             return <MdExitToApp className={className} />;
-        case 'lootsCount':
-            return <TbCurrentLocation className={className} />;
-        case 'mapLocation':
-            return <IoLocationSharp className={className} />;
-        case 'users':
+        case IconName.users:
             return <HiOutlineUsers className={className} />;
-        case 'ticket':
-            return <TbTicket className={className} />;
-        case 'phone':
+        case IconName.phone:
             return <MdOutlineLocalPhone className={className} />;
-        case 'email':
+        case IconName.email:
             return <FiMail className={className} />;
-        case 'visibleOn':
-            return <MdOutlineVisibility className={className} />;
-        case 'visibleOff':
-            return <MdOutlineVisibilityOff className={className} />;
-        case 'dropdownArrow':
+        case IconName.dropdownArrow:
             return <MdKeyboardArrowDown className={className} />;
-        case 'invited':
-            return <FiUserPlus className={className} />;
-        case 'verified':
-            return <MdVerifiedUser className={className} />;
-        case 'close':
+        case IconName.close:
             return <CgClose className={className} />;
-        case 'violation':
-            return <BsFillExclamationTriangleFill className={className} />;
-        case 'crown':
-            return <FaCrown className={className} />;
-        case 'person':
+        case IconName.person:
             return <IoPersonOutline className={className} />;
-        case 'home':
+        case IconName.home:
             return <AiFillHome className={className} />;
-        case 'anchor':
+        case IconName.anchor:
             return <FaAnchor className={className} />;
-        case 'hook':
+        case IconName.hook:
             return <TbFishHook className={className} />;
-        case 'right':
+        case IconName.right:
             return <FaChevronRight className={className} />;
-
+        case IconName.check:
+            return <FaCheck className={className} />;
+        case IconName.scales:
+            return <LiaBalanceScaleSolid className={className} />;
+        case IconName.return:
+            return <PiArrowBendDownLeftBold className={className} />;
         default:
             return null;
     }

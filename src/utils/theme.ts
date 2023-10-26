@@ -26,6 +26,7 @@ export interface Theme {
             input: string;
         };
         border: string;
+        background: string;
         largeButton: {
             FLORAL_WHITE: string;
             GHOST_WHITE: string;
@@ -63,6 +64,7 @@ export const theme: Theme = {
             input: '#231f20',
         },
         border: '#CDD5DF',
+        background: '#f7f7f7',
         largeButton: {
             FLORAL_WHITE: '#FFF5E8',
             GHOST_WHITE: '#EBEDFD', //'#F0F0FF'

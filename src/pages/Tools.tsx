@@ -15,6 +15,7 @@ import * as Yup from 'yup';
 import { validationTexts } from '../utils/texts.ts';
 import ToolCard from '../components/other/ToolCard.tsx';
 import LoaderComponent from '../components/other/LoaderComponent.tsx';
+import { device } from '../utils/theme.ts';
 
 const validateSpecies = (toolType: any) =>
     Yup.object().shape({
@@ -90,20 +91,15 @@ const Tools = () => {
 
     return (
         <>
-            <DefaultLayout
-                title={currentRoute?.title}
-                subtitle={currentRoute?.subtitle}
-                footer={
+            <DefaultLayout title={currentRoute?.title} subtitle={currentRoute?.subtitle}>
+                <Container>
+                    {toolsLoading && <LoaderComponent />}
+                    {tools?.map((tool: any) => <ToolCard tool={tool} />)}
                     <Footer>
                         <StyledButton onClick={() => setShowPopup(true)}>
                             Naujas įrankis
                         </StyledButton>
                     </Footer>
-                }
-            >
-                <Container>
-                    {toolsLoading && <LoaderComponent />}
-                    {tools?.map((tool: any) => <ToolCard tool={tool} />)}
                 </Container>
             </DefaultLayout>
             <Popup visible={showPopup} onClose={() => setShowPopup(false)}>
@@ -230,6 +226,9 @@ const Footer = styled.div`
     text-decoration: none;
     width: 100%;
     background-color: white;
+    @media ${device.desktop} {
+        padding: 16px 0 0 0;
+    }
 `;
 
 const StyledButton = styled(Button)`

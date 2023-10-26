@@ -3,19 +3,20 @@ import { device } from '../../utils/theme.ts';
 import Div100vh from 'react-div-100vh';
 import LogoHeader from '../headers/LogoHeader.tsx';
 
-const DefaultLayout = ({ children, title, subtitle, footer = null, back }: any) => {
+const DefaultLayout = ({ children, title, subtitle, back }: any) => {
     return (
         <Container>
             <SideBar></SideBar>
-            <InnerContainer>
-                <LogoHeader back={back} />
-                <Content>
-                    {title && <Title>{title}</Title>}
-                    {subtitle && <Subtitle>{subtitle}</Subtitle>}
-                    {children}
-                    {footer}
-                </Content>
-            </InnerContainer>
+            <ScrollableContainer>
+                <InnerContainer>
+                    <LogoHeader back={back} />
+                    <Content>
+                        {title && <Title>{title}</Title>}
+                        {subtitle && <Subtitle>{subtitle}</Subtitle>}
+                        {children}
+                    </Content>
+                </InnerContainer>
+            </ScrollableContainer>
         </Container>
     );
 };
@@ -31,16 +32,17 @@ const Content = styled.div`
     flex-direction: column;
     width: 100%;
     height: 100%;
-    background-color: white;
     align-self: center;
     align-items: center;
     padding: 0 16px 0 16px;
+    background-color: white;
     @media ${device.desktop} {
         max-width: 800px;
-        height: fit-content;
         border-radius: 16px;
         margin: 40px auto;
         padding: 40px;
+        overflow-y: auto;
+        height: fit-content;
     }
 `;
 
@@ -55,13 +57,24 @@ const SideBar = styled.div`
     }
 `;
 
+const ScrollableContainer = styled.div`
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    background-color: white;
+`;
+
 const InnerContainer = styled.div`
     display: flex;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     flex-direction: column;
     align-items: center;
-    overflow-y: scroll;
+    @media ${device.desktop} {
+        padding: 0 16px;
+        height: fit-content;
+        background-color: #f7f7f7;
+    }
 `;
 
 const Title = styled.div`

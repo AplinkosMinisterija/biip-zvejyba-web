@@ -25,12 +25,18 @@ const MobileMenu = ({ onClose, visible = true }: any) => {
                     <MenuButton
                         label="Mano žvejyba"
                         icon={IconName.home}
-                        onClick={() => navigate(slugs.fishingLocation)}
+                        onClick={() => {
+                            navigate(slugs.fishingLocation);
+                            onClose();
+                        }}
                     />
                     <MenuButton
                         label="Įrankiai"
                         icon={IconName.hook}
-                        onClick={() => navigate(slugs.tools)}
+                        onClick={() => {
+                            navigate(slugs.tools);
+                            onClose();
+                        }}
                     />
                     <MenuButton label="Atsijungti" icon={IconName.logout} onClick={() => {}} />
                 </>

@@ -69,7 +69,6 @@ export const useFilteredRoutes = () => {
 
 export const useLogoutMutation = () => {
     const dispatch = useDispatch();
-
     const { mutateAsync } = useMutation(() => api.logout(), {
         onError: () => {
             handleAlert();
@@ -79,7 +78,6 @@ export const useLogoutMutation = () => {
             dispatch(actions.setUser(initialState));
         },
     });
-
     return { mutateAsync };
 };
 
@@ -92,10 +90,14 @@ export const useGeolocationWatcher = () => {
     useEffect(() => {
         const successHandler = (position: any) => {
             dispatch(fishingActions.setError(null));
+            console.log('coordinates', {
+                x: position.coords.longitude,
+                y: position.coords.latitude,
+            });
             dispatch(
                 fishingActions.setCoordinates({
-                    y: position.coords.latitude,
                     x: position.coords.longitude,
+                    y: position.coords.latitude,
                 })
             );
         };
