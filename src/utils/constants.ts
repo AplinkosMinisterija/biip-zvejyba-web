@@ -29,3 +29,8 @@ export enum ToolType {
     NET = 'NET',
     CATCHER = 'CATCHER',
 }
+
+export enum FishingToolsType {
+    GROUP = 'GROUP',
+    SINGLE = 'SINGLE',
+}

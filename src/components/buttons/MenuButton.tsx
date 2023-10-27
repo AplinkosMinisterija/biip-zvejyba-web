@@ -41,7 +41,7 @@ const IconContainer = styled.div`
     justify-content: center;
 `;
 const StyledIcon = styled(Icon)`
-    filter: invert(15%) sepia(56%) saturate(5078%) hue-rotate(226deg) brightness(92%) contrast(97%);
+    //filter: invert(15%) sepia(56%) saturate(5078%) hue-rotate(226deg) brightness(92%) contrast(97%);
 `;
 
 export default MenuButton;
