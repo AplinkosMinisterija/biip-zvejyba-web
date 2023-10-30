@@ -1,0 +1,22 @@
+name: Deploy to Production
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  deploy-production:
+    name: Deploy production
+    uses: AplinkosMinisterija/reusable-workflows/.github/workflows/biip-deploy.yml@main
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+    with:
+      environment: Production
+      docker-image: ghcr.io/AplinkosMinisterija/biip-zvejyba-web
+      enable-sentry: true
+      build-args: |
+        NODE_ENV=production
+        REACT_APP_SENTRY_ENV=production
+        REACT_APP_SENTRY_DSN=https://0fadf707c6574ab792a4dd2f8d729ea2@sentry.biip.lt/42
