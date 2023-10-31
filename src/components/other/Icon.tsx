@@ -8,15 +8,15 @@ import { IoMdCalendar } from 'react-icons/io';
 import { IoPersonOutline } from 'react-icons/io5';
 import { LiaBalanceScaleSolid } from 'react-icons/lia';
 import {
-    MdExitToApp,
-    MdKeyboardArrowDown,
-    MdLogout,
-    MdOutlineDelete,
-    MdOutlineEdit,
-    MdOutlineLocalPhone,
-    MdOutlineVisibility,
-    MdOutlineVisibilityOff,
-    MdUnfoldMore,
+  MdExitToApp,
+  MdKeyboardArrowDown,
+  MdLogout,
+  MdOutlineDelete,
+  MdOutlineEdit,
+  MdOutlineLocalPhone,
+  MdOutlineVisibility,
+  MdOutlineVisibilityOff,
+  MdUnfoldMore
 } from 'react-icons/md';
 import { PiArrowBendDownLeftBold } from 'react-icons/pi';
 import { TbFishHook } from 'react-icons/tb';
@@ -56,8 +56,8 @@ export enum IconName {
     eGate = 'eGate',
 }
 export interface IconProps {
-    name: IconName | string;
-    className?: string;
+  name: IconName | string;
+  className?: string;
 }
 
 const Icon = ({ name, className }: IconProps) => {

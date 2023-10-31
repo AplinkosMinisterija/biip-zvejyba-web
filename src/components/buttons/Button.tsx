@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { theme } from '../../utils/theme.ts';
+import { theme } from '../../utils/theme';
 import Loader from '../other/Loader';
 
 export enum ButtonColors {
@@ -33,21 +33,21 @@ const buttonTextColors = {
     [ButtonColors.POWDER]: theme.colors.text.primary,
 };
 export interface ButtonProps {
-    variant?: ButtonColors;
-    route?: string;
-    children?: JSX.Element | string;
-    leftIcon?: JSX.Element | string;
-    rightIcon?: JSX.Element | string;
-    height?: number;
-    type?: string;
-    loading?: boolean;
-    padding?: string;
-    buttonPadding?: string;
-    signature?: boolean;
-    disabled?: boolean;
-    color?: string;
-    fontWeight?: string;
-    radius?: string;
+  variant?: ButtonColors;
+  route?: string;
+  children?: JSX.Element | string;
+  leftIcon?: JSX.Element | string;
+  rightIcon?: JSX.Element | string;
+  height?: number;
+  type?: string;
+  loading?: boolean;
+  padding?: string;
+  buttonPadding?: string;
+  signature?: boolean;
+  disabled?: boolean;
+  color?: string;
+  fontWeight?: string;
+  radius?: string;
 }
 
 const Button = ({
@@ -88,11 +88,11 @@ const Button = ({
 };
 
 const StyledButton = styled.button<{
-    variant: ButtonColors;
-    height: number;
-    padding?: string;
-    fontWeight?: string;
-    $radius?: string;
+  variant: ButtonColors;
+  height: number;
+  padding?: string;
+  fontWeight?: string;
+  $radius?: string;
 }>`
     display: flex;
     justify-content: center;

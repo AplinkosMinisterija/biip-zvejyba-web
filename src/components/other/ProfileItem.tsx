@@ -107,8 +107,13 @@ const SecondRow = styled.div`
 `;
 
 const TenantCode = styled.div`
+<<<<<<< HEAD
     font: normal normal 600 1.4rem/19px;
     color: ${({ theme }) => theme.colors.text.secondary};
+=======
+  font: normal normal 600 1.4rem/19px;
+  color: ${({ theme }) => theme.colors.text.secondary};
+>>>>>>> c34cdadb72c26841968cb57b3b4e191fc2dfe55d
 `;
 
 const BiipIcon = styled.img`

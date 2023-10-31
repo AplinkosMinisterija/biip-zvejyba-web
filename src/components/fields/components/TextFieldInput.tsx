@@ -1,18 +1,18 @@
 import styled from 'styled-components';
 export interface TextFieldProps {
-    value?: string | number;
-    name?: string;
-    error?: string;
-    leftIcon?: JSX.Element;
-    rightIcon?: JSX.Element;
-    onChange?: (option?: any) => void;
-    disabled?: boolean;
-    height?: number;
-    readOnly?: boolean;
-    onInputClick?: () => void;
-    placeholder?: string;
-    type?: string;
-    selectedValue?: boolean;
+  value?: string | number;
+  name?: string;
+  error?: string;
+  leftIcon?: JSX.Element;
+  rightIcon?: JSX.Element;
+  onChange?: (option?: any) => void;
+  disabled?: boolean;
+  height?: number;
+  readOnly?: boolean;
+  onInputClick?: () => void;
+  placeholder?: string;
+  type?: string;
+  selectedValue?: boolean;
 }
 
 const TextFieldInput = ({
@@ -31,31 +31,31 @@ const TextFieldInput = ({
     onInputClick,
     ...rest
 }: TextFieldProps) => {
-    return (
-        <InputContainer $error={!!error} $height={height || 40} $disabled={disabled || false}>
-            {leftIcon}
-            <StyledTextInput
-                $selectedValue={selectedValue}
-                onClick={() => (onInputClick ? onInputClick() : null)}
-                readOnly={readOnly}
-                type={type || 'text'}
-                name={name}
-                autoComplete="off"
-                value={value || ''}
-                onChange={(e) => onChange && onChange(e?.target?.value || '')}
-                placeholder={placeholder}
-                disabled={disabled}
-                {...rest}
-            />
-            {rightIcon}
-        </InputContainer>
-    );
+  return (
+    <InputContainer $error={!!error} $height={height || 40} $disabled={disabled || false}>
+      {leftIcon}
+      <StyledTextInput
+        $selectedValue={selectedValue}
+        onClick={() => (onInputClick ? onInputClick() : null)}
+        readOnly={readOnly}
+        type={type || 'text'}
+        name={name}
+        autoComplete="off"
+        value={value || ''}
+        onChange={(e) => onChange && onChange(e?.target?.value || '')}
+        placeholder={placeholder}
+        disabled={disabled}
+        {...rest}
+      />
+      {rightIcon}
+    </InputContainer>
+  );
 };
 
 const InputContainer = styled.div<{
-    $error: boolean;
-    $height: number;
-    $disabled: boolean;
+  $error: boolean;
+  $height: number;
+  $disabled: boolean;
 }>`
     display: flex;
     height: ${({ $height }) => `${$height}px`};
@@ -67,56 +67,56 @@ const InputContainer = styled.div<{
     border: 1px solid ${({ theme, $error }) => ($error ? theme.colors.error : theme.colors.border)};
     opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
 
-    cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'text')};
-    :focus-within {
-        border-color: ${({ theme }) => theme.colors.primary};
-        box-shadow: 0 0 0 4px ${({ theme }) => `${theme.colors.primary}33`};
-    }
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'text')};
+  :focus-within {
+    border-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 0 0 4px ${({ theme }) => `${theme.colors.primary}33`};
+  }
 `;
 
 const StyledTextInput = styled.input<{
-    readOnly: boolean;
-    $selectedValue: boolean;
+  readOnly: boolean;
+  $selectedValue: boolean;
 }>`
-    border: none;
-    padding: 0 12px;
-    width: 100%;
-    height: 100%;
+  border: none;
+  padding: 0 12px;
+  width: 100%;
+  height: 100%;
 
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'text')};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'text')};
 
-    background-color: white;
-    font-size: 1.6rem;
-    color: ${({ theme }) => theme.colors.text.input};
+  background-color: white;
+  font-size: 1.6rem;
+  color: ${({ theme }) => theme.colors.text.input};
 
-    &:focus {
-        outline: none;
-    }
+  &:focus {
+    outline: none;
+  }
 
-    [type='number'] {
-        -moz-appearance: textfield;
-    }
-    ::-webkit-inner-spin-button,
-    ::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-    ::-webkit-input-placeholder {
-        color: ${({ theme, $selectedValue }) =>
-            theme.colors.text.input + `${!$selectedValue ? '8F' : ''}`};
-    }
-    ::-moz-placeholder {
-        color: ${({ theme, $selectedValue }) =>
-            theme.colors.text.input + `${!$selectedValue ? '8F' : ''}`};
-    }
-    ::-ms-placeholder {
-        color: ${({ theme, $selectedValue }) =>
-            theme.colors.text.input + `${!$selectedValue ? '8F' : ''}`};
-    }
-    ::placeholder {
-        color: ${({ theme, $selectedValue }) =>
-            theme.colors.text.input + `${!$selectedValue ? '8F' : ''}`};
-    }
+  [type='number'] {
+    -moz-appearance: textfield;
+  }
+  ::-webkit-inner-spin-button,
+  ::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  ::-webkit-input-placeholder {
+    color: ${({ theme, $selectedValue }) =>
+      theme.colors.text.input + `${!$selectedValue ? '8F' : ''}`};
+  }
+  ::-moz-placeholder {
+    color: ${({ theme, $selectedValue }) =>
+      theme.colors.text.input + `${!$selectedValue ? '8F' : ''}`};
+  }
+  ::-ms-placeholder {
+    color: ${({ theme, $selectedValue }) =>
+      theme.colors.text.input + `${!$selectedValue ? '8F' : ''}`};
+  }
+  ::placeholder {
+    color: ${({ theme, $selectedValue }) =>
+      theme.colors.text.input + `${!$selectedValue ? '8F' : ''}`};
+  }
 `;
 
 export default TextFieldInput;

@@ -22,7 +22,7 @@ export interface TextFieldProps {
   type?: string;
   secondLabel?: JSX.Element;
   selectedValue?: boolean;
-  [key:string] : any;
+  [key: string]: any;
 }
 
 const TextField = ({

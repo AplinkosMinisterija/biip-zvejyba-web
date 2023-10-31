@@ -43,78 +43,78 @@ export const useCheckAuthMutation = () => {
 };
 
 export const useEGatesSign = () => {
-    const { mutateAsync, isLoading } = useMutation(api.eGatesSign, {
-        onError: () => {
-            handleAlert();
-        },
-        onSuccess: ({ url }) => {
-            window.location.replace(url);
-        },
-        retry: false,
-    });
-    return { isLoading, mutateAsync };
+  const { mutateAsync, isLoading } = useMutation(api.eGatesSign, {
+    onError: () => {
+      handleAlert();
+    },
+    onSuccess: ({ url }) => {
+      window.location.replace(url);
+    },
+    retry: false,
+  });
+  return { isLoading, mutateAsync };
 };
 
 export const useGetCurrentProfile = () => {
-    const profiles = useSelector((state: RootState) => state.user.userData.profiles);
-    const profileId = cookies.get('profileId');
-    const currentProfile = profiles?.find((profile) => profile.id == profileId);
-    return currentProfile;
+  const profiles = useSelector((state: RootState) => state.user.userData.profiles);
+  const profileId = cookies.get('profileId');
+  const currentProfile = profiles?.find((profile) => profile.id == profileId);
+  return currentProfile;
 };
 export const useFilteredRoutes = () => {
-    const profile = useGetCurrentProfile();
-    return routes.filter((route: any) => {
-        if (!route?.slug) return false;
+  const profile = useGetCurrentProfile();
+  return routes.filter((route: any) => {
+    if (!route?.slug) return false;
 
-        if (route.tenantOwner) {
-            return [RolesTypes.USER_ADMIN, RolesTypes.OWNER].some((r) => r === profile?.role);
-        }
-        return true;
-    });
+    if (route.tenantOwner) {
+      return [RolesTypes.USER_ADMIN, RolesTypes.OWNER].some((r) => r === profile?.role);
+    }
+    return true;
+  });
 };
 
 export const useLogoutMutation = () => {
-    const dispatch = useDispatch();
-    const { mutateAsync } = useMutation(() => api.logout(), {
-        onError: () => {
-            handleAlert();
-        },
-        onSuccess: () => {
-            clearCookies();
-            dispatch(actions.setUser(initialState));
-        },
-    });
-    return { mutateAsync };
+  const dispatch = useDispatch();
+  const { mutateAsync } = useMutation(() => api.logout(), {
+    onError: () => {
+      handleAlert();
+    },
+    onSuccess: () => {
+      clearCookies();
+      dispatch(actions.setUser(initialState));
+    },
+  });
+  return { mutateAsync };
 };
 
 export const useGeolocationWatcher = () => {
-    const options = {
-        enableHighAccuracy: true,
-        timeout: 100000,
+  const options = {
+    enableHighAccuracy: true,
+    timeout: 100000,
+  };
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const successHandler = (position: any) => {
+      dispatch(fishingActions.setError(null));
+      console.log('coordinates', {
+        x: position.coords.longitude,
+        y: position.coords.latitude,
+      });
+      dispatch(
+        fishingActions.setCoordinates({
+          x: position.coords.longitude,
+          y: position.coords.latitude,
+        }),
+      );
     };
-    const dispatch = useDispatch();
-    useEffect(() => {
-        const successHandler = (position: any) => {
-            dispatch(fishingActions.setError(null));
-            console.log('coordinates', {
-                x: position.coords.longitude,
-                y: position.coords.latitude,
-            });
-            dispatch(
-                fishingActions.setCoordinates({
-                    x: position.coords.longitude,
-                    y: position.coords.latitude,
-                })
-            );
-        };
-        const errorHandler = () => {
-            dispatch(fishingActions.setError(LOCATION_ERRORS.POINT_NOT_FOUND));
-        };
-        navigator.geolocation.getCurrentPosition(successHandler, errorHandler, options);
-        const id = navigator.geolocation.watchPosition(successHandler, errorHandler, options);
-        return () => navigator.geolocation.clearWatch(id);
-    }, []);
-    return {};
+    const errorHandler = () => {
+      dispatch(fishingActions.setError(LOCATION_ERRORS.POINT_NOT_FOUND));
+    };
+    navigator.geolocation.getCurrentPosition(successHandler, errorHandler, options);
+    const id = navigator.geolocation.watchPosition(successHandler, errorHandler, options);
+    return () => navigator.geolocation.clearWatch(id);
+  }, []);
+  return {};
 };
 
 export const useWindowSize = (width: string) => {

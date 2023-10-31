@@ -40,7 +40,9 @@ export interface Theme {
             GREY: string;
         };
     };
-}
+
+
+  };
 
 export const theme: Theme = {
     colors: {
@@ -82,7 +84,8 @@ export const theme: Theme = {
             ALICE_BLUE: '#E6F4FF',
             GREY: '#f7f7f7',
         },
-    },
+
+  },
 };
 
 export const GlobalStyle = createGlobalStyle`
@@ -148,8 +151,8 @@ export const GlobalStyle = createGlobalStyle`
 `;
 
 export const device = {
-    mobileS: `(max-width: 320px)`,
-    mobileM: `(max-width: 425px)`,
-    mobileL: `(max-width: 868px)`,
-    desktop: `(min-width: 869px)`,
+  mobileS: `(max-width: 320px)`,
+  mobileM: `(max-width: 425px)`,
+  mobileL: `(max-width: 868px)`,
+  desktop: `(min-width: 869px)`,
 };

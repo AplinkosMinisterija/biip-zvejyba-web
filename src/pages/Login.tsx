@@ -18,7 +18,7 @@ import { loginSchema } from '../utils/validations';
 class LoginProps {}
 
 export const Login = () => {
-    const [isSelectedLocalLogin, setIsSelectedLocalLogin] = useState(false);
+    const [showLocalLogin, setShowLocalLogin] = useState(false);
     const isMobile = useWindowSize(device.mobileL);
 
     const loginMutation: any = useMutation((params: LoginProps) => api.login(params), {
@@ -92,7 +92,7 @@ export const Login = () => {
     };
 
     const renderContent = () => {
-        if (!isSelectedLocalLogin) {
+        if (!showLocalLogin) {
             return (
                 <ButtonContainer>
                     <Button
@@ -106,7 +106,7 @@ export const Login = () => {
                     <TransparentButton
                         color={theme.colors.text.retroBlack}
                         type="button"
-                        onClick={() => setIsSelectedLocalLogin(true)}
+                        onClick={() => setShowLocalLogin(true)}
                     >
                         {buttonLabels.loginWithPassword}
                     </TransparentButton>
@@ -118,7 +118,7 @@ export const Login = () => {
     };
 
     const renderMobileContent = () => {
-        if (!isSelectedLocalLogin) {
+        if (!showLocalLogin) {
             return (
                 <ButtonContainer>
                     <Button
@@ -133,7 +133,7 @@ export const Login = () => {
                     <TransparentButton
                         color={theme.colors.powder}
                         type="button"
-                        onClick={() => setIsSelectedLocalLogin(true)}
+                        onClick={() => setShowLocalLogin(true)}
                     >
                         {buttonLabels.loginWithPassword}
                     </TransparentButton>

@@ -2,14 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useSelector } from 'react-redux';
 import {
-    Location,
-    Navigate,
-    Outlet,
-    Route,
-    Routes,
-    useLocation,
-    useNavigate,
-    useSearchParams,
+  Location,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useSearchParams
 } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -25,160 +25,145 @@ import { slugs } from './utils/routes';
 import { ProfileId } from './utils/types';
 const cookies = new Cookies();
 interface RouteProps {
-    loggedIn: boolean;
-    profileId?: ProfileId;
-    location?: Location;
+  loggedIn: boolean;
+  profileId?: ProfileId;
+  location?: Location;
 }
 
 function App() {
-    const loggedIn = useSelector((state: RootState) => state.user.loggedIn);
-    const profiles = useSelector((state: RootState) => state.user.userData.profiles);
-    const [searchParams] = useSearchParams();
-    const { ticket, eGates } = Object.fromEntries([...Array.from(searchParams)]);
-    const profileId: ProfileId = cookies.get('profileId');
-    const [initialLoading, setInitialLoading] = useState(true);
-    const location = useLocation();
-    const navigate = useNavigate();
-    const routes = useFilteredRoutes();
-    const navigateRef = useRef(navigate);
+  const loggedIn = useSelector((state: RootState) => state.user.loggedIn);
+  const profiles = useSelector((state: RootState) => state.user.userData.profiles);
+  const [searchParams] = useSearchParams();
+  const { ticket, eGates } = Object.fromEntries([...Array.from(searchParams)]);
+  const profileId: ProfileId = cookies.get('profileId');
+  const [initialLoading, setInitialLoading] = useState(true);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const routes = useFilteredRoutes();
+  const navigateRef = useRef(navigate);
 
-    const profileIDS = profiles?.map((profile: any) => profile?.id?.toString());
+  const profileIDS = profiles?.map((profile: any) => profile?.id?.toString());
 
-    const isInvalidProfile = profileIDS?.includes(profileId) && loggedIn;
-    const updateTokensMutation = useMutation(api.refreshToken, {
-        onError: ({ response }: any) => {
-            if (response.status == 404) {
-                cookies.remove('refreshToken', { path: '/' });
-            }
-        },
-        onSuccess: (data) => {
-            handleUpdateTokens(data);
-        },
-    });
+  const isInvalidProfile = profileIDS?.includes(profileId) && loggedIn;
+  const updateTokensMutation = useMutation(api.refreshToken, {
+    onError: ({ response }: any) => {
+      if (response.status == 404) {
+        cookies.remove('refreshToken', { path: '/' });
+      }
+    },
+    onSuccess: (data) => {
+      handleUpdateTokens(data);
+    },
+  });
 
-    const updateTokensMutationMutateAsyncFunction = updateTokensMutation.mutateAsync;
+  const updateTokensMutationMutateAsyncFunction = updateTokensMutation.mutateAsync;
 
-    const shouldUpdateTokens = useCallback(async () => {
-        if (!cookies.get('token') && cookies.get('refreshToken')) {
-            await updateTokensMutationMutateAsyncFunction();
-        }
-    }, [updateTokensMutationMutateAsyncFunction]);
-
-    const { mutateAsync: eGateSignsMutation, isLoading: eGatesSignLoading } = useEGatesSign();
-
-    const { isLoading: checkAuthLoading } = useCheckAuthMutation();
-
-    const eGatesLoginMutation = useMutation((ticket: string) => api.eGatesLogin({ ticket }), {
-        onError: () => {
-            navigate(slugs.cantLogin);
-        },
-        onSuccess: (data) => {
-            handleUpdateTokens(data);
-        },
-        retry: false,
-    });
-
-    const isLoading = [
-        initialLoading,
-        checkAuthLoading,
-        eGatesLoginMutation.isLoading,
-        eGatesSignLoading,
-        updateTokensMutation.isLoading,
-    ].some((loading) => loading);
-
-    useEffect(() => {
-        (async () => {
-            await shouldUpdateTokens();
-            setInitialLoading(false);
-        })();
-    }, [location.pathname]);
-
-    const eGatesLoginMutationMutateAsync = eGatesLoginMutation.mutateAsync;
-
-    useEffect(() => {
-        (async () => {
-            if (loggedIn) return;
-
-            if (ticket) {
-                eGatesLoginMutationMutateAsync(ticket);
-            }
-            if (eGates !== undefined) {
-                eGateSignsMutation();
-            }
-        })();
-    }, [ticket, eGates, eGateSignsMutation, eGatesLoginMutationMutateAsync, loggedIn]);
-
-    useEffect(() => {
-        if (!isInvalidProfile) return;
-        cookies.remove('profileId', { path: '/' });
-
-        if (!navigateRef?.current) return;
-
-        navigateRef?.current('');
-    }, [profileId, loggedIn, isInvalidProfile]);
-
-    if (isLoading) {
-        return <LoaderComponent />;
+  const shouldUpdateTokens = useCallback(async () => {
+    if (!cookies.get('token') && cookies.get('refreshToken')) {
+      await updateTokensMutationMutateAsyncFunction();
     }
-    return (
-        <>
-            <Routes>
-                <Route element={<PublicRoute profileId={profileId} loggedIn={loggedIn} />}>
-                    <Route path={slugs.login} element={<Login />} />
-                    <Route path={slugs.cantLogin} element={<CantLogin />} />
-                </Route>
+  }, [updateTokensMutationMutateAsyncFunction]);
 
-                <Route
-                    element={
-                        <ProtectedRoute
-                            location={location}
-                            profileId={profileId}
-                            loggedIn={loggedIn}
-                        />
-                    }
-                >
-                    {(routes || []).map((route, index) => (
-                        <Route key={`route-${index}`} path={route.slug} element={route.component} />
-                    ))}
-                </Route>
-                <Route
-                    path="*"
-                    element={
-                        <Navigate
-                            to={
-                                loggedIn
-                                    ? profileId
-                                        ? slugs.fishingLocation
-                                        : slugs.profiles
-                                    : slugs.login
-                            }
-                        />
-                    }
-                />
-            </Routes>
-            <ToastContainer />
-        </>
+  const { mutateAsync: eGateSignsMutation, isLoading: eGatesSignLoading } = useEGatesSign();
+
+  const { isLoading: checkAuthLoading } = useCheckAuthMutation();
+
+  const eGatesLoginMutation = useMutation((ticket: string) => api.eGatesLogin({ ticket }), {
+    onError: () => {
+      navigate(slugs.cantLogin);
+    },
+    onSuccess: (data) => {
+      handleUpdateTokens(data);
+    },
+    retry: false,
+  });
+
+  const isLoading =
+    [initialLoading,eGatesLoginMutation.isLoading, eGatesSignLoading, updateTokensMutation.isLoading,checkAuthLoading].some(
+      (loading) => loading,
     );
+
+  useEffect(() => {
+    (async () => {
+      await shouldUpdateTokens();
+      setInitialLoading(false);
+    })();
+  }, [location.pathname]);
+
+  const eGatesLoginMutationMutateAsync = eGatesLoginMutation.mutateAsync;
+
+  useEffect(() => {
+    (async () => {
+      if (loggedIn) return;
+
+      if (ticket) {
+        eGatesLoginMutationMutateAsync(ticket);
+      }
+      if (eGates !== undefined) {
+        eGateSignsMutation();
+      }
+    })();
+  }, [ticket, eGates, eGateSignsMutation, eGatesLoginMutationMutateAsync, loggedIn]);
+
+  useEffect(() => {
+    if (!isInvalidProfile) return;
+    cookies.remove('profileId', { path: '/' });
+
+    if (!navigateRef?.current) return;
+
+    navigateRef?.current('');
+  }, [profileId, loggedIn, isInvalidProfile]);
+
+  if (isLoading) {
+    return <LoaderComponent />;
+  }
+  return (
+    <>
+      <Routes>
+        <Route element={<PublicRoute profileId={profileId} loggedIn={loggedIn} />}>
+          <Route path={slugs.login} element={<Login />} />
+          <Route path={slugs.cantLogin} element={<CantLogin />} />
+        </Route>
+
+        <Route
+          element={<ProtectedRoute location={location} profileId={profileId} loggedIn={loggedIn} />}
+        >
+          {(routes || []).map((route, index) => (
+            <Route key={`route-${index}`} path={route.slug} element={route.component} />
+          ))}
+        </Route>
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to={loggedIn ? (profileId ? slugs.fishingLocation : slugs.profiles) : slugs.login}
+            />
+          }
+        />
+      </Routes>
+      <ToastContainer />
+    </>
+  );
 }
 
 const PublicRoute = ({ loggedIn, profileId }: RouteProps) => {
-    if (loggedIn) {
-        return <Navigate to={profileId ? slugs.fishingLocation : slugs.profiles} replace />;
-    }
+  if (loggedIn) {
+    return <Navigate to={profileId ? slugs.fishingLocation : slugs.profiles} replace />;
+  }
 
-    return <Outlet />;
+  return <Outlet />;
 };
 
 const ProtectedRoute = ({ loggedIn, profileId, location }: RouteProps) => {
-    if (!loggedIn) {
-        return <Navigate to={slugs.login} replace />;
-    }
+  if (!loggedIn) {
+    return <Navigate to={slugs.login} replace />;
+  }
 
-    if (location?.pathname === slugs.profiles && !!profileId) {
-        return <Navigate to={slugs.fishingLocation} replace />;
-    }
+  if (location?.pathname === slugs.profiles && !!profileId) {
+    return <Navigate to={slugs.fishingLocation} replace />;
+  }
 
-    return <Outlet />;
+  return <Outlet />;
 };
 
 export default App;
