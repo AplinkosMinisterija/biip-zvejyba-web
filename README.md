@@ -11,15 +11,16 @@ Ministerija.
 
 - [About the Project](#about-the-project)
 - [Getting Started](#getting-started)
-  - [Installation](#installation)
-  - [Usage](#usage)
+    - [Installation](#installation)
+    - [Usage](#usage)
 - [Deployment](#deployment)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## About the Project
 
-The BĮIP Žvejyba API is designed to provide information and functionalities related to activities of commercial fishing events. It aims to support the management of commercial fishings.
+The BĮIP Žvejyba API is designed to provide information and functionalities related to activities of commercial fishing
+events. It aims to support the management of commercial fishings.
 
 This is a client application that utilizes
 the [BĮIP Žvejyba API](https://github.com/AplinkosMinisterija/biip-zvejyba-api).
@@ -77,7 +78,8 @@ To deploy any branch to the development environment use the `Deploy to Developme
 ## Contributing
 
 Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a
-pull request. For more information, see the [contribution guidelines](./CONTRIBUTING.md).
+pull request. For more information, see
+the [contribution guidelines](https://github.com/AplinkosMinisterija/.github/blob/main/CONTRIBUTING.md).
 
 ## License
 
