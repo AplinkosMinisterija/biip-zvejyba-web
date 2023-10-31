@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import { device } from "../utils/theme";
-import {LoginLayout} from "../components/layouts/Login.tsx";
+import styled from 'styled-components';
+import { device } from '../utils/theme';
+import { LoginLayout } from '../components/layouts/Login.tsx';
 
 export const CantLogin = () => {
   return (
@@ -8,14 +8,14 @@ export const CantLogin = () => {
       <>
         <H1>Anketa neaktyvi</H1>
         <Description>
-          Jeigu esate įmonės vadovas arba privatus žuvinimą vykdantis asmuo, susisiekite su Aplinkos apsaugos departamentu (
-          <Email href={`mailto:'prieiga@aad.am.lt'`}>
-            prieiga@aad.am.lt
-          </Email>{" "}
-          )
+          Jeigu esate įmonės vadovas arba privatus žuvinimą vykdantis asmuo, susisiekite su Aplinkos
+          apsaugos departamentu (
+          <Email href={`mailto:'prieiga@aad.am.lt'`}>prieiga@aad.am.lt</Email> )
         </Description>
         <Or>arba</Or>
-        <Description>Jeigu jungiatės kaip įmonės darbuotojas, susisiekite su savo įmonės vadovu</Description>
+        <Description>
+          Jeigu jungiatės kaip įmonės darbuotojas, susisiekite su savo įmonės vadovu
+        </Description>
       </>
     </LoginLayout>
   );
@@ -57,4 +57,3 @@ const H1 = styled.h1`
 const Email = styled.a`
   color: ${({ theme }) => theme.colors.primary};
 `;
-

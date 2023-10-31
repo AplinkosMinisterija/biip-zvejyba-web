@@ -1,7 +1,7 @@
 import React from 'react';
 import Div100vh from 'react-div-100vh';
 import styled from 'styled-components';
-import {device} from "../../utils/theme.ts";
+import { device } from '../../utils/theme.ts';
 
 export const LoginLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -13,7 +13,6 @@ export const LoginLayout = ({ children }: { children: React.ReactNode }) => {
     </Container>
   );
 };
-
 
 const Container = styled(Div100vh)`
   width: 100vw;
@@ -61,4 +60,3 @@ const Image = styled.div`
     display: none;
   }
 `;
-

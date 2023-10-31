@@ -24,6 +24,16 @@
     jsonpointer "^5.0.0"
     leven "^3.1.0"
 
+"@aplinkosministerija/biip-prettier-config@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@aplinkosministerija/biip-prettier-config/-/biip-prettier-config-1.1.0.tgz#f62b0dde76107ab3f646cce2d54d02bd783ce388"
+  integrity sha512-DxWGfBY2KuK8OgP2KUb96ieGlqE5gYuxI22Yt1FfoIldlDENW5I8kXj+YFB4iG65i7e1neXPZd9RGHmxxDxxSQ==
+
+"@aplinkosministerija/eslint-config-biip-react@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@aplinkosministerija/eslint-config-biip-react/-/eslint-config-biip-react-1.0.0.tgz#a87bd21ea6232b87bb054ba2d5e5eb40de445f26"
+  integrity sha512-47FOmWXePgUUhObngeeNZM2HVYZbj3DPDyqLGGGq8wXxHr5d8C76pS4GcWfiX9lhw1hrT4iwLGJ+njD0nA1QnA==
+
 "@babel/cli@^7.21.0":
   version "7.23.0"
   resolved "https://registry.npmjs.org/@babel/cli/-/cli-7.23.0.tgz"

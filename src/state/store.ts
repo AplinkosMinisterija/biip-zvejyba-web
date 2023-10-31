@@ -7,22 +7,22 @@ import { UserReducer } from './user/reducer';
 import { FishingReducer } from './fishing/reducer.ts';
 
 const persistConfig = {
-    key: 'animalsConfig',
-    storage,
-    whitelist: ['filters', 'user', 'fishing'],
+  key: 'animalsConfig',
+  storage,
+  whitelist: ['filters', 'user', 'fishing'],
 };
 
 const reducers = combineReducers({
-    user: UserReducer.reducer,
-    filters: FiltersReducer.reducer,
-    fishing: FishingReducer.reducer,
+  user: UserReducer.reducer,
+  filters: FiltersReducer.reducer,
+  fishing: FishingReducer.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducers);
 
 const store = configureStore({
-    reducer: persistedReducer,
-    middleware: (getDefaultMiddleware) => [...getDefaultMiddleware({ serializableCheck: false })],
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) => [...getDefaultMiddleware({ serializableCheck: false })],
 });
 
 const persistor = persistStore(store);

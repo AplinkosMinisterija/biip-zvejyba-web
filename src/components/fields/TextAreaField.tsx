@@ -71,8 +71,7 @@ const TextAreaField = (props: TextFieldProps) => {
 };
 
 const InputContainer = styled.div<{ error: boolean; disabled: boolean }>`
-  border: 1px solid
-    ${({ theme, error }) => (error ? theme.colors.error : theme.colors.border)};
+  border: 1px solid ${({ theme, error }) => (error ? theme.colors.error : theme.colors.border)};
   display: flex;
   height: auto;
   overflow: hidden;
@@ -81,8 +80,7 @@ const InputContainer = styled.div<{ error: boolean; disabled: boolean }>`
   box-sizing: border-box;
   background-color: white;
   opacity: ${({ disabled }) => (disabled ? 0.48 : 1)};
-  border: 1px solid
-    ${({ theme, error }) => (error ? theme.colors.error : theme.colors.border)};
+  border: 1px solid ${({ theme, error }) => (error ? theme.colors.error : theme.colors.border)};
   border-radius: 4px;
   :focus-within {
     border-color: ${({ theme }) => theme.colors.primary};
