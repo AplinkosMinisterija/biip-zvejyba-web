@@ -1,7 +1,7 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { User } from './types';
 import Cookies from 'universal-cookie';
 import { LocationType } from './constants.ts';
+import { User } from './types';
 
 const cookies = new Cookies();
 
@@ -257,6 +257,12 @@ class Api {
         return this.authApi({
             resource: 'auth/evartai/login',
             params,
+        });
+    };
+
+    getFishings = async () => {
+        return this.get({
+            resource: 'fishings',
         });
     };
 

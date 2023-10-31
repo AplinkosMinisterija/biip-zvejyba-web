@@ -8,6 +8,7 @@ export default defineConfig({
     plugins: [react(), VitePWA(manifestForPlugIn)],
     server: {
         open: '/app',
+
         proxy: {
             '/api': {
                 target: 'http://0.0.0.0:3000/zvejyba/api/',

@@ -6,8 +6,10 @@ export interface Theme {
         secondary: string;
         tertiary: string;
         transparent: string;
+        label: string;
         error: string;
         success: string;
+        powder: string;
         hover: {
             primary: string;
             secondary: string;
@@ -24,6 +26,8 @@ export interface Theme {
             accent: string;
             error: string;
             input: string;
+            powder: string;
+            retroBlack: string;
         };
         border: string;
         background: string;
@@ -40,12 +44,15 @@ export interface Theme {
 
 export const theme: Theme = {
     colors: {
-        primary: '#102EB1',
+        primary: '#102eb1;',
         secondary: '#121A55',
         tertiary: '#101010',
         transparent: 'transparent',
+        label: '#4B5565',
         error: '#FE5B78',
         success: '#4FB922',
+        powder: '#FFFFFFCC',
+
         hover: {
             primary: '#102EB1',
             secondary: '#121A55',
@@ -62,6 +69,8 @@ export const theme: Theme = {
             accent: '#102EB1',
             error: '#FE5B78',
             input: '#231f20',
+            powder: '#FFFFFFCC',
+            retroBlack: '#101010',
         },
         border: '#CDD5DF',
         background: '#f7f7f7',

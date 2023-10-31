@@ -1,11 +1,9 @@
-import Cookies from 'universal-cookie';
-import { initialState } from '../state/user/reducer.ts';
-import api from './api.ts';
 import { toast } from 'react-toastify';
-import { validationTexts } from './texts.ts';
-import { Profile, ProfileId, ResponseProps, UpdateTokenProps } from './types.ts';
+import Cookies from 'universal-cookie';
 import { LOCATION_ERRORS } from './constants.ts';
 import { routes } from './routes.tsx';
+import { validationTexts } from './texts.ts';
+import { Profile, ProfileId, ResponseProps, UpdateTokenProps } from './types.ts';
 
 const cookies = new Cookies();
 
@@ -14,11 +12,6 @@ export const clearCookies = () => {
     cookies.remove('refreshToken', { path: '/' });
     cookies.remove('module', { path: '/' });
     cookies.remove('profileId', { path: '/' });
-};
-
-export const handleGetCurrentUser = async () => {
-    if (!cookies.get('token')) return initialState;
-    return { userData: await api.checkAuth(), loggedIn: true };
 };
 
 export const handleAlert = (responseError: string = 'error') => {

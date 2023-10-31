@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
+import { useSelector } from 'react-redux';
 import {
     Location,
     Navigate,
@@ -16,13 +17,12 @@ import Cookies from 'universal-cookie';
 import LoaderComponent from './components/other/LoaderComponent';
 import { CantLogin } from './pages/CantLogin';
 import { Login } from './pages/Login';
+import { RootState } from './state/store';
 import api from './utils/api';
 import { handleUpdateTokens } from './utils/functions';
 import { useCheckAuthMutation, useEGatesSign, useFilteredRoutes } from './utils/hooks';
 import { slugs } from './utils/routes';
 import { ProfileId } from './utils/types';
-import { useSelector } from 'react-redux';
-import { RootState } from './state/store.ts';
 const cookies = new Cookies();
 interface RouteProps {
     loggedIn: boolean;
@@ -66,7 +66,7 @@ function App() {
 
     const { mutateAsync: eGateSignsMutation, isLoading: eGatesSignLoading } = useEGatesSign();
 
-    const { mutateAsync: checkAuthMutation } = useCheckAuthMutation();
+    const { isLoading: checkAuthLoading } = useCheckAuthMutation();
 
     const eGatesLoginMutation = useMutation((ticket: string) => api.eGatesLogin({ ticket }), {
         onError: () => {
@@ -74,21 +74,21 @@ function App() {
         },
         onSuccess: (data) => {
             handleUpdateTokens(data);
-            checkAuthMutation();
         },
         retry: false,
     });
 
-    const isLoading =
-        initialLoading ||
-        [eGatesLoginMutation.isLoading, eGatesSignLoading, updateTokensMutation.isLoading].some(
-            (loading) => loading
-        );
+    const isLoading = [
+        initialLoading,
+        checkAuthLoading,
+        eGatesLoginMutation.isLoading,
+        eGatesSignLoading,
+        updateTokensMutation.isLoading,
+    ].some((loading) => loading);
 
     useEffect(() => {
         (async () => {
             await shouldUpdateTokens();
-            checkAuthMutation();
             setInitialLoading(false);
         })();
     }, [location.pathname]);
