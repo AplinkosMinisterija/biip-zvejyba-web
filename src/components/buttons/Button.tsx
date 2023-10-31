@@ -4,33 +4,33 @@ import { theme } from '../../utils/theme';
 import Loader from '../other/Loader';
 
 export enum ButtonColors {
-    PRIMARY = 'primary',
-    SECONDARY = 'secondary',
-    TERTIARY = 'tertiary',
-    DANGER = 'danger',
-    SUCCESS = 'success',
-    TRANSPARENT = 'transparent',
-    POWDER = 'powder',
+  PRIMARY = 'primary',
+  SECONDARY = 'secondary',
+  TERTIARY = 'tertiary',
+  DANGER = 'danger',
+  SUCCESS = 'success',
+  TRANSPARENT = 'transparent',
+  POWDER = 'powder',
 }
 
 const buttonColors = {
-    [ButtonColors.PRIMARY]: theme.colors.primary,
-    [ButtonColors.SECONDARY]: 'white',
-    [ButtonColors.TERTIARY]: theme.colors.tertiary,
-    [ButtonColors.DANGER]: theme.colors.error,
-    [ButtonColors.SUCCESS]: theme.colors.success,
-    [ButtonColors.TRANSPARENT]: 'transparent',
-    [ButtonColors.POWDER]: theme.colors.powder,
+  [ButtonColors.PRIMARY]: theme.colors.primary,
+  [ButtonColors.SECONDARY]: 'white',
+  [ButtonColors.TERTIARY]: theme.colors.tertiary,
+  [ButtonColors.DANGER]: theme.colors.error,
+  [ButtonColors.SUCCESS]: theme.colors.success,
+  [ButtonColors.TRANSPARENT]: 'transparent',
+  [ButtonColors.POWDER]: theme.colors.powder,
 };
 
 const buttonTextColors = {
-    [ButtonColors.PRIMARY]: 'white',
-    [ButtonColors.SECONDARY]: theme.colors.text.primary,
-    [ButtonColors.TERTIARY]: 'white',
-    [ButtonColors.DANGER]: 'white',
-    [ButtonColors.SUCCESS]: 'white',
-    [ButtonColors.TRANSPARENT]: theme.colors.text.primary,
-    [ButtonColors.POWDER]: theme.colors.text.primary,
+  [ButtonColors.PRIMARY]: 'white',
+  [ButtonColors.SECONDARY]: theme.colors.text.primary,
+  [ButtonColors.TERTIARY]: 'white',
+  [ButtonColors.DANGER]: 'white',
+  [ButtonColors.SUCCESS]: 'white',
+  [ButtonColors.TRANSPARENT]: theme.colors.text.primary,
+  [ButtonColors.POWDER]: theme.colors.text.primary,
 };
 export interface ButtonProps {
   variant?: ButtonColors;
@@ -51,40 +51,40 @@ export interface ButtonProps {
 }
 
 const Button = ({
-    variant = ButtonColors.PRIMARY,
-    route,
-    children,
-    height = 56,
-    padding = '11px 20px;',
-    leftIcon,
-    radius = '28px',
-    buttonPadding,
-    rightIcon,
-    color,
-    type,
-    loading = false,
-    className,
-    disabled = false,
-    fontWeight = 'normal',
-    ...rest
+  variant = ButtonColors.PRIMARY,
+  route,
+  children,
+  height = 56,
+  padding = '11px 20px;',
+  leftIcon,
+  radius = '28px',
+  buttonPadding,
+  rightIcon,
+  color,
+  type,
+  loading = false,
+  className,
+  disabled = false,
+  fontWeight = 'normal',
+  ...rest
 }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
-    return (
-        <StyledButton
-            className={className}
-            padding={buttonPadding}
-            fontWeight={fontWeight}
-            variant={variant}
-            height={height || 40}
-            type={type}
-            disabled={disabled}
-            $radius={radius}
-            {...rest}
-        >
-            {leftIcon}
-            {loading ? <Loader color="white" /> : children}
-            {rightIcon}
-        </StyledButton>
-    );
+  return (
+    <StyledButton
+      className={className}
+      padding={buttonPadding}
+      fontWeight={fontWeight}
+      variant={variant}
+      height={height || 40}
+      type={type}
+      disabled={disabled}
+      $radius={radius}
+      {...rest}
+    >
+      {leftIcon}
+      {loading ? <Loader color="white" /> : children}
+      {rightIcon}
+    </StyledButton>
+  );
 };
 
 const StyledButton = styled.button<{
@@ -94,25 +94,25 @@ const StyledButton = styled.button<{
   fontWeight?: string;
   $radius?: string;
 }>`
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    align-items: center;
-    height: ${({ height }) => `${height}px`};
-    border-radius: ${({ $radius }) => $radius};
-    padding: ${({ padding }) => padding};
-    background-color: ${({ variant }) => buttonColors[variant]};
-    color: ${({ variant }) => buttonTextColors[variant]};
-    border: ${({ variant }) => (variant === ButtonColors.TRANSPARENT ? '1.4px' : '1px')} solid
-        ${({ variant }) =>
-            variant !== ButtonColors.TRANSPARENT ? 'transparent' : ' rgb(35, 31, 32)'};
-    font-weight: ${({ fontWeight }) => fontWeight};
-    font-size: 1.8rem;
-    :hover {
-        background-color: ${({ variant, theme }) => theme.colors.hover[variant]};
-    }
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-    width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  font-weight: 600px;
+  align-items: center;
+  height: ${({ height }) => `${height}px`};
+  border-radius: ${({ $radius }) => $radius};
+  padding: ${({ padding }) => padding};
+  background-color: ${({ variant }) => buttonColors[variant]};
+  color: ${({ variant }) => buttonTextColors[variant]};
+  border: ${({ variant }) => (variant === ButtonColors.TRANSPARENT ? '1.4px' : '1px')} solid
+    ${({ variant }) => (variant !== ButtonColors.TRANSPARENT ? 'transparent' : ' rgb(35, 31, 32)')};
+  font-weight: ${({ fontWeight }) => fontWeight};
+  font-size: 1.8rem;
+  :hover {
+    background-color: ${({ variant, theme }) => theme.colors.hover[variant]};
+  }
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  width: 100%;
 `;
 
 Button.colors = ButtonColors;

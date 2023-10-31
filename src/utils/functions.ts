@@ -27,6 +27,16 @@ export const handleAlert = (responseError: string = 'error') => {
   );
 };
 
+export const handleSuccessToast = (message: string) => {
+  toast.success(message, {
+    position: 'top-center',
+    autoClose: 5000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+  });
+};
+
 export const handleSetProfile = (profiles?: Profile[], justLoggedIn: boolean = false) => {
   const isOneProfile = profiles?.length === 1;
   const profileId = cookies.get('profileId');

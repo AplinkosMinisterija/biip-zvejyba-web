@@ -7,10 +7,10 @@ import FishingTools from '../components/containers/FishingTools';
 import FishingWeight from '../components/containers/FishingWeight';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import LoaderComponent from '../components/other/LoaderComponent';
-import api from '../utils/api.ts';
-import { getCurrentRoute } from '../utils/functions.ts';
+import api from '../utils/api';
+import { getCurrentRoute } from '../utils/functions';
 import { useGeolocationWatcher } from '../utils/hooks';
-import { slugs } from '../utils/routes.tsx';
+import { slugs } from '../utils/routes';
 export const Fishing = () => {
   const navigate = useNavigate();
   const currentRoute = getCurrentRoute(window.location.pathname);
@@ -24,9 +24,9 @@ export const Fishing = () => {
   useEffect(() => {
     if (!currentFishingLoading) {
       if (currentFishing && currentRoute?.slug === slugs.fishingLocation) {
-        navigate(slugs.fishing(currentFishing.id));
+        // navigate(slugs.fishing(currentFishing.id));
       } else if (!currentFishing && currentRoute?.slug !== slugs.fishingLocation) {
-        navigate(slugs.fishingLocation);
+        // navigate(slugs.fishingLocation);
       }
     }
   }, [currentFishing, window.location.pathname]);

@@ -1,6 +1,8 @@
-import Fishing from '../pages/Fishing.tsx';
-import Profiles from '../pages/Profiles.tsx';
-import Tools from '../pages/Tools.tsx';
+import { IconName } from '../components/other/Icon';
+import Fishing from '../pages/Fishing';
+import Profile from '../pages/Profile';
+import Profiles from '../pages/Profiles';
+import Tools from '../pages/Tools';
 
 export const slugs = {
   login: `/prisijungimas`,
@@ -15,7 +17,10 @@ export const slugs = {
   fishingToolConnect: (fishingId: string, toolId: string) =>
     `/zvejyba/${fishingId}/irankiai/${toolId}/irankiu_jungimas`,
   tools: '/irankiai',
+  profile: '/profilis',
 };
+
+export type RouteType = (typeof routes)[0];
 
 export const routes = [
   {
@@ -27,6 +32,7 @@ export const routes = [
     title: 'Kur žvejosite?',
     subtitle: 'Pasirinkite žvejybos vietą',
     slug: slugs.fishingLocation,
+    iconName: IconName.fourSquares,
     component: <Fishing />,
     regExp: new RegExp('^/zvejyba$'),
   },
@@ -34,6 +40,7 @@ export const routes = [
     title: 'Mano žvejyba',
     subtitle: 'Pasirinkite žvejybos veiksmą',
     slug: slugs.fishing(':fishingId'),
+    iconName: IconName.home,
     component: <Fishing />,
     regExp: new RegExp('^/zvejyba/[0-9]+$'),
   },
@@ -63,10 +70,42 @@ export const routes = [
     back: true,
   },
   {
+    title: 'Žvejybos žurnalas',
+    subtitle: 'Žvejybos istorija',
+    slug: slugs.tools,
+    component: <Tools />,
+    regExp: new RegExp('^/irankiai$'),
+    iconName: IconName.journal,
+  },
+  {
+    title: 'Nariai',
+    subtitle: 'Valdykite įmonės darbuotojų sąrašą',
+    slug: slugs.tools,
+    component: <Tools />,
+    regExp: new RegExp('^/irankiai$'),
+    iconName: IconName.members,
+  },
+  {
     title: 'Įrankiai',
     subtitle: 'Valdykite leidžiamų naudoti įrankių sąrašą',
     slug: slugs.tools,
     component: <Tools />,
     regExp: new RegExp('^/irankiai$'),
+    iconName: IconName.tools,
+  },
+  {
+    title: 'Nustatymai',
+    subtitle: 'Pagindiniai nustatymai',
+    slug: slugs.tools,
+    component: <Tools />,
+    regExp: new RegExp('^/irankiai$'),
+    iconName: IconName.settings,
+  },
+  {
+    title: 'Profilis',
+    subtitle: 'Pagindiniai nustatymai',
+    slug: slugs.profile,
+    component: <Profile />,
+    iconName: IconName.profile,
   },
 ];

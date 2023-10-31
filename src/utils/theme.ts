@@ -1,90 +1,87 @@
 import { createGlobalStyle } from 'styled-components';
 
 export interface Theme {
-    colors: {
-        primary: string;
-        secondary: string;
-        tertiary: string;
-        transparent: string;
-        label: string;
-        error: string;
-        success: string;
-        powder: string;
-        hover: {
-            primary: string;
-            secondary: string;
-            tertiary: string;
-            transparent: string;
-            danger: string;
-            success: string;
-        };
-        text: {
-            primary: string;
-            secondary: string;
-            tertiary: string;
-            labels: string;
-            accent: string;
-            error: string;
-            input: string;
-            powder: string;
-            retroBlack: string;
-        };
-        border: string;
-        background: string;
-        largeButton: {
-            FLORAL_WHITE: string;
-            GHOST_WHITE: string;
-            AZURE: string;
-            HONEY_DEW: string;
-            ALICE_BLUE: string;
-            GREY: string;
-        };
+  colors: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+    transparent: string;
+    label: string;
+    error: string;
+    success: string;
+    powder: string;
+    hover: {
+      primary: string;
+      secondary: string;
+      tertiary: string;
+      transparent: string;
+      danger: string;
+      success: string;
     };
-
-
+    text: {
+      primary: string;
+      secondary: string;
+      tertiary: string;
+      labels: string;
+      accent: string;
+      error: string;
+      input: string;
+      powder: string;
+      retroBlack: string;
+    };
+    border: string;
+    background: string;
+    largeButton: {
+      FLORAL_WHITE: string;
+      GHOST_WHITE: string;
+      AZURE: string;
+      HONEY_DEW: string;
+      ALICE_BLUE: string;
+      GREY: string;
+    };
   };
+}
 
 export const theme: Theme = {
-    colors: {
-        primary: '#102eb1;',
-        secondary: '#121A55',
-        tertiary: '#101010',
-        transparent: 'transparent',
-        label: '#4B5565',
-        error: '#FE5B78',
-        success: '#4FB922',
-        powder: '#FFFFFFCC',
+  colors: {
+    primary: '#102eb1',
+    secondary: '#121A55',
+    tertiary: '#101010',
+    transparent: 'transparent',
+    label: '#4B5565',
+    error: '#FE5B78',
+    success: '#4FB922',
+    powder: '#FFFFFFCC',
 
-        hover: {
-            primary: '#102EB1',
-            secondary: '#121A55',
-            tertiary: '#F7F7F7',
-            transparent: 'transparent',
-            danger: '#FE5B78E6',
-            success: '#4FB922B3',
-        },
-        text: {
-            primary: '#2C2C2C',
-            secondary: '#525252',
-            tertiary: '#4B5565',
-            labels: '#697586',
-            accent: '#102EB1',
-            error: '#FE5B78',
-            input: '#231f20',
-            powder: '#FFFFFFCC',
-            retroBlack: '#101010',
-        },
-        border: '#CDD5DF',
-        background: '#f7f7f7',
-        largeButton: {
-            FLORAL_WHITE: '#FFF5E8',
-            GHOST_WHITE: '#EBEDFD', //'#F0F0FF'
-            AZURE: '#EAFBF6',
-            HONEY_DEW: '#E3F5E1',
-            ALICE_BLUE: '#E6F4FF',
-            GREY: '#f7f7f7',
-        },
-
+    hover: {
+      primary: '#102EB1',
+      secondary: '#121A55',
+      tertiary: '#F7F7F7',
+      transparent: 'transparent',
+      danger: '#FE5B78E6',
+      success: '#4FB922B3',
+    },
+    text: {
+      primary: '#2C2C2C',
+      secondary: '#525252',
+      tertiary: '#4B5565',
+      labels: '#697586',
+      accent: '#102EB1',
+      error: '#FE5B78',
+      input: '#231f20',
+      powder: '#FFFFFFCC',
+      retroBlack: '#101010',
+    },
+    border: '#CDD5DF',
+    background: '#f7f7f7',
+    largeButton: {
+      FLORAL_WHITE: '#FFF5E8',
+      GHOST_WHITE: '#EBEDFD', //'#F0F0FF'
+      AZURE: '#EAFBF6',
+      HONEY_DEW: '#E3F5E1',
+      ALICE_BLUE: '#E6F4FF',
+      GREY: '#f7f7f7',
+    },
   },
 };
 

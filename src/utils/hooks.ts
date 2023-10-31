@@ -1,45 +1,48 @@
 import { useMutation, useQuery } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { actions as fishingActions } from '../state/fishing/reducer';
 import { actions, initialState } from '../state/user/reducer';
 import api from './api';
-import { LOCATION_ERRORS, RolesTypes, ServerErrors } from './constants';
+import { LOCATION_ERRORS, RolesTypes } from './constants';
 import { clearCookies, handleAlert, handleSetProfile } from './functions';
 
 import { useEffect, useState } from 'react';
 import Cookies from 'universal-cookie';
-import { RootState } from '../state/store';
+import { RootState, AppDispatch } from '../state/store';
 import { routes } from './routes';
 import { User } from './types';
 
 const cookies = new Cookies();
 
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
 export const useCheckAuthMutation = () => {
-    const dispatch = useDispatch();
-    const token = cookies.get('token');
+  const dispatch = useDispatch();
+  const token = cookies.get('token');
 
-    const { isLoading } = useQuery([token], () => api.checkAuth(), {
-        onError: ({ response }: any) => {
-            if (response.status === ServerErrors.NO_PERMISSION) {
-                clearCookies();
-                dispatch(actions.setUser(initialState));
+  const { isLoading } = useQuery([token], () => api.checkAuth(), {
+    onError: ({ response }: any) => {
+      if (response.status === 401) {
+        clearCookies();
+        dispatch(actions.setUser(initialState));
 
-                return;
-            }
+        return;
+      }
 
-            return handleAlert();
-        },
-        onSuccess: (data: User) => {
-            if (data) {
-                handleSetProfile(data?.profiles);
-                dispatch(actions.setUser({ userData: data, loggedIn: true }));
-            }
-        },
-        retry: false,
-        enabled: !!token,
-    });
+      return handleAlert();
+    },
+    onSuccess: (data: User) => {
+      if (data) {
+        handleSetProfile(data?.profiles);
+        dispatch(actions.setUser({ userData: data, loggedIn: true }));
+      }
+    },
+    retry: false,
+    enabled: !!token,
+  });
 
-    return { isLoading };
+  return { isLoading };
 };
 
 export const useEGatesSign = () => {
@@ -71,6 +74,10 @@ export const useFilteredRoutes = () => {
     }
     return true;
   });
+};
+
+export const useMenuRouters = () => {
+  return useFilteredRoutes().filter((route) => !!route.iconName);
 };
 
 export const useLogoutMutation = () => {
@@ -118,20 +125,20 @@ export const useGeolocationWatcher = () => {
 };
 
 export const useWindowSize = (width: string) => {
-    const [isInRange, setIsInRange] = useState(false);
+  const [isInRange, setIsInRange] = useState(false);
 
-    const handleResize = () => {
-        const mediaQuery = window.matchMedia(width);
-        setIsInRange(mediaQuery.matches);
-    };
+  const handleResize = () => {
+    const mediaQuery = window.matchMedia(width);
+    setIsInRange(mediaQuery.matches);
+  };
 
-    useEffect(() => {
-        handleResize();
-    }, []);
+  useEffect(() => {
+    handleResize();
+  }, []);
 
-    useEffect(() => {
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-    return isInRange;
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return isInRange;
 };

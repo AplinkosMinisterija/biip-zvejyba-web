@@ -1,13 +1,16 @@
+import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { useMenuRouters } from '../../utils';
+import { device } from '../../utils/theme';
+import MenuButton from '../buttons/MenuButton';
 import Icon, { IconName } from '../other/Icon';
 import Modal from './Modal';
-import { device } from '../../utils/theme';
-import MenuButton from '../buttons/MenuButton.tsx';
-import { slugs } from '../../utils/routes.tsx';
-import { useNavigate } from 'react-router-dom';
 
 const MobileMenu = ({ onClose, visible = true }: any) => {
   const navigate = useNavigate();
+  const currentLocation = useLocation();
+  const routes = useMenuRouters();
+
   return (
     <Modal visible={visible} onClose={onClose}>
       <Container>
@@ -21,25 +24,22 @@ const MobileMenu = ({ onClose, visible = true }: any) => {
           <Title>Meniu</Title>
           <Subtitle>Pasirinkite dominančią sritį</Subtitle>
         </Headings>
-        <>
-          <MenuButton
-            label="Mano žvejyba"
-            icon={IconName.home}
-            onClick={() => {
-              navigate(slugs.fishingLocation);
-              onClose();
-            }}
-          />
-          <MenuButton
-            label="Įrankiai"
-            icon={IconName.hook}
-            onClick={() => {
-              navigate(slugs.tools);
-              onClose();
-            }}
-          />
-          <MenuButton label="Atsijungti" icon={IconName.logout} onClick={() => {}} />
-        </>
+
+        {routes.map((route) => {
+          return (
+            <MenuButton
+              isActive={!!matchPath({ path: route.slug, end: true }, currentLocation.pathname)}
+              label={route.title}
+              icon={route.iconName}
+              onClick={() => {
+                navigate(route.slug);
+                onClose();
+              }}
+            />
+          );
+        })}
+
+        <MenuButton label="Atsijungti" icon={IconName.logout} onClick={() => {}} />
       </Container>
     </Modal>
   );
@@ -56,6 +56,7 @@ const Container = styled.div<{ width?: string }>`
   width: 100%;
   height: 100%;
   padding: 0 16px;
+
   @media ${device.desktop} {
     max-width: 700px;
     margin: 40px auto;

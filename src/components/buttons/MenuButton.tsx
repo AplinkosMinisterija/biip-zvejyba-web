@@ -1,10 +1,10 @@
 import styled from 'styled-components';
-import Icon, { IconName } from '../other/Icon.tsx';
+import Icon, { IconName } from '../other/Icon';
 
-const MenuButton = ({ label, icon, onClick }: any) => {
+const MenuButton = ({ label, icon, onClick, isActive }: any) => {
   //TODO: disable option
   return (
-    <Container onClick={onClick}>
+    <Container isActive={isActive} onClick={onClick}>
       <IconContainer>
         <StyledIcon name={icon} />
       </IconContainer>
@@ -13,7 +13,7 @@ const MenuButton = ({ label, icon, onClick }: any) => {
     </Container>
   );
 };
-const Container = styled.div`
+const Container = styled.div<{ isActive: boolean }>`
   grid-template-columns: 48px 1fr 32px;
   align-items: center;
   font-size: 2rem;
@@ -26,6 +26,14 @@ const Container = styled.div`
   display: grid;
   text-decoration: none;
   gap: 12px;
+
+  ${({ isActive, theme }) =>
+    isActive &&
+    `
+    background-color: #f5f6fe;
+    border: 1px solid ${theme.colors.primary};
+  `};
+
   &:hover {
     background-color: #f5f6fe;
     border: 1px solid ${({ theme }) => theme.colors.primary};
@@ -41,7 +49,25 @@ const IconContainer = styled.div`
   justify-content: center;
 `;
 const StyledIcon = styled(Icon)`
-  //filter: invert(15%) sepia(56%) saturate(5078%) hue-rotate(226deg) brightness(92%) contrast(97%);
+  svg {
+    stroke: ${({ theme }) => theme.colors.primary};
+  }
+
+  rect {
+    stroke: ${({ theme }) => theme.colors.primary};
+  }
+  path {
+    stroke: ${({ theme }) => theme.colors.primary};
+  }
+  circle {
+    stroke: ${({ theme }) => theme.colors.primary};
+  }
+  polyline {
+    stroke: ${({ theme }) => theme.colors.primary};
+  }
+  line {
+    stroke: ${({ theme }) => theme.colors.primary};
+  }
 `;
 
 export default MenuButton;

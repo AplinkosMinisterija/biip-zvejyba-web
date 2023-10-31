@@ -5,3 +5,4 @@ export * from './texts';
 export * from './validations';
 export * from './theme';
 export * from './types';
+export * from './routes';
