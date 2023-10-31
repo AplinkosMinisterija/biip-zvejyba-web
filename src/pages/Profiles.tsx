@@ -1,14 +1,14 @@
-import { useState } from "react";
-import styled from "styled-components";
-import Icon from "../components/other/Icon";
-import Loader from "../components/other/Loader";
-import ProfileItem from "../components/other/ProfileItem";
-import { handleSelectProfile } from "../utils/functions";
-import { useLogoutMutation } from "../utils/hooks";
-import {RootState} from "../state/store.ts";
-import {LoginLayout} from "../components/layouts/Login.tsx";
-import {User} from "../utils/types.ts";
-import {useSelector} from "react-redux";
+import { useState } from 'react';
+import styled from 'styled-components';
+import Icon from '../components/other/Icon';
+import Loader from '../components/other/Loader';
+import ProfileItem from '../components/other/ProfileItem';
+import { handleSelectProfile } from '../utils/functions';
+import { useLogoutMutation } from '../utils/hooks';
+import { RootState } from '../state/store.ts';
+import { LoginLayout } from '../components/layouts/Login.tsx';
+import { User } from '../utils/types.ts';
+import { useSelector } from 'react-redux';
 
 const Profiles = () => {
   const user: User = useSelector((state: RootState) => state?.user?.userData);
@@ -33,7 +33,7 @@ const Profiles = () => {
                 name: user?.firstName || '',
                 lastName: user?.lastName || '',
                 email: profile?.freelancer ? user?.email : profile?.name,
-                freelancer: profile?.freelancer
+                freelancer: profile?.freelancer,
               }}
               onClick={() => handleSelect(profile?.id)}
             />

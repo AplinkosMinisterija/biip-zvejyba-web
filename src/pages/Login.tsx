@@ -7,29 +7,19 @@ import TextField from '../components/fields/TextField';
 import { LoginLayout } from '../components/layouts/Login';
 import api from '../utils/api';
 import { handleAlert, handleUpdateTokens } from '../utils/functions';
-import {
-  validationTexts,
-} from '../utils/texts';
+import { validationTexts } from '../utils/texts';
 import * as Yup from 'yup';
-import {useCheckAuthMutation, useEGatesSign} from "../utils/hooks.ts";
+import { useCheckAuthMutation, useEGatesSign } from '../utils/hooks.ts';
 
 class LoginProps {}
 
 export const loginSchema = Yup.object().shape({
-  email: Yup.string()
-      .required(validationTexts.requireText)
-      .email(validationTexts.badEmailFormat),
+  email: Yup.string().required(validationTexts.requireText).email(validationTexts.badEmailFormat),
   password: Yup.string().required(validationTexts.requireText),
 });
 
 export const Login = () => {
-  const onSubmit = async ({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) => {
+  const onSubmit = async ({ email, password }: { email: string; password: string }) => {
     const params = { email, password };
     loginMutation.mutateAsync(params);
   };
@@ -51,15 +41,11 @@ export const Login = () => {
     retry: false,
   });
 
-  const { mutateAsync: eGatesMutation, isLoading: eGatesSignLoading } =
-    useEGatesSign();
+  const { mutateAsync: eGatesMutation, isLoading: eGatesSignLoading } = useEGatesSign();
 
-  const { mutateAsync: checkAuthMutation, isLoading: checkAuthLoading } =
-    useCheckAuthMutation();
+  const { mutateAsync: checkAuthMutation, isLoading: checkAuthLoading } = useCheckAuthMutation();
 
-  const loading = [loginMutation.isLoading, checkAuthLoading].some(
-    (loading) => loading,
-  );
+  const loading = [loginMutation.isLoading, checkAuthLoading].some((loading) => loading);
 
   const { values, errors, setFieldValue, handleSubmit, setErrors } = useFormik({
     initialValues: {
@@ -116,11 +102,7 @@ export const Login = () => {
             </Or>
           </OrContainer>
         </InnerContainer>
-        <StyledButton
-          loading={eGatesSignLoading}
-          type="button"
-          onClick={() => eGatesMutation()}
-        >
+        <StyledButton loading={eGatesSignLoading} type="button" onClick={() => eGatesMutation()}>
           Prisijungti per el. valdžios vartus
         </StyledButton>
       </FormContainer>

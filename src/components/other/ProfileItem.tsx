@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import Avatar from "../other/Avatar";
+import styled from 'styled-components';
+import Avatar from '../other/Avatar';
 
 export interface FishStockerItemProps {
   fisher: {
@@ -13,7 +13,6 @@ export interface FishStockerItemProps {
 }
 
 const ProfileItem = ({ fisher, onClick }: FishStockerItemProps) => {
-
   const fullName = `${fisher.name} ${fisher.lastName}`;
 
   return (
@@ -50,9 +49,7 @@ const Container = styled.a`
   vertical-align: middle;
   padding: 12px 0;
   margin: 8px 0;
-  border: 1px solid
-    ${({ theme }) =>
-        theme.colors.border};
+  border: 1px solid ${({ theme }) => theme.colors.border};
 
   &:hover,
   &:focus {
@@ -106,7 +103,7 @@ const SecondRow = styled.div`
 
 const TenantCode = styled.div`
   font: normal normal 600 1.4rem/19px;
-  color: ${({theme}) => theme.colors.text.secondary};
+  color: ${({ theme }) => theme.colors.text.secondary};
 `;
 
 const BiipIcon = styled.img`
