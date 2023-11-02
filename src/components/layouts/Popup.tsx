@@ -1,7 +1,7 @@
 import styled from 'styled-components';
+import { device } from '../../utils/theme';
 import Icon from '../other/Icon';
 import Modal from './Modal';
-import { device } from '../../utils/theme';
 
 const Popup = ({ children, onClose, visible = true }: any) => {
   return (
@@ -25,7 +25,6 @@ const Container = styled.div<{ width?: string; $backgroundImg?: boolean }>`
   background-color: white;
   position: relative;
   width: 100%;
-  height: 100%;
   ${({ $backgroundImg }) =>
     $backgroundImg
       ? ` background-image: url('/empty-bg.svg');
@@ -34,10 +33,10 @@ const Container = styled.div<{ width?: string; $backgroundImg?: boolean }>`
                 background-size: cover;`
       : ''}
   padding: 0 16px;
-  overflow-y: scroll;
+  overflow-y: auto;
   @media ${device.desktop} {
     max-width: 700px;
-    padding: 40px 40px 0 40px;
+    padding: 40px;
     flex-basis: auto;
     border-radius: 16px;
   }

@@ -1,7 +1,7 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import Cookies from 'universal-cookie';
-import { LocationType, Resources } from './constants';
-import { User } from './types';
+import { LocationType, Populations, Resources } from './constants';
+import { TenantUser, User } from './types';
 
 const cookies = new Cookies();
 
@@ -209,7 +209,7 @@ class Api {
     );
   };
 
-  checkAuth = async (): Promise<User> => {
+  userInfo = async (): Promise<User> => {
     return this.errorWrapper(() => this.AuthApiAxios.get('/api/auth/me'));
   };
 
@@ -330,7 +330,6 @@ class Api {
   };
 
   getBuiltTools = async (params: { locationId: number }) => {
-    console.log('params', params);
     return this.get({
       resource: 'toolGroups/current',
       query: JSON.stringify(params),
@@ -342,6 +341,40 @@ class Api {
     await this.patch({
       resource: Resources.ME,
       params,
+    });
+
+  getUsers = async ({ page }: any): Promise<GetAllResponse<TenantUser>> =>
+    await this.get({
+      resource: Resources.TENANT_USERS,
+      populate: [Populations.USER],
+      page,
+    });
+
+  getUser = async (id: string): Promise<TenantUser> =>
+    await this.getOne({
+      resource: Resources.TENANT_USERS,
+      populate: [Populations.USER],
+      id,
+    });
+
+  createUser = async (params: any): Promise<User[]> =>
+    await this.post({
+      resource: Resources.USER_INVITE,
+      params,
+    });
+
+  updateTenantUser = async (params: any, id?: string): Promise<User> => {
+    return await this.patch({
+      resource: Resources.USERS,
+      params,
+      id,
+    });
+  };
+
+  deleteUser = async (id: string) =>
+    await this.delete({
+      resource: Resources.TENANT_USERS,
+      id,
     });
 }
 

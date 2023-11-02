@@ -1,6 +1,6 @@
 import { matchPath, useLocation, useNavigate } from 'react-router';
 import styled from 'styled-components';
-import { buttonLabels, useMenuRouters } from '../../utils';
+import { buttonLabels, useLogoutMutation, useMenuRouters } from '../../utils';
 import Icon, { IconName } from './Icon';
 import ProfilesDropdown from './ProfileDropdown';
 
@@ -8,6 +8,7 @@ const SideBar = () => {
   const routes = useMenuRouters();
   const navigate = useNavigate();
   const currentLocation = useLocation();
+  const { mutateAsync } = useLogoutMutation();
 
   return (
     <Container>
@@ -28,7 +29,7 @@ const SideBar = () => {
       })}
       <Divider />
 
-      <Item isActive={false}>
+      <Item onClick={() => mutateAsync()} isActive={false}>
         <StyledIcon name={IconName.logout} />
         <Label>{buttonLabels.logout}</Label>
       </Item>

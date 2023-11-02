@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { LoginLayout } from '../components/layouts/Login';
 import Icon from '../components/other/Icon';
 import Loader from '../components/other/Loader';
-import ProfileItem from '../components/other/ProfileItem';
+import ProfileCard from '../components/other/ProfileCard';
 import { RootState } from '../state/store';
 import { buttonLabels, device, titles } from '../utils';
 import { handleSelectProfile } from '../utils/functions';
@@ -28,9 +28,9 @@ const Profiles = () => {
         <Title>{titles.selectProfile}</Title>
         {user.profiles?.map((profile: any) => (
           <InnerContainer key={profile?.id}>
-            <ProfileItem
+            <ProfileCard
               fisher={{
-                name: user?.firstName || '',
+                firstName: user?.firstName || '',
                 lastName: user?.lastName || '',
                 email: profile?.freelancer ? user?.email : profile?.name,
                 freelancer: profile?.freelancer,
@@ -47,6 +47,7 @@ const Profiles = () => {
     </LoginLayout>
   );
 };
+
 
 export default Profiles;
 
@@ -80,7 +81,6 @@ const InnerContainer = styled.div`
 const Container = styled.div`
   width: 100%;
   height: 100%;
-  max-width: 440px;
   display: flex;
   flex-direction: column;
   row-gap: 12px;

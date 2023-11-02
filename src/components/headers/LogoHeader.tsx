@@ -16,7 +16,9 @@ const LogoHeader = ({ back }: any) => {
             <Icon name={IconName.back} />
           </div>
         ) : (
-          <Icon name={IconName.logo} />
+          <div onClick={() => navigate('/')}>
+            <Icon name={IconName.logo} />
+          </div>
         )}
         <Button onClick={() => setShowMenu(true)}>
           <MenuIcon name={IconName.burger} />

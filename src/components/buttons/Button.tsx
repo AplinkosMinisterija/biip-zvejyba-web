@@ -97,16 +97,15 @@ const StyledButton = styled.button<{
   display: flex;
   justify-content: center;
   gap: 12px;
-  font-weight: 600px;
   align-items: center;
   height: ${({ height }) => `${height}px`};
   border-radius: ${({ $radius }) => $radius};
   padding: ${({ padding }) => padding};
   background-color: ${({ variant }) => buttonColors[variant]};
   color: ${({ variant }) => buttonTextColors[variant]};
-  border: ${({ variant }) => (variant === ButtonColors.TRANSPARENT ? '1.4px' : '1px')} solid
+  border: ${({ variant }) => (variant === ButtonColors.TRANSPARENT ? '0' : '1px')} solid
     ${({ variant }) => (variant !== ButtonColors.TRANSPARENT ? 'transparent' : ' rgb(35, 31, 32)')};
-  font-weight: ${({ fontWeight }) => fontWeight};
+  font-weight: 600;
   font-size: 1.8rem;
   :hover {
     background-color: ${({ variant, theme }) => theme.colors.hover[variant]};

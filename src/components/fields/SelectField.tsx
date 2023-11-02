@@ -28,7 +28,7 @@ export interface SelectFieldProps {
   isClearable?: boolean;
   dependantId?: string;
   refreshOptions?: (dependantId?: string) => any;
-  height: number;
+  height?: number;
 }
 
 const SelectField = ({
@@ -47,7 +47,7 @@ const SelectField = ({
   disabled,
   dependantId,
   refreshOptions,
-  height,
+  height = 56,
 }: SelectFieldProps) => {
   const {
     suggestions,

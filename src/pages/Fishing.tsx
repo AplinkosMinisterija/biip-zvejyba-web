@@ -24,9 +24,9 @@ export const Fishing = () => {
   useEffect(() => {
     if (!currentFishingLoading) {
       if (currentFishing && currentRoute?.slug === slugs.fishingLocation) {
-        // navigate(slugs.fishing(currentFishing.id));
+        navigate(slugs.fishing(currentFishing.id));
       } else if (!currentFishing && currentRoute?.slug !== slugs.fishingLocation) {
-        // navigate(slugs.fishingLocation);
+        navigate(slugs.fishingLocation);
       }
     }
   }, [currentFishing, window.location.pathname]);

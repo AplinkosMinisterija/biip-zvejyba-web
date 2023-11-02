@@ -7,6 +7,12 @@ export const Title = styled.div`
   font-weight: 800;
 `;
 
+export const FormTitle = styled.div`
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: 2rem;
+  font-weight: 800;
+`;
+
 export const Subtitle = styled.div`
   color: ${({ theme }) => theme.colors.text.primary};
   line-height: 26px;
@@ -23,4 +29,35 @@ export const Grid = styled.div<{ columns?: number }>`
   @media ${device.mobileL} {
     grid-template-columns: repeat(1, 1fr);
   }
+`;
+
+export const SpaceBetweenFlexContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
+
+export const InfoContainer = styled.div`
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const InfoTitle = styled.div`
+  font-size: 2.4rem;
+  font-weight: 600;
+`;
+
+export const InfoSubTitle = styled.div`
+  color: ${({ theme }) => theme.colors.text.grey};
+  font-size: 1.6rem;
+  margin-bottom: 32px;
+`;
+export const IconContainer = styled.div`
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

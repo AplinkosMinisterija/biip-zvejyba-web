@@ -1,4 +1,4 @@
-import { LOCATION_ERRORS, ServerErrors } from './constants';
+import { LOCATION_ERRORS, RoleTypes, ServerErrors } from './constants';
 export const validationTexts: any = {
   requireMap: 'Privalote pasirinkti vietą žemėlapyje',
   requirePhotos: 'Privalote įkelti nuotrauką',
@@ -40,6 +40,7 @@ export const titles = {
   login: 'Verslinės žvejybos aplikacija',
   selectProfile: 'Pasirinkite paskyrą',
   profile: 'Profilis',
+  newMember: 'Naujas narys',
 };
 
 export const subTitles = {
@@ -53,9 +54,36 @@ export const buttonLabels = {
   logout: 'Atsijungti',
   profiles: 'Profiliai',
   saveChanges: 'Saugoti pakeitimus',
+
+  newMember: 'Naujas narys',
+  addMember: 'Pridėti narį',
+  cancel: 'Atšaukti',
+  delete: 'Pašalinti',
 };
 
 export const inputLabels = {
+  firstName: 'Vardas',
+  lastName: 'Pavardė',
   phone: 'Telefonas',
   email: 'El. pašto adresas',
+  personalCode: 'Asmens kodas',
+  role: 'Teisė',
+};
+
+export const deleteDescriptionFirstPart = {
+  delete: 'Ar esate tikri, kad norite pašalinti',
+};
+
+export const deleteDescriptionSecondPart = {
+  user: 'naudotoją',
+};
+
+export const deleteTitles = {
+  user: 'Ištrinti naudotoją',
+};
+
+export const roleLabels = {
+  [RoleTypes.USER]: 'Naudotojas',
+  [RoleTypes.USER_ADMIN]: 'Administratorius',
+  [RoleTypes.OWNER]: 'Administratorius',
 };

@@ -3,12 +3,13 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { actions as fishingActions } from '../state/fishing/reducer';
 import { actions, initialState } from '../state/user/reducer';
 import api from './api';
-import { LOCATION_ERRORS, RolesTypes } from './constants';
+import { LOCATION_ERRORS, RoleTypes } from './constants';
 import { clearCookies, handleAlert, handleSetProfile } from './functions';
 
 import { useEffect, useState } from 'react';
+import { matchPath, useLocation } from 'react-router';
 import Cookies from 'universal-cookie';
-import { RootState, AppDispatch } from '../state/store';
+import { AppDispatch, RootState } from '../state/store';
 import { routes } from './routes';
 import { User } from './types';
 
@@ -21,7 +22,7 @@ export const useCheckAuthMutation = () => {
   const dispatch = useDispatch();
   const token = cookies.get('token');
 
-  const { isLoading } = useQuery([token], () => api.checkAuth(), {
+  const { isLoading } = useQuery([token], () => api.userInfo(), {
     onError: ({ response }: any) => {
       if (response.status === 401) {
         clearCookies();
@@ -70,7 +71,7 @@ export const useFilteredRoutes = () => {
     if (!route?.slug) return false;
 
     if (route.tenantOwner) {
-      return [RolesTypes.USER_ADMIN, RolesTypes.OWNER].some((r) => r === profile?.role);
+      return [RoleTypes.USER_ADMIN, RoleTypes.OWNER].some((r) => r === profile?.role);
     }
     return true;
   });
@@ -103,10 +104,7 @@ export const useGeolocationWatcher = () => {
   useEffect(() => {
     const successHandler = (position: any) => {
       dispatch(fishingActions.setError(null));
-      console.log('coordinates', {
-        x: position.coords.longitude,
-        y: position.coords.latitude,
-      });
+
       dispatch(
         fishingActions.setCoordinates({
           x: position.coords.longitude,
@@ -141,4 +139,12 @@ export const useWindowSize = (width: string) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   return isInRange;
+};
+
+export const useGetCurrentRoute = () => {
+  const currentLocation = useLocation();
+
+  return routes?.find(
+    (route: any) => !!matchPath({ path: route.slug, end: true }, currentLocation.pathname),
+  );
 };

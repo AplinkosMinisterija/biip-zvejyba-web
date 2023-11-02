@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
-import { useSelector } from 'react-redux';
 import {
   Location,
   Navigate,
@@ -9,7 +8,7 @@ import {
   Routes,
   useLocation,
   useNavigate,
-  useSearchParams
+  useSearchParams,
 } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,10 +16,14 @@ import Cookies from 'universal-cookie';
 import LoaderComponent from './components/other/LoaderComponent';
 import { CantLogin } from './pages/CantLogin';
 import { Login } from './pages/Login';
-import { RootState } from './state/store';
 import api from './utils/api';
 import { handleUpdateTokens } from './utils/functions';
-import { useCheckAuthMutation, useEGatesSign, useFilteredRoutes } from './utils/hooks';
+import {
+  useAppSelector,
+  useCheckAuthMutation,
+  useEGatesSign,
+  useFilteredRoutes,
+} from './utils/hooks';
 import { slugs } from './utils/routes';
 import { ProfileId } from './utils/types';
 const cookies = new Cookies();
@@ -31,20 +34,26 @@ interface RouteProps {
 }
 
 function App() {
-  const loggedIn = useSelector((state: RootState) => state.user.loggedIn);
-  const profiles = useSelector((state: RootState) => state.user.userData.profiles);
+  const loggedIn = useAppSelector((state) => state.user.loggedIn);
+  const profiles = useAppSelector((state) => state.user.userData.profiles);
   const [searchParams] = useSearchParams();
   const { ticket, eGates } = Object.fromEntries([...Array.from(searchParams)]);
-  const profileId: ProfileId = cookies.get('profileId');
+  const profileId: ProfileId = cookies.get('profileId')?.toString();
   const [initialLoading, setInitialLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
   const routes = useFilteredRoutes();
   const navigateRef = useRef(navigate);
 
-  const profileIDS = profiles?.map((profile: any) => profile?.id?.toString());
+  const isInvalidProfile =
+    profileId &&
+    !profiles
+      ?.map((profile) => {
+        return profile?.id?.toString();
+      })
+      .includes(profileId) &&
+    loggedIn;
 
-  const isInvalidProfile = profileIDS?.includes(profileId) && loggedIn;
   const updateTokensMutation = useMutation(api.refreshToken, {
     onError: ({ response }: any) => {
       if (response.status == 404) {
@@ -78,10 +87,13 @@ function App() {
     retry: false,
   });
 
-  const isLoading =
-    [initialLoading,eGatesLoginMutation.isLoading, eGatesSignLoading, updateTokensMutation.isLoading,checkAuthLoading].some(
-      (loading) => loading,
-    );
+  const isLoading = [
+    initialLoading,
+    eGatesLoginMutation.isLoading,
+    eGatesSignLoading,
+    updateTokensMutation.isLoading,
+    checkAuthLoading,
+  ].some((loading) => loading);
 
   useEffect(() => {
     (async () => {

@@ -2,26 +2,30 @@ import React from 'react';
 import styled from 'styled-components';
 
 export interface AvatarProps {
-  name: string;
-  surname: string;
+  firstName: string;
+  lastName: string;
   className?: string;
   style?: React.CSSProperties;
   active?: boolean;
   icon?: any;
+  color?: string;
 }
 
 const Avatar = ({
-  name = ' ',
-  surname = ' ',
+  firstName = ' ',
+  lastName = ' ',
   className,
   style = {},
   active,
+  color,
   icon,
 }: AvatarProps) => {
-  const initials = `${name[0]?.toUpperCase() || ''} ${surname[0]?.toUpperCase() || ''}`;
+  const initials = `${firstName[0]?.toUpperCase() || ''} ${lastName[0]?.toUpperCase() || ''}`;
   return (
     <Container active={active} className={className}>
-      <InnerContainer style={style}>{icon ? icon : initials}</InnerContainer>
+      <InnerContainer color={color} style={style}>
+        {icon ? icon : initials}
+      </InnerContainer>
     </Container>
   );
 };
@@ -41,7 +45,7 @@ const InnerContainer = styled.div<{ color?: string }>`
   height: 40px;
   width: 40px;
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme, color }) => color || theme.colors.primary};
 
   color: white;
   display: flex;

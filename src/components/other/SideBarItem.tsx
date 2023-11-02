@@ -6,7 +6,6 @@ import Icon from './Icon';
 const SideBarItem = ({ route }: { route: RouteType }) => {
   const isActive = useMatch(route.slug);
 
-  console.log(isActive, 'isActive');
   return (
     <Item isActive={false}>
       <StyledIcon name={route.iconName!} />
