@@ -48,7 +48,6 @@ const Profiles = () => {
   );
 };
 
-
 export default Profiles;
 
 const StyledIcon = styled(Icon)`
