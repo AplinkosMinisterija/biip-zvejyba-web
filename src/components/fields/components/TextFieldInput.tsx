@@ -16,20 +16,20 @@ export interface TextFieldProps {
 }
 
 const TextFieldInput = ({
-    value,
-    name,
-    error,
-    readOnly = false,
-    leftIcon,
-    rightIcon,
-    onChange,
-    placeholder,
-    type,
-    disabled,
-    height = 56,
-    selectedValue = false,
-    onInputClick,
-    ...rest
+  value,
+  name,
+  error,
+  readOnly = false,
+  leftIcon,
+  rightIcon,
+  onChange,
+  placeholder,
+  type,
+  disabled,
+  height = 56,
+  selectedValue = false,
+  onInputClick,
+  ...rest
 }: TextFieldProps) => {
   return (
     <InputContainer $error={!!error} $height={height || 40} $disabled={disabled || false}>
@@ -57,15 +57,15 @@ const InputContainer = styled.div<{
   $height: number;
   $disabled: boolean;
 }>`
-    display: flex;
-    height: ${({ $height }) => `${$height}px`};
-    background-color: white;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 4px;
-    overflow: hidden;
-    border: 1px solid ${({ theme, $error }) => ($error ? theme.colors.error : theme.colors.border)};
-    opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
+  display: flex;
+  height: ${({ $height }) => `${$height}px`};
+  background-color: white;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid ${({ theme, $error }) => ($error ? theme.colors.error : theme.colors.border)};
+  opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
 
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'text')};
   :focus-within {

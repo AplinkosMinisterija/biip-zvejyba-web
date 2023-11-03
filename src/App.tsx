@@ -9,7 +9,7 @@ import {
   Routes,
   useLocation,
   useNavigate,
-  useSearchParams
+  useSearchParams,
 } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -78,10 +78,13 @@ function App() {
     retry: false,
   });
 
-  const isLoading =
-    [initialLoading,eGatesLoginMutation.isLoading, eGatesSignLoading, updateTokensMutation.isLoading,checkAuthLoading].some(
-      (loading) => loading,
-    );
+  const isLoading = [
+    initialLoading,
+    eGatesLoginMutation.isLoading,
+    eGatesSignLoading,
+    updateTokensMutation.isLoading,
+    checkAuthLoading,
+  ].some((loading) => loading);
 
   useEffect(() => {
     (async () => {

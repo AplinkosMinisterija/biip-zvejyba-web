@@ -36,17 +36,17 @@ export const LOCATION_ERROR_MESSAGES = {
 };
 
 export const titles = {
-    login: 'Verslinės žvejybos aplikacija',
-    selectProfile: 'Pasirinkite paskyrą',
+  login: 'Verslinės žvejybos aplikacija',
+  selectProfile: 'Pasirinkite paskyrą',
 };
 
 export const descriptions = {
-    login: 'Žvejybos padalinių žvejybos žurnalas',
+  login: 'Žvejybos padalinių žvejybos žurnalas',
 };
 
 export const buttonLabels = {
-    eGate: 'Prisijungti per el. valdžios vartus',
-    login: 'Prisijungti',
-    loginWithPassword: 'Prisijungti su slaptažodžiu',
-    logout: 'Atsijungti',
+  eGate: 'Prisijungti per el. valdžios vartus',
+  login: 'Prisijungti',
+  loginWithPassword: 'Prisijungti su slaptažodžiu',
+  logout: 'Atsijungti',
 };
