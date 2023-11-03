@@ -36,7 +36,7 @@ export const routes = [
     title: 'Mano žvejyba',
     subtitle: 'Pasirinkite žvejybos vietą',
     slug: slugs.fishingLocation,
-    iconName: IconName.fourSquares,
+    iconName: IconName.home,
     component: <Fishing />,
     regExp: new RegExp('^/zvejyba$'),
   },
