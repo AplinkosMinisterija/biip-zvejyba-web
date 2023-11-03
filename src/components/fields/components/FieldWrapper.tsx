@@ -72,7 +72,10 @@ const BottomLabel = styled.div`
 
 const Label = styled.label`
   font-size: 1.4rem;
+<<<<<<< HEAD
   font-weight: 600;
+=======
+>>>>>>> 7485745a37b48f88a22c718e99b3218d75608d80
   color: ${({ theme }) => theme.colors.label};
   //white-space: nowrap;
   overflow: hidden;
