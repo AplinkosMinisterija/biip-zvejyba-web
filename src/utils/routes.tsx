@@ -33,7 +33,7 @@ export const routes = [
     regExp: new RegExp('^/profiliai$'),
   },
   {
-    title: 'Kur žvejosite?',
+    title: 'Mano žvejyba',
     subtitle: 'Pasirinkite žvejybos vietą',
     slug: slugs.fishingLocation,
     iconName: IconName.fourSquares,
@@ -44,7 +44,6 @@ export const routes = [
     title: 'Mano žvejyba',
     subtitle: 'Pasirinkite žvejybos veiksmą',
     slug: slugs.fishing(':fishingId'),
-    iconName: IconName.home,
     component: <Fishing />,
     regExp: new RegExp('^/zvejyba/[0-9]+$'),
   },
