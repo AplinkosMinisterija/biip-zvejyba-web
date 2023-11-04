@@ -1,22 +1,18 @@
 import React from 'react';
 import Div100vh from 'react-div-100vh';
 import styled from 'styled-components';
-import { useWindowSize } from '../../utils';
 import { descriptions, titles } from '../../utils/texts';
-import { device } from '../../utils/theme';
 
-export const LoginLayout = ({ children }: { children: React.ReactNode }) => {
-  const isMobile = useWindowSize(device.mobileL);
-
+export const MobileLoginLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Container>
       <InnerContainer>
-        {!isMobile && <Image />}
+        <Image />
         <Box>
-          <div>
+          <InfoContainer>
             <Title>{titles.login}</Title>
             <Description>{descriptions.login}</Description>
-          </div>
+          </InfoContainer>
           <div>{children}</div>
         </Box>
       </InnerContainer>
@@ -37,43 +33,46 @@ const InnerContainer = styled.div`
   justify-content: center;
   flex-direction: row;
   overflow-y: auto;
+  position: relative;
+`;
+
+const InfoContainer = styled.div`
+    display:flex:
+    flex-direction:column;
+    gap:28px;
+    margin:16px;
 `;
 
 const Title = styled.h1`
   font-size: 40px;
   font-weight: bold;
-  color: #1121da;
   margin-bottom: 28px;
+  color: white;
 `;
 
 const Description = styled.p`
   font-size: 18px;
-  color: #101010;
   opacity: 1;
   text-align: left;
+  color: white;
 `;
 
 const Box = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 480px;
   overflow-y: auto;
-  padding: 50px;
-  @media ${device.mobileL} {
-    padding: 16px;
-    max-width: 100%;
-  }
+  height: 100%;
+  position: absolute;
+  justify-content: space-between;
 `;
 const Image = styled.div`
   height: 100%;
   position: relative;
   width: 100%;
   background-color: ${({ theme }) => theme.colors.primary};
-
   &:before {
     background-image: url(/loginBackground.jpg);
-
     background-position: 50% 0;
     background-repeat: no-repeat;
     background-size: cover;

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { device } from '../../utils';
 import Avatar from '../other/Avatar';
 
 export interface FishStockerItemProps {
@@ -51,6 +52,10 @@ const Container = styled.a`
   margin: 8px 0;
   border: 1px solid ${({ theme }) => theme.colors.border};
 
+  @media ${device.mobileL} {
+    max-width: 100%;
+  }
+
   &:hover,
   &:focus {
     border: 1px solid #13c9e7;
@@ -102,8 +107,8 @@ const SecondRow = styled.div`
 `;
 
 const TenantCode = styled.div`
-  font: normal normal 600 1.4rem/19px;
-  color: ${({ theme }) => theme.colors.text.secondary};
+    font: normal normal 600 1.4rem/19px;
+    color: ${({ theme }) => theme.colors.text.secondary};
 `;
 
 const BiipIcon = styled.img`

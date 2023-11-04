@@ -1,14 +1,14 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { LoginLayout } from '../components/layouts/Login';
 import Icon from '../components/other/Icon';
 import Loader from '../components/other/Loader';
 import ProfileItem from '../components/other/ProfileItem';
+import { RootState } from '../state/store';
+import { buttonLabels, device, titles, User } from '../utils';
 import { handleSelectProfile } from '../utils/functions';
 import { useLogoutMutation } from '../utils/hooks';
-import { RootState } from '../state/store.ts';
-import { LoginLayout } from '../components/layouts/Login.tsx';
-import { User } from '../utils/types.ts';
-import { useSelector } from 'react-redux';
 
 const Profiles = () => {
   const user: User = useSelector((state: RootState) => state?.user?.userData);
@@ -25,7 +25,7 @@ const Profiles = () => {
   return (
     <LoginLayout>
       <Container>
-        <Title>Pasirinkite paskyrą</Title>
+        <Title>{titles.selectProfile}</Title>
         {user.profiles?.map((profile: any) => (
           <InnerContainer key={profile?.id}>
             <ProfileItem
@@ -41,7 +41,7 @@ const Profiles = () => {
         ))}
         <Row onClick={() => mutateAsync()}>
           <StyledIcon name="exit" />
-          <BackButton>Atsijungti</BackButton>
+          <BackButton>{buttonLabels.logout}</BackButton>
         </Row>
       </Container>
     </LoginLayout>
@@ -83,14 +83,16 @@ const Container = styled.div`
   max-width: 440px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   row-gap: 12px;
+  margin-top: 50px;
+  @media ${device.mobileL} {
+    max-width: 100%;
+  }
 `;
 
 const Title = styled.div`
-  font-size: 2.8rem;
+  font-size: 2rem;
   line-height: 22px;
   font-weight: bold;
-  margin-bottom: 30px;
   color: ${({ theme }) => theme.colors.text.primary};
 `;

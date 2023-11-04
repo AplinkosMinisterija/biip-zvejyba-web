@@ -26,7 +26,7 @@ const TextFieldInput = ({
   placeholder,
   type,
   disabled,
-  height,
+  height = 56,
   selectedValue = false,
   onInputClick,
   ...rest
@@ -58,7 +58,7 @@ const InputContainer = styled.div<{
   $disabled: boolean;
 }>`
   display: flex;
-  height: ${({ $height }) => ($height ? `${$height}px` : `40px`)};
+  height: ${({ $height }) => `${$height}px`};
   background-color: white;
   justify-content: space-between;
   align-items: center;

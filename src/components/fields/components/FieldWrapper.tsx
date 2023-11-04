@@ -71,11 +71,8 @@ const BottomLabel = styled.div`
 `;
 
 const Label = styled.label`
-  text-align: left;
-  font-size: 1.6rem;
-  font-weight: 500;
-  color: ${({ theme }) => theme.colors.text.primary};
-  opacity: 1;
+  font-size: 1.4rem;
+  color: ${({ theme }) => theme.colors.label};
   //white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

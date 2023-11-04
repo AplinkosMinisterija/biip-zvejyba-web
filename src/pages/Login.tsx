@@ -1,30 +1,27 @@
 import { useFormik } from 'formik';
+import { useState } from 'react';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
-import Button from '../components/buttons/Button';
+import Button, { ButtonColors } from '../components/buttons/Button';
 import PasswordField from '../components/fields/PasswordField';
 import TextField from '../components/fields/TextField';
 import { LoginLayout } from '../components/layouts/Login';
+import { MobileLoginLayout } from '../components/layouts/MobileLogin';
+import Icon, { IconName } from '../components/other/Icon';
 import api from '../utils/api';
 import { handleAlert, handleUpdateTokens } from '../utils/functions';
-import { validationTexts } from '../utils/texts';
-import * as Yup from 'yup';
-import { useCheckAuthMutation, useEGatesSign } from '../utils/hooks.ts';
+import { useCheckAuthMutation, useEGatesSign, useWindowSize } from '../utils/hooks';
+import { buttonLabels, validationTexts } from '../utils/texts';
+import { device, theme } from '../utils/theme';
+import { loginSchema } from '../utils/validations';
 
 class LoginProps {}
 
-export const loginSchema = Yup.object().shape({
-  email: Yup.string().required(validationTexts.requireText).email(validationTexts.badEmailFormat),
-  password: Yup.string().required(validationTexts.requireText),
-});
-
 export const Login = () => {
-  const onSubmit = async ({ email, password }: { email: string; password: string }) => {
-    const params = { email, password };
-    loginMutation.mutateAsync(params);
-  };
+  const [showLocalLogin, setShowLocalLogin] = useState(false);
+  const isMobile = useWindowSize(device.mobileL);
 
-  const loginMutation = useMutation((params: LoginProps) => api.login(params), {
+  const loginMutation: any = useMutation((params: LoginProps) => api.login(params), {
     onError: ({ response }: any) => {
       const text = validationTexts[response?.data?.type];
 
@@ -36,14 +33,13 @@ export const Login = () => {
     },
     onSuccess: (data) => {
       handleUpdateTokens(data);
-      checkAuthMutation();
     },
     retry: false,
   });
 
   const { mutateAsync: eGatesMutation, isLoading: eGatesSignLoading } = useEGatesSign();
 
-  const { mutateAsync: checkAuthMutation, isLoading: checkAuthLoading } = useCheckAuthMutation();
+  const { isLoading: checkAuthLoading } = useCheckAuthMutation();
 
   const loading = [loginMutation.isLoading, checkAuthLoading].some((loading) => loading);
 
@@ -54,13 +50,116 @@ export const Login = () => {
     },
     validateOnChange: false,
     validationSchema: loginSchema,
-    onSubmit,
+    onSubmit: loginMutation.mutateAsync,
   });
 
   const handleType = (field: string, value: string) => {
     setFieldValue(field, value);
     setErrors({});
   };
+
+  const renderLoginFields = () => {
+    return (
+      <>
+        <TextField
+          label="Elektroninis paštas"
+          type="email"
+          value={values.email}
+          error={errors.email}
+          onChange={(e) => handleType('email', e)}
+        />
+        <PasswordField
+          label="Slaptažodis"
+          value={values.password}
+          error={errors.password}
+          onChange={(e) => handleType('password', e)}
+        />
+        <ButtonContainer>
+          <Button loading={loading} type="submit">
+            {buttonLabels.login}
+          </Button>
+          <TransparentButton
+            color={theme.colors.text.retroBlack}
+            type="button"
+            onClick={() => eGatesMutation()}
+          >
+            <Icon name={IconName.eGate} />
+            {buttonLabels.eGate}
+          </TransparentButton>
+        </ButtonContainer>
+      </>
+    );
+  };
+
+  const renderContent = () => {
+    if (!showLocalLogin) {
+      return (
+        <ButtonContainer>
+          <Button
+            leftIcon={<StyledEGateIcon name={IconName.eGate} />}
+            loading={eGatesSignLoading}
+            type="button"
+            onClick={() => eGatesMutation()}
+          >
+            {buttonLabels.eGate}
+          </Button>
+          <TransparentButton
+            color={theme.colors.text.retroBlack}
+            type="button"
+            onClick={() => setShowLocalLogin(true)}
+          >
+            {buttonLabels.loginWithPassword}
+          </TransparentButton>
+        </ButtonContainer>
+      );
+    }
+
+    return renderLoginFields();
+  };
+
+  const renderMobileContent = () => {
+    if (!showLocalLogin) {
+      return (
+        <ButtonContainer>
+          <Button
+            leftIcon={<Icon name={IconName.eGate} />}
+            loading={eGatesSignLoading}
+            variant={ButtonColors.POWDER}
+            type="button"
+            onClick={() => eGatesMutation()}
+          >
+            {buttonLabels.eGate}
+          </Button>
+          <TransparentButton
+            color={theme.colors.powder}
+            type="button"
+            onClick={() => setShowLocalLogin(true)}
+          >
+            {buttonLabels.loginWithPassword}
+          </TransparentButton>
+        </ButtonContainer>
+      );
+    }
+
+    return <MobileLoginContainer>{renderLoginFields()}</MobileLoginContainer>;
+  };
+
+  if (isMobile) {
+    return (
+      <MobileLoginLayout>
+        <FormContainer
+          onSubmit={handleSubmit}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSubmit();
+            }
+          }}
+        >
+          <InnerContainer>{renderMobileContent()}</InnerContainer>
+        </FormContainer>
+      </MobileLoginLayout>
+    );
+  }
 
   return (
     <LoginLayout>
@@ -72,64 +171,37 @@ export const Login = () => {
           }
         }}
       >
-        <H1>Prisijungti</H1>
-        <InnerContainer>
-          <TextField
-            label="Elektroninis paštas"
-            type="email"
-            value={values.email}
-            error={errors.email}
-            onChange={(e) => handleType('email', e)}
-          />
-          <PasswordField
-            label="Slaptažodis"
-            value={values.password}
-            error={errors.password}
-            onChange={(e) => handleType('password', e)}
-          />
-          <ButtonContainer>
-            <StyledButton loading={loading} type="submit">
-              Prisijungti
-            </StyledButton>
-          </ButtonContainer>
-
-          <OrContainer>
-            <Or>
-              <Separator />
-              <SeparatorLabelContainer>
-                <SeparatorLabel>arba</SeparatorLabel>
-              </SeparatorLabelContainer>
-            </Or>
-          </OrContainer>
-        </InnerContainer>
-        <StyledButton loading={eGatesSignLoading} type="button" onClick={() => eGatesMutation()}>
-          Prisijungti per el. valdžios vartus
-        </StyledButton>
+        <InnerContainer>{renderContent()}</InnerContainer>
       </FormContainer>
     </LoginLayout>
   );
 };
 
-const StyledButton = styled(Button)`
-  width: 100%;
-  max-width: 300px;
-`;
-
 const ButtonContainer = styled.div`
   margin-top: 40px;
   width: 100%;
   display: flex;
+  flex-direction: column;
+  gap: 28px;
   justify-content: center;
+  @media ${device.mobileL} {
+    padding: 24px 16px;
+  }
 `;
 
-const H1 = styled.div`
-  text-align: start;
-  font-size: 3.4rem;
-  letter-spacing: 0px;
-  color: ${({ theme }) => theme.colors.text.primary};
-  opacity: 1;
-  padding-bottom: 8px;
-  font-weight: bold;
+const TransparentButton = styled.button<{ color: string }>`
+  color: ${({ color }) => color};
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+  gap: 12px;
+  width: 100%;
+`;
+
+const StyledEGateIcon = styled(Icon)`
+  path {
+    fill: white;
+  }
 `;
 
 const FormContainer = styled.form`
@@ -139,58 +211,23 @@ const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
+  @media ${device.mobileL} {
+    max-width: 100%;
+  }
 `;
 
 const InnerContainer = styled.div`
   width: 100%;
   height: 100%;
-  max-width: 300px;
+  margin-top: 90px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 `;
 
-const OrContainer = styled.div`
-  width: 100%;
-`;
-
-const Or = styled.div`
-  width: 100%;
-  height: 50px;
-  position: relative;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-`;
-
-const SeparatorLabelContainer = styled.div`
-  font: normal normal 600 16px/40px;
-  letter-spacing: 1.02px;
-  color: #0b1f518f;
-  position: absolute;
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-  opacity: 1;
-`;
-
-const SeparatorLabel = styled.span`
-  font: normal normal 600 16px/40px;
-  letter-spacing: 1.02px;
-  color: #0b1f518f;
+const MobileLoginContainer = styled.div`
   background-color: white;
-  padding: 0 8px;
-  margin: 0 auto;
-  vertical-align: middle;
-  opacity: 1;
-`;
-
-const Separator = styled.div`
-  height: 1px;
-  background-color: ${({ theme }) => theme?.colors?.border};
-  margin: auto 0;
-  position: absolute;
-  max-width: 400px;
+  border-radius: 16px 16px 0px 0px;
   width: 100%;
-  margin: 24px 0;
+  padding: 47px 24px 24px 24px;
 `;

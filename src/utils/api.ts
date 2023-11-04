@@ -1,7 +1,7 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { User } from './types';
 import Cookies from 'universal-cookie';
-import { LocationType } from './constants.ts';
+import { LocationType } from './constants';
+import { User } from './types';
 
 const cookies = new Cookies();
 

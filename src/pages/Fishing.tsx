@@ -1,16 +1,16 @@
-import DefaultLayout from '../components/layouts/DefaultLayout';
-import FishingAction from '../components/containers/FishingAction';
 import { useEffect } from 'react';
-import FishingLocation from '../components/containers/FishingLocation';
-import { useGeolocationWatcher } from '../utils/hooks';
-import { getCurrentRoute } from '../utils/functions.ts';
-import { useNavigate } from 'react-router-dom';
-import { slugs } from '../utils/routes.tsx';
 import { useQuery } from 'react-query';
-import api from '../utils/api.ts';
-import LoaderComponent from '../components/other/LoaderComponent';
+import { useNavigate } from 'react-router-dom';
+import FishingAction from '../components/containers/FishingAction';
+import FishingLocation from '../components/containers/FishingLocation';
 import FishingTools from '../components/containers/FishingTools';
 import FishingWeight from '../components/containers/FishingWeight';
+import DefaultLayout from '../components/layouts/DefaultLayout';
+import LoaderComponent from '../components/other/LoaderComponent';
+import api from '../utils/api.ts';
+import { getCurrentRoute } from '../utils/functions.ts';
+import { useGeolocationWatcher } from '../utils/hooks';
+import { slugs } from '../utils/routes.tsx';
 export const Fishing = () => {
   const navigate = useNavigate();
   const currentRoute = getCurrentRoute(window.location.pathname);
