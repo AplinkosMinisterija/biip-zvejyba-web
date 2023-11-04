@@ -1,18 +1,21 @@
 import { useMutation, useQuery } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { actions as fishingActions } from '../state/fishing/reducer';
 import { actions, initialState } from '../state/user/reducer';
 import api from './api';
-import { LOCATION_ERRORS, RolesTypes, ServerErrors } from './constants';
+import { LOCATION_ERRORS, RolesTypes } from './constants';
 import { clearCookies, handleAlert, handleSetProfile } from './functions';
 
 import { useEffect, useState } from 'react';
 import Cookies from 'universal-cookie';
-import { RootState } from '../state/store';
+import { RootState, AppDispatch } from '../state/store';
 import { routes } from './routes';
 import { User } from './types';
 
 const cookies = new Cookies();
+
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export const useCheckAuthMutation = () => {
   const dispatch = useDispatch();
@@ -20,7 +23,7 @@ export const useCheckAuthMutation = () => {
 
   const { isLoading } = useQuery([token], () => api.checkAuth(), {
     onError: ({ response }: any) => {
-      if (response.status === ServerErrors.NO_PERMISSION) {
+      if (response.status === 401) {
         clearCookies();
         dispatch(actions.setUser(initialState));
 
@@ -71,6 +74,10 @@ export const useFilteredRoutes = () => {
     }
     return true;
   });
+};
+
+export const useMenuRouters = () => {
+  return useFilteredRoutes().filter((route) => !!route.iconName);
 };
 
 export const useLogoutMutation = () => {

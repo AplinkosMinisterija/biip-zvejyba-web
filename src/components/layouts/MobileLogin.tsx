@@ -1,7 +1,7 @@
 import React from 'react';
 import Div100vh from 'react-div-100vh';
 import styled from 'styled-components';
-import { descriptions, titles } from '../../utils/texts';
+import { subTitles, titles } from '../../utils/texts';
 
 export const MobileLoginLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -11,7 +11,7 @@ export const MobileLoginLayout = ({ children }: { children: React.ReactNode }) =
         <Box>
           <InfoContainer>
             <Title>{titles.login}</Title>
-            <Description>{descriptions.login}</Description>
+            <Description>{subTitles.login}</Description>
           </InfoContainer>
           <div>{children}</div>
         </Box>

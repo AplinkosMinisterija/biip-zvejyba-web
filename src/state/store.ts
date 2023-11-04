@@ -3,8 +3,8 @@ import { combineReducers } from 'redux';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { FiltersReducer } from './filters/reducer';
+import { FishingReducer } from './fishing/reducer';
 import { UserReducer } from './user/reducer';
-import { FishingReducer } from './fishing/reducer.ts';
 
 const persistConfig = {
   key: 'animalsConfig',
@@ -30,3 +30,5 @@ const persistor = persistStore(store);
 export default { store, persistor };
 
 export type RootState = ReturnType<typeof store.getState>;
+
+export type AppDispatch = typeof store.dispatch;

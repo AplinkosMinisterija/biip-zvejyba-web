@@ -97,6 +97,7 @@ const StyledButton = styled.button<{
   display: flex;
   justify-content: center;
   gap: 12px;
+  font-weight: 600px;
   align-items: center;
   height: ${({ height }) => `${height}px`};
   border-radius: ${({ $radius }) => $radius};

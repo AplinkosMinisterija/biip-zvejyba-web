@@ -1,4 +1,4 @@
-import { LOCATION_ERRORS, ServerErrors } from './constants.ts';
+import { LOCATION_ERRORS, ServerErrors } from './constants';
 export const validationTexts: any = {
   requireMap: 'Privalote pasirinkti vietą žemėlapyje',
   requirePhotos: 'Privalote įkelti nuotrauką',
@@ -21,6 +21,7 @@ export const validationTexts: any = {
   positiveNumber: 'Reikšmė turi būti didesnė už nulį',
   requireFiles: 'Privalote įkelti dokumentus',
   atLeastOneColumn: 'Turi būti pasirinktas bent vienas stulpelis',
+  profileUpdated: 'Profilis atnaujintas',
 };
 
 export const LOCATION_ERROR_MESSAGES = {
@@ -38,9 +39,10 @@ export const LOCATION_ERROR_MESSAGES = {
 export const titles = {
   login: 'Verslinės žvejybos aplikacija',
   selectProfile: 'Pasirinkite paskyrą',
+  profile: 'Profilis',
 };
 
-export const descriptions = {
+export const subTitles = {
   login: 'Žvejybos padalinių žvejybos žurnalas',
 };
 
@@ -49,4 +51,11 @@ export const buttonLabels = {
   login: 'Prisijungti',
   loginWithPassword: 'Prisijungti su slaptažodžiu',
   logout: 'Atsijungti',
+  profiles: 'Profiliai',
+  saveChanges: 'Saugoti pakeitimus',
+};
+
+export const inputLabels = {
+  phone: 'Telefonas',
+  email: 'El. pašto adresas',
 };

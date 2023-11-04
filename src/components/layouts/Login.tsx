@@ -2,7 +2,7 @@ import React from 'react';
 import Div100vh from 'react-div-100vh';
 import styled from 'styled-components';
 import { useWindowSize } from '../../utils';
-import { descriptions, titles } from '../../utils/texts';
+import { subTitles, titles } from '../../utils/texts';
 import { device } from '../../utils/theme';
 
 export const LoginLayout = ({ children }: { children: React.ReactNode }) => {
@@ -15,7 +15,7 @@ export const LoginLayout = ({ children }: { children: React.ReactNode }) => {
         <Box>
           <div>
             <Title>{titles.login}</Title>
-            <Description>{descriptions.login}</Description>
+            <Description>{subTitles.login}</Description>
           </div>
           <div>{children}</div>
         </Box>

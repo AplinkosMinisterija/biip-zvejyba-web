@@ -1,6 +1,6 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import Cookies from 'universal-cookie';
-import { LocationType } from './constants';
+import { LocationType, Resources } from './constants';
 import { User } from './types';
 
 const cookies = new Cookies();
@@ -97,20 +97,8 @@ class Api {
   }
 
   errorWrapper = async (endpoint: () => Promise<AxiosResponse<any, any>>) => {
-    try {
-      const { data } = await endpoint();
-      return data;
-    } catch (e: any) {
-      if (e?.response?.data?.type) {
-        throw e.response.data;
-      }
-      throw {
-        code: e.response.status,
-        message: e.message,
-        name: e.name,
-        type: e.code,
-      };
-    }
+    const { data } = await endpoint();
+    return data;
   };
 
   getAll = async ({
@@ -206,16 +194,16 @@ class Api {
     );
   };
 
-  update = async ({ resource, id, params }: UpdateOne) => {
+  patch = async ({ resource, id, params }: UpdateOne) => {
     return this.errorWrapper(() =>
-      this.AuthApiAxios.patch(`/api/${resource}/${id ? `/${id}` : ''}`, params),
+      this.AuthApiAxios.patch(`/api/${resource}${id ? `/${id}` : ''}`, params),
     );
   };
 
   delete = async ({ resource, id }: Delete) => {
     return this.errorWrapper(() => this.AuthApiAxios.delete(`/api/${resource}/${id}`));
   };
-  create = async ({ resource, id, params }: Create) => {
+  post = async ({ resource, id, params }: Create) => {
     return this.errorWrapper(() =>
       this.AuthApiAxios.post(`/api/${resource}${id ? `/${id}` : ''}`, params),
     );
@@ -273,19 +261,19 @@ class Api {
   };
 
   startFishing = async (params: { type: LocationType; coordinates: { x: number; y: number } }) => {
-    return this.create({
+    return this.post({
       resource: 'fishings',
       params,
     });
   };
   skipFishing = async (params: { type: LocationType }) => {
-    return this.create({
+    return this.post({
       resource: 'fishings/ship',
       params,
     });
   };
   finishFishing = async (id: number | string) => {
-    return this.update({
+    return this.patch({
       resource: `fishings/${id}/finish`,
     });
   };
@@ -303,7 +291,7 @@ class Api {
   };
 
   newTool = async (params: any) => {
-    return this.create({
+    return this.post({
       resource: 'tools',
       params,
     });
@@ -327,14 +315,14 @@ class Api {
     location: number;
     locationName: string;
   }) => {
-    return this.create({
+    return this.post({
       resource: 'toolGroups',
       params,
     });
   };
 
   returnTools = async (id: number) => {
-    return this.update({
+    return this.patch({
       resource: 'toolGroups/return',
       id: id.toString(),
       params: null,
@@ -349,6 +337,12 @@ class Api {
       // populate: ['tools'],
     });
   };
+
+  updateProfile = async (params: any): Promise<User> =>
+    await this.patch({
+      resource: Resources.ME,
+      params,
+    });
 }
 
 export default new Api();

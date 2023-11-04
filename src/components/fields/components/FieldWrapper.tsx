@@ -72,6 +72,7 @@ const BottomLabel = styled.div`
 
 const Label = styled.label`
   font-size: 1.4rem;
+  font-weight: 600;
   color: ${({ theme }) => theme.colors.label};
   //white-space: nowrap;
   overflow: hidden;

@@ -6,12 +6,12 @@ import Icon from '../components/other/Icon';
 import Loader from '../components/other/Loader';
 import ProfileItem from '../components/other/ProfileItem';
 import { RootState } from '../state/store';
-import { buttonLabels, device, titles, User } from '../utils';
+import { buttonLabels, device, titles } from '../utils';
 import { handleSelectProfile } from '../utils/functions';
 import { useLogoutMutation } from '../utils/hooks';
 
 const Profiles = () => {
-  const user: User = useSelector((state: RootState) => state?.user?.userData);
+  const user = useSelector((state: RootState) => state?.user?.userData);
   const [loading, setLoading] = useState(false);
   const { mutateAsync } = useLogoutMutation();
 
