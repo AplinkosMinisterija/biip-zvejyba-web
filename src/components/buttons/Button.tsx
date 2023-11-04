@@ -55,7 +55,7 @@ const Button = ({
   route,
   children,
   height = 56,
-  padding = '11px 20px;',
+  padding = '11px 20px',
   leftIcon,
   radius = '28px',
   buttonPadding,
@@ -71,7 +71,7 @@ const Button = ({
   return (
     <StyledButton
       className={className}
-      padding={buttonPadding}
+      padding={padding}
       fontWeight={fontWeight}
       variant={variant}
       height={height || 40}
