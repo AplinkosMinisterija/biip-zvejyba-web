@@ -65,7 +65,7 @@ const Button = ({
   loading = false,
   className,
   disabled = false,
-  fontWeight = 'normal',
+  fontWeight = '600',
   ...rest
 }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
@@ -105,7 +105,7 @@ const StyledButton = styled.button<{
   color: ${({ variant }) => buttonTextColors[variant]};
   border: ${({ variant }) => (variant === ButtonColors.TRANSPARENT ? '0' : '1px')} solid
     ${({ variant }) => (variant !== ButtonColors.TRANSPARENT ? 'transparent' : ' rgb(35, 31, 32)')};
-  font-weight: 600;
+  font-weight: ${({ fontWeight }) => fontWeight};
   font-size: 1.8rem;
   :hover {
     background-color: ${({ variant, theme }) => theme.colors.hover[variant]};
