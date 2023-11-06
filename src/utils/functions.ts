@@ -1,6 +1,7 @@
 import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
-import { LOCATION_ERRORS } from './constants';
+import api from './api';
+import { LOCATION_ERRORS, ToolTypeType } from './constants';
 import { routes } from './routes';
 import { validationTexts } from './texts';
 import { Profile, ProfileId, ResponseProps, UpdateTokenProps } from './types';
@@ -142,4 +143,11 @@ export const getCurrentLocation = ({
 
 export const getCurrentRoute = (pathname: any) => {
   return routes?.find((route: any) => route.regExp.test(pathname));
+};
+
+export const getToolTypeList = async (input: string, page: number, toolType: ToolTypeType) => {
+  return await api.toolTypes({
+    filter: { label: input, type: toolType },
+    page,
+  });
 };

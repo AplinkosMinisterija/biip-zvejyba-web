@@ -41,6 +41,7 @@ export const titles = {
   selectProfile: 'Pasirinkite paskyrą',
   profile: 'Profilis',
   newMember: 'Naujas narys',
+  newTool: 'Naujas įrankis',
 };
 
 export const subTitles = {
@@ -54,11 +55,12 @@ export const buttonLabels = {
   logout: 'Atsijungti',
   profiles: 'Profiliai',
   saveChanges: 'Saugoti pakeitimus',
-
+  newTool: 'Naujas įrankis',
   newMember: 'Naujas narys',
   addMember: 'Pridėti narį',
   cancel: 'Atšaukti',
   delete: 'Pašalinti',
+  addTool: 'Pridėti įrankį',
 };
 
 export const inputLabels = {
@@ -76,10 +78,12 @@ export const deleteDescriptionFirstPart = {
 
 export const deleteDescriptionSecondPart = {
   user: 'naudotoją',
+  tool: 'įrankį',
 };
 
 export const deleteTitles = {
   user: 'Ištrinti naudotoją',
+  tool: 'Ištrinti įrankį',
 };
 
 export const roleLabels = {

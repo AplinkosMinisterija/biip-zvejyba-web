@@ -3,6 +3,7 @@ export enum Resources {
   USERS = 'users',
   USER_INVITE = 'tenantUsers/invite',
   ME = 'users/me',
+  TOOLS = 'tools',
   TENANT_USERS = 'tenantUsers',
 }
 
@@ -38,7 +39,7 @@ export enum LocationType {
   POLDERS = 'POLDERS',
   INLAND_WATERS = 'INLAND_WATERS',
 }
-export enum ToolType {
+export enum ToolTypeType {
   NET = 'NET',
   CATCHER = 'CATCHER',
 }

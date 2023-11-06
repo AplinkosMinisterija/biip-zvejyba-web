@@ -10,7 +10,7 @@ export interface AsyncSelectFieldProps {
   name?: string;
   label?: string;
   value?: any;
-  error?: string;
+  error?: any;
   showError?: boolean;
   editable?: boolean;
   left?: JSX.Element;
@@ -25,9 +25,9 @@ export interface AsyncSelectFieldProps {
   placeholder?: string;
   backgroundColor?: string;
   hasBorder?: boolean;
-  setSuggestionsFromApi: (input: any, page: number, id?: any) => any;
+  loadOptions: (input: any, page: number, dependentValue?: any) => any;
   getOptionValue?: (option: any) => any;
-  dependantId?: string;
+  dependsOnValue?: string;
   optionsKey?: string;
   hasOptionKey?: boolean;
   primaryKey?: string;
@@ -41,14 +41,13 @@ const AsyncSelectField = ({
   showError = true,
   className,
   padding,
-  hasOptionKey = true,
   optionsKey = 'rows',
   onChange,
   name,
   disabled = false,
   getOptionLabel = (option) => option.label,
-  setSuggestionsFromApi,
-  dependantId,
+  loadOptions,
+  dependsOnValue,
   placeholder = 'Pasirinkite',
 }: AsyncSelectFieldProps) => {
   const {
@@ -62,12 +61,11 @@ const AsyncSelectField = ({
     handleBlur,
     handleClick,
   } = useAsyncSelectData({
-    setSuggestionsFromApi,
+    loadOptions,
     disabled,
     onChange,
-    dependantId,
+    dependsOnValue,
     optionsKey,
-    hasOptionKey,
   });
   return (
     <FieldWrapper

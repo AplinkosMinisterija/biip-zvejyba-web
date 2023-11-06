@@ -1,17 +1,14 @@
-import FishingLocationButton, { Variant } from '../buttons/FishingLocationButton.tsx';
-import styled from 'styled-components';
-import Popup from '../layouts/Popup.tsx';
-import Button, { ButtonColors } from '../buttons/Button.tsx';
 import { useState } from 'react';
-import { LocationType } from '../../utils/constants.ts';
 import { useMutation, useQueryClient } from 'react-query';
-import api from '../../utils/api.ts';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions } from '../../state/fishing/reducer.ts';
-import { useNavigate } from 'react-router-dom';
-import { slugs } from '../../utils/routes.tsx';
-import { handleAlert } from '../../utils/functions.ts';
-import { RootState } from '../../state/store.ts';
+import { useSelector } from 'react-redux';
+import styled from 'styled-components';
+import { RootState } from '../../state/store';
+import api from '../../utils/api';
+import { LocationType } from '../../utils/constants';
+import { handleAlert } from '../../utils/functions';
+import Button, { ButtonColors } from '../buttons/Button';
+import FishingLocationButton, { Variant } from '../buttons/FishingLocationButton';
+import Popup from '../layouts/Popup';
 
 const FishingLocation = () => {
   const queryClient = useQueryClient();

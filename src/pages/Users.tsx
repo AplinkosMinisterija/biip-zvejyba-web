@@ -129,7 +129,6 @@ export const Users = () => {
           <UsersContainer>
             {tenantUsers?.map((tenantUsers) => {
               const user = tenantUsers.user!;
-
               return (
                 <ProfileCard
                   color={theme.colors.powder}

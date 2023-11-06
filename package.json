@@ -14,6 +14,7 @@
     "@sentry/react": "^7.77.0",
     "axios": "^1.5.1",
     "formik": "^2.4.5",
+    "lodash": "^4.17.21",
     "lt-codes": "ambrazasp/lt-codes",
     "react": "^18.2.0",
     "react-div-100vh": "^0.7.0",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@aplinkosministerija/biip-prettier-config": "^1.1.0",
     "@aplinkosministerija/eslint-config-biip-react": "^1.0.0",
+    "@types/lodash": "^4.14.200",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",

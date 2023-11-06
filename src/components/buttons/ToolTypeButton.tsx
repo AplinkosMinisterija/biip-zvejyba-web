@@ -1,15 +1,15 @@
 import styled from 'styled-components';
 
-const ToolTypeButton = ({ label, icon, active, onClick }: any) => {
+const ToolTypeButton = ({ label, icon, active, onClick, disabled }: any) => {
   return (
-    <Container onClick={onClick} $active={active}>
+    <Container disabled={disabled} onClick={() => !disabled && onClick()} $active={active}>
       <StyledImage src={icon} $active={active} />
       <Title>{label}</Title>
     </Container>
   );
 };
 
-const Container = styled.div<{ $active: boolean }>`
+const Container = styled.div<{ $active: boolean; disabled: boolean }>`
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -20,6 +20,8 @@ const Container = styled.div<{ $active: boolean }>`
   align-items: center;
   gap: 12px;
   flex-grow: inherit;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `;
 
 const Title = styled.div`

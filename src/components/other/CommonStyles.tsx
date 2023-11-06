@@ -61,3 +61,10 @@ export const IconContainer = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
+export const ListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+`;

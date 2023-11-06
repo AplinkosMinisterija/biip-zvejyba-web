@@ -1,9 +1,9 @@
 import { IconName } from '../components/other/Icon';
 import Fishing from '../pages/Fishing';
-import Profile from '../pages/Profile';
 import Profiles from '../pages/Profiles';
+import Tool from '../pages/Tool';
 import Tools from '../pages/Tools';
-import UserForm from '../pages/UserForm';
+import UserForm from '../pages/User';
 import Users from '../pages/Users';
 
 export const slugs = {
@@ -19,12 +19,17 @@ export const slugs = {
   fishingToolConnect: (fishingId: string, toolId: string) =>
     `/zvejyba/${fishingId}/irankiai/${toolId}/irankiu_jungimas`,
   tools: '/irankiai',
+  tool: (id: string) => `/irankiai/${id}`,
   users: '/nariai',
   user: (id: string) => `/nariai/${id}`,
   profile: '/profilis',
 };
 
 export type RouteType = (typeof routes)[0];
+
+export enum Ids {
+  ID = ':id',
+}
 
 export const routes = [
   {
@@ -95,6 +100,14 @@ export const routes = [
     tenantOwner: true,
     back: true,
   },
+
+  {
+    title: 'Nario informacija',
+    slug: slugs.user(Ids.ID),
+    component: <UserForm />,
+    tenantOwner: true,
+    back: true,
+  },
   {
     title: 'Įrankiai',
     subtitle: 'Valdykite leidžiamų naudoti įrankių sąrašą',
@@ -112,9 +125,8 @@ export const routes = [
     iconName: IconName.settings,
   },
   {
-    title: 'Profilis',
-    slug: slugs.profile,
-    component: <Profile />,
-    iconName: IconName.profile,
+    title: 'Įrankio informacija',
+    slug: slugs.tool(Ids.ID),
+    component: <Tool />,
   },
 ];

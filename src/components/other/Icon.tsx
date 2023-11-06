@@ -60,6 +60,7 @@ export enum IconName {
   logo = 'logo',
   sidebarLogo = 'sidebarLogo',
   active = 'active',
+  net = 'net',
 }
 export interface IconProps {
   name: IconName | string;
@@ -379,6 +380,27 @@ V12l3,3"
           <line x1="1.06" y1="18.55" x2="1.06" y2="12.55" />
           <line x1="19.06" y1="18.55" x2="19.06" y2="12.55" />
           <line x1="10.06" y1="18.55" x2="10.06" y2="15.55" />
+        </svg>
+      );
+    case IconName.net:
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          className={className}
+        >
+          <path d="M4,13c0.5,0.2,3.6,1.7,7.1,0.1c2.7-1.2,3.8-3.6,4.1-4.2"></path>
+          <path d="M4,18c1,0.3,4.3,1.4,8.1,0c4.9-1.8,6.7-6.3,7-7"></path>
+          <line x1="4" y1="3" x2="4" y2="21"></line>
+          <line x1="18" y1="18" x2="4" y2="3"></line>
+          <polyline points="21,12 4,3 12,21 "></polyline>
         </svg>
       );
 

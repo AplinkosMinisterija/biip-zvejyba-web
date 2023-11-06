@@ -1,7 +1,7 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import Cookies from 'universal-cookie';
 import { LocationType, Populations, Resources } from './constants';
-import { TenantUser, User } from './types';
+import { TenantUser, Tool, ToolFormProps, User } from './types';
 
 const cookies = new Cookies();
 
@@ -262,13 +262,13 @@ class Api {
 
   startFishing = async (params: { type: LocationType; coordinates: { x: number; y: number } }) => {
     return this.post({
-      resource: 'fishings',
+      resource: 'fishings/start',
       params,
     });
   };
   skipFishing = async (params: { type: LocationType }) => {
     return this.post({
-      resource: 'fishings/ship',
+      resource: 'fishings/skip',
       params,
     });
   };
@@ -278,22 +278,9 @@ class Api {
     });
   };
   toolTypes = async (params: any) => {
-    return this.getAll({
+    return this.get({
       resource: 'toolTypes',
       ...params,
-    });
-  };
-  tools = async (params: any) => {
-    return this.getAll({
-      resource: 'tools',
-      ...params,
-    });
-  };
-
-  newTool = async (params: any) => {
-    return this.post({
-      resource: 'tools',
-      params,
     });
   };
 
@@ -374,6 +361,40 @@ class Api {
   deleteUser = async (id: string) =>
     await this.delete({
       resource: Resources.TENANT_USERS,
+      id,
+    });
+
+  tools = async (params: any): Promise<Tool[]> => {
+    return this.getAll({
+      resource: Resources.TOOLS,
+      ...params,
+    });
+  };
+
+  getTool = async (id: string): Promise<Tool> =>
+    await this.getOne({
+      resource: Resources.TOOLS,
+      id,
+    });
+
+  newTool = async (params: ToolFormProps): Promise<Tool> => {
+    return this.post({
+      resource: Resources.TOOLS,
+      params,
+    });
+  };
+
+  updateTool = async (params: ToolFormProps, id: string): Promise<Tool> => {
+    return this.patch({
+      resource: Resources.TOOLS,
+      params,
+      id,
+    });
+  };
+
+  deleteTool = async (id: string) =>
+    await this.delete({
+      resource: Resources.TOOLS,
       id,
     });
 }
