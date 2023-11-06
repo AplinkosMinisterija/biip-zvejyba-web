@@ -1,22 +1,18 @@
-import styled from 'styled-components';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import api from '../../utils/api';
+import { useState } from 'react';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { LocationType } from '../../utils/constants';
+import styled from 'styled-components';
 import { RootState } from '../../state/store';
-import LoaderComponent from '../other/LoaderComponent';
+import api from '../../utils/api';
+import { LocationType } from '../../utils/constants';
+import { device } from '../../utils/theme';
+import { ToolGroup } from '../../utils/types';
 import Button from '../buttons/Button';
 import Popup from '../layouts/Popup';
-import { useState } from 'react';
-import ToolCardSelectable from '../other/ToolCardSelecetable';
-import SwitchButton from '../buttons/SwitchButton';
+import LoaderComponent from '../other/LoaderComponent';
 import ToolsGroupCard from '../other/ToolsGroupCard';
-import { device } from '../../utils/theme.ts';
-import { ToolGroup } from '../../utils/types.ts';
-import MenuButton from '../buttons/MenuButton.tsx';
-import { IconName } from '../other/Icon.tsx';
 import BuildTools from './BuildTools';
-import ToolActions from './ToolActions.tsx';
+import ToolActions from './ToolActions';
 
 const FishingTools = ({ fishing }: any) => {
   const locationType: LocationType = fishing.type;
@@ -29,7 +25,7 @@ const FishingTools = ({ fishing }: any) => {
       api.getLocation({
         query: {
           type: locationType,
-          coordinates: JSON.stringify(coordinates),
+          coordinates: { y: 54.860114825735025, x: 24.159378652040488 },
         },
       }),
     {
@@ -38,9 +34,12 @@ const FishingTools = ({ fishing }: any) => {
     },
   );
 
-  const { data: builtTools, isLoading: builtToolsLoading } = useQuery(
+  const { data: builtTools } = useQuery(
     ['builtTools', location?.id],
     () => api.getBuiltTools({ locationId: location?.id }),
+    {
+      enabled: !!location?.id,
+    },
   );
 
   return (
@@ -50,7 +49,7 @@ const FishingTools = ({ fishing }: any) => {
           <LoaderComponent />
         ) : (
           <>
-            <Title>{location?.name ? location.name : 'Vieta nenustatyta'}</Title>
+            <Title>{location.name || 'Vieta nenustatyta'}</Title>
             {builtTools?.map((toolsGroup: any) => (
               <ToolsGroupCard
                 key={toolsGroup.id}
@@ -72,9 +71,13 @@ const FishingTools = ({ fishing }: any) => {
         />
       </Popup>
 
-      <Popup visible={!!selectedToolsGroup} onClose={() => setSelectedToolsGroup(null)}>
-        <ToolActions toolGroup={selectedToolsGroup} onReturn={() => setSelectedToolsGroup(null)} />
-      </Popup>
+      <ToolActions
+        coordinates={coordinates}
+        location={location}
+        visible={!!selectedToolsGroup}
+        toolGroup={selectedToolsGroup}
+        onReturn={() => setSelectedToolsGroup(null)}
+      />
     </>
   );
 };

@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import Button from '../components/buttons/Button';
 import ToolForm from '../components/forms/ToolForm';
 import DefaultLayout from '../components/layouts/DefaultLayout';
-import PopUpWithTitle from '../components/layouts/PopUpWithTitle';
+import PopUpWithTitles from '../components/layouts/PopUpWithTitle';
 import { ListContainer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
 import ToolCard from '../components/other/ToolCard';
@@ -73,7 +73,7 @@ const Tools = () => {
           <Button onClick={() => setShowPopup(true)}>{buttonLabels.newTool}</Button>
         </Container>
       </DefaultLayout>
-      <PopUpWithTitle
+      <PopUpWithTitles
         title={titles.newTool}
         visible={showPopup}
         onClose={() => setShowPopup(false)}
@@ -84,7 +84,7 @@ const Tools = () => {
           isLoading={isLoading}
           isNew={true}
         />
-      </PopUpWithTitle>
+      </PopUpWithTitles>
     </>
   );
 };

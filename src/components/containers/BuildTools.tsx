@@ -1,12 +1,12 @@
-import ToolCardSelectable from '../other/ToolCardSelecetable';
+import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import SwitchButton from '../buttons/SwitchButton';
+import api from '../../utils/api';
+import { FishingToolsType } from '../../utils/constants';
 import { device } from '../../utils/theme';
 import Button from '../buttons/Button';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import api from '../../utils/api';
-import { useState } from 'react';
-import { FishingToolsType } from '../../utils/constants';
+import SwitchButton from '../buttons/SwitchButton';
+import ToolCardSelectable from '../other/ToolCardSelecetable';
 
 const FishingOptions = [
   { label: 'Atskiras įrankis', value: FishingToolsType.SINGLE },
@@ -61,8 +61,7 @@ const BuildTools = ({ onClose, location, coordinates }: any) => {
     if (coordinates) {
       buildToolsMutation({
         tools: selectedTools,
-        location: location.id,
-        locationName: location.name,
+        location,
         coordinates,
       });
     } else {

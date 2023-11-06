@@ -61,6 +61,7 @@ export enum IconName {
   sidebarLogo = 'sidebarLogo',
   active = 'active',
   net = 'net',
+  connection = 'connection',
 }
 export interface IconProps {
   name: IconName | string;
@@ -401,6 +402,28 @@ V12l3,3"
           <line x1="4" y1="3" x2="4" y2="21"></line>
           <line x1="18" y1="18" x2="4" y2="3"></line>
           <polyline points="21,12 4,3 12,21 "></polyline>
+        </svg>
+      );
+
+    case IconName.connection:
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="black"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          className={className}
+        >
+          <circle cx="12" cy="12" r="3" />
+          <circle cx="5" cy="21" r="1" />
+          <circle cx="19" cy="3" r="1" />
+          <path d="M15,12h1.5c2.5,0,4.5,2,4.5,4.5v0c0,2.5-2,4.5-4.5,4.5H6" />
+          <path d="M18,3H7.5C5,3,3,5,3,7.5v0C3,10,5,12,7.5,12H9" />
         </svg>
       );
 

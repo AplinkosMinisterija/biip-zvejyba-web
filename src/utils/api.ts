@@ -65,7 +65,7 @@ interface Delete {
 
 interface Create {
   resource: string;
-  params: any;
+  params?: any;
   id?: string;
 }
 
@@ -299,28 +299,31 @@ class Api {
   buildTools = async (params: {
     tools: number[];
     coordinates: { x: number; y: number };
-    location: number;
-    locationName: string;
+    location: Location;
   }) => {
     return this.post({
-      resource: 'toolGroups',
+      resource: 'toolsGroups/build',
       params,
     });
   };
 
-  returnTools = async (id: number) => {
-    return this.patch({
-      resource: 'toolGroups/return',
-      id: id.toString(),
-      params: null,
+  removeTool = async (
+    params: {
+      coordinates: { x: number; y: number };
+      location: Location;
+    },
+    id: string,
+  ) => {
+    return this.post({
+      resource: 'toolsGroups/remove',
+      params,
+      id,
     });
   };
 
-  getBuiltTools = async (params: { locationId: number }) => {
+  getBuiltTools = async ({ locationId }: { locationId: number }) => {
     return this.get({
-      resource: 'toolGroups/current',
-      query: JSON.stringify(params),
-      // populate: ['tools'],
+      resource: `toolsGroups/location/${locationId}`,
     });
   };
 

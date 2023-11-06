@@ -8,7 +8,7 @@ const ToolsGroupCard = ({ toolsGroup, selected, onSelect }: any) => {
         <StyledIcon name={selected ? IconName.check : IconName.home} $selected={selected} />
       </IconContainer>
       <div>
-        <ToolName>{toolsGroup.tools[0].toolType.label}</ToolName>
+        <ToolName>{toolsGroup.tools[0]?.toolType?.label}</ToolName>
         <SealNr>{toolsGroup.tools?.map((tool: any) => tool.sealNr).join(', ')}</SealNr>
       </div>
     </Container>

@@ -8,7 +8,7 @@ import NumericTextField from '../components/fields/NumericTextField';
 import SelectField from '../components/fields/SelectField';
 import TextField from '../components/fields/TextField';
 import DefaultLayout from '../components/layouts/DefaultLayout';
-import PopUpWithTitle from '../components/layouts/PopUpWithTitle';
+import PopUpWithTitles from '../components/layouts/PopUpWithTitle';
 import { Grid } from '../components/other/CommonStyles';
 import Icon, { IconName } from '../components/other/Icon';
 import LoaderComponent from '../components/other/LoaderComponent';
@@ -146,7 +146,7 @@ export const Users = () => {
         {isFetching && <LoaderComponent />}
         <Button onClick={() => setShowPopup(true)}>{buttonLabels.newMember}</Button>
       </DefaultLayout>
-      <PopUpWithTitle
+      <PopUpWithTitles
         title={titles.newMember}
         visible={showPopup}
         onClose={() => setShowPopup(false)}
@@ -215,7 +215,7 @@ export const Users = () => {
             );
           }}
         </Formik>
-      </PopUpWithTitle>
+      </PopUpWithTitles>
     </>
   );
 };
