@@ -13,7 +13,9 @@ import { GlobalStyle, theme } from './utils/theme';
 const queryClient = new QueryClient();
 
 const { store, persistor } = redux;
-const env = process?.env;
+
+
+const env = import.meta.env;
 
 
 
