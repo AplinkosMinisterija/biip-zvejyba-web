@@ -193,14 +193,14 @@ const FishingTools = ({ fishing }: any) => {
                     error={errors.location}
                     onChange={(value) => {
                       const { lat, lng, name } = value;
-                      setFieldValue('location', { x: lat, y: lng, name });
+                      setFieldValue('location', { x: lng, y: lat, name });
                     }}
                     getOptionValue={(option) => option?.cadastralId}
                     getInputLabel={(option) => option?.name}
                     showError={false}
                     getOptionLabel={(option) => {
-                      const { name, cadastralId, categoryTranslate } = option;
-                      return `${name}, ${cadastralId}, ${categoryTranslate}`;
+                      const { name } = option;
+                      return name;
                     }}
                     loadOptions={(input: string, page: number | string) =>
                       getLocationList(input, page, {})
@@ -217,7 +217,7 @@ const FishingTools = ({ fishing }: any) => {
 
                 <Grid columns={2}>
                   <NumericTextField
-                    label={inputLabels.lat}
+                    label={inputLabels.lng}
                     name="x"
                     value={values.x}
                     showError={false}
@@ -225,7 +225,7 @@ const FishingTools = ({ fishing }: any) => {
                     onChange={(email) => setFieldValue('x', email)}
                   />
                   <NumericTextField
-                    label={inputLabels.lng}
+                    label={inputLabels.lat}
                     name="y"
                     value={values.y}
                     showError={false}

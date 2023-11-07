@@ -228,6 +228,7 @@ const Invisible = styled.div`
 const StyledIcon = styled(Icon)`
   cursor: pointer;
   font-size: 2.4rem;
+  color: ${({ theme }) => theme.colors.text.primary};
 `;
 
 const Container = styled.div`
