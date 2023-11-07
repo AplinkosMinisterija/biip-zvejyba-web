@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Button, { ButtonColors } from './Button.tsx';
+import Button, { ButtonColors } from './Button';
 
 export enum Variant {
   FLORAL_WHITE = 'FLORAL_WHITE',

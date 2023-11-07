@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Icon, { IconName } from '../other/Icon.tsx';
+import Icon, { IconName } from '../other/Icon';
 
 const ToolCard = ({ tool }: any) => {
   return (

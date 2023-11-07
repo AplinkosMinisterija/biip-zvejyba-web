@@ -1,11 +1,9 @@
-import MenuButton from '../buttons/MenuButton.tsx';
-import { IconName } from '../other/Icon.tsx';
-import styled from 'styled-components';
-import Button from '../buttons/Button.tsx';
-import SwitchButton from '../buttons/SwitchButton.tsx';
-import { device } from '../../utils/theme.ts';
 import { useMutation, useQueryClient } from 'react-query';
-import api from '../../utils/api.ts';
+import styled from 'styled-components';
+import api from '../../utils/api';
+import { device } from '../../utils/theme';
+import MenuButton from '../buttons/MenuButton';
+import { IconName } from '../other/Icon';
 
 const ToolActions = ({ toolGroup, onReturn }: any) => {
   const queryClient = useQueryClient();

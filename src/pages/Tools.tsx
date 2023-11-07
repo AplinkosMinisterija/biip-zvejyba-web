@@ -1,21 +1,21 @@
-import DefaultLayout from '../components/layouts/DefaultLayout';
-import { getCurrentRoute, handleUpdateTokens } from '../utils/functions';
+import { Form, Formik } from 'formik';
+import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
+import * as Yup from 'yup';
 import Button from '../components/buttons/Button';
 import ToolTypeButton from '../components/buttons/ToolTypeButton';
-import Popup from '../components/layouts/Popup';
-import { useState } from 'react';
-import { Form, Formik } from 'formik';
-import { ToolType } from '../utils/constants';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import api from '../utils/api';
 import SelectField from '../components/fields/SelectField';
 import TextField from '../components/fields/TextField';
-import * as Yup from 'yup';
-import { validationTexts } from '../utils/texts.ts';
-import ToolCard from '../components/other/ToolCard.tsx';
-import LoaderComponent from '../components/other/LoaderComponent.tsx';
-import { device } from '../utils/theme.ts';
+import DefaultLayout from '../components/layouts/DefaultLayout';
+import Popup from '../components/layouts/Popup';
+import LoaderComponent from '../components/other/LoaderComponent';
+import ToolCard from '../components/other/ToolCard';
+import api from '../utils/api';
+import { ToolType } from '../utils/constants';
+import { getCurrentRoute } from '../utils/functions';
+import { validationTexts } from '../utils/texts';
+import { device } from '../utils/theme';
 
 const validateSpecies = (toolType: any) =>
   Yup.object().shape({
