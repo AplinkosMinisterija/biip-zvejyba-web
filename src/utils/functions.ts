@@ -150,10 +150,20 @@ export const getToolTypeList = async (input: string, page: number, toolType: Too
     filter: { label: input, type: toolType },
     page,
   });
-}
-
-
+};
 
 export const getLocationList = async (input: string, page: number | string, query: any) => {
   return await api.getLocations({ search: input, page, query });
+};
+
+export const getBars = async () => {
+  const bars = await api.getBars();
+
+  return bars?.features.map((item: any) => {
+    return {
+      x: Number(item?.bbox[0]),
+      y: Number(item?.bbox[1]),
+      name: item?.properties?.name,
+    };
+  });
 };

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
+import { handleAlert } from '../../utils';
 import api from '../../utils/api';
 import { FishingToolsType } from '../../utils/constants';
 import { device } from '../../utils/theme';
@@ -33,7 +34,7 @@ const BuildTools = ({ onClose, location, coordinates }: any) => {
         onClose();
       },
       onError: ({ response }: any) => {
-        //TODO: display error
+        handleAlert();
       },
     },
   );

@@ -90,12 +90,13 @@ export const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    color: #2C2C2C;
   }
 
   html {
     font-size: 62.5%;
     width: 100vw;
+    color: #2C2C2C;
+
   }
 
   body {

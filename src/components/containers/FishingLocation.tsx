@@ -8,7 +8,8 @@ import { LocationType } from '../../utils/constants';
 import { handleAlert } from '../../utils/functions';
 import Button, { ButtonColors } from '../buttons/Button';
 import FishingLocationButton, { Variant } from '../buttons/FishingLocationButton';
-import Popup from '../layouts/Popup';
+import PopUpWithImage from '../layouts/PopUpWithImage';
+import { IconName } from '../other/Icon';
 
 const FishingLocation = () => {
   const queryClient = useQueryClient();
@@ -57,6 +58,8 @@ const FishingLocation = () => {
     }
   };
 
+  const disabledButtons = startLoading || skipLoading;
+
   return (
     <>
       <Container>
@@ -79,32 +82,25 @@ const FishingLocation = () => {
           onClick={handleSelectLocation(LocationType.POLDERS)}
         />
       </Container>
-      <Popup visible={showStartFishing} onClose={() => setShowStartFishing(false)}>
-        <PopupWrapper>
-          <>
-            <FishingImage src={'/startFishing.svg'} />
-            <Heading>Žvejybos pradžia</Heading>
-            <Description>Lengvai ir paprastai praneškite apie žvejybos pradžią</Description>
-          </>
-          <StyledButton
-            radius="24px"
-            onClick={handleStartFishing}
-            loading={startLoading}
-            disabled={startLoading || skipLoading}
-          >
-            Pradėti žvejybą
-          </StyledButton>
-          <StyledButton
-            variant={ButtonColors.SECONDARY}
-            radius="24px"
-            onClick={handleSkipFishing}
-            loading={skipLoading}
-            disabled={startLoading || skipLoading}
-          >
-            Neplaukiu žvejoti
-          </StyledButton>
-        </PopupWrapper>
-      </Popup>
+      <PopUpWithImage
+        iconName={IconName.startFishing}
+        visible={showStartFishing}
+        onClose={() => setShowStartFishing(false)}
+        title={'Žvejybos pradžia'}
+        description={'Lengvai ir paprastai praneškite apie žvejybos pradžią'}
+      >
+        <Button loading={startLoading} disabled={disabledButtons} onClick={handleStartFishing}>
+          {'Pradėti žvejybą'}
+        </Button>
+        <Button
+          loading={skipLoading}
+          disabled={disabledButtons}
+          variant={ButtonColors.SECONDARY}
+          onClick={handleSkipFishing}
+        >
+          {'Neplaukiu žvejoti'}
+        </Button>
+      </PopUpWithImage>
     </>
   );
 };
@@ -115,37 +111,6 @@ const Container = styled.div`
   gap: 16px;
   width: 100%;
   margin-bottom: 40px;
-`;
-const PopupWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  gap: 16px;
-`;
-const FishingImage = styled.img`
-  width: 116px;
-  height: 116px;
-`;
-
-const Heading = styled.div`
-  font-size: 3.2rem;
-  font-weight: bold;
-`;
-
-const Description = styled.div`
-  margin-bottom: 40px;
-  line-height: 26px;
-  text-align: center;
-  font-weight: 500;
-`;
-
-const StyledButton = styled(Button)`
-  font-size: 2rem;
-  font-weight: 600;
-  border-radius: 30px;
-  height: 56px;
 `;
 
 export default FishingLocation;

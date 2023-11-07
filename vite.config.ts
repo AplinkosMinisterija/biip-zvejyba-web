@@ -8,15 +8,10 @@ export default defineConfig({
   server: {
     open: '/app',
     proxy: {
-      '/fishing/api': {
+      '/api': {
         target: 'http://0.0.0.0:3000/zvejyba/api/',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/fishing\/api/, ''),
-      },
-      '/uetk/api': {
-        target: 'https://uetk.biip.lt/api/',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/uetk\/api/, ''),
+        rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },

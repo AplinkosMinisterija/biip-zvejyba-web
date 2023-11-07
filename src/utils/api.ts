@@ -72,22 +72,14 @@ interface Create {
 class Api {
   private fishingAxios: AxiosInstance;
   private uetkAxios: AxiosInstance;
-  private readonly fishingProxy: string = '/fishing/api';
-  private readonly uetkProxy: string = '/uetk/api';
+  private readonly fishingProxy: string = '/api';
+  private readonly riversLakesSearchUrl: string = 'https://uetk.biip.lt/api/objects/search';
+  private readonly barSearchUrl: string =
+    'https://dev.gis.biip.lt/api/zuvinimas_barai/collections/fishing_sections/items.json?limit=1000';
 
   constructor() {
     this.fishingAxios = Axios.create();
     this.uetkAxios = Axios.create();
-
-    this.uetkAxios.interceptors.request.use(
-      (config: any) => {
-        config.url = this.uetkProxy + config.url;
-        return config;
-      },
-      (error: any) => {
-        Promise.reject(error);
-      },
-    );
 
     this.fishingAxios.interceptors.request.use(
       (config: any) => {
@@ -154,18 +146,18 @@ class Api {
   getAll = async ({ resource, id, ...rest }: GetAll) => {
     const config = this.getCommonConfigs(rest);
     return this.errorWrapper(() =>
-      this.fishingAxios.get(`${resource}${id ? `/${id}` : ''}/all`, config),
+      this.fishingAxios.get(`/${resource}${id ? `/${id}` : ''}/all`, config),
     );
   };
 
   get = async ({ resource, id, ...rest }: GetAll) => {
     const config = this.getCommonConfigs(rest);
     return this.errorWrapper(() =>
-      this.fishingAxios.get(`${resource}${id ? `/${id}` : ''}`, config),
+      this.fishingAxios.get(`/${resource}${id ? `/${id}` : ''}`, config),
     );
   };
 
-  getUetk = async ({ resource, id, ...rest }: GetAll) => {
+  getPublic = async ({ resource, id, ...rest }: GetAll) => {
     const config = this.getCommonConfigs(rest);
     return this.errorWrapper(() => this.uetkAxios.get(`${resource}${id ? `/${id}` : ''}`, config));
   };
@@ -179,13 +171,13 @@ class Api {
     };
 
     return this.errorWrapper(() =>
-      this.fishingAxios.get(`${resource}${id ? `/${id}` : ''}`, config),
+      this.fishingAxios.get(`/${resource}${id ? `/${id}` : ''}`, config),
     );
   };
 
   patch = async ({ resource, id, params }: UpdateOne) => {
     return this.errorWrapper(() =>
-      this.fishingAxios.patch(`${resource}${id ? `/${id}` : ''}`, params),
+      this.fishingAxios.patch(`/${resource}${id ? `/${id}` : ''}`, params),
     );
   };
 
@@ -194,20 +186,20 @@ class Api {
   };
   post = async ({ resource, id, params }: Create) => {
     return this.errorWrapper(() =>
-      this.fishingAxios.post(`${resource}${id ? `/${id}` : ''}`, params),
+      this.fishingAxios.post(`/${resource}${id ? `/${id}` : ''}`, params),
     );
   };
 
   userInfo = async (): Promise<User> => {
-    return this.errorWrapper(() => this.fishingAxios.get('auth/me'));
+    return this.errorWrapper(() => this.fishingAxios.get('/auth/me'));
   };
 
   logout = async () => {
-    return this.errorWrapper(() => this.fishingAxios.post('auth/users/logout'));
+    return this.errorWrapper(() => this.fishingAxios.post('/auth/users/logout'));
   };
 
   authApi = async ({ resource, params }: AuthApiProps) => {
-    return this.errorWrapper(() => this.fishingAxios.post(`${resource}`, params || {}));
+    return this.errorWrapper(() => this.fishingAxios.post(`/${resource}`, params || {}));
   };
 
   refreshToken = async () => {
@@ -391,11 +383,16 @@ class Api {
     });
 
   getLocations = async ({ search, page, query }: any): Promise<any> =>
-    await this.getAll({
-      resource: Resources.SEARCH,
+    await this.getPublic({
+      resource: this.riversLakesSearchUrl,
       query,
       search,
       page,
+    });
+
+  getBars = async (): Promise<any> =>
+    await this.getPublic({
+      resource: this.barSearchUrl,
     });
 }
 

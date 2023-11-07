@@ -70,6 +70,9 @@ export const inputLabels = {
   email: 'El. pašto adresas',
   personalCode: 'Asmens kodas',
   role: 'Teisė',
+  lat: 'Ilguma',
+  lng: 'Platuma',
+  location: 'Telkinio pavadinimas arba baro nr.',
 };
 
 export const deleteDescriptionFirstPart = {

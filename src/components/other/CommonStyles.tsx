@@ -31,6 +31,15 @@ export const Grid = styled.div<{ columns?: number }>`
   }
 `;
 
+export const Row = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+`;
+
 export const SpaceBetweenFlexContainer = styled.div`
   display: flex;
   justify-content: space-between;

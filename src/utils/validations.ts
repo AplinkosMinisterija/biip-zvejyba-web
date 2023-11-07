@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import * as Yup from 'yup';
 import { ToolTypeType } from './constants';
 import { validationTexts } from './texts';
@@ -42,4 +43,28 @@ export const toolSchema = Yup.object().shape({
     }
     return schema.nullable();
   }),
+});
+
+export const locationSchema = Yup.lazy((_, { context }) => {
+  const { x, y, location } = context as any;
+
+  let obj: any = {};
+
+  console.log(obj, 'ob');
+
+  if ((!x || !y) && !location) {
+    obj.location = Yup.string().required(validationTexts.requireSelect);
+  }
+
+  if (!x && !location) {
+    obj.x = Yup.string().required(validationTexts.requireSelect);
+  }
+
+  if (!y && !location) {
+    obj.y = Yup.string().required(validationTexts.requireSelect);
+  }
+
+  if (!isEmpty(obj)) return Yup.object().shape(obj);
+
+  return Yup.mixed().notRequired();
 });
