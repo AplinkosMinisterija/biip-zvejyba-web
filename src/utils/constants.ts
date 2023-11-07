@@ -1,7 +1,13 @@
 export enum Resources {
   FISHINGS = 'fishings',
   USERS = 'users',
+  USER_INVITE = 'tenantUsers/invite',
   ME = 'users/me',
+  TENANT_USERS = 'tenantUsers',
+}
+
+export enum Populations {
+  USER = 'user',
 }
 
 export enum ServerErrors {
@@ -11,7 +17,7 @@ export enum ServerErrors {
   NO_PERMISSION = 'NO_PERMISSION',
 }
 
-export enum RolesTypes {
+export enum RoleTypes {
   USER = 'USER',
   USER_ADMIN = 'USER_ADMIN',
   OWNER = 'OWNER',
@@ -41,3 +47,9 @@ export enum FishingToolsType {
   GROUP = 'GROUP',
   SINGLE = 'SINGLE',
 }
+
+export const intersectionObserverConfig = {
+  root: null,
+  rootMargin: '0px',
+  threshold: 1.0,
+};

@@ -3,6 +3,8 @@ import Fishing from '../pages/Fishing';
 import Profile from '../pages/Profile';
 import Profiles from '../pages/Profiles';
 import Tools from '../pages/Tools';
+import UserForm from '../pages/UserForm';
+import Users from '../pages/Users';
 
 export const slugs = {
   login: `/prisijungimas`,
@@ -17,6 +19,8 @@ export const slugs = {
   fishingToolConnect: (fishingId: string, toolId: string) =>
     `/zvejyba/${fishingId}/irankiai/${toolId}/irankiu_jungimas`,
   tools: '/irankiai',
+  users: '/nariai',
+  user: (id: string) => `/nariai/${id}`,
   profile: '/profilis',
 };
 
@@ -29,10 +33,10 @@ export const routes = [
     regExp: new RegExp('^/profiliai$'),
   },
   {
-    title: 'Kur žvejosite?',
+    title: 'Mano žvejyba',
     subtitle: 'Pasirinkite žvejybos vietą',
     slug: slugs.fishingLocation,
-    iconName: IconName.fourSquares,
+    iconName: IconName.home,
     component: <Fishing />,
     regExp: new RegExp('^/zvejyba$'),
   },
@@ -40,7 +44,6 @@ export const routes = [
     title: 'Mano žvejyba',
     subtitle: 'Pasirinkite žvejybos veiksmą',
     slug: slugs.fishing(':fishingId'),
-    iconName: IconName.home,
     component: <Fishing />,
     regExp: new RegExp('^/zvejyba/[0-9]+$'),
   },
@@ -80,10 +83,17 @@ export const routes = [
   {
     title: 'Nariai',
     subtitle: 'Valdykite įmonės darbuotojų sąrašą',
-    slug: slugs.tools,
-    component: <Tools />,
-    regExp: new RegExp('^/irankiai$'),
+    slug: slugs.users,
+    component: <Users />,
+    tenantOwner: true,
     iconName: IconName.members,
+  },
+  {
+    title: 'Nario informacija',
+    slug: slugs.user(':id'),
+    component: <UserForm />,
+    tenantOwner: true,
+    back: true,
   },
   {
     title: 'Įrankiai',
@@ -103,7 +113,6 @@ export const routes = [
   },
   {
     title: 'Profilis',
-    subtitle: 'Pagindiniai nustatymai',
     slug: slugs.profile,
     component: <Profile />,
     iconName: IconName.profile,

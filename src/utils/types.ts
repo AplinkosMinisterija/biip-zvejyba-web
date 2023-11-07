@@ -1,4 +1,4 @@
-import { RolesTypes } from './constants.ts';
+import { RoleTypes } from './constants';
 
 export type ProfileId = 'personal' | string;
 export interface Profile {
@@ -6,7 +6,7 @@ export interface Profile {
   name: string;
   code?: string;
   email?: string;
-  role: RolesTypes;
+  role: RoleTypes;
   phone: string;
 }
 export interface User {
@@ -14,18 +14,19 @@ export interface User {
   firstName?: string;
   lastName?: string;
   email?: string;
-  role?: RolesTypes;
-  active?: boolean;
+  role?: RoleTypes;
   phone?: string;
-  mobilePhone?: string;
-  password?: string;
-  personalCode?: string;
-  duties?: string;
-  accessDate?: Date;
-  getData?: boolean;
   error?: string;
   profiles?: Profile[];
+  freelancer: boolean;
 }
+
+export interface TenantUser {
+  id?: string;
+  user?: User;
+  role: RoleTypes;
+}
+
 export interface Tenant {
   id: number;
 }
@@ -97,4 +98,13 @@ export interface Fishing {
 export interface FishType {
   id: number;
   label: string;
+}
+
+export interface DeleteInfoProps {
+  deleteButtonText?: string;
+  deleteDescriptionFirstPart?: string;
+  deleteDescriptionSecondPart?: string;
+  deleteTitle?: string;
+  deleteName?: string;
+  handleDelete?: (props?: any) => void;
 }

@@ -1,5 +1,4 @@
 import { Form, Formik } from 'formik';
-import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -7,13 +6,17 @@ import Cookies from 'universal-cookie';
 import Button from '../components/buttons/Button';
 import TextField from '../components/fields/TextField';
 import DefaultLayoutWrapper from '../components/layouts/DefaultLayoutWrapper';
-import { Grid, Title } from '../components/other/CommonStyles';
-import Loader from '../components/other/Loader';
+import {
+  Grid,
+  InfoContainer,
+  InfoSubTitle,
+  InfoTitle,
+  Title,
+} from '../components/other/CommonStyles';
 import { RootState } from '../state/store';
 import { buttonLabels, inputLabels, profileSchema, titles, User, validationTexts } from '../utils';
 import api from '../utils/api';
-import { handleAlert, handleSelectProfile, handleSuccessToast } from '../utils/functions';
-import { useLogoutMutation } from '../utils/hooks';
+import { handleAlert, handleSuccessToast } from '../utils/functions';
 
 export interface UserProps {
   email?: string;
@@ -23,8 +26,6 @@ export interface UserProps {
 const cookies = new Cookies();
 const Profile = () => {
   const user: User = useSelector((state: RootState) => state?.user?.userData);
-  const [loading, setLoading] = useState(false);
-  const { mutateAsync } = useLogoutMutation();
   const token = cookies.get('token');
   const queryClient = useQueryClient();
 
@@ -42,25 +43,18 @@ const Profile = () => {
     },
   );
 
-  const handleSelect = (profileId: string) => {
-    setLoading(true);
-    handleSelectProfile(profileId);
-  };
-
   const initialValues = {
     email: user.email || '',
     phone: user.phone || '',
   };
 
-  if (loading) return <Loader />;
-
   return (
     <DefaultLayoutWrapper>
       <Title>{titles.profile}</Title>
-      <UserInfo>
-        <Name>{`${user.firstName} ${user.lastName}`}</Name>
-        <Email>{`${user.email}`}</Email>
-      </UserInfo>
+      <InfoContainer>
+        <InfoTitle>{`${user.firstName} ${user.lastName}`}</InfoTitle>
+        <InfoSubTitle>{`${user.email}`}</InfoSubTitle>
+      </InfoContainer>
 
       <Formik
         enableReinitialize={true}
@@ -69,7 +63,7 @@ const Profile = () => {
         validateOnChange={false}
         validationSchema={profileSchema}
       >
-        {({ values, errors, setFieldValue, resetForm }: any) => {
+        {({ values, errors, setFieldValue }) => {
           return (
             <FormContainer>
               <Grid columns={1}>
@@ -119,10 +113,6 @@ const UserInfo = styled.div`
 const Name = styled.div`
   font-size: 2.4rem;
   font-weight: 600;
-`;
-
-const ButtonContainer = styled.div`
-  width: 100%;
 `;
 
 const Email = styled.div`
