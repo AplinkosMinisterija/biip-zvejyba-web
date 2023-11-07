@@ -3,16 +3,20 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { manifestForPlugIn } from './manifest';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), VitePWA(manifestForPlugIn)],
   server: {
     open: '/app',
     proxy: {
-      '/api': {
+      '/fishing/api': {
         target: 'http://0.0.0.0:3000/zvejyba/api/',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace(/^\/fishing\/api/, ''),
+      },
+      '/uetk/api': {
+        target: 'https://uetk.biip.lt/api/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/uetk\/api/, ''),
       },
     },
   },

@@ -20,8 +20,8 @@ const ProfileItem = ({ fisher, onClick }: FishStockerItemProps) => {
     <Container onClick={() => onClick()}>
       <StatusContainer>
         <StyledAvatar
-          name={fisher.name}
-          surname={fisher.lastName}
+          firstName={fisher.name}
+          lastName={fisher.lastName}
           icon={fisher.freelancer && <BiipIcon src="/b-icon.png" />}
         />
       </StatusContainer>

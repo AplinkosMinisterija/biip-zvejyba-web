@@ -1,6 +1,6 @@
-import Icon, { IconName } from '../other/Icon.tsx';
+import Icon, { IconName } from '../other/Icon';
 import styled from 'styled-components';
-import { device } from '../../utils/theme.ts';
+import { device } from '../../utils/theme';
 
 const BackHeader = ({ title }: any) => {
   return (
