@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { device } from '../../utils/theme.ts';
+import { device } from '../../utils/theme';
 import { FileProps } from '../../utils/types';
 import Icon from '../other/Icon';
 import LoaderComponent from '../other/LoaderComponent';

@@ -20,8 +20,8 @@ const ProfileItem = ({ fisher, onClick }: FishStockerItemProps) => {
     <Container onClick={() => onClick()}>
       <StatusContainer>
         <StyledAvatar
-          name={fisher.name}
-          surname={fisher.lastName}
+          firstName={fisher.name}
+          lastName={fisher.lastName}
           icon={fisher.freelancer && <BiipIcon src="/b-icon.png" />}
         />
       </StatusContainer>
@@ -107,8 +107,8 @@ const SecondRow = styled.div`
 `;
 
 const TenantCode = styled.div`
-    font: normal normal 600 1.4rem/19px;
-    color: ${({ theme }) => theme.colors.text.secondary};
+  font: normal normal 600 1.4rem/19px;
+  color: ${({ theme }) => theme.colors.text.secondary};
 `;
 
 const BiipIcon = styled.img`

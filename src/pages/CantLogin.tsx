@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { device } from '../utils/theme';
-import { LoginLayout } from '../components/layouts/Login.tsx';
+import { LoginLayout } from '../components/layouts/Login';
 
 export const CantLogin = () => {
   return (

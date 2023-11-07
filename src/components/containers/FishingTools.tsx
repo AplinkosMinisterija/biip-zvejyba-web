@@ -11,12 +11,12 @@ import { useState } from 'react';
 import ToolCardSelectable from '../other/ToolCardSelecetable';
 import SwitchButton from '../buttons/SwitchButton';
 import ToolsGroupCard from '../other/ToolsGroupCard';
-import { device } from '../../utils/theme.ts';
-import { ToolGroup } from '../../utils/types.ts';
-import MenuButton from '../buttons/MenuButton.tsx';
-import { IconName } from '../other/Icon.tsx';
+import { device } from '../../utils/theme';
+import { ToolGroup } from '../../utils/types';
+import MenuButton from '../buttons/MenuButton';
+import { IconName } from '../other/Icon';
 import BuildTools from './BuildTools';
-import ToolActions from './ToolActions.tsx';
+import ToolActions from './ToolActions';
 
 const FishingTools = ({ fishing }: any) => {
   const locationType: LocationType = fishing.type;

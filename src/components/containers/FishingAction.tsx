@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import LargeButton from '../buttons/LargeButton.tsx';
-import { Variant } from '../buttons/FishingLocationButton.tsx';
+import LargeButton from '../buttons/LargeButton';
+import { Variant } from '../buttons/FishingLocationButton';
 import { useMutation, useQueryClient } from 'react-query';
-import api from '../../utils/api.ts';
+import api from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { slugs } from '../../utils/routes';
 
