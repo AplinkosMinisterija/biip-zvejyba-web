@@ -6,7 +6,7 @@ import { TenantUser, User } from './types';
 const cookies = new Cookies();
 
 interface GetAll {
-  resource: string;
+  resource?: string;
   page?: number;
   populate?: string[];
   municipalityId?: string;
@@ -70,12 +70,26 @@ interface Create {
 }
 
 class Api {
-  private AuthApiAxios: AxiosInstance;
+  private fishingAxios: AxiosInstance;
+  private uetkAxios: AxiosInstance;
+  private readonly fishingProxy: string = '/fishing/api';
+  private readonly uetkProxy: string = '/uetk/api';
 
   constructor() {
-    this.AuthApiAxios = Axios.create();
+    this.fishingAxios = Axios.create();
+    this.uetkAxios = Axios.create();
 
-    this.AuthApiAxios.interceptors.request.use(
+    this.uetkAxios.interceptors.request.use(
+      (config: any) => {
+        config.url = this.uetkProxy + config.url;
+        return config;
+      },
+      (error: any) => {
+        Promise.reject(error);
+      },
+    );
+
+    this.fishingAxios.interceptors.request.use(
       (config: any) => {
         if (!config.url) {
           return config;
@@ -87,6 +101,7 @@ class Api {
 
           if (!isNaN(profileId)) config.headers!['X-Profile'] = profileId;
         }
+        config.url = this.fishingProxy + config.url;
 
         return config;
       },
@@ -101,8 +116,7 @@ class Api {
     return data;
   };
 
-  getAll = async ({
-    resource,
+  getCommonConfigs = ({
     page,
     populate,
     sort,
@@ -115,9 +129,9 @@ class Api {
     scope,
     geom,
     fields,
-    id,
+    responseType,
   }: GetAll) => {
-    const config = {
+    return {
       params: {
         pageSize: pageSize || 10,
         page: page || 1,
@@ -132,53 +146,28 @@ class Api {
         ...(!!query && { query }),
         ...(!!scope && { scope }),
         ...(!!fields && { fields }),
+        ...(!!responseType && { responseType }),
       },
     };
+  };
 
+  getAll = async ({ resource, id, ...rest }: GetAll) => {
+    const config = this.getCommonConfigs(rest);
     return this.errorWrapper(() =>
-      this.AuthApiAxios.get(`/api/${resource}${id ? `/${id}` : ''}/all`, config),
+      this.fishingAxios.get(`${resource}${id ? `/${id}` : ''}/all`, config),
     );
   };
 
-  get = async ({
-    resource,
-    page,
-    populate,
-    sort,
-    filter,
-    pageSize,
-    search,
-    municipalityId,
-    query,
-    searchFields,
-    scope,
-    geom,
-    fields,
-    id,
-    responseType,
-  }: GetAll) => {
-    const config = {
-      params: {
-        pageSize: pageSize || 10,
-        page: page || 1,
-        ...(!!populate && { populate }),
-        ...(!!searchFields && { searchFields }),
-        ...(!!search && { search }),
-        ...(!!municipalityId && { municipalityId }),
-        ...(!!geom && { geom }),
-        ...(!!filter && { filter }),
-        ...(!!sort && { sort }),
-        ...(!!geom && { geom }),
-        ...(!!query && { query }),
-        ...(!!scope && { scope }),
-        ...(!!fields && { fields }),
-      },
-      ...(!!responseType && { responseType }),
-    };
-
+  get = async ({ resource, id, ...rest }: GetAll) => {
+    const config = this.getCommonConfigs(rest);
     return this.errorWrapper(() =>
-      this.AuthApiAxios.get(`/api/${resource}${id ? `/${id}` : ''}`, config),
+      this.fishingAxios.get(`${resource}${id ? `/${id}` : ''}`, config),
     );
+  };
+
+  getUetk = async ({ resource, id, ...rest }: GetAll) => {
+    const config = this.getCommonConfigs(rest);
+    return this.errorWrapper(() => this.uetkAxios.get(`${resource}${id ? `/${id}` : ''}`, config));
   };
 
   getOne = async ({ resource, id, populate, scope }: GetOne) => {
@@ -190,35 +179,35 @@ class Api {
     };
 
     return this.errorWrapper(() =>
-      this.AuthApiAxios.get(`/api/${resource}${id ? `/${id}` : ''}`, config),
+      this.fishingAxios.get(`${resource}${id ? `/${id}` : ''}`, config),
     );
   };
 
   patch = async ({ resource, id, params }: UpdateOne) => {
     return this.errorWrapper(() =>
-      this.AuthApiAxios.patch(`/api/${resource}${id ? `/${id}` : ''}`, params),
+      this.fishingAxios.patch(`${resource}${id ? `/${id}` : ''}`, params),
     );
   };
 
   delete = async ({ resource, id }: Delete) => {
-    return this.errorWrapper(() => this.AuthApiAxios.delete(`/api/${resource}/${id}`));
+    return this.errorWrapper(() => this.fishingAxios.delete(`/api/${resource}/${id}`));
   };
   post = async ({ resource, id, params }: Create) => {
     return this.errorWrapper(() =>
-      this.AuthApiAxios.post(`/api/${resource}${id ? `/${id}` : ''}`, params),
+      this.fishingAxios.post(`${resource}${id ? `/${id}` : ''}`, params),
     );
   };
 
   userInfo = async (): Promise<User> => {
-    return this.errorWrapper(() => this.AuthApiAxios.get('/api/auth/me'));
+    return this.errorWrapper(() => this.fishingAxios.get('auth/me'));
   };
 
   logout = async () => {
-    return this.errorWrapper(() => this.AuthApiAxios.post('/api/auth/users/logout'));
+    return this.errorWrapper(() => this.fishingAxios.post('auth/users/logout'));
   };
 
   authApi = async ({ resource, params }: AuthApiProps) => {
-    return this.errorWrapper(() => this.AuthApiAxios.post(`/api/${resource}`, params || {}));
+    return this.errorWrapper(() => this.fishingAxios.post(`${resource}`, params || {}));
   };
 
   refreshToken = async () => {
@@ -375,6 +364,14 @@ class Api {
     await this.delete({
       resource: Resources.TENANT_USERS,
       id,
+    });
+
+  getLocations = async ({ search, page, query }: any): Promise<any> =>
+    await this.getAll({
+      resource: Resources.SEARCH,
+      query,
+      search,
+      page,
     });
 }
 

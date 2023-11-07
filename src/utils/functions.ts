@@ -1,5 +1,6 @@
 import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
+import api from './api';
 import { LOCATION_ERRORS } from './constants';
 import { routes } from './routes';
 import { validationTexts } from './texts';
@@ -142,4 +143,8 @@ export const getCurrentLocation = ({
 
 export const getCurrentRoute = (pathname: any) => {
   return routes?.find((route: any) => route.regExp.test(pathname));
+};
+
+export const getLocationList = async (input: string, page: number | string, query: any) => {
+  return await api.getLocations({ search: input, page, query });
 };

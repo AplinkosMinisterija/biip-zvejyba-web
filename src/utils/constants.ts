@@ -4,6 +4,7 @@ export enum Resources {
   USER_INVITE = 'tenantUsers/invite',
   ME = 'users/me',
   TENANT_USERS = 'tenantUsers',
+  SEARCH = 'objects/search',
 }
 
 export enum Populations {
