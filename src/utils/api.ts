@@ -394,6 +394,11 @@ class Api {
     await this.getPublic({
       resource: this.barSearchUrl,
     });
+
+  getFishTypes = async (): Promise<{ label: string; photo: any }[]> =>
+    await this.getAll({
+      resource: Resources.FISH_TYPES,
+    });
 }
 
 export default new Api();

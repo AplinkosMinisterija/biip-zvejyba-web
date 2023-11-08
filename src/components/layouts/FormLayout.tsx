@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import {
   FormTitle,
+  Grid,
   IconContainer,
   InfoContainer,
   InfoSubTitle,
   InfoTitle,
-  SpaceBetweenFlexContainer,
 } from '../other/CommonStyles';
 import DeleteComponent from '../other/DeleteComponent';
 import Icon, { IconName } from '../other/Icon';
@@ -15,7 +15,7 @@ const FormLayout = ({ children, title, infoTitle, infoSubTitle, back, deleteInfo
   const navigate = useNavigate();
   return (
     <DefaultLayoutWrapper back={back}>
-      <SpaceBetweenFlexContainer>
+      <Grid columns={3}>
         <>
           <IconContainer onClick={() => navigate(-1)}>
             <Icon name={IconName.back} />
@@ -23,7 +23,7 @@ const FormLayout = ({ children, title, infoTitle, infoSubTitle, back, deleteInfo
           <FormTitle>{title}</FormTitle>
           {deleteInfo && <DeleteComponent deleteInfo={deleteInfo} />}
         </>
-      </SpaceBetweenFlexContainer>
+      </Grid>
       <InfoContainer>
         <InfoTitle>{infoTitle}</InfoTitle>
         <InfoSubTitle>{infoSubTitle}</InfoSubTitle>

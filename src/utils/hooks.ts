@@ -59,6 +59,12 @@ export const useEGatesSign = () => {
   return { isLoading, mutateAsync };
 };
 
+export const useFishTypes = () => {
+  const { data, isLoading } = useQuery(['location'], api.getFishTypes);
+
+  return { fishTypes: data, isLoading };
+};
+
 export const useGetCurrentProfile = () => {
   const profiles = useSelector((state: RootState) => state.user.userData.profiles);
   const profileId = cookies.get('profileId');

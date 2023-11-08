@@ -1,4 +1,5 @@
 import { IconName } from '../components/other/Icon';
+import CaughtFishesWithTool from '../pages/CaughtFishesWithTool';
 import Fishing from '../pages/Fishing';
 import Profiles from '../pages/Profiles';
 import Tool from '../pages/Tool';
@@ -20,6 +21,7 @@ export const slugs = {
     `/zvejyba/${fishingId}/irankiai/${toolId}/irankiu_jungimas`,
   tools: '/irankiai',
   tool: (id: string) => `/irankiai/${id}`,
+  caughtFishes: (id: string) => `/irankiai/${id}/sugautos-zuvys`,
   users: '/nariai',
   user: (id: string) => `/nariai/${id}`,
   profile: '/profilis',
@@ -95,7 +97,7 @@ export const routes = [
   },
   {
     title: 'Nario informacija',
-    slug: slugs.user(':id'),
+    slug: slugs.user(Ids.ID),
     component: <UserForm />,
     tenantOwner: true,
     back: true,
@@ -128,5 +130,11 @@ export const routes = [
     title: 'Įrankio informacija',
     slug: slugs.tool(Ids.ID),
     component: <Tool />,
+  },
+  {
+    title: 'Apytikslis svoris, kg',
+    slug: slugs.caughtFishes(Ids.ID),
+    component: <CaughtFishesWithTool />,
+    bacK: true,
   },
 ];

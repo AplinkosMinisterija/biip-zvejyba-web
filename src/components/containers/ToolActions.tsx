@@ -1,4 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
+import { useNavigate } from 'react-router';
+import { slugs } from '../../utils';
 import api from '../../utils/api';
 import MenuButton from '../buttons/MenuButton';
 import PopUpWithTitles from '../layouts/PopUpWithTitle';
@@ -6,6 +8,7 @@ import { IconName } from '../other/Icon';
 
 const ToolActions = ({ toolGroup, onReturn, visible, coordinates, location }: any) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { mutateAsync: returnToolsMutation } = useMutation(
     () =>
@@ -34,7 +37,13 @@ const ToolActions = ({ toolGroup, onReturn, visible, coordinates, location }: an
       title={toolGroup?.tools[0]?.toolType?.label}
       subTitle={toolGroup?.tools?.map((tool: any) => tool.sealNr).join(', ')}
     >
-      <MenuButton label="Sverti žuvį laive " icon={IconName.scales} onClick={() => {}} />
+      <MenuButton
+        label="Sverti žuvį laive "
+        icon={IconName.scales}
+        onClick={() => {
+          navigate(slugs.caughtFishes(toolGroup?.id));
+        }}
+      />
       <MenuButton label="Sujungti įrankius " icon={IconName.connection} onClick={() => {}} />
       <MenuButton
         label="Sugrąžinti į sandėlį "

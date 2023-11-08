@@ -5,6 +5,7 @@ export enum Resources {
   ME = 'users/me',
   TOOLS = 'tools',
   TENANT_USERS = 'tenantUsers',
+  FISH_TYPES = 'fishTypes',
   SEARCH = 'objects/search',
 }
 
