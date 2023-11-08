@@ -11,6 +11,8 @@ export const FormTitle = styled.div`
   color: ${({ theme }) => theme.colors.text.primary};
   font-size: 2rem;
   font-weight: 800;
+  width: 100%;
+  text-align: center;
 `;
 
 export const Subtitle = styled.div`

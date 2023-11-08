@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 import {
   FormTitle,
-  Grid,
   IconContainer,
   InfoContainer,
   InfoSubTitle,
@@ -15,15 +15,23 @@ const FormLayout = ({ children, title, infoTitle, infoSubTitle, back, deleteInfo
   const navigate = useNavigate();
   return (
     <DefaultLayoutWrapper back={back}>
-      <Grid columns={3}>
+      <FormTitleGrid>
         <>
-          <IconContainer onClick={() => navigate(-1)}>
-            <Icon name={IconName.back} />
-          </IconContainer>
-          <FormTitle>{title}</FormTitle>
-          {deleteInfo && <DeleteComponent deleteInfo={deleteInfo} />}
+          <GridItem justify={'start'}>
+            <IconContainer onClick={() => navigate(-1)}>
+              <Icon name={IconName.back} />
+            </IconContainer>
+          </GridItem>
+          <GridItem justify={'center'}>
+            <FormTitle>{title}</FormTitle>
+          </GridItem>
+          {deleteInfo && (
+            <GridItem justify={'end'}>
+              <DeleteComponent deleteInfo={deleteInfo} />
+            </GridItem>
+          )}
         </>
-      </Grid>
+      </FormTitleGrid>
       <InfoContainer>
         <InfoTitle>{infoTitle}</InfoTitle>
         <InfoSubTitle>{infoSubTitle}</InfoSubTitle>
@@ -32,5 +40,21 @@ const FormLayout = ({ children, title, infoTitle, infoSubTitle, back, deleteInfo
     </DefaultLayoutWrapper>
   );
 };
+
+export const FormTitleGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 16px 0;
+  width: 100%;
+`;
+
+export const GridItem = styled.div<{ justify: string }>`
+  display: grid;
+  align-items: center;
+  justify-items: start;
+  justify-items: ${({ justify }) => justify};
+  width: 100%;
+`;
 
 export default FormLayout;

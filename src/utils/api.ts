@@ -1,7 +1,7 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import Cookies from 'universal-cookie';
 import { LocationType, Populations, Resources } from './constants';
-import { TenantUser, Tool, ToolFormProps, User } from './types';
+import { BuiltTool, TenantUser, Tool, ToolFormProps, User } from './types';
 
 const cookies = new Cookies();
 
@@ -274,6 +274,7 @@ class Api {
   getAvailableTools = async () => {
     return this.get({
       resource: 'tools/available',
+      populate: ['toolType'],
     });
   };
 
@@ -288,6 +289,21 @@ class Api {
     });
   };
 
+  weighTools = async (
+    params: {
+      data: { [key: string]: number };
+      coordinates: { x: number; y: number };
+      location: Location;
+    },
+    id: string,
+  ) => {
+    return this.post({
+      resource: 'toolsGroups/weigh',
+      params,
+      id,
+    });
+  };
+
   removeTool = async (
     params: {
       coordinates: { x: number; y: number };
@@ -298,6 +314,14 @@ class Api {
     return this.post({
       resource: 'toolsGroups/remove',
       params,
+      id,
+    });
+  };
+
+  getBuiltTool = async (id: string): Promise<BuiltTool> => {
+    return this.getOne({
+      resource: `builtToolsGroups`,
+      populate: ['tools'],
       id,
     });
   };
@@ -395,7 +419,7 @@ class Api {
       resource: this.barSearchUrl,
     });
 
-  getFishTypes = async (): Promise<{ label: string; photo: any }[]> =>
+  getFishTypes = async (): Promise<{ id: string; label: string; photo: any }[]> =>
     await this.getAll({
       resource: Resources.FISH_TYPES,
     });

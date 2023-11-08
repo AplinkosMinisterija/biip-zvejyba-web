@@ -18,6 +18,8 @@ export enum ServerErrors {
   WRONG_PASSWORD = 'Wrong password.',
   NOT_FOUND = 'NOT_FOUND',
   NO_PERMISSION = 'NO_PERMISSION',
+  TOO_MANY_TOOLS = 'To many tool types',
+  NO_TOOLS_IN_STORAGE = 'No tools in storage',
 }
 
 export enum RoleTypes {

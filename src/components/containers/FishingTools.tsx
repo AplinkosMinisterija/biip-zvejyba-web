@@ -29,19 +29,16 @@ const FishingTools = ({ fishing }: any) => {
   const [showBuildTools, setShowBuildTools] = useState(false);
   const [showNotIdentifiedPopUp, setShowNotIdentifiedPopUp] = useState(false);
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
-  const [location, setLocation] = useState<any>();
   const [selectedToolsGroup, setSelectedToolsGroup] = useState<ToolGroup | null>(null);
   const isEstuary = locationType === LocationType.ESTUARY;
+  const queryCache = queryClient.getQueryCache();
+  const cachedLocation = queryCache.find(['location'])?.state?.data;
 
-  const { isLoading: locationLoading, isFetching: locationFetching } = useQuery(
-    ['location'],
-    () => getLocationMutation(coordinates),
-    {
-      cacheTime: 0,
-      staleTime: 0,
-      enabled: !location,
-    },
-  );
+  const {
+    data: location,
+    isLoading: locationLoading,
+    isFetching: locationFetching,
+  } = useQuery(['location'], () => getLocationMutation(coordinates), { enabled: !cachedLocation });
 
   const { data: bars } = useQuery(['bars'], async () => getBars(), {
     enabled: isEstuary,
@@ -59,7 +56,7 @@ const FishingTools = ({ fishing }: any) => {
       onSuccess: (value) => {
         if (!value) return setShowNotIdentifiedPopUp(true);
 
-        setLocation(value);
+        queryClient.setQueryData('location', value);
       },
       onError: () => {
         handleAlert();
@@ -106,14 +103,19 @@ const FishingTools = ({ fishing }: any) => {
             </Row>
             {builtTools?.map((toolsGroup: any) => (
               <ToolsGroupCard
+                isEstuary={isEstuary}
                 key={toolsGroup.id}
                 toolsGroup={toolsGroup}
                 onSelect={setSelectedToolsGroup}
               />
             ))}
-            <Footer>
-              <StyledButton onClick={() => setShowBuildTools(true)}>Pastatyti įrankį</StyledButton>
-            </Footer>
+            {location?.name && (
+              <Footer>
+                <StyledButton onClick={() => setShowBuildTools(true)}>
+                  Pastatyti įrankį
+                </StyledButton>
+              </Footer>
+            )}
           </>
         )}
       </Container>

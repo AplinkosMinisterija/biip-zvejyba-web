@@ -24,7 +24,7 @@ const Content = styled.div<{ $numberOfColumns?: number }>`
     Array($numberOfColumns || 2)
       .fill('1fr')
       .join(' ')};
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.background.primary};
   padding: 4px;
   border-radius: 99px;
 `;

@@ -3,12 +3,11 @@ import NumericTextField from '../fields/NumericTextField';
 
 interface FishRowProp {
   onChange: (value: any) => void;
-  fish: { label: string; photo: any };
-  value: any;
+  fish: { label: string; photo: any; value: any };
 }
 
-const FishRow = ({ onChange, fish, value = 2 }: FishRowProp) => {
-  const { label, photo } = fish;
+const FishRow = ({ onChange, fish }: FishRowProp) => {
+  const { label, photo, value } = fish;
 
   return (
     <Row>
@@ -25,7 +24,9 @@ const FishRow = ({ onChange, fish, value = 2 }: FishRowProp) => {
           <Caught>{`Sagauta 2 kg`}</Caught>
         </TextColumn>
         <Row>
-          <Button onClick={() => value && onChange(Number(value) - 1)}>-</Button>
+          <Button type="button" onClick={() => Number(value) && onChange(Number(value))}>
+            -
+          </Button>
           <StyledNumericTextField
             type="number"
             label={''}
@@ -33,7 +34,9 @@ const FishRow = ({ onChange, fish, value = 2 }: FishRowProp) => {
             value={value}
             onChange={(value) => onChange(value)}
           />
-          <Button onClick={() => onChange(Number(value) + 1)}>+</Button>
+          <Button type="button" onClick={() => onChange(Number(value) + 1)}>
+            +
+          </Button>
         </Row>
       </Column>
     </Row>

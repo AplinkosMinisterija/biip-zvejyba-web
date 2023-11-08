@@ -15,13 +15,13 @@ export const slugs = {
   fishing: (fishingId: string) => `/zvejyba/${fishingId}`,
   fishingTools: (fishingId: string) => `/zvejyba/${fishingId}/irankiai`,
   fishingWeight: (fishingId: string) => `/zvejyba/${fishingId}/svoris`,
-  fishingToolFish: (fishingId: string, toolId: string) =>
-    `/zvejyba/${fishingId}/irankiai/${toolId}/zuvis`,
+  fishingToolCaughtFishes: (fishingId: string, toolId: string) =>
+    `/zvejyba/${fishingId}/irankiai/${toolId}/sugautos-zuvys`,
   fishingToolConnect: (fishingId: string, toolId: string) =>
     `/zvejyba/${fishingId}/irankiai/${toolId}/irankiu_jungimas`,
   tools: '/irankiai',
   tool: (id: string) => `/irankiai/${id}`,
-  caughtFishes: (id: string) => `/irankiai/${id}/sugautos-zuvys`,
+
   users: '/nariai',
   user: (id: string) => `/nariai/${id}`,
   profile: '/profilis',
@@ -30,6 +30,8 @@ export const slugs = {
 export type RouteType = (typeof routes)[0];
 
 export enum Ids {
+  FISHING_ID = ':fishingId',
+  TOOL_ID = ':toolId',
   ID = ':id',
 }
 
@@ -60,12 +62,7 @@ export const routes = [
     regExp: new RegExp('^/zvejyba/[0-9]+/irankiai$'),
     back: true,
   },
-  {
-    slug: slugs.fishingToolFish(':fishingId', ':toolId'),
-    component: <Fishing />,
-    regExp: new RegExp('^/zvejyba/[0-9]+/irankiai[0-9]+/zuvis$'),
-    back: true,
-  },
+
   {
     slug: slugs.fishingToolConnect(':fishingId', ':toolId'),
     component: <Fishing />,
@@ -133,7 +130,7 @@ export const routes = [
   },
   {
     title: 'Apytikslis svoris, kg',
-    slug: slugs.caughtFishes(Ids.ID),
+    slug: slugs.fishingToolCaughtFishes(Ids.FISHING_ID, Ids.TOOL_ID),
     component: <CaughtFishesWithTool />,
     bacK: true,
   },

@@ -1,4 +1,5 @@
 import { Form } from 'formik';
+import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +10,7 @@ import DefaultLayout from '../components/layouts/DefaultLayout';
 import PopUpWithTitles from '../components/layouts/PopUpWithTitle';
 import { ListContainer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
+import { NotFound } from '../components/other/NotFound';
 import ToolCard from '../components/other/ToolCard';
 import { slugs } from '../utils';
 import api from '../utils/api';
@@ -60,16 +62,24 @@ const Tools = () => {
     });
   };
 
+  if (toolsLoading) {
+    return <LoaderComponent />;
+  }
+
   return (
     <>
       <DefaultLayout title={currentRoute?.title} subtitle={currentRoute?.subtitle}>
         <Container>
-          {toolsLoading && <LoaderComponent />}
-          <ListContainer>
-            {tools?.map((tool: any) => (
-              <ToolCard tool={tool} onClick={() => navigate(slugs.tool(tool.id))} />
-            ))}
-          </ListContainer>
+          {isEmpty(tools) ? (
+            <NotFound message={'Nėra sukurtų įrankių sandelyje'} />
+          ) : (
+            <ListContainer>
+              {tools?.map((tool: any) => (
+                <ToolCard tool={tool} onClick={() => navigate(slugs.tool(tool.id))} />
+              ))}
+            </ListContainer>
+          )}
+
           <Button onClick={() => setShowPopup(true)}>{buttonLabels.newTool}</Button>
         </Container>
       </DefaultLayout>

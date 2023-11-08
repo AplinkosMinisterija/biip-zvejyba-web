@@ -17,18 +17,18 @@ const FishingLocation = () => {
   const [location, setLocation] = useState<LocationType | null>(null);
   const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
   const { isLoading: startLoading, mutateAsync: startFishing } = useMutation(api.startFishing, {
-    onError: () => {
-      //TODO: display error
+    onError: ({ response }) => {
+      handleAlert(response);
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries('currentFishing');
     },
     retry: false,
   });
 
   const { isLoading: skipLoading, mutateAsync: skipFishing } = useMutation(api.skipFishing, {
-    onError: () => {
-      //TODO: display error
+    onError: ({ response }) => {
+      handleAlert(response);
     },
     onSuccess: () => {
       //TODO: display success message

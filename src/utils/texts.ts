@@ -15,6 +15,8 @@ export const validationTexts: any = {
   validLastName: 'Įveskite taisyklingą pavardę',
   [ServerErrors.WRONG_PASSWORD]: 'Blogas elektroninis paštas arba slaptažodis',
   [ServerErrors.USER_NOT_FOUND]: 'Naudotojo su tokiu el. paštu nėra',
+  [ServerErrors.TOO_MANY_TOOLS]: 'Galimos tik vieno  tipo  įrankių grupės',
+  [ServerErrors.NO_TOOLS_IN_STORAGE]: 'Neturite įrankių sandelyje',
   badFileTypes: 'Blogi failų tipai',
   fileSizesExceeded: 'Viršyti failų dydžiai',
   personalCode: 'Neteisingas asmens kodo formatas',

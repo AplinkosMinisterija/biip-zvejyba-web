@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { slugs } from '../../utils';
 import api from '../../utils/api';
 import MenuButton from '../buttons/MenuButton';
@@ -9,6 +10,7 @@ import { IconName } from '../other/Icon';
 const ToolActions = ({ toolGroup, onReturn, visible, coordinates, location }: any) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { fishingId } = useParams();
 
   const { mutateAsync: returnToolsMutation } = useMutation(
     () =>
@@ -41,7 +43,7 @@ const ToolActions = ({ toolGroup, onReturn, visible, coordinates, location }: an
         label="Sverti žuvį laive "
         icon={IconName.scales}
         onClick={() => {
-          navigate(slugs.caughtFishes(toolGroup?.id));
+          navigate(slugs.fishingToolCaughtFishes(fishingId!, toolGroup?.id));
         }}
       />
       <MenuButton label="Sujungti įrankius " icon={IconName.connection} onClick={() => {}} />

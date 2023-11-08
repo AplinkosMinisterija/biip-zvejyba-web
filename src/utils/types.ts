@@ -58,6 +58,42 @@ export interface ToolType {
   type: ToolTypeType;
 }
 
+export interface BuiltTool {
+  buildEvent: {
+    id: string;
+    data: any;
+    geom: any;
+    location: Location;
+  };
+  weighingEvent: {
+    id: string;
+    data: { [key: string | number]: string };
+  };
+  type: string;
+  tools: Tool[];
+}
+
+export interface Location {
+  id: string;
+  name: string;
+  municipality: string;
+}
+
+export interface Tool {
+  id: number;
+  sealNr: string;
+  data: {
+    eyeSize: number;
+    eyeSize2: number;
+    eyeSize3: number;
+    netLength: number;
+  };
+  toolType: ToolType;
+  toolGroup: ToolGroup['id'];
+  tenant: Tenant['id'];
+  user: User['id'];
+}
+
 export interface Tool {
   id: number;
   sealNr: string;

@@ -4,8 +4,7 @@ import api from './api';
 import { LOCATION_ERRORS, ToolTypeType } from './constants';
 import { routes } from './routes';
 import { validationTexts } from './texts';
-import { Profile, ProfileId, ResponseProps, UpdateTokenProps } from './types';
-
+import { BuiltTool, Profile, ProfileId, ResponseProps, UpdateTokenProps } from './types';
 const cookies = new Cookies();
 
 export const clearCookies = () => {
@@ -15,17 +14,17 @@ export const clearCookies = () => {
   cookies.remove('profileId', { path: '/' });
 };
 
+const getErrorMEssage = (responseError: string) =>
+  validationTexts[responseError as keyof typeof validationTexts] || validationTexts.error;
+
 export const handleAlert = (responseError: string = 'error') => {
-  toast.error(
-    validationTexts[responseError as keyof typeof validationTexts] || validationTexts.error,
-    {
-      position: 'top-center',
-      autoClose: 5000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-    },
-  );
+  toast.error(getReactQueryErrorMessage(getErrorMEssage(responseError)), {
+    position: 'top-center',
+    autoClose: 5000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+  });
 };
 
 export const handleSuccessToast = (message: string) => {
@@ -156,14 +155,39 @@ export const getLocationList = async (input: string, page: number | string, quer
   return await api.getLocations({ search: input, page, query });
 };
 
+function getCentroid(bbox: number[]) {
+  const minX = bbox[0];
+  const minY = bbox[1];
+  const maxX = bbox[2];
+  const maxY = bbox[3];
+
+  const centroidX = (minX + maxX) / 2;
+  const centroidY = (minY + maxY) / 2;
+
+  return { x: centroidX, y: centroidY };
+}
+
 export const getBars = async () => {
   const bars = await api.getBars();
 
   return bars?.features.map((item: any) => {
+    const { x, y } = getCentroid(item?.bbox.map((coordinate: string) => Number(coordinate)));
+
     return {
-      x: Number(item?.bbox[0]),
-      y: Number(item?.bbox[1]),
+      x,
+      y,
       name: item?.properties?.name,
     };
   });
 };
+
+export const getBuiltToolInfo = (toolsGroup: BuiltTool) => {
+  return {
+    label: toolsGroup?.tools?.[0]?.toolType?.label,
+    sealNr: toolsGroup.tools?.map((tool: any) => tool?.sealNr)?.join(', '),
+    isGroup: toolsGroup?.tools?.length > 1,
+    locationName: toolsGroup?.buildEvent?.location?.name,
+  };
+};
+
+export const getReactQueryErrorMessage = (response: any) => response?.data?.message;

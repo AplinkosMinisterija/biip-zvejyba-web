@@ -34,7 +34,7 @@ const BuildTools = ({ onClose, location, coordinates }: any) => {
         onClose();
       },
       onError: ({ response }: any) => {
-        handleAlert();
+        handleAlert(response);
       },
     },
   );

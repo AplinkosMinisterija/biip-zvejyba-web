@@ -10,6 +10,7 @@ export interface Theme {
     error: string;
     success: string;
     powder: string;
+    purple: string;
     hover: {
       primary: string;
       secondary: string;
@@ -30,7 +31,7 @@ export interface Theme {
       retroBlack: string;
     };
     border: string;
-    background: string;
+    background: { primary: string; success: string };
     largeButton: {
       FLORAL_WHITE: string;
       GHOST_WHITE: string;
@@ -50,8 +51,9 @@ export const theme: Theme = {
     transparent: 'transparent',
     label: '#4B5565',
     error: '#FE5B78',
-    success: '#4FB922',
+    success: '#258800',
     powder: '#FFFFFFCC',
+    purple: '#8a33fe',
 
     hover: {
       primary: '#102EB1',
@@ -73,7 +75,7 @@ export const theme: Theme = {
       retroBlack: '#101010',
     },
     border: '#CDD5DF',
-    background: '#f7f7f7',
+    background: { primary: '#f7f7f7', success: '#eafbf6' },
     largeButton: {
       FLORAL_WHITE: '#FFF5E8',
       GHOST_WHITE: '#EBEDFD', //'#F0F0FF'
