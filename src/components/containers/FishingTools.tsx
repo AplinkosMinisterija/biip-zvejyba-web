@@ -1,4 +1,5 @@
 import { Form, Formik } from 'formik';
+import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -18,6 +19,7 @@ import PopUpWithImage from '../layouts/PopUpWithImage';
 import { Grid, IconContainer, Row } from '../other/CommonStyles';
 import Icon, { IconName } from '../other/Icon';
 import LoaderComponent from '../other/LoaderComponent';
+import { NotFound } from '../other/NotFound';
 import ToolsGroupCard from '../other/ToolsGroupCard';
 import BuildTools from './BuildTools';
 import ToolActions from './ToolActions';
@@ -101,20 +103,27 @@ const FishingTools = ({ fishing }: any) => {
                 <EditIcon name={IconName.edit} />
               </IconContainer>
             </Row>
-            {builtTools?.map((toolsGroup: any) => (
-              <ToolsGroupCard
-                isEstuary={isEstuary}
-                key={toolsGroup.id}
-                toolsGroup={toolsGroup}
-                onSelect={setSelectedToolsGroup}
-              />
-            ))}
+
             {location?.name && (
-              <Footer>
-                <StyledButton onClick={() => setShowBuildTools(true)}>
-                  Pastatyti įrankį
-                </StyledButton>
-              </Footer>
+              <>
+                {isEmpty(builtTools) ? (
+                  <NotFound message={'Nėra pastatytų įrankių'} />
+                ) : (
+                  map(builtTools, (toolsGroup: any) => (
+                    <ToolsGroupCard
+                      isEstuary={isEstuary}
+                      key={toolsGroup.id}
+                      toolsGroup={toolsGroup}
+                      onSelect={setSelectedToolsGroup}
+                    />
+                  ))
+                )}
+                <Footer>
+                  <StyledButton onClick={() => setShowBuildTools(true)}>
+                    Pastatyti įrankį
+                  </StyledButton>
+                </Footer>
+              </>
             )}
           </>
         )}
@@ -183,7 +192,7 @@ const FishingTools = ({ fishing }: any) => {
                     getOptionLabel={(option) => option?.name}
                     value={values.location}
                     error={errors.location}
-                    label={inputLabels.role}
+                    label={inputLabels.location}
                     name={'location'}
                     onChange={(value) => setFieldValue('location', value)}
                   />
@@ -311,7 +320,7 @@ const Container = styled.div`
 
 const Title = styled.div`
   color: ${({ theme }) => theme.colors.text.primary};
-  font-size: 3.2rem;
+  font-size: 2.2rem;
   font-weight: 800;
   text-align: center;
 `;
@@ -342,7 +351,7 @@ const Footer = styled.div`
 `;
 
 const EditIcon = styled(Icon)`
-  font-size: 3.3rem;
+  font-size: 1.7em;
 `;
 
 export default FishingTools;

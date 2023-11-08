@@ -1,22 +1,12 @@
-import { Form, Formik } from 'formik';
 import { map } from 'lodash';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
-import styled from 'styled-components';
-import Button from '../components/buttons/Button';
+import FishForm from '../components/forms/FishForm';
 import FormLayout from '../components/layouts/FormLayout';
-import { Grid } from '../components/other/CommonStyles';
-import FishRow from '../components/other/FishRow';
-import Icon from '../components/other/Icon';
 import LoaderComponent from '../components/other/LoaderComponent';
-import { buttonLabels, getBuiltToolInfo, handleAlert, profileSchema, slugs } from '../utils';
+import { getBuiltToolInfo, handleAlert, slugs } from '../utils';
 import api from '../utils/api';
 import { useAppSelector, useFishTypes, useGetCurrentRoute } from '../utils/hooks';
-
-export interface UserProps {
-  email?: string;
-  phone?: string;
-}
 
 export const CaughtFishesWithTool = () => {
   const currentRoute = useGetCurrentRoute();
@@ -32,14 +22,16 @@ export const CaughtFishesWithTool = () => {
     ['builtTool', toolId],
     () => api.getBuiltTool(toolId!),
     {
-      onError: () => {},
+      onError: () => {
+        navigate(slugs.fishingTools(fishingId!));
+      },
     },
   );
 
   const handleSubmit = (values: typeof initialValues) => {
     const data = values.reduce((obj: any, curr) => {
-      if (Number(curr.value)) {
-        obj[curr.id] = curr.value;
+      if (Number(curr.amount)) {
+        obj[curr.id] = curr.amount;
       }
 
       return obj;
@@ -66,7 +58,7 @@ export const CaughtFishesWithTool = () => {
 
   const initialValues = map(fishTypes, (item) => ({
     ...item,
-    value: tool?.weighingEvent?.data?.[item?.id]! || '',
+    amount: tool?.weighingEvent?.data?.[item?.id]! || '',
   }))!;
 
   return (
@@ -77,66 +69,14 @@ export const CaughtFishesWithTool = () => {
         infoSubTitle={sealNr}
         back={currentRoute?.back}
       >
-        <Container>
-          <Formik
-            enableReinitialize={true}
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            validateOnChange={false}
-            validationSchema={profileSchema}
-          >
-            {({ values, setFieldValue }) => {
-              return (
-                <FormContainer>
-                  <Grid columns={1}>
-                    {values?.map((value, index) => (
-                      <FishRow
-                        fish={value}
-                        onChange={(value) => setFieldValue(`${index}.value`, value)}
-                      />
-                    ))}
-                    <Button
-                      type="submit"
-                      loading={weighToolsIsLoading}
-                      disabled={weighToolsIsLoading}
-                    >
-                      {buttonLabels.saveChanges}
-                    </Button>
-                  </Grid>
-                </FormContainer>
-              );
-            }}
-          </Formik>
-        </Container>
+        <FishForm
+          initialValues={initialValues}
+          handleSubmit={handleSubmit}
+          loading={weighToolsIsLoading}
+        />
       </FormLayout>
     </>
   );
 };
-
-const StyledIcon = styled(Icon)`
-  cursor: pointer;
-  font-size: 2.4rem;
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  width: 100%;
-`;
-
-const UsersContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  width: 100%;
-`;
-
-const FormContainer = styled(Form)`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-`;
 
 export default CaughtFishesWithTool;

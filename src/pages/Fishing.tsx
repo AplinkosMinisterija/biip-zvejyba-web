@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import FishingAction from '../components/containers/FishingAction';
 import FishingLocation from '../components/containers/FishingLocation';
 import FishingTools from '../components/containers/FishingTools';
-import FishingWeight from '../components/containers/FishingWeight';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import LoaderComponent from '../components/other/LoaderComponent';
 import api from '../utils/api';
@@ -49,9 +48,6 @@ export const Fishing = () => {
       )}
       {currentRoute?.slug === slugs.fishingTools(':fishingId') && (
         <FishingTools fishing={currentFishing} />
-      )}
-      {currentRoute?.slug === slugs.fishingWeight(':fishingId') && (
-        <FishingWeight fishing={currentFishing} />
       )}
     </DefaultLayout>
   );

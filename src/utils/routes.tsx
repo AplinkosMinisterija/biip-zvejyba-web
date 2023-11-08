@@ -1,6 +1,7 @@
 import { IconName } from '../components/other/Icon';
 import CaughtFishesWithTool from '../pages/CaughtFishesWithTool';
 import Fishing from '../pages/Fishing';
+import FishingWeight from '../pages/FishingWeight';
 import Profiles from '../pages/Profiles';
 import Tool from '../pages/Tool';
 import Tools from '../pages/Tools';
@@ -71,8 +72,8 @@ export const routes = [
   },
   {
     title: 'Tikslus svoris, kg',
-    slug: slugs.fishingWeight(':fishingId'),
-    component: <Fishing />,
+    slug: slugs.fishingWeight(Ids.FISHING_ID),
+    component: <FishingWeight />,
     regExp: new RegExp('^/zvejyba/[0-9]+/svoris$'),
     back: true,
   },

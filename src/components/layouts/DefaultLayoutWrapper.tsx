@@ -26,7 +26,6 @@ const Content = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  max-height: 800px;
   align-self: center;
   align-items: center;
   padding: 0 16px 0 16px;

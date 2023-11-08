@@ -1,5 +1,5 @@
 import { Form } from 'formik';
-import { isEmpty } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -74,7 +74,7 @@ const Tools = () => {
             <NotFound message={'Nėra sukurtų įrankių sandelyje'} />
           ) : (
             <ListContainer>
-              {tools?.map((tool: any) => (
+              {map(tools, (tool: any) => (
                 <ToolCard tool={tool} onClick={() => navigate(slugs.tool(tool.id))} />
               ))}
             </ListContainer>

@@ -3,11 +3,11 @@ import NumericTextField from '../fields/NumericTextField';
 
 interface FishRowProp {
   onChange: (value: any) => void;
-  fish: { label: string; photo: any; value: any };
+  fish: { label: string; photo: any; amount: any; preliminaryAmount: any };
 }
 
 const FishRow = ({ onChange, fish }: FishRowProp) => {
-  const { label, photo, value } = fish;
+  const { label, photo, amount, preliminaryAmount } = fish;
 
   return (
     <Row>
@@ -21,23 +21,23 @@ const FishRow = ({ onChange, fish }: FishRowProp) => {
       <Column>
         <TextColumn>
           <Title>{label}</Title>
-          <Caught>{`Sagauta 2 kg`}</Caught>
+          {preliminaryAmount && <Caught>{`Sagauta ${preliminaryAmount} kg`}</Caught>}
         </TextColumn>
-        <Row>
-          <Button type="button" onClick={() => Number(value) && onChange(Number(value))}>
+        <InnerRow>
+          <Button type="button" onClick={() => Number(amount) && onChange(Number(amount))}>
             -
           </Button>
           <StyledNumericTextField
             type="number"
-            label={''}
+            placeholder="0"
             name="personalCode"
-            value={value}
-            onChange={(value) => onChange(value)}
+            value={amount}
+            onChange={(amount) => onChange(amount)}
           />
-          <Button type="button" onClick={() => onChange(Number(value) + 1)}>
+          <Button type="button" onClick={() => onChange(Number(amount) + 1)}>
             +
           </Button>
-        </Row>
+        </InnerRow>
       </Column>
     </Row>
   );
@@ -53,6 +53,12 @@ const Row = styled.div`
   height: 119px;
   color: ${({ theme }) => theme.colors.text.primary};
   width: 100%;
+`;
+
+const InnerRow = styled.div`
+  display: grid;
+  grid-template-columns: 56px 1fr 56px;
+  gap: 16px;
 `;
 
 const Column = styled.div`

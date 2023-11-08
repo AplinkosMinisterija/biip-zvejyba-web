@@ -304,6 +304,19 @@ class Api {
     });
   };
 
+  preliminaryFishWeights = async () => {
+    return this.get({
+      resource: 'fishWeights/preliminary',
+    });
+  };
+
+  createFishingFishWeights = async (params: { params: { [key: string]: number } }) => {
+    return this.post({
+      resource: 'fishWeights',
+      params,
+    });
+  };
+
   removeTool = async (
     params: {
       coordinates: { x: number; y: number };

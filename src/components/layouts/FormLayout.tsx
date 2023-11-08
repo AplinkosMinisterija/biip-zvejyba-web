@@ -13,6 +13,7 @@ import DefaultLayoutWrapper from './DefaultLayoutWrapper';
 
 const FormLayout = ({ children, title, infoTitle, infoSubTitle, back, deleteInfo }: any) => {
   const navigate = useNavigate();
+  const showInfoContainer = infoTitle || infoSubTitle;
   return (
     <DefaultLayoutWrapper back={back}>
       <FormTitleGrid>
@@ -32,10 +33,12 @@ const FormLayout = ({ children, title, infoTitle, infoSubTitle, back, deleteInfo
           )}
         </>
       </FormTitleGrid>
-      <InfoContainer>
-        <InfoTitle>{infoTitle}</InfoTitle>
-        <InfoSubTitle>{infoSubTitle}</InfoSubTitle>
-      </InfoContainer>
+      {showInfoContainer && (
+        <InfoContainer>
+          <InfoTitle>{infoTitle}</InfoTitle>
+          <InfoSubTitle>{infoSubTitle}</InfoSubTitle>
+        </InfoContainer>
+      )}
       {children}
     </DefaultLayoutWrapper>
   );

@@ -1,3 +1,4 @@
+import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
@@ -7,6 +8,7 @@ import { FishingToolsType } from '../../utils/constants';
 import { device } from '../../utils/theme';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
+import { NotFound } from '../other/NotFound';
 import ToolCardSelectable from '../other/ToolCardSelecetable';
 
 const FishingOptions = [
@@ -19,10 +21,7 @@ const BuildTools = ({ onClose, location, coordinates }: any) => {
   const [type, setType] = useState<FishingToolsType>(FishingToolsType.SINGLE);
   const [toolType, setToolType] = useState<number | null>(null);
 
-  const { data: availableTools, isLoading: availableToolsLoading } = useQuery(
-    ['availableTools'],
-    () => api.getAvailableTools(),
-  );
+  const { data: availableTools } = useQuery(['availableTools'], () => api.getAvailableTools());
 
   const { mutateAsync: buildToolsMutation, isLoading: buildToolsIsLoading } = useMutation(
     api.buildTools,
@@ -74,7 +73,7 @@ const BuildTools = ({ onClose, location, coordinates }: any) => {
     <>
       <PopupContainer>
         <PopupTitle>Įrankių pridėjimas</PopupTitle>
-        <StyledSwitchButton
+        <SwitchButton
           options={FishingOptions}
           value={type}
           onChange={(value: FishingToolsType) => {
@@ -85,13 +84,20 @@ const BuildTools = ({ onClose, location, coordinates }: any) => {
             }
           }}
         />
-        {availableTools?.map((tool: any) => (
-          <ToolCardSelectable
-            tool={tool}
-            selected={selectedTools.includes(tool.id)}
-            onSelect={handleSelectTool}
-          />
-        ))}
+        {isEmpty(availableTools) ? (
+          <NotFound message={'Nėra laisvų įrankių sandelyje'} />
+        ) : (
+          <>
+            {map(availableTools, (tool: any) => (
+              <ToolCardSelectable
+                tool={tool}
+                selected={selectedTools.includes(tool.id)}
+                onSelect={handleSelectTool}
+              />
+            ))}
+          </>
+        )}
+
         <Footer>
           <StyledButton
             onClick={handleBuildTools}
@@ -115,10 +121,6 @@ const PopupTitle = styled.div`
 
 const PopupContainer = styled.div`
   padding-top: 68px;
-`;
-
-const StyledSwitchButton = styled(SwitchButton)`
-  padding: 32px 0 16px 0;
 `;
 
 const Footer = styled.div`

@@ -53,6 +53,11 @@ export enum FishingToolsType {
   SINGLE = 'SINGLE',
 }
 
+export enum FishingWeighType {
+  CAUGHT = 'CAUGHT',
+  All = 'All',
+}
+
 export const intersectionObserverConfig = {
   root: null,
   rootMargin: '0px',
