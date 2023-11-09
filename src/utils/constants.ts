@@ -20,6 +20,8 @@ export enum ServerErrors {
   NO_PERMISSION = 'NO_PERMISSION',
   TOO_MANY_TOOLS = 'To many tool types',
   NO_TOOLS_IN_STORAGE = 'No tools in storage',
+  TOOL_WITH_THIS_SEAL_NUMBER_ALREADY_EXISTS = 'Tool with this seal number already exists',
+  FISH_MUST_BE_WEIGHTED = 'Fish must be weighted',
 }
 
 export enum RoleTypes {

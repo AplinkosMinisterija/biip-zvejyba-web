@@ -17,6 +17,10 @@ export const validationTexts = {
   [ServerErrors.USER_NOT_FOUND]: 'Naudotojo su tokiu el. paštu nėra',
   [ServerErrors.TOO_MANY_TOOLS]: 'Galimos tik vieno  tipo  įrankių grupės',
   [ServerErrors.NO_TOOLS_IN_STORAGE]: 'Neturite įrankių sandelyje',
+  [ServerErrors.TOOL_WITH_THIS_SEAL_NUMBER_ALREADY_EXISTS]:
+    'Įrankis su šiuo plombos numeriu jau egzistuoja',
+  [ServerErrors.FISH_MUST_BE_WEIGHTED]:
+    'Sužvejotos žuvys turi būti pasvertos krante, prieš užbaigiant žvejybą',
   badFileTypes: 'Blogi failų tipai',
   fileSizesExceeded: 'Viršyti failų dydžiai',
   personalCode: 'Neteisingas asmens kodo formatas',

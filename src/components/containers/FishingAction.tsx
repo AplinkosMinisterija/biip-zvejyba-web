@@ -19,11 +19,10 @@ const FishingAction = ({ fishing }: any) => {
   const { mutateAsync: finishFishing, isLoading: finishFishingLoading } = useMutation(
     api.finishFishing,
     {
-      onError: () => {
-        handleAlert();
+      onError: ({ response }) => {
+        handleAlert(response);
       },
       onSuccess: () => {
-        //TODO: display success message
         handleSuccessToast(validationTexts.fishingFinished);
         queryClient.invalidateQueries('currentFishing');
       },

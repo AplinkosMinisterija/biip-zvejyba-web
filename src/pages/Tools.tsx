@@ -12,24 +12,24 @@ import { ListContainer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
 import { NotFound } from '../components/other/NotFound';
 import ToolCard from '../components/other/ToolCard';
-import { slugs } from '../utils';
+import { slugs, useGetCurrentRoute } from '../utils';
 import api from '../utils/api';
 import { ToolTypeType } from '../utils/constants';
-import { getCurrentRoute, handleAlert } from '../utils/functions';
+import { handleAlert } from '../utils/functions';
 import { buttonLabels, titles } from '../utils/texts';
 
 const Tools = () => {
   const queryClient = useQueryClient();
   const [showPopup, setShowPopup] = useState(false);
-  const currentRoute = getCurrentRoute(window.location.pathname);
+  const currentRoute = useGetCurrentRoute();
   const navigate = useNavigate();
 
   const { data: tools, isLoading: toolsLoading } = useQuery(
     ['tools'],
     () => api.tools({ filter: {} }),
     {
-      onError: () => {
-        handleAlert();
+      onError: ({ response }) => {
+        handleAlert(response);
       },
     },
   );
@@ -39,8 +39,8 @@ const Tools = () => {
       queryClient.invalidateQueries('tools');
       setShowPopup(false);
     },
-    onError: () => {
-      handleAlert();
+    onError: ({ response }) => {
+      handleAlert(response);
     },
   });
 
