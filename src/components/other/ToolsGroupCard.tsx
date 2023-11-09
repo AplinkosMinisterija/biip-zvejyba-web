@@ -49,7 +49,6 @@ const Container = styled.div<{ $isCheckedTool: boolean }>`
     ${({ theme, $isCheckedTool }) => ($isCheckedTool ? theme.colors.success : 'transparent')};
   border-radius: 12px;
   padding: 16px;
-  margin-bottom: 16px;
   cursor: pointer;
   &:hover {
     background-color: #f5f6fe;

@@ -85,7 +85,7 @@ const BuildTools = ({ onClose, location, coordinates }: any) => {
           }}
         />
         {isEmpty(availableTools) ? (
-          <NotFound message={'Nėra laisvų įrankių sandelyje'} />
+          <NotFound message={'Nėra laisvų įrankių sandėlyje'} />
         ) : (
           <>
             {map(availableTools, (tool: any) => (
@@ -97,12 +97,11 @@ const BuildTools = ({ onClose, location, coordinates }: any) => {
             ))}
           </>
         )}
-
         <Footer>
           <StyledButton
             onClick={handleBuildTools}
             loading={buildToolsIsLoading}
-            disabled={buildToolsIsLoading}
+            disabled={buildToolsIsLoading || !selectedTools.length}
           >
             Pastatyti
           </StyledButton>

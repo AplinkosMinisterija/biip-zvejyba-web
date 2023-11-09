@@ -3,19 +3,10 @@ import styled from 'styled-components';
 import { IconContainer } from '../other/CommonStyles';
 import Icon, { IconName } from '../other/Icon';
 
-const DefaultLayout = ({ children, title, subtitle, back, onEdit }: any) => {
+const DefaultLayout = ({ children, title, customTitle, subtitle, back, onEdit }: any) => {
   return (
     <DefaultLayoutWrapper back={back}>
-      {title && (
-        <TitleWrapper>
-          <Title>{title}</Title>
-          {onEdit && (
-            <IconContainer onClick={() => onEdit()}>
-              <EditIcon name={IconName.edit} />
-            </IconContainer>
-          )}
-        </TitleWrapper>
-      )}
+      {customTitle ? customTitle : title && <Title>{title}</Title>}
       {subtitle && <Subtitle>{subtitle}</Subtitle>}
       {children}
     </DefaultLayoutWrapper>
@@ -23,17 +14,11 @@ const DefaultLayout = ({ children, title, subtitle, back, onEdit }: any) => {
 };
 export default DefaultLayout;
 
-const TitleWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  align-items: center;
-`;
-
 const Title = styled.div`
   color: ${({ theme }) => theme.colors.text.primary};
   font-size: 3.2rem;
   font-weight: 800;
+  text-align: center;
 `;
 
 const Subtitle = styled.div`
@@ -42,8 +27,4 @@ const Subtitle = styled.div`
   margin-top: 4px;
   font-size: 1.6rem;
   margin-bottom: 32px;
-`;
-
-const EditIcon = styled(Icon)`
-  font-size: 2.8rem;
 `;
