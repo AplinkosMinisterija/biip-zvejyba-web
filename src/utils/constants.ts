@@ -2,6 +2,7 @@ export enum Resources {
   FISHINGS = 'fishings',
   USERS = 'users',
   USER_INVITE = 'tenantUsers/invite',
+  USER_UPDATE = 'tenantUsers/update',
   ME = 'users/me',
   TOOLS = 'tools',
   TENANT_USERS = 'tenantUsers',

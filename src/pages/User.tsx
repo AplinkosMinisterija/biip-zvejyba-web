@@ -43,7 +43,7 @@ export const UserForm = () => {
   const user = tenantUser?.user;
 
   const { mutateAsync: updateUserMutation } = useMutation(
-    (values: UserProps) => api.updateTenantUser({ ...values, tenantUserId: id }, user?.id),
+    (values: UserProps) => api.updateTenantUser({ ...values }, id),
     {
       onError: () => {
         handleAlert();

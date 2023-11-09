@@ -373,7 +373,7 @@ class Api {
 
   updateTenantUser = async (params: any, id?: string): Promise<User> => {
     return await this.patch({
-      resource: Resources.USERS,
+      resource: Resources.USER_UPDATE,
       params,
       id,
     });
