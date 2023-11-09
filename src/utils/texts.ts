@@ -1,5 +1,5 @@
 import { LOCATION_ERRORS, RoleTypes, ServerErrors } from './constants';
-export const validationTexts: any = {
+export const validationTexts = {
   requireMap: 'Privalote pasirinkti vietą žemėlapyje',
   requirePhotos: 'Privalote įkelti nuotrauką',
   userDeniedLocation: 'Turite leisti nustatyti jūsų buvimo vietą',
@@ -24,6 +24,7 @@ export const validationTexts: any = {
   requireFiles: 'Privalote įkelti dokumentus',
   atLeastOneColumn: 'Turi būti pasirinktas bent vienas stulpelis',
   profileUpdated: 'Profilis atnaujintas',
+  fishingFinished: 'Žvejyba pabaigta',
 };
 
 export const LOCATION_ERROR_MESSAGES = {
@@ -57,12 +58,19 @@ export const buttonLabels = {
   logout: 'Atsijungti',
   profiles: 'Profiliai',
   saveChanges: 'Saugoti pakeitimus',
+  save: 'Saugoti',
   newTool: 'Naujas įrankis',
   newMember: 'Naujas narys',
   addMember: 'Pridėti narį',
   cancel: 'Atšaukti',
   delete: 'Pašalinti',
   addTool: 'Pridėti įrankį',
+  startFishing: 'Pradėti žvejybą',
+  endFishing: 'Pabaigti žvejybą',
+  cantFishing: 'Neplaukiu žvejoti',
+  badWeather: 'Blogos oro sąlygos',
+  sick: 'Sergu',
+  other: 'Kita',
 };
 
 export const inputLabels = {

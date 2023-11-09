@@ -11,7 +11,15 @@ import DeleteComponent from '../other/DeleteComponent';
 import Icon, { IconName } from '../other/Icon';
 import DefaultLayoutWrapper from './DefaultLayoutWrapper';
 
-const FormLayout = ({ children, title, infoTitle, infoSubTitle, back, deleteInfo }: any) => {
+const FormLayout = ({
+  children,
+  title,
+  infoTitle,
+  infoSubTitle,
+  back,
+  deleteInfo,
+  onEdit,
+}: any) => {
   const navigate = useNavigate();
   const showInfoContainer = infoTitle || infoSubTitle;
   return (
@@ -24,7 +32,12 @@ const FormLayout = ({ children, title, infoTitle, infoSubTitle, back, deleteInfo
             </IconContainer>
           </GridItem>
           <GridItem justify={'center'}>
-            <FormTitle>{title}</FormTitle>
+            <TitleGridRow>
+              <FormTitle>{title}</FormTitle>
+              <IconContainer onClick={() => onEdit()}>
+                <EditIcon name={IconName.edit} />
+              </IconContainer>
+            </TitleGridRow>
           </GridItem>
           {deleteInfo && (
             <GridItem justify={'end'}>
@@ -44,15 +57,25 @@ const FormLayout = ({ children, title, infoTitle, infoSubTitle, back, deleteInfo
   );
 };
 
-export const FormTitleGrid = styled.div`
+export const TitleGridRow = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 30px;
+  gap: 16px;
+`;
+
+const EditIcon = styled(Icon)`
+  font-size: 1.7em;
+`;
+
+const FormTitleGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
   gap: 16px;
   margin: 16px 0;
   width: 100%;
 `;
 
-export const GridItem = styled.div<{ justify: string }>`
+const GridItem = styled.div<{ justify: string }>`
   display: grid;
   align-items: center;
   justify-items: start;

@@ -3,7 +3,6 @@ import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import FishingAction from '../components/containers/FishingAction';
 import FishingLocation from '../components/containers/FishingLocation';
-import FishingTools from '../components/containers/FishingTools';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import LoaderComponent from '../components/other/LoaderComponent';
 import api from '../utils/api';
@@ -45,9 +44,6 @@ export const Fishing = () => {
       {currentRoute?.slug === slugs.fishingLocation && <FishingLocation />}
       {currentRoute?.slug === slugs.fishing(':fishingId') && (
         <FishingAction fishing={currentFishing} />
-      )}
-      {currentRoute?.slug === slugs.fishingTools(':fishingId') && (
-        <FishingTools fishing={currentFishing} />
       )}
     </DefaultLayout>
   );

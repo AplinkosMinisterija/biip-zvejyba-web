@@ -71,12 +71,4 @@ const FishingWeight = () => {
   );
 };
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-  margin-bottom: 40px;
-`;
-
 export default FishingWeight;

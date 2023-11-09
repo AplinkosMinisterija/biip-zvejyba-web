@@ -28,6 +28,7 @@ export const Grid = styled.div<{ columns?: number }>`
   grid-template-columns: repeat(${({ columns }) => columns || 2}, 1fr);
   gap: 16px;
   margin: 16px 0;
+  width: 100%;
   @media ${device.mobileL} {
     grid-template-columns: repeat(1, 1fr);
   }

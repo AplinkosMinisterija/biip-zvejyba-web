@@ -14,11 +14,11 @@ export const clearCookies = () => {
   cookies.remove('profileId', { path: '/' });
 };
 
-const getErrorMEssage = (responseError: string) =>
+export const getErrorMessage = (responseError: string) =>
   validationTexts[responseError as keyof typeof validationTexts] || validationTexts.error;
 
 export const handleAlert = (responseError: string = 'error') => {
-  toast.error(getReactQueryErrorMessage(getErrorMEssage(responseError)), {
+  toast.error(getErrorMessage(getReactQueryErrorMessage(responseError)), {
     position: 'top-center',
     autoClose: 5000,
     hideProgressBar: true,
@@ -90,11 +90,7 @@ export const handleResponse = async ({
   if (isOnline) {
     const response: any = await endpoint();
     if (onError && response?.error) {
-      return onError(
-        validationTexts[response.error.type!] ||
-          validationTexts[response.error.message!] ||
-          validationTexts.error,
-      );
+      return onError(getErrorMessage(response?.error));
     }
 
     if (!response || response?.error) {

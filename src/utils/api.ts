@@ -253,9 +253,9 @@ class Api {
       params,
     });
   };
-  finishFishing = async (id: number | string) => {
+  finishFishing = async () => {
     return this.patch({
-      resource: `fishings/${id}/finish`,
+      resource: `fishings/finish`,
     });
   };
   toolTypes = async (params: any) => {

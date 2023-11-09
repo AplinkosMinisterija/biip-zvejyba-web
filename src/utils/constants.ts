@@ -28,6 +28,12 @@ export enum RoleTypes {
   OWNER = 'OWNER',
 }
 
+export enum SickReasons {
+  BAD_WEATHER = 'BAD_WEATHER',
+  SICK = 'SICK',
+  OTHER = 'OTHER',
+}
+
 export enum LOCATION_ERRORS {
   NO_ERROR = 0,
   POINT_NOT_FOUND = 1,

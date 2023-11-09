@@ -4,38 +4,47 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { RootState } from '../../state/store';
-import { getBars, getLocationList, handleAlert, inputLabels, locationSchema } from '../../utils';
-import api from '../../utils/api';
-import { LocationType } from '../../utils/constants';
-import { device } from '../../utils/theme';
-import { ToolGroup } from '../../utils/types';
-import Button, { ButtonColors } from '../buttons/Button';
-import AsyncSelectField from '../fields/AsyncSelect';
-import NumericTextField from '../fields/NumericTextField';
-import SelectField from '../fields/SelectField';
-import Popup from '../layouts/Popup';
-import PopUpWithImage from '../layouts/PopUpWithImage';
-import { Grid, IconContainer, Row } from '../other/CommonStyles';
-import Icon, { IconName } from '../other/Icon';
-import LoaderComponent from '../other/LoaderComponent';
-import { NotFound } from '../other/NotFound';
-import ToolsGroupCard from '../other/ToolsGroupCard';
-import BuildTools from './BuildTools';
-import ToolActions from './ToolActions';
+import Button, { ButtonColors } from '../components/buttons/Button';
+import BuildTools from '../components/containers/BuildTools';
+import ToolActions from '../components/containers/ToolActions';
+import AsyncSelectField from '../components/fields/AsyncSelect';
+import NumericTextField from '../components/fields/NumericTextField';
+import SelectField from '../components/fields/SelectField';
+import FormLayout from '../components/layouts/FormLayout';
+import Popup from '../components/layouts/Popup';
+import PopUpWithImage from '../components/layouts/PopUpWithImage';
+import { Grid } from '../components/other/CommonStyles';
+import Icon, { IconName } from '../components/other/Icon';
+import LoaderComponent from '../components/other/LoaderComponent';
+import { NotFound } from '../components/other/NotFound';
+import ToolsGroupCard from '../components/other/ToolsGroupCard';
+import { RootState } from '../state/store';
+import {
+  getBars,
+  getLocationList,
+  handleAlert,
+  inputLabels,
+  locationSchema,
+  useGetCurrentRoute,
+} from '../utils';
+import api from '../utils/api';
+import { LocationType } from '../utils/constants';
+import { device } from '../utils/theme';
+import { ToolGroup } from '../utils/types';
 
-const FishingTools = ({ fishing }: any) => {
-  const locationType: LocationType = fishing.type;
+const FishingTools = () => {
   const queryClient = useQueryClient();
   const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
   const [showBuildTools, setShowBuildTools] = useState(false);
   const [showNotIdentifiedPopUp, setShowNotIdentifiedPopUp] = useState(false);
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
   const [selectedToolsGroup, setSelectedToolsGroup] = useState<ToolGroup | null>(null);
-  const isEstuary = locationType === LocationType.ESTUARY;
   const queryCache = queryClient.getQueryCache();
   const cachedLocation = queryCache.find(['location'])?.state?.data;
-
+  const locationType: LocationType = (queryCache.find(['currentFishing'])?.state?.data as any)
+    ?.type;
+  const currentRoute = useGetCurrentRoute();
+  const isEstuary = locationType === LocationType.ESTUARY;
   const {
     data: location,
     isLoading: locationLoading,
@@ -91,19 +100,16 @@ const FishingTools = ({ fishing }: any) => {
   };
 
   return (
-    <>
+    <FormLayout
+      title={location?.name || 'Vieta nenustatyta'}
+      onEdit={() => setShowLocationPopUp(true)}
+      back={currentRoute?.back}
+    >
       <Container>
         {locationLoading ? (
           <LoaderComponent />
         ) : (
           <>
-            <Row>
-              <Title>{location?.name || 'Vieta nenustatyta'}</Title>
-              <IconContainer onClick={() => setShowLocationPopUp(true)}>
-                <EditIcon name={IconName.edit} />
-              </IconContainer>
-            </Row>
-
             {location?.name && (
               <>
                 {isEmpty(builtTools) ? (
@@ -267,7 +273,7 @@ const FishingTools = ({ fishing }: any) => {
         toolGroup={selectedToolsGroup}
         onReturn={() => setSelectedToolsGroup(null)}
       />
-    </>
+    </FormLayout>
   );
 };
 
