@@ -1,7 +1,11 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import Cookies from 'universal-cookie';
-import { LocationType, Populations, Resources } from './constants';
+import { LocationType } from './constants';
 import { BuiltTool, TenantUser, Tool, ToolFormProps, User } from './types';
+
+enum Populations {
+  USER = 'user',
+}
 
 const cookies = new Cookies();
 
@@ -30,16 +34,6 @@ export interface GetAllResponse<T> {
   pageSize: number;
   error?: any;
 }
-
-// interface TableList<T = any> {
-//   filter?: T;
-//   page?: number;
-//   id?: string;
-//   pageSize?: string;
-//   scope?: string;
-//   fields?: string[];
-//   populate?: string[];
-// }
 
 interface AuthApiProps {
   resource: string;
@@ -264,8 +258,8 @@ class Api {
       ...params,
     });
   };
-
   getLocation = async (params: any) => {
+    console.log('get location', params);
     return this.get({
       resource: 'locations',
       ...params,
@@ -277,7 +271,6 @@ class Api {
       populate: ['toolType'],
     });
   };
-
   buildTools = async (params: {
     tools: number[];
     coordinates: { x: number; y: number };
@@ -288,7 +281,6 @@ class Api {
       params,
     });
   };
-
   weighTools = async (
     params: {
       data: { [key: string]: number };
@@ -347,33 +339,33 @@ class Api {
 
   updateProfile = async (params: any): Promise<User> =>
     await this.patch({
-      resource: Resources.ME,
+      resource: 'users/me',
       params,
     });
 
   getUsers = async ({ page }: any): Promise<GetAllResponse<TenantUser>> =>
     await this.get({
-      resource: Resources.TENANT_USERS,
+      resource: 'tenantUsers',
       populate: [Populations.USER],
       page,
     });
 
   getUser = async (id: string): Promise<TenantUser> =>
     await this.getOne({
-      resource: Resources.TENANT_USERS,
+      resource: 'tenantUsers',
       populate: [Populations.USER],
       id,
     });
 
   createUser = async (params: any): Promise<User[]> =>
     await this.post({
-      resource: Resources.USER_INVITE,
+      resource: 'tenantUsers/invite',
       params,
     });
 
   updateTenantUser = async (params: any, id?: string): Promise<User> => {
     return await this.patch({
-      resource: Resources.USERS,
+      resource: 'users',
       params,
       id,
     });
@@ -381,33 +373,33 @@ class Api {
 
   deleteUser = async (id: string) =>
     await this.delete({
-      resource: Resources.TENANT_USERS,
+      resource: 'tenantUsers',
       id,
     });
 
   tools = async (params: any): Promise<Tool[]> => {
     return this.getAll({
-      resource: Resources.TOOLS,
+      resource: 'tools',
       ...params,
     });
   };
 
   getTool = async (id: string): Promise<Tool> =>
     await this.getOne({
-      resource: Resources.TOOLS,
+      resource: 'tools',
       id,
     });
 
   newTool = async (params: ToolFormProps): Promise<Tool> => {
     return this.post({
-      resource: Resources.TOOLS,
+      resource: 'tools',
       params,
     });
   };
 
   updateTool = async (params: ToolFormProps, id: string): Promise<Tool> => {
     return this.patch({
-      resource: Resources.TOOLS,
+      resource: 'tools',
       params,
       id,
     });
@@ -415,7 +407,7 @@ class Api {
 
   deleteTool = async (id: string) =>
     await this.delete({
-      resource: Resources.TOOLS,
+      resource: 'tools',
       id,
     });
 
@@ -434,7 +426,7 @@ class Api {
 
   getFishTypes = async (): Promise<{ id: string; label: string; photo: any }[]> =>
     await this.getAll({
-      resource: Resources.FISH_TYPES,
+      resource: 'fishTypes',
     });
 }
 

@@ -31,29 +31,20 @@ import api from '../utils/api';
 import { LocationType } from '../utils/constants';
 import { device } from '../utils/theme';
 import { ToolGroup } from '../utils/types';
+import LocationForm from '../components/forms/LocationForm';
+import DefaultLayout from '../components/layouts/DefaultLayout';
 
 const FishingTools = () => {
   const queryClient = useQueryClient();
   const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
   const [showBuildTools, setShowBuildTools] = useState(false);
-  const [showNotIdentifiedPopUp, setShowNotIdentifiedPopUp] = useState(false);
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
   const [selectedToolsGroup, setSelectedToolsGroup] = useState<ToolGroup | null>(null);
-  const queryCache = queryClient.getQueryCache();
-  const cachedLocation = queryCache.find(['location'])?.state?.data;
-  const locationType: LocationType = (queryCache.find(['currentFishing'])?.state?.data as any)
-    ?.type;
+
+  const { data: currentFishing } = useQuery(['currentFishing'], () => api.getCurrentFishing(), {});
+  const locationType: LocationType = currentFishing?.type;
   const currentRoute = useGetCurrentRoute();
   const isEstuary = locationType === LocationType.ESTUARY;
-  const {
-    data: location,
-    isLoading: locationLoading,
-    isFetching: locationFetching,
-  } = useQuery(['location'], () => getLocationMutation(coordinates), { enabled: !cachedLocation });
-
-  const { data: bars } = useQuery(['bars'], async () => getBars(), {
-    enabled: isEstuary,
-  });
 
   const { mutateAsync: getLocationMutation } = useMutation(
     (coordinates: any) =>
@@ -65,8 +56,6 @@ const FishingTools = () => {
       }),
     {
       onSuccess: (value) => {
-        if (!value) return setShowNotIdentifiedPopUp(true);
-
         queryClient.setQueryData('location', value);
       },
       onError: () => {
@@ -74,6 +63,26 @@ const FishingTools = () => {
       },
     },
   );
+
+  const {
+    data: location,
+    isLoading: locationLoading,
+    isFetching: locationFetching,
+  } = useQuery(
+    ['location'],
+    () =>
+      api.getLocation({
+        query: {
+          coordinates,
+        },
+      }),
+    {},
+  );
+
+  const { data: bars } = useQuery(['bars'], async () => getBars(), {
+    enabled: isEstuary,
+  });
+
   const handleRefreshLocation = () => {
     queryClient.invalidateQueries('location');
   };
@@ -95,13 +104,12 @@ const FishingTools = () => {
     } else {
       getLocationMutation({ x, y });
     }
-
     setShowLocationPopUp(false);
   };
 
   return (
-    <FormLayout
-      title={location?.name || 'Vieta nenustatyta'}
+    <DefaultLayout
+      title={location?.name}
       onEdit={() => setShowLocationPopUp(true)}
       back={currentRoute?.back}
     >
@@ -110,7 +118,7 @@ const FishingTools = () => {
           <LoaderComponent />
         ) : (
           <>
-            {location?.name && (
+            {location?.name ? (
               <>
                 {isEmpty(builtTools) ? (
                   <NotFound message={'Nėra pastatytų įrankių'} />
@@ -124,16 +132,36 @@ const FishingTools = () => {
                     />
                   ))
                 )}
-                <Footer>
+                <Footer key={'-1'}>
                   <StyledButton onClick={() => setShowBuildTools(true)}>
                     Pastatyti įrankį
                   </StyledButton>
                 </Footer>
               </>
+            ) : (
+              <Grid>
+                <Button
+                  disabled={locationFetching}
+                  onClick={() => {
+                    setShowLocationPopUp(true);
+                  }}
+                >
+                  {'Nustatyti rankiniu būdu'}
+                </Button>
+                <Button
+                  loading={locationFetching}
+                  disabled={locationFetching}
+                  variant={ButtonColors.SECONDARY}
+                  onClick={handleRefreshLocation}
+                >
+                  {'Atnaujinti informaciją'}
+                </Button>
+              </Grid>
             )}
           </>
         )}
       </Container>
+
       <Popup visible={showBuildTools} onClose={() => setShowBuildTools(false)}>
         <BuildTools
           coordinates={coordinates}
@@ -143,38 +171,6 @@ const FishingTools = () => {
       </Popup>
 
       <PopUpWithImage
-        visible={showNotIdentifiedPopUp}
-        iconName={IconName.location}
-        onClose={() => {
-          setShowNotIdentifiedPopUp(false);
-        }}
-        title={'Nenustatytas vandens telkinys'}
-        description={
-          'Nepavyko nustatyti jūsų buvimo vietos. Nustatykite rankiniu būdu arba nuplaukite į žvejybos vietą ir atnaujinkite inofrmaciją.'
-        }
-      >
-        <Grid>
-          <Button
-            disabled={locationFetching}
-            onClick={() => {
-              setShowNotIdentifiedPopUp(false);
-              setShowLocationPopUp(true);
-            }}
-          >
-            {'Nustatyti rankiniu būdu'}
-          </Button>
-          <Button
-            loading={locationFetching}
-            disabled={locationFetching}
-            variant={ButtonColors.SECONDARY}
-            onClick={handleRefreshLocation}
-          >
-            {'Atnaujinti informaciją'}
-          </Button>
-        </Grid>
-      </PopUpWithImage>
-
-      <PopUpWithImage
         visible={showLocationPopUp}
         onClose={() => setShowLocationPopUp(false)}
         title={'Esate kitur?'}
@@ -182,88 +178,13 @@ const FishingTools = () => {
           'Prašome pasirinkti iš sąrašo telkinio pavadinimą/baro numerį arba įrašykite koordinates.'
         }
       >
-        <Formik
-          enableReinitialize={true}
+        <LocationForm
           initialValues={initialValues}
-          onSubmit={handleSetLocationManually}
-          validateOnChange={false}
-          validationSchema={locationSchema}
-        >
-          {({ values, errors, setFieldValue }) => {
-            return (
-              <FormContainer>
-                {isEstuary ? (
-                  <SelectField
-                    options={bars}
-                    getOptionLabel={(option) => option?.name}
-                    value={values.location}
-                    error={errors.location}
-                    label={inputLabels.location}
-                    name={'location'}
-                    onChange={(value) => setFieldValue('location', value)}
-                  />
-                ) : (
-                  <AsyncSelectField
-                    name={'location'}
-                    label={inputLabels.location}
-                    value={values.location}
-                    error={errors.location}
-                    onChange={(value) => {
-                      const { lat, lng, name } = value;
-                      setFieldValue('location', { x: lng, y: lat, name });
-                    }}
-                    getOptionValue={(option) => option?.cadastralId}
-                    getInputLabel={(option) => option?.name}
-                    showError={false}
-                    getOptionLabel={(option) => {
-                      const { name } = option;
-                      return name;
-                    }}
-                    loadOptions={(input: string, page: number | string) =>
-                      getLocationList(input, page, {})
-                    }
-                  />
-                )}
-
-                <Or>
-                  <Separator />
-                  <SeparatorLabelContainer>
-                    <SeparatorLabel>arba</SeparatorLabel>
-                  </SeparatorLabelContainer>
-                </Or>
-
-                <Grid columns={2}>
-                  <NumericTextField
-                    label={inputLabels.lng}
-                    name="x"
-                    value={values.x}
-                    showError={false}
-                    error={errors.x}
-                    onChange={(email) => setFieldValue('x', email)}
-                  />
-                  <NumericTextField
-                    label={inputLabels.lat}
-                    name="y"
-                    value={values.y}
-                    showError={false}
-                    error={errors.y}
-                    onChange={(email) => setFieldValue('y', email)}
-                  />
-                </Grid>
-                <Grid>
-                  <Button
-                    type="button"
-                    variant={ButtonColors.SECONDARY}
-                    onClick={() => setShowLocationPopUp(false)}
-                  >
-                    {'Atšaukti'}
-                  </Button>
-                  <Button type="submit">{'Saugoti'}</Button>
-                </Grid>
-              </FormContainer>
-            );
-          }}
-        </Formik>
+          handleSetLocationManually={handleSetLocationManually}
+          isEstuary={isEstuary}
+          bars={bars}
+          onClose={() => setShowLocationPopUp(false)}
+        />
       </PopUpWithImage>
 
       <ToolActions
@@ -273,62 +194,14 @@ const FishingTools = () => {
         toolGroup={selectedToolsGroup}
         onReturn={() => setSelectedToolsGroup(null)}
       />
-    </FormLayout>
+    </DefaultLayout>
   );
 };
-
-const Or = styled.div`
-  width: 100%;
-  position: relative;
-`;
-
-const SeparatorLabelContainer = styled.div`
-  font: normal normal 600 16px/40px Manrope;
-  color: #0b1f518f;
-  position: absolute;
-  width: 100%;
-  text-align: center;
-  opacity: 1;
-`;
-
-const SeparatorLabel = styled.span`
-  font: normal normal 600 16px/40px Manrope;
-  letter-spacing: 1.02px;
-  color: #0b1f518f;
-  background-color: white;
-  padding: 0 8px;
-  margin: 0 auto;
-  vertical-align: middle;
-  opacity: 1;
-`;
-
-const Separator = styled.div`
-  height: 1px;
-  background-color: ${({ theme }) => theme.colors.border};
-  margin: auto 0;
-  position: absolute;
-  width: 100%;
-  margin: 24px 0;
-`;
-
-const FormContainer = styled(Form)`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-`;
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-`;
-
-const Title = styled.div`
-  color: ${({ theme }) => theme.colors.text.primary};
-  font-size: 2.2rem;
-  font-weight: 800;
-  text-align: center;
 `;
 
 const StyledButton = styled(Button)`
@@ -354,10 +227,6 @@ const Footer = styled.div`
   @media ${device.desktop} {
     padding: 16px 0 0 0;
   }
-`;
-
-const EditIcon = styled(Icon)`
-  font-size: 1.7em;
 `;
 
 export default FishingTools;

@@ -19,7 +19,7 @@ const ToolsGroupCard = ({
   const { label, sealNr, locationName } = getBuiltToolInfo(toolsGroup);
 
   return (
-    <Container isCheckedTool={isCheckedTool}>
+    <Container $isCheckedTool={isCheckedTool}>
       <InnerContainer onClick={() => onSelect(toolsGroup)}>
         <IconContainer selected={isCheckedTool}>
           {isEstuary ? (
@@ -39,14 +39,14 @@ const ToolsGroupCard = ({
   );
 };
 
-const Container = styled.div<{ isCheckedTool: boolean }>`
+const Container = styled.div<{ $isCheckedTool: boolean }>`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  background-color: ${({ theme, isCheckedTool }) =>
-    isCheckedTool ? theme.colors.background.success : theme.colors.largeButton.GREY};
+  background-color: ${({ theme, $isCheckedTool }) =>
+    $isCheckedTool ? theme.colors.background.success : theme.colors.largeButton.GREY};
   border: 1px solid
-    ${({ theme, isCheckedTool }) => (isCheckedTool ? theme.colors.success : 'transparent')};
+    ${({ theme, $isCheckedTool }) => ($isCheckedTool ? theme.colors.success : 'transparent')};
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;

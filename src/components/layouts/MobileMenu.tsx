@@ -25,9 +25,10 @@ const MobileMenu = ({ onClose, visible = true }: any) => {
           <Subtitle>Pasirinkite dominančią sritį</Subtitle>
         </Headings>
 
-        {routes.map((route) => {
+        {routes.map((route, index) => {
           return (
             <MenuButton
+              key={`menu_button_${route.slug}`}
               isActive={!!matchPath({ path: route.slug, end: true }, currentLocation.pathname)}
               label={route.title}
               icon={route.iconName}

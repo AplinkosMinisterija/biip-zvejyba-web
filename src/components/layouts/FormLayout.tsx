@@ -82,7 +82,6 @@ const FormTitleGrid = styled.div`
 const GridItem = styled.div<{ justify: string }>`
   display: grid;
   align-items: center;
-  justify-items: start;
   justify-items: ${({ justify }) => justify};
   width: 100%;
 `;

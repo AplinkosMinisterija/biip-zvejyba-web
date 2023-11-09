@@ -4,7 +4,7 @@ import Icon, { IconName } from '../other/Icon';
 const MenuButton = ({ label, icon, onClick, isActive }: any) => {
   //TODO: disable option
   return (
-    <Container isActive={isActive} onClick={onClick}>
+    <Container $isActive={isActive} onClick={onClick}>
       <IconContainer>
         <StyledIcon name={icon} />
       </IconContainer>
@@ -13,7 +13,7 @@ const MenuButton = ({ label, icon, onClick, isActive }: any) => {
     </Container>
   );
 };
-const Container = styled.div<{ isActive: boolean }>`
+const Container = styled.div<{ $isActive: boolean }>`
   grid-template-columns: 48px 1fr 32px;
   align-items: center;
   font-size: 2rem;
@@ -27,8 +27,8 @@ const Container = styled.div<{ isActive: boolean }>`
   text-decoration: none;
   gap: 12px;
 
-  ${({ isActive, theme }) =>
-    isActive &&
+  ${({ $isActive, theme }) =>
+    $isActive &&
     `
     background-color: #f5f6fe;
     border: 1px solid ${theme.colors.primary};

@@ -1,17 +1,4 @@
-export enum Resources {
-  FISHINGS = 'fishings',
-  USERS = 'users',
-  USER_INVITE = 'tenantUsers/invite',
-  ME = 'users/me',
-  TOOLS = 'tools',
-  TENANT_USERS = 'tenantUsers',
-  FISH_TYPES = 'fishTypes',
-  SEARCH = 'objects/search',
-}
 
-export enum Populations {
-  USER = 'user',
-}
 
 export enum ServerErrors {
   USER_NOT_FOUND = `Email not found.`,

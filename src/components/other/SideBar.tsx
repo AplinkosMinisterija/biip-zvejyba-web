@@ -16,11 +16,12 @@ const SideBar = () => {
 
       <ProfilesDropdown />
 
-      {routes.map((route) => {
+      {routes.map((route, index) => {
         return (
           <Item
+            key={`sidebar_btn_${route.slug}_${index}`}
             onClick={() => navigate(route.slug)}
-            isActive={!!matchPath({ path: route.slug, end: true }, currentLocation.pathname)}
+            $isActive={!!matchPath({ path: route.slug, end: true }, currentLocation.pathname)}
           >
             <StyledIcon name={route.iconName!} />
             <Label>{route.title}</Label>
@@ -29,7 +30,7 @@ const SideBar = () => {
       })}
       <Divider />
 
-      <Item onClick={() => mutateAsync()} isActive={false}>
+      <Item onClick={() => mutateAsync()} $isActive={false}>
         <StyledIcon name={IconName.logout} />
         <Label>{buttonLabels.logout}</Label>
       </Item>
@@ -81,7 +82,7 @@ const Container = styled.nav`
   gap: 4px;
 `;
 
-const Item = styled.div<{ isActive: boolean }>`
+const Item = styled.div<{ $isActive: boolean }>`
   cursor: pointer;
   display: flex;
   gap: 12px;
@@ -91,8 +92,8 @@ const Item = styled.div<{ isActive: boolean }>`
   transition: all 0.2s ease-out;
   color: ${({ theme }) => theme.colors.text.retroBlack};
 
-  ${({ isActive, theme }) =>
-    isActive &&
+  ${({ $isActive, theme }) =>
+    $isActive &&
     `
 ${Label} {
     color: white;

@@ -34,7 +34,7 @@ const ProfilesDropdown = () => {
             const isActive = profile.id === currentProfile?.id;
             return (
               <Option
-                isActive={isActive}
+                $isActive={isActive}
                 key={`profile-${index}`}
                 onClick={() => {
                   handleProfileChange(profile.id);
@@ -83,7 +83,7 @@ const OptionsContainer = styled.div`
   gap: 8px;
 `;
 
-const Option = styled.div<{ isActive: boolean }>`
+const Option = styled.div<{ $isActive: boolean }>`
   padding: 12px;
   font-size: 1.6rem;
   border-radius: 2px;
@@ -96,8 +96,8 @@ const Option = styled.div<{ isActive: boolean }>`
     border: 1px solid ${({ theme }) => theme.colors.primary};
   }
 
-  ${({ isActive, theme }) =>
-    isActive &&
+  ${({ $isActive, theme }) =>
+    $isActive &&
     `
     background-color: #f5f6fe;
     border: 1px solid ${theme.colors.primary};

@@ -7,7 +7,7 @@ const SideBarItem = ({ route }: { route: RouteType }) => {
   const isActive = useMatch(route.slug);
 
   return (
-    <Item isActive={false}>
+    <Item $isActive={false}>
       <StyledIcon name={route.iconName!} />
       <Label>{route.title}</Label>
     </Item>
@@ -42,7 +42,7 @@ const Label = styled.div`
   font-weight: 500;
 `;
 
-const Item = styled.div<{ isActive: boolean }>`
+const Item = styled.div<{ $isActive: boolean }>`
   cursor: pointer;
   display: flex;
   gap: 12px;
@@ -52,8 +52,8 @@ const Item = styled.div<{ isActive: boolean }>`
   transition: all 0.2s ease-out;
   color: ${({ theme }) => theme.colors.text.retroBlack};
 
-  ${({ isActive, theme }) =>
-    isActive &&
+  ${({ $isActive, theme }) =>
+    $isActive &&
     `
 ${Label} {
     color: white;

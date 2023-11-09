@@ -110,7 +110,6 @@ export const useGeolocationWatcher = () => {
   useEffect(() => {
     const successHandler = (position: any) => {
       dispatch(fishingActions.setError(null));
-
       dispatch(
         fishingActions.setCoordinates({
           x: position.coords.longitude,

@@ -23,7 +23,6 @@ export const slugs = {
     `/zvejyba/${fishingId}/irankiai/${toolId}/irankiu_jungimas`,
   tools: '/irankiai',
   tool: (id: string) => `/irankiai/${id}`,
-
   users: '/nariai',
   user: (id: string) => `/nariai/${id}`,
   profile: '/profilis',
@@ -63,7 +62,6 @@ export const routes = [
     component: <FishingTools />,
     back: true,
   },
-
   {
     slug: slugs.fishingToolConnect(':fishingId', ':toolId'),
     component: <Fishing />,
@@ -99,7 +97,6 @@ export const routes = [
     tenantOwner: true,
     back: true,
   },
-
   {
     title: 'Nario informacija',
     slug: slugs.user(Ids.ID),
