@@ -16,6 +16,7 @@ const MenuButton = ({ label, icon, onClick, isActive }: any) => {
 const Container = styled.div<{ isActive: boolean }>`
   grid-template-columns: 48px 1fr 32px;
   align-items: center;
+  cursor: pointer;
   font-size: 2rem;
   font-weight: 600;
   background-color: ${({ theme }) => theme.colors.largeButton.GREY};

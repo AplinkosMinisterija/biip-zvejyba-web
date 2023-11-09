@@ -8,7 +8,8 @@ import { FishingToolsType } from '../../utils/constants';
 import { device } from '../../utils/theme';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
-import { NotFound } from '../other/NotFound';
+import { IconName } from '../other/Icon';
+import InfoWithImage from '../other/InfoWithImage';
 import ToolCardSelectable from '../other/ToolCardSelecetable';
 
 const FishingOptions = [
@@ -85,7 +86,11 @@ const BuildTools = ({ onClose, location, coordinates }: any) => {
           }}
         />
         {isEmpty(availableTools) ? (
-          <NotFound message={'Nėra laisvų įrankių sandelyje'} />
+          <InfoWithImage
+            iconName={IconName.tools}
+            title={'Įrankiai sandėlyje'}
+            description={'Nėra laisvų įrankių sandelyje'}
+          />
         ) : (
           <>
             {map(availableTools, (tool: any) => (

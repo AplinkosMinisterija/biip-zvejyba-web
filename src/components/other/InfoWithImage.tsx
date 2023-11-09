@@ -1,23 +1,13 @@
 import styled from 'styled-components';
 import Icon from '../other/Icon';
-import InfoWithImage from '../other/InfoWithImage';
-import Popup from './Popup';
 
-const PopUpWithImage = ({
-  title,
-  description,
-  children,
-  onClose,
-  visible = true,
-  iconName,
-}: any) => {
+const InfoWithImage = ({ title, description, iconName }: any) => {
   return (
-    <Popup visible={visible} onClose={onClose}>
-      <PopupWrapper>
-        <InfoWithImage iconName={iconName} title={title} description={description} />
-        {children}
-      </PopupWrapper>
-    </Popup>
+    <Container>
+      {iconName && <StyledIcon name={iconName} />}
+      <Heading>{title}</Heading>
+      <Description>{description}</Description>
+    </Container>
   );
 };
 
@@ -27,7 +17,7 @@ const StyledIcon = styled(Icon)`
   color: ${({ theme }) => theme.colors.primary};
 `;
 
-const PopupWrapper = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,4 +39,4 @@ const Description = styled.div`
   font-weight: 500;
 `;
 
-export default PopUpWithImage;
+export default InfoWithImage;

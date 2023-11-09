@@ -15,8 +15,8 @@ import Popup from '../components/layouts/Popup';
 import PopUpWithImage from '../components/layouts/PopUpWithImage';
 import { Grid } from '../components/other/CommonStyles';
 import Icon, { IconName } from '../components/other/Icon';
+import InfoWithImage from '../components/other/InfoWithImage';
 import LoaderComponent from '../components/other/LoaderComponent';
-import { NotFound } from '../components/other/NotFound';
 import ToolsGroupCard from '../components/other/ToolsGroupCard';
 import { RootState } from '../state/store';
 import {
@@ -78,7 +78,7 @@ const FishingTools = () => {
     queryClient.invalidateQueries('location');
   };
 
-  const { data: builtTools } = useQuery(
+  const { data: builtTools, isLoading: builtToolsLoading } = useQuery(
     ['builtTools', location?.id],
     () => api.getBuiltTools({ locationId: location?.id }),
 
@@ -98,6 +98,7 @@ const FishingTools = () => {
 
     setShowLocationPopUp(false);
   };
+  const isLoading = [locationLoading, builtToolsLoading].some((loading) => loading);
 
   return (
     <FormLayout
@@ -106,14 +107,18 @@ const FishingTools = () => {
       back={currentRoute?.back}
     >
       <Container>
-        {locationLoading ? (
+        {isLoading ? (
           <LoaderComponent />
         ) : (
           <>
             {location?.name && (
               <>
                 {isEmpty(builtTools) ? (
-                  <NotFound message={'Nėra pastatytų įrankių'} />
+                  <InfoWithImage
+                    iconName={IconName.tools}
+                    title={'Pastatykite įrankius'}
+                    description={'Šioje vietoje nėra pastatytų įrankių'}
+                  />
                 ) : (
                   map(builtTools, (toolsGroup: any) => (
                     <ToolsGroupCard

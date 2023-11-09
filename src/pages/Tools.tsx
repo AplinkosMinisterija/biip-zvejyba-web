@@ -9,8 +9,9 @@ import ToolForm from '../components/forms/ToolForm';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import PopUpWithTitles from '../components/layouts/PopUpWithTitle';
 import { ListContainer } from '../components/other/CommonStyles';
+import { IconName } from '../components/other/Icon';
+import InfoWithImage from '../components/other/InfoWithImage';
 import LoaderComponent from '../components/other/LoaderComponent';
-import { NotFound } from '../components/other/NotFound';
 import ToolCard from '../components/other/ToolCard';
 import { slugs, useGetCurrentRoute } from '../utils';
 import api from '../utils/api';
@@ -71,7 +72,11 @@ const Tools = () => {
       <DefaultLayout title={currentRoute?.title} subtitle={currentRoute?.subtitle}>
         <Container>
           {isEmpty(tools) ? (
-            <NotFound message={'Nėra sukurtų įrankių sandelyje'} />
+            <InfoWithImage
+              iconName={IconName.tools}
+              title={'Įrankiai sandėlyje'}
+              description={'Sandėlyje nėra įrankių'}
+            />
           ) : (
             <ListContainer>
               {map(tools, (tool: any) => (
