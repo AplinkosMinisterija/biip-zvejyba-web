@@ -1,4 +1,6 @@
+import { isEmpty } from 'lodash';
 import * as Yup from 'yup';
+import { ToolTypeType } from './constants';
 import { validationTexts } from './texts';
 
 export const loginSchema = Yup.object().shape({
@@ -23,4 +25,46 @@ export const tenantUserSchema = profileSchema.shape({
     .test('validatePersonalCode', validationTexts.personalCode, (value) => {
       return value.length === 11;
     }),
+});
+
+export const toolSchema = Yup.object().shape({
+  sealNr: Yup.string().required(validationTexts.requireText),
+  toolType: Yup.object().required(validationTexts.requireText),
+  eyeSize: Yup.number().required(validationTexts.requireText),
+  eyeSize2: Yup.number().when(['toolType'], (toolType: any, schema) => {
+    if (toolType === ToolTypeType.CATCHER) {
+      return schema.required(validationTexts.requireText);
+    }
+    return schema.nullable();
+  }),
+  netLength: Yup.number().when(['toolType'], (toolType: any, schema) => {
+    if (toolType === ToolTypeType.NET) {
+      return schema.required(validationTexts.requireText);
+    }
+    return schema.nullable();
+  }),
+});
+
+export const locationSchema = Yup.lazy((_, { context }) => {
+  const { x, y, location } = context as any;
+
+  let obj: any = {};
+
+  console.log(obj, 'ob');
+
+  if ((!x || !y) && !location) {
+    obj.location = Yup.string().required(validationTexts.requireSelect);
+  }
+
+  if (!x && !location) {
+    obj.x = Yup.string().required(validationTexts.requireSelect);
+  }
+
+  if (!y && !location) {
+    obj.y = Yup.string().required(validationTexts.requireSelect);
+  }
+
+  if (!isEmpty(obj)) return Yup.object().shape(obj);
+
+  return Yup.mixed().notRequired();
 });

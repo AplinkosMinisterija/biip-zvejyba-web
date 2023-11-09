@@ -9,9 +9,14 @@ import { LoginLayout } from '../components/layouts/Login';
 import { MobileLoginLayout } from '../components/layouts/MobileLogin';
 import Icon, { IconName } from '../components/other/Icon';
 import api from '../utils/api';
-import { handleAlert, handleUpdateTokens } from '../utils/functions';
+import {
+  getErrorMessage,
+  getReactQueryErrorMessage,
+  handleAlert,
+  handleUpdateTokens,
+} from '../utils/functions';
 import { useCheckAuthMutation, useEGatesSign, useWindowSize } from '../utils/hooks';
-import { buttonLabels, validationTexts } from '../utils/texts';
+import { buttonLabels } from '../utils/texts';
 import { device, theme } from '../utils/theme';
 import { loginSchema } from '../utils/validations';
 
@@ -23,7 +28,7 @@ export const Login = () => {
 
   const loginMutation: any = useMutation((params: LoginProps) => api.login(params), {
     onError: ({ response }: any) => {
-      const text = validationTexts[response?.data?.type];
+      const text = getErrorMessage(getReactQueryErrorMessage(response));
 
       if (text) {
         return setErrors({ password: text });
@@ -196,6 +201,7 @@ const TransparentButton = styled.button<{ color: string }>`
   font-size: 18px;
   gap: 12px;
   width: 100%;
+  cursor: pointer;
 `;
 
 const StyledEGateIcon = styled(Icon)`

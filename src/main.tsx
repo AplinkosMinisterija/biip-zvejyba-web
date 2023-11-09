@@ -1,9 +1,15 @@
-import * as Sentry from "@sentry/react";
+import * as Sentry from '@sentry/react';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
-import { BrowserRouter, createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from 'react-router-dom';
+import {
+  BrowserRouter,
+  createRoutesFromChildren,
+  matchRoutes,
+  useLocation,
+  useNavigationType,
+} from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from 'styled-components';
 import App from './App';
@@ -14,10 +20,7 @@ const queryClient = new QueryClient();
 
 const { store, persistor } = redux;
 
-
 const env = import.meta.env;
-
-
 
 if (env.REACT_APP_SENTRY_DSN) {
   Sentry.init({
@@ -30,16 +33,15 @@ if (env.REACT_APP_SENTRY_DSN) {
           useLocation,
           useNavigationType,
           createRoutesFromChildren,
-          matchRoutes
-        )
-      })
+          matchRoutes,
+        ),
+      }),
     ],
     tracesSampleRate: 1,
     release: env.REACT_APP_VERSION,
-    tracePropagationTargets: [env.REACT_APP_MAPS_HOST!]
+    tracePropagationTargets: [env.REACT_APP_MAPS_HOST!],
   });
 }
-
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

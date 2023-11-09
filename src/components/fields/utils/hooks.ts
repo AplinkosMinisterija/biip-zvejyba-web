@@ -1,14 +1,14 @@
+import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 import { handleResponse } from '../../../utils/functions';
 import { getFilteredOptions } from './functions';
 
 export const useAsyncSelectData = ({
-  setSuggestionsFromApi,
+  loadOptions,
   disabled,
   onChange,
-  dependantId,
+  dependsOnValue,
   optionsKey,
-  hasOptionKey,
 }: any) => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -33,28 +33,28 @@ export const useAsyncSelectData = ({
   };
 
   useEffect(() => {
-    if (suggestions?.length && showSelect) {
+    if (isEmpty(suggestions) && showSelect) {
       handleLoadData('', 1);
     }
   }, [showSelect]);
 
   useEffect(() => {
-    if (!dependantId) return;
+    if (!dependsOnValue) return;
 
     handleLoadData('', 1);
-  }, [dependantId]);
+  }, [JSON.stringify(dependsOnValue)]);
 
   const handleLoadData = async (input: string, page: number, lazyLoading = false) => {
-    if (input.length < 2) return setSuggestions([]);
-
     setLoading(true);
     handleResponse({
-      endpoint: () => setSuggestionsFromApi(input, page, dependantId),
+      endpoint: () => loadOptions(input, page, dependsOnValue),
       onSuccess: (response: any) => {
         setCurrentPage(response.page);
-        const data = hasOptionKey ? response?.[optionsKey] : response;
 
-        setSuggestions(lazyLoading ? [...suggestions, data] : data);
+        const data = !!response?.[optionsKey] ? response?.[optionsKey] : response;
+
+        setSuggestions(lazyLoading ? [...suggestions, ...data] : data);
+
         setHasMore(response?.page < response?.totalPages);
         setLoading(false);
       },
@@ -64,7 +64,7 @@ export const useAsyncSelectData = ({
   const handleScroll = async (e: any) => {
     const element = e.currentTarget;
     const isTheBottom =
-      Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) < 1;
+      Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) <= 1;
 
     if (isTheBottom && hasMore && !loading) {
       handleLoadData(input, currentPage + 1, true);
@@ -72,17 +72,12 @@ export const useAsyncSelectData = ({
   };
 
   const handleToggleSelect = () => {
-    !disabled && input.length > 2 && setShowSelect(!showSelect);
+    !disabled && setShowSelect(!showSelect);
   };
 
   const handleInputChange = (input: string) => {
-    if (input.length > 2) {
-      setShowSelect(true);
-      handleLoadData(input, 1);
-    } else {
-      setShowSelect(false);
-      setSuggestions([]);
-    }
+    setShowSelect(true);
+    handleLoadData(input, 1);
     setInput(input);
   };
 

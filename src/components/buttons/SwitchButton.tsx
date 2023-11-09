@@ -16,6 +16,8 @@ const SwitchButton = ({ options, onChange, value, className }: any) => {
 
 const Container = styled.div`
   padding: 2px 0;
+  width: 100%;
+  padding: 32px 0;
 `;
 
 const Content = styled.div<{ $numberOfColumns?: number }>`
@@ -24,7 +26,7 @@ const Content = styled.div<{ $numberOfColumns?: number }>`
     Array($numberOfColumns || 2)
       .fill('1fr')
       .join(' ')};
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.background.primary};
   padding: 4px;
   border-radius: 99px;
 `;

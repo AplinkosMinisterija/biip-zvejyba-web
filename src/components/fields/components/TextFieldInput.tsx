@@ -24,7 +24,7 @@ const TextFieldInput = ({
   rightIcon,
   onChange,
   placeholder,
-  type,
+  type = 'text',
   disabled,
   height = 56,
   selectedValue = false,
@@ -38,7 +38,7 @@ const TextFieldInput = ({
         $selectedValue={selectedValue}
         onClick={() => (onInputClick ? onInputClick() : null)}
         readOnly={readOnly}
-        type={type || 'text'}
+        type={type}
         name={name}
         autoComplete="off"
         value={value || ''}

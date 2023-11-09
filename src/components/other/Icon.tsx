@@ -10,6 +10,7 @@ import {
   MdDone,
   MdExitToApp,
   MdKeyboardArrowDown,
+  MdLocationOn,
   MdOutlineEdit,
   MdOutlineLocalPhone,
   MdOutlineVisibility,
@@ -60,6 +61,11 @@ export enum IconName {
   logo = 'logo',
   sidebarLogo = 'sidebarLogo',
   active = 'active',
+  net = 'net',
+  connection = 'connection',
+  startFishing = 'startFishing',
+  endFishing = 'endFishing',
+  location = 'location',
 }
 export interface IconProps {
   name: IconName | string;
@@ -381,7 +387,88 @@ V12l3,3"
           <line x1="10.06" y1="18.55" x2="10.06" y2="15.55" />
         </svg>
       );
+    case IconName.net:
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          className={className}
+        >
+          <path d="M4,13c0.5,0.2,3.6,1.7,7.1,0.1c2.7-1.2,3.8-3.6,4.1-4.2"></path>
+          <path d="M4,18c1,0.3,4.3,1.4,8.1,0c4.9-1.8,6.7-6.3,7-7"></path>
+          <line x1="4" y1="3" x2="4" y2="21"></line>
+          <line x1="18" y1="18" x2="4" y2="3"></line>
+          <polyline points="21,12 4,3 12,21 "></polyline>
+        </svg>
+      );
 
+    case IconName.connection:
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="black"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          className={className}
+        >
+          <circle cx="12" cy="12" r="3" />
+          <circle cx="5" cy="21" r="1" />
+          <circle cx="19" cy="3" r="1" />
+          <path d="M15,12h1.5c2.5,0,4.5,2,4.5,4.5v0c0,2.5-2,4.5-4.5,4.5H6" />
+          <path d="M18,3H7.5C5,3,3,5,3,7.5v0C3,10,5,12,7.5,12H9" />
+        </svg>
+      );
+
+    case IconName.startFishing:
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="116"
+          height="115.841"
+          viewBox="0 0 116 115.841"
+          className={className}
+        >
+          <path
+            id="ship"
+            d="M11.558,90.3a5.784,5.784,0,1,0,10.749-4.276l-6.472-16.3,38.372-8.5v27.45a5.779,5.779,0,0,0,11.558,0V61.234l38.372,8.5-6.472,16.3A5.784,5.784,0,0,0,108.414,90.3l8.957-22.6a5.849,5.849,0,0,0-4.1-7.8L94.66,55.8V30.895a5.779,5.779,0,0,0-5.779-5.779H77.323V7.779A5.779,5.779,0,0,0,71.544,2H48.428a5.779,5.779,0,0,0-5.779,5.779V25.116H31.091a5.779,5.779,0,0,0-5.779,5.779V55.8L6.7,59.79a5.849,5.849,0,0,0-4.1,7.8ZM54.207,13.558H65.765V25.116H54.207ZM36.87,36.674H83.1V53.2l-21.845-4.97H58.715L36.87,53.2Zm73.451,65.187a25.312,25.312,0,0,0-5.779,2.6,12.02,12.02,0,0,1-12.136,0,26.7,26.7,0,0,0-26.237,0,12.367,12.367,0,0,1-12.251,0,26.814,26.814,0,0,0-26.237,0,12.02,12.02,0,0,1-12.136,0,25.312,25.312,0,0,0-5.779-2.6,5.779,5.779,0,0,0-7.57,4.161,5.779,5.779,0,0,0,3.872,7.166,12.136,12.136,0,0,1,3.294,1.445,23.116,23.116,0,0,0,11.558,3.178,23.929,23.929,0,0,0,12.024-3.238,15.314,15.314,0,0,1,14.79,0,23.983,23.983,0,0,0,23.809,0,15.314,15.314,0,0,1,14.794,0,23.116,23.116,0,0,0,23.694,0,12.136,12.136,0,0,1,3.294-1.445,5.841,5.841,0,1,0-3.005-11.269Z"
+            transform="translate(-1.959 -2)"
+            fill="#1121DA"
+          ></path>
+        </svg>
+      );
+    case IconName.endFishing:
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="116"
+          height="116"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          className={className}
+        >
+          <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+          <line x1="4" y1="22" x2="4" y2="15"></line>
+        </svg>
+      );
+
+    case IconName.location:
+      return <MdLocationOn className={className} />;
     default:
       return null;
   }

@@ -11,6 +11,8 @@ export const FormTitle = styled.div`
   color: ${({ theme }) => theme.colors.text.primary};
   font-size: 2rem;
   font-weight: 800;
+  width: 100%;
+  text-align: center;
 `;
 
 export const Subtitle = styled.div`
@@ -26,9 +28,19 @@ export const Grid = styled.div<{ columns?: number }>`
   grid-template-columns: repeat(${({ columns }) => columns || 2}, 1fr);
   gap: 16px;
   margin: 16px 0;
+  width: 100%;
   @media ${device.mobileL} {
     grid-template-columns: repeat(1, 1fr);
   }
+`;
+
+export const Row = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
 `;
 
 export const SpaceBetweenFlexContainer = styled.div`
@@ -60,4 +72,11 @@ export const IconContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+export const ListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
 `;

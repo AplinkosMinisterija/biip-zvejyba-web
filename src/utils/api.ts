@@ -1,12 +1,12 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import Cookies from 'universal-cookie';
 import { LocationType, Populations, Resources } from './constants';
-import { TenantUser, User } from './types';
+import { BuiltTool, TenantUser, Tool, ToolFormProps, User } from './types';
 
 const cookies = new Cookies();
 
 interface GetAll {
-  resource: string;
+  resource?: string;
   page?: number;
   populate?: string[];
   municipalityId?: string;
@@ -65,17 +65,23 @@ interface Delete {
 
 interface Create {
   resource: string;
-  params: any;
+  params?: any;
   id?: string;
 }
 
 class Api {
-  private AuthApiAxios: AxiosInstance;
+  private fishingAxios: AxiosInstance;
+  private uetkAxios: AxiosInstance;
+  private readonly fishingProxy: string = '/api';
+  private readonly riversLakesSearchUrl: string = 'https://uetk.biip.lt/api/objects/search';
+  private readonly barSearchUrl: string =
+    'https://dev.gis.biip.lt/api/zuvinimas_barai/collections/fishing_sections/items.json?limit=1000';
 
   constructor() {
-    this.AuthApiAxios = Axios.create();
+    this.fishingAxios = Axios.create();
+    this.uetkAxios = Axios.create();
 
-    this.AuthApiAxios.interceptors.request.use(
+    this.fishingAxios.interceptors.request.use(
       (config: any) => {
         if (!config.url) {
           return config;
@@ -87,6 +93,7 @@ class Api {
 
           if (!isNaN(profileId)) config.headers!['X-Profile'] = profileId;
         }
+        config.url = this.fishingProxy + config.url;
 
         return config;
       },
@@ -101,8 +108,7 @@ class Api {
     return data;
   };
 
-  getAll = async ({
-    resource,
+  getCommonConfigs = ({
     page,
     populate,
     sort,
@@ -115,9 +121,9 @@ class Api {
     scope,
     geom,
     fields,
-    id,
+    responseType,
   }: GetAll) => {
-    const config = {
+    return {
       params: {
         pageSize: pageSize || 10,
         page: page || 1,
@@ -132,53 +138,28 @@ class Api {
         ...(!!query && { query }),
         ...(!!scope && { scope }),
         ...(!!fields && { fields }),
+        ...(!!responseType && { responseType }),
       },
     };
+  };
 
+  getAll = async ({ resource, id, ...rest }: GetAll) => {
+    const config = this.getCommonConfigs(rest);
     return this.errorWrapper(() =>
-      this.AuthApiAxios.get(`/api/${resource}${id ? `/${id}` : ''}/all`, config),
+      this.fishingAxios.get(`/${resource}${id ? `/${id}` : ''}/all`, config),
     );
   };
 
-  get = async ({
-    resource,
-    page,
-    populate,
-    sort,
-    filter,
-    pageSize,
-    search,
-    municipalityId,
-    query,
-    searchFields,
-    scope,
-    geom,
-    fields,
-    id,
-    responseType,
-  }: GetAll) => {
-    const config = {
-      params: {
-        pageSize: pageSize || 10,
-        page: page || 1,
-        ...(!!populate && { populate }),
-        ...(!!searchFields && { searchFields }),
-        ...(!!search && { search }),
-        ...(!!municipalityId && { municipalityId }),
-        ...(!!geom && { geom }),
-        ...(!!filter && { filter }),
-        ...(!!sort && { sort }),
-        ...(!!geom && { geom }),
-        ...(!!query && { query }),
-        ...(!!scope && { scope }),
-        ...(!!fields && { fields }),
-      },
-      ...(!!responseType && { responseType }),
-    };
-
+  get = async ({ resource, id, ...rest }: GetAll) => {
+    const config = this.getCommonConfigs(rest);
     return this.errorWrapper(() =>
-      this.AuthApiAxios.get(`/api/${resource}${id ? `/${id}` : ''}`, config),
+      this.fishingAxios.get(`/${resource}${id ? `/${id}` : ''}`, config),
     );
+  };
+
+  getPublic = async ({ resource, id, ...rest }: GetAll) => {
+    const config = this.getCommonConfigs(rest);
+    return this.errorWrapper(() => this.uetkAxios.get(`${resource}${id ? `/${id}` : ''}`, config));
   };
 
   getOne = async ({ resource, id, populate, scope }: GetOne) => {
@@ -190,35 +171,35 @@ class Api {
     };
 
     return this.errorWrapper(() =>
-      this.AuthApiAxios.get(`/api/${resource}${id ? `/${id}` : ''}`, config),
+      this.fishingAxios.get(`/${resource}${id ? `/${id}` : ''}`, config),
     );
   };
 
   patch = async ({ resource, id, params }: UpdateOne) => {
     return this.errorWrapper(() =>
-      this.AuthApiAxios.patch(`/api/${resource}${id ? `/${id}` : ''}`, params),
+      this.fishingAxios.patch(`/${resource}${id ? `/${id}` : ''}`, params),
     );
   };
 
   delete = async ({ resource, id }: Delete) => {
-    return this.errorWrapper(() => this.AuthApiAxios.delete(`/api/${resource}/${id}`));
+    return this.errorWrapper(() => this.fishingAxios.delete(`/api/${resource}/${id}`));
   };
   post = async ({ resource, id, params }: Create) => {
     return this.errorWrapper(() =>
-      this.AuthApiAxios.post(`/api/${resource}${id ? `/${id}` : ''}`, params),
+      this.fishingAxios.post(`/${resource}${id ? `/${id}` : ''}`, params),
     );
   };
 
   userInfo = async (): Promise<User> => {
-    return this.errorWrapper(() => this.AuthApiAxios.get('/api/auth/me'));
+    return this.errorWrapper(() => this.fishingAxios.get('/auth/me'));
   };
 
   logout = async () => {
-    return this.errorWrapper(() => this.AuthApiAxios.post('/api/auth/users/logout'));
+    return this.errorWrapper(() => this.fishingAxios.post('/auth/users/logout'));
   };
 
   authApi = async ({ resource, params }: AuthApiProps) => {
-    return this.errorWrapper(() => this.AuthApiAxios.post(`/api/${resource}`, params || {}));
+    return this.errorWrapper(() => this.fishingAxios.post(`/${resource}`, params || {}));
   };
 
   refreshToken = async () => {
@@ -262,38 +243,25 @@ class Api {
 
   startFishing = async (params: { type: LocationType; coordinates: { x: number; y: number } }) => {
     return this.post({
-      resource: 'fishings',
+      resource: 'fishings/start',
       params,
     });
   };
   skipFishing = async (params: { type: LocationType }) => {
     return this.post({
-      resource: 'fishings/ship',
+      resource: 'fishings/skip',
       params,
     });
   };
-  finishFishing = async (id: number | string) => {
+  finishFishing = async () => {
     return this.patch({
-      resource: `fishings/${id}/finish`,
+      resource: `fishings/finish`,
     });
   };
   toolTypes = async (params: any) => {
-    return this.getAll({
+    return this.get({
       resource: 'toolTypes',
       ...params,
-    });
-  };
-  tools = async (params: any) => {
-    return this.getAll({
-      resource: 'tools',
-      ...params,
-    });
-  };
-
-  newTool = async (params: any) => {
-    return this.post({
-      resource: 'tools',
-      params,
     });
   };
 
@@ -306,34 +274,74 @@ class Api {
   getAvailableTools = async () => {
     return this.get({
       resource: 'tools/available',
+      populate: ['toolType'],
     });
   };
 
   buildTools = async (params: {
     tools: number[];
     coordinates: { x: number; y: number };
-    location: number;
-    locationName: string;
+    location: Location;
   }) => {
     return this.post({
-      resource: 'toolGroups',
+      resource: 'toolsGroups/build',
       params,
     });
   };
 
-  returnTools = async (id: number) => {
-    return this.patch({
-      resource: 'toolGroups/return',
-      id: id.toString(),
-      params: null,
+  weighTools = async (
+    params: {
+      data: { [key: string]: number };
+      coordinates: { x: number; y: number };
+      location: Location;
+    },
+    id: string,
+  ) => {
+    return this.post({
+      resource: 'toolsGroups/weigh',
+      params,
+      id,
     });
   };
 
-  getBuiltTools = async (params: { locationId: number }) => {
+  preliminaryFishWeights = async () => {
     return this.get({
-      resource: 'toolGroups/current',
-      query: JSON.stringify(params),
-      // populate: ['tools'],
+      resource: 'fishWeights/preliminary',
+    });
+  };
+
+  createFishingFishWeights = async (params: { params: { [key: string]: number } }) => {
+    return this.post({
+      resource: 'fishWeights',
+      params,
+    });
+  };
+
+  removeTool = async (
+    params: {
+      coordinates: { x: number; y: number };
+      location: Location;
+    },
+    id: string,
+  ) => {
+    return this.post({
+      resource: 'toolsGroups/remove',
+      params,
+      id,
+    });
+  };
+
+  getBuiltTool = async (id: string): Promise<BuiltTool> => {
+    return this.getOne({
+      resource: `builtToolsGroups`,
+      populate: ['tools'],
+      id,
+    });
+  };
+
+  getBuiltTools = async ({ locationId }: { locationId: number }) => {
+    return this.get({
+      resource: `toolsGroups/location/${locationId}`,
     });
   };
 
@@ -375,6 +383,58 @@ class Api {
     await this.delete({
       resource: Resources.TENANT_USERS,
       id,
+    });
+
+  tools = async (params: any): Promise<Tool[]> => {
+    return this.getAll({
+      resource: Resources.TOOLS,
+      ...params,
+    });
+  };
+
+  getTool = async (id: string): Promise<Tool> =>
+    await this.getOne({
+      resource: Resources.TOOLS,
+      id,
+    });
+
+  newTool = async (params: ToolFormProps): Promise<Tool> => {
+    return this.post({
+      resource: Resources.TOOLS,
+      params,
+    });
+  };
+
+  updateTool = async (params: ToolFormProps, id: string): Promise<Tool> => {
+    return this.patch({
+      resource: Resources.TOOLS,
+      params,
+      id,
+    });
+  };
+
+  deleteTool = async (id: string) =>
+    await this.delete({
+      resource: Resources.TOOLS,
+      id,
+    });
+
+  getLocations = async ({ search, page, query }: any): Promise<any> =>
+    await this.getPublic({
+      resource: this.riversLakesSearchUrl,
+      query,
+      search,
+      page,
+    });
+
+  getBars = async (): Promise<any> =>
+    await this.getPublic({
+      resource: this.barSearchUrl,
+    });
+
+  getFishTypes = async (): Promise<{ id: string; label: string; photo: any }[]> =>
+    await this.getAll({
+      resource: Resources.FISH_TYPES,
     });
 }
 

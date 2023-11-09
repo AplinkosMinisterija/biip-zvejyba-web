@@ -3,7 +3,7 @@ import TextFieldInput from './components/TextFieldInput';
 export interface TextFieldProps {
   value?: string | number;
   name?: string;
-  error?: string;
+  error?: any;
   showError?: boolean;
   label?: string;
   icon?: JSX.Element;

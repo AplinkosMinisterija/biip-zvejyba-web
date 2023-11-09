@@ -106,9 +106,4 @@ const TenantCode = styled.div`
   color: ${({ theme }) => theme.colors.text.secondary};
 `;
 
-const BiipIcon = styled.img`
-  height: 24px;
-  width: 24px;
-`;
-
 export default ProfileCard;

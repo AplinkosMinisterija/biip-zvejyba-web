@@ -1,202 +1,100 @@
-import { Form, Formik } from 'formik';
+import { Form } from 'formik';
+import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import * as Yup from 'yup';
 import Button from '../components/buttons/Button';
-import ToolTypeButton from '../components/buttons/ToolTypeButton';
-import SelectField from '../components/fields/SelectField';
-import TextField from '../components/fields/TextField';
+import ToolForm from '../components/forms/ToolForm';
 import DefaultLayout from '../components/layouts/DefaultLayout';
-import Popup from '../components/layouts/Popup';
+import PopUpWithTitles from '../components/layouts/PopUpWithTitle';
+import { ListContainer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
+import { NotFound } from '../components/other/NotFound';
 import ToolCard from '../components/other/ToolCard';
+import { slugs, useGetCurrentRoute } from '../utils';
 import api from '../utils/api';
-import { ToolType } from '../utils/constants';
-import { getCurrentRoute } from '../utils/functions';
-import { validationTexts } from '../utils/texts';
-import { device } from '../utils/theme';
-
-const validateSpecies = (toolType: any) =>
-  Yup.object().shape({
-    sealNr: Yup.string().required(validationTexts.requireText),
-    toolType: Yup.object().required(validationTexts.requireText),
-    eyeSize: Yup.number().required(validationTexts.requireText),
-    eyeSize2: Yup.number().when([], (values, schema) => {
-      if (toolType === ToolType.CATCHER) {
-        return schema.required(validationTexts.requireText);
-      }
-      return schema.nullable();
-    }),
-    netLength: Yup.number().when([], (values, schema) => {
-      if (toolType === ToolType.NET) {
-        return schema.required(validationTexts.requireText);
-      }
-      return schema.nullable();
-    }),
-  });
+import { ToolTypeType } from '../utils/constants';
+import { handleAlert } from '../utils/functions';
+import { buttonLabels, titles } from '../utils/texts';
 
 const Tools = () => {
   const queryClient = useQueryClient();
   const [showPopup, setShowPopup] = useState(false);
-  const currentRoute = getCurrentRoute(window.location.pathname);
-  const [toolType, setToolType] = useState(ToolType.NET);
-
-  const { data: toolTypes } = useQuery(
-    ['toolTypes', toolType],
-    () => api.toolTypes({ filter: { type: toolType } }),
-    {
-      onError: () => {},
-    },
-  );
+  const currentRoute = useGetCurrentRoute();
+  const navigate = useNavigate();
 
   const { data: tools, isLoading: toolsLoading } = useQuery(
     ['tools'],
-    () => api.tools({ filter: { type: toolType } }),
+    () => api.tools({ filter: {} }),
     {
-      onError: () => {},
+      onError: ({ response }) => {
+        handleAlert(response);
+      },
     },
   );
 
   const { mutateAsync: newToolMutation, isLoading } = useMutation(api.newTool, {
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries('tools');
       setShowPopup(false);
     },
-    onError: ({ response }: any) => {},
+    onError: ({ response }) => {
+      handleAlert(response);
+    },
   });
 
   const initialValues = {
-    toolType: toolTypes?.[0],
+    type: ToolTypeType.NET,
+    toolType: null,
     sealNr: null,
     eyeSize: null,
     eyeSize2: null,
+    eyeSize3: null,
     netLength: null,
   };
   const handleCreateNewTool = async (values: any) => {
+    const { toolType, sealNr, ...rest } = values;
     await newToolMutation({
-      ...values,
-      toolType: values.toolType.id,
+      toolType: toolType.id,
+      sealNr,
+      data: rest,
     });
   };
 
-  const preventNumInputFromScrolling = (e: any) =>
-    e.target.addEventListener(
-      'wheel',
-      function (e: any) {
-        e.preventDefault();
-      },
-      { passive: false },
-    );
+  if (toolsLoading) {
+    return <LoaderComponent />;
+  }
 
   return (
     <>
       <DefaultLayout title={currentRoute?.title} subtitle={currentRoute?.subtitle}>
         <Container>
-          {toolsLoading && <LoaderComponent />}
-          {tools?.map((tool: any) => <ToolCard tool={tool} />)}
-          <Footer>
-            <StyledButton onClick={() => setShowPopup(true)}>Naujas įrankis</StyledButton>
-          </Footer>
+          {isEmpty(tools) ? (
+            <NotFound message={'Nėra sukurtų įrankių sandelyje'} />
+          ) : (
+            <ListContainer>
+              {map(tools, (tool: any) => (
+                <ToolCard tool={tool} onClick={() => navigate(slugs.tool(tool.id))} />
+              ))}
+            </ListContainer>
+          )}
+
+          <Button onClick={() => setShowPopup(true)}>{buttonLabels.newTool}</Button>
         </Container>
       </DefaultLayout>
-      <Popup visible={showPopup} onClose={() => setShowPopup(false)}>
-        <Formik
-          enableReinitialize={true}
-          initialValues={initialValues}
+      <PopUpWithTitles
+        title={titles.newTool}
+        visible={showPopup}
+        onClose={() => setShowPopup(false)}
+      >
+        <ToolForm
           onSubmit={handleCreateNewTool}
-          validateOnChange={false}
-          validationSchema={validateSpecies(toolType)}
-        >
-          {({ values, errors, setFieldValue, resetForm }: any) => {
-            return (
-              <FormContainer>
-                <FormTitle>Naujas įrankis</FormTitle>
-                <ButtonsContainer>
-                  <ToolTypeButton
-                    label="Tinklas"
-                    icon="/net.svg"
-                    onClick={() => {
-                      setToolType(ToolType.NET);
-                      resetForm();
-                    }}
-                    active={toolType === ToolType.NET}
-                  />
-                  <ToolTypeButton
-                    label="Gaudyklė"
-                    icon="/catcher.svg"
-                    onClick={() => {
-                      setToolType(ToolType.CATCHER);
-                      resetForm();
-                    }}
-                    active={toolType === ToolType.CATCHER}
-                  />
-                </ButtonsContainer>
-                <Wrapper>
-                  <TextField
-                    label="Plombos Nr."
-                    name="sealNr"
-                    value={values.sealNr || ''}
-                    error={errors.sealNr}
-                    onChange={(e) => setFieldValue('sealNr', e)}
-                    height={56}
-                    type="number"
-                    onFocus={preventNumInputFromScrolling}
-                  />
-                  <SelectField
-                    label={toolType === ToolType.NET ? 'Tinklo tipas' : 'Gaudyklės tipas'}
-                    name="toolType"
-                    options={toolTypes}
-                    value={values.toolType}
-                    onChange={(e) => setFieldValue('toolType', e)}
-                    getOptionLabel={(option) => option.label}
-                    error={errors.toolType}
-                    height={56}
-                  />
-                  {toolType === ToolType.CATCHER && (
-                    <SectionTitle>Gaudyklės akių dydis</SectionTitle>
-                  )}
-                  <TextField
-                    label={toolType === ToolType.NET ? 'Akių dydis, mm' : 'Sparnuose, mm'}
-                    name="eyeSize"
-                    value={values.eyeSize || ''}
-                    error={errors.eyeSize}
-                    height={56}
-                    onChange={(e) => setFieldValue('eyeSize', Number(e))}
-                    type="number"
-                    onFocus={preventNumInputFromScrolling}
-                  />
-                  {toolType === ToolType.CATCHER && (
-                    <TextField
-                      label="Jungiamoje dalyje, mm"
-                      name="eyeSize2"
-                      value={values.eyeSize2 || ''}
-                      error={errors.eyeSize2}
-                      height={56}
-                      onChange={(e) => setFieldValue('eyeSize2', Number(e))}
-                      type="number"
-                      onFocus={preventNumInputFromScrolling}
-                    />
-                  )}
-                  {toolType === ToolType.NET && (
-                    <TextField
-                      label="Tinklo ilgis, m"
-                      name="netLength"
-                      value={values.netLength || ''}
-                      error={errors.netLength}
-                      height={56}
-                      onChange={(e) => setFieldValue('netLength', Number(e))}
-                      type="number"
-                      // onFocus={preventNumInputFromScrolling}
-                    />
-                  )}
-                </Wrapper>
-                <StyledButton>Pridėti įrankį</StyledButton>
-              </FormContainer>
-            );
-          }}
-        </Formik>
-      </Popup>
+          initialValues={initialValues}
+          isLoading={isLoading}
+          isNew={true}
+        />
+      </PopUpWithTitles>
     </>
   );
 };
@@ -204,63 +102,18 @@ const Tools = () => {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
-`;
-
-const Footer = styled.div`
-  display: block;
-  position: sticky;
-  bottom: 0;
-  cursor: pointer;
-  padding: 16px 0;
-  text-decoration: none;
-  width: 100%;
-  background-color: white;
-  @media ${device.desktop} {
-    padding: 16px 0 0 0;
-  }
-`;
-
-const StyledButton = styled(Button)`
-  width: 100%;
-  border-radius: 28px;
-  height: 56px;
-  display: block;
-  line-height: 56px;
-  font-size: 20px;
-  font-weight: 600;
-  padding: 0;
-`;
-
-const ButtonsContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 40px;
   width: 100%;
 `;
 
 const FormContainer = styled(Form)`
-  padding-top: 68px;
-  padding-bottom: 40px;
-`;
-
-const FormTitle = styled.div`
-  text-align: center;
-  margin: 16px 0 32px 16px;
-  font-size: 2.4rem;
-  font-weight: bold;
-`;
-
-const Wrapper = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 56px;
+  gap: 40px;
 `;
 
 const SectionTitle = styled.div`
-  margin: 24px 0 8px;
   font-weight: 600;
   font-size: 1.8rem;
   color: ${({ theme }) => theme.colors.text.accent};

@@ -3,7 +3,10 @@ export enum Resources {
   USERS = 'users',
   USER_INVITE = 'tenantUsers/invite',
   ME = 'users/me',
+  TOOLS = 'tools',
   TENANT_USERS = 'tenantUsers',
+  FISH_TYPES = 'fishTypes',
+  SEARCH = 'objects/search',
 }
 
 export enum Populations {
@@ -15,12 +18,22 @@ export enum ServerErrors {
   WRONG_PASSWORD = 'Wrong password.',
   NOT_FOUND = 'NOT_FOUND',
   NO_PERMISSION = 'NO_PERMISSION',
+  TOO_MANY_TOOLS = 'To many tool types',
+  NO_TOOLS_IN_STORAGE = 'No tools in storage',
+  TOOL_WITH_THIS_SEAL_NUMBER_ALREADY_EXISTS = 'Tool with this seal number already exists',
+  FISH_MUST_BE_WEIGHTED = 'Fish must be weighted',
 }
 
 export enum RoleTypes {
   USER = 'USER',
   USER_ADMIN = 'USER_ADMIN',
   OWNER = 'OWNER',
+}
+
+export enum SickReasons {
+  BAD_WEATHER = 'BAD_WEATHER',
+  SICK = 'SICK',
+  OTHER = 'OTHER',
 }
 
 export enum LOCATION_ERRORS {
@@ -38,7 +51,7 @@ export enum LocationType {
   POLDERS = 'POLDERS',
   INLAND_WATERS = 'INLAND_WATERS',
 }
-export enum ToolType {
+export enum ToolTypeType {
   NET = 'NET',
   CATCHER = 'CATCHER',
 }
@@ -46,6 +59,11 @@ export enum ToolType {
 export enum FishingToolsType {
   GROUP = 'GROUP',
   SINGLE = 'SINGLE',
+}
+
+export enum FishingWeighType {
+  CAUGHT = 'CAUGHT',
+  All = 'All',
 }
 
 export const intersectionObserverConfig = {

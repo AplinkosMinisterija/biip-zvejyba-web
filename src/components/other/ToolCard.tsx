@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import Icon, { IconName } from '../other/Icon';
 
-const ToolCard = ({ tool }: any) => {
+const ToolCard = ({ tool, onClick }: any) => {
   return (
-    <Container>
+    <Container onClick={onClick}>
       <IconContainer>
         <StyledIcon name={IconName.home} />
       </IconContainer>

@@ -23,6 +23,7 @@ export interface NumericTextFieldProps {
   wholeNumber?: boolean;
   secondLabel?: JSX.Element;
   subLabel?: string;
+  type?: string;
 }
 
 const NumericTextField = ({
@@ -36,6 +37,7 @@ const NumericTextField = ({
   padding,
   onChange,
   placeholder,
+  type,
   disabled,
   height,
   showError,
@@ -71,6 +73,7 @@ const NumericTextField = ({
       <TextFieldInput
         value={value}
         name={name}
+        type={type}
         error={error}
         leftIcon={leftIcon}
         rightIcon={rightIcon}

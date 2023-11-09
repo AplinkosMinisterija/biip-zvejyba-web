@@ -1,5 +1,5 @@
 import { LOCATION_ERRORS, RoleTypes, ServerErrors } from './constants';
-export const validationTexts: any = {
+export const validationTexts = {
   requireMap: 'Privalote pasirinkti vietą žemėlapyje',
   requirePhotos: 'Privalote įkelti nuotrauką',
   userDeniedLocation: 'Turite leisti nustatyti jūsų buvimo vietą',
@@ -15,6 +15,12 @@ export const validationTexts: any = {
   validLastName: 'Įveskite taisyklingą pavardę',
   [ServerErrors.WRONG_PASSWORD]: 'Blogas elektroninis paštas arba slaptažodis',
   [ServerErrors.USER_NOT_FOUND]: 'Naudotojo su tokiu el. paštu nėra',
+  [ServerErrors.TOO_MANY_TOOLS]: 'Galimos tik vieno  tipo  įrankių grupės',
+  [ServerErrors.NO_TOOLS_IN_STORAGE]: 'Neturite įrankių sandelyje',
+  [ServerErrors.TOOL_WITH_THIS_SEAL_NUMBER_ALREADY_EXISTS]:
+    'Įrankis su šiuo plombos numeriu jau egzistuoja',
+  [ServerErrors.FISH_MUST_BE_WEIGHTED]:
+    'Sužvejotos žuvys turi būti pasvertos krante, prieš užbaigiant žvejybą',
   badFileTypes: 'Blogi failų tipai',
   fileSizesExceeded: 'Viršyti failų dydžiai',
   personalCode: 'Neteisingas asmens kodo formatas',
@@ -22,6 +28,7 @@ export const validationTexts: any = {
   requireFiles: 'Privalote įkelti dokumentus',
   atLeastOneColumn: 'Turi būti pasirinktas bent vienas stulpelis',
   profileUpdated: 'Profilis atnaujintas',
+  fishingFinished: 'Žvejyba pabaigta',
 };
 
 export const LOCATION_ERROR_MESSAGES = {
@@ -41,6 +48,7 @@ export const titles = {
   selectProfile: 'Pasirinkite paskyrą',
   profile: 'Profilis',
   newMember: 'Naujas narys',
+  newTool: 'Naujas įrankis',
 };
 
 export const subTitles = {
@@ -54,11 +62,19 @@ export const buttonLabels = {
   logout: 'Atsijungti',
   profiles: 'Profiliai',
   saveChanges: 'Saugoti pakeitimus',
-
+  save: 'Saugoti',
+  newTool: 'Naujas įrankis',
   newMember: 'Naujas narys',
   addMember: 'Pridėti narį',
   cancel: 'Atšaukti',
   delete: 'Pašalinti',
+  addTool: 'Pridėti įrankį',
+  startFishing: 'Pradėti žvejybą',
+  endFishing: 'Pabaigti žvejybą',
+  cantFishing: 'Neplaukiu žvejoti',
+  badWeather: 'Blogos oro sąlygos',
+  sick: 'Sergu',
+  other: 'Kita',
 };
 
 export const inputLabels = {
@@ -68,6 +84,9 @@ export const inputLabels = {
   email: 'El. pašto adresas',
   personalCode: 'Asmens kodas',
   role: 'Teisė',
+  lat: 'Ilguma',
+  lng: 'Platuma',
+  location: 'Telkinio pavadinimas arba baro nr.',
 };
 
 export const deleteDescriptionFirstPart = {
@@ -76,10 +95,12 @@ export const deleteDescriptionFirstPart = {
 
 export const deleteDescriptionSecondPart = {
   user: 'naudotoją',
+  tool: 'įrankį',
 };
 
 export const deleteTitles = {
   user: 'Ištrinti naudotoją',
+  tool: 'Ištrinti įrankį',
 };
 
 export const roleLabels = {

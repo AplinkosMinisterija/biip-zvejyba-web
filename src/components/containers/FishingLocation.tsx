@@ -1,33 +1,39 @@
+import { map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { RootState } from '../../state/store';
+import { buttonLabels, skipOptions } from '../../utils';
 import api from '../../utils/api';
-import { LocationType } from '../../utils/constants';
+import { LocationType, SickReasons } from '../../utils/constants';
 import { handleAlert } from '../../utils/functions';
 import Button, { ButtonColors } from '../buttons/Button';
 import FishingLocationButton, { Variant } from '../buttons/FishingLocationButton';
-import Popup from '../layouts/Popup';
+import PopUpWithImage from '../layouts/PopUpWithImage';
+import { Grid } from '../other/CommonStyles';
+import { IconName } from '../other/Icon';
 
 const FishingLocation = () => {
   const queryClient = useQueryClient();
   const [showStartFishing, setShowStartFishing] = useState(false);
+  const [showSkipFishing, setShowSkipFishing] = useState(false);
+  const [skipReason, setSkipReason] = useState(SickReasons.BAD_WEATHER);
   const [location, setLocation] = useState<LocationType | null>(null);
   const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
   const { isLoading: startLoading, mutateAsync: startFishing } = useMutation(api.startFishing, {
-    onError: () => {
-      //TODO: display error
+    onError: ({ response }) => {
+      handleAlert(response);
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries('currentFishing');
     },
     retry: false,
   });
 
   const { isLoading: skipLoading, mutateAsync: skipFishing } = useMutation(api.skipFishing, {
-    onError: () => {
-      //TODO: display error
+    onError: ({ response }) => {
+      handleAlert(response);
     },
     onSuccess: () => {
       //TODO: display success message
@@ -57,6 +63,8 @@ const FishingLocation = () => {
     }
   };
 
+  const disabledButtons = startLoading || skipLoading;
+
   return (
     <>
       <Container>
@@ -79,32 +87,61 @@ const FishingLocation = () => {
           onClick={handleSelectLocation(LocationType.POLDERS)}
         />
       </Container>
-      <Popup visible={showStartFishing} onClose={() => setShowStartFishing(false)}>
-        <PopupWrapper>
-          <>
-            <FishingImage src={'/startFishing.svg'} />
-            <Heading>Žvejybos pradžia</Heading>
-            <Description>Lengvai ir paprastai praneškite apie žvejybos pradžią</Description>
-          </>
-          <StyledButton
-            radius="24px"
-            onClick={handleStartFishing}
-            loading={startLoading}
-            disabled={startLoading || skipLoading}
-          >
-            Pradėti žvejybą
-          </StyledButton>
-          <StyledButton
-            variant={ButtonColors.SECONDARY}
-            radius="24px"
-            onClick={handleSkipFishing}
+      <PopUpWithImage
+        iconName={IconName.startFishing}
+        visible={showStartFishing}
+        onClose={() => setShowStartFishing(false)}
+        title={'Žvejybos pradžia'}
+        description={'Lengvai ir paprastai praneškite apie žvejybos pradžią'}
+      >
+        <Grid columns={2}>
+          <Button loading={startLoading} disabled={disabledButtons} onClick={handleStartFishing}>
+            {buttonLabels.startFishing}
+          </Button>
+          <Button
             loading={skipLoading}
-            disabled={startLoading || skipLoading}
+            disabled={disabledButtons}
+            variant={ButtonColors.SECONDARY}
+            onClick={() => {
+              setShowStartFishing(false);
+              setShowSkipFishing(true);
+            }}
           >
-            Neplaukiu žvejoti
-          </StyledButton>
-        </PopupWrapper>
-      </Popup>
+            {buttonLabels.cantFishing}
+          </Button>
+        </Grid>
+      </PopUpWithImage>
+      <PopUpWithImage
+        visible={showSkipFishing}
+        onClose={() => setShowSkipFishing(false)}
+        title={'Neplaukiu žvejoti'}
+        description={'Pasirinkite priežastį, dėl ko negalite žvejoti'}
+      >
+        <Grid columns={3}>
+          {map(skipOptions, (item, index) => (
+            <SelectButton
+              $selected={item.value === skipReason}
+              key={`skip-reasons-${index}`}
+              onClick={() => setSkipReason(item.value)}
+            >
+              {item.label}
+            </SelectButton>
+          ))}
+        </Grid>
+        <Grid columns={2}>
+          <Button loading={startLoading} disabled={disabledButtons} onClick={handleSkipFishing}>
+            {buttonLabels.save}
+          </Button>
+          <Button
+            loading={skipLoading}
+            disabled={disabledButtons}
+            variant={ButtonColors.TRANSPARENT}
+            onClick={() => setShowSkipFishing(false)}
+          >
+            {buttonLabels.cancel}
+          </Button>
+        </Grid>
+      </PopUpWithImage>
     </>
   );
 };
@@ -116,36 +153,20 @@ const Container = styled.div`
   width: 100%;
   margin-bottom: 40px;
 `;
-const PopupWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  gap: 16px;
-`;
-const FishingImage = styled.img`
-  width: 116px;
-  height: 116px;
-`;
 
-const Heading = styled.div`
-  font-size: 3.2rem;
-  font-weight: bold;
-`;
-
-const Description = styled.div`
-  margin-bottom: 40px;
-  line-height: 26px;
-  text-align: center;
-  font-weight: 500;
-`;
-
-const StyledButton = styled(Button)`
-  font-size: 2rem;
-  font-weight: 600;
-  border-radius: 30px;
-  height: 56px;
+const SelectButton = styled.button<{ $selected: boolean }>`
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  background-color: ${({ $selected, theme }) =>
+    $selected ? '#f5f6fe' : theme.colors.background.primary};
+  color: ${({ theme }) => theme.colors.text.primary};
+  border: 1px solid ${({ $selected, theme }) => ($selected ? theme.colors.primary : 'transparent')};
+  cursor: pointer;
+  &:hover {
+    background-color: #f5f6fe;
+    border: 1px solid ${({ theme }) => theme.colors.primary};
+  }
 `;
 
 export default FishingLocation;

@@ -5,21 +5,15 @@ import { device } from '../../utils/theme';
 import MobileMenu from '../layouts/MobileMenu';
 import Icon, { IconName } from '../other/Icon';
 
-const LogoHeader = ({ back }: any) => {
+const LogoHeader = () => {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
   return (
     <>
       <Container>
-        {back ? (
-          <div onClick={() => navigate(-1)}>
-            <Icon name={IconName.back} />
-          </div>
-        ) : (
-          <div onClick={() => navigate('/')}>
-            <Icon name={IconName.logo} />
-          </div>
-        )}
+        <div onClick={() => navigate('/')}>
+          <Icon name={IconName.logo} />
+        </div>
         <Button onClick={() => setShowMenu(true)}>
           <MenuIcon name={IconName.burger} />
           Meniu

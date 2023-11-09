@@ -1,9 +1,12 @@
 import { IconName } from '../components/other/Icon';
+import CaughtFishesWithTool from '../pages/CaughtFishesWithTool';
 import Fishing from '../pages/Fishing';
-import Profile from '../pages/Profile';
+import FishingTools from '../pages/FishingTools';
+import FishingWeight from '../pages/FishingWeight';
 import Profiles from '../pages/Profiles';
+import Tool from '../pages/Tool';
 import Tools from '../pages/Tools';
-import UserForm from '../pages/UserForm';
+import UserForm from '../pages/User';
 import Users from '../pages/Users';
 
 export const slugs = {
@@ -14,17 +17,25 @@ export const slugs = {
   fishing: (fishingId: string) => `/zvejyba/${fishingId}`,
   fishingTools: (fishingId: string) => `/zvejyba/${fishingId}/irankiai`,
   fishingWeight: (fishingId: string) => `/zvejyba/${fishingId}/svoris`,
-  fishingToolFish: (fishingId: string, toolId: string) =>
-    `/zvejyba/${fishingId}/irankiai/${toolId}/zuvis`,
+  fishingToolCaughtFishes: (fishingId: string, toolId: string) =>
+    `/zvejyba/${fishingId}/irankiai/${toolId}/sugautos-zuvys`,
   fishingToolConnect: (fishingId: string, toolId: string) =>
     `/zvejyba/${fishingId}/irankiai/${toolId}/irankiu_jungimas`,
   tools: '/irankiai',
+  tool: (id: string) => `/irankiai/${id}`,
+
   users: '/nariai',
   user: (id: string) => `/nariai/${id}`,
   profile: '/profilis',
 };
 
 export type RouteType = (typeof routes)[0];
+
+export enum Ids {
+  FISHING_ID = ':fishingId',
+  TOOL_ID = ':toolId',
+  ID = ':id',
+}
 
 export const routes = [
   {
@@ -49,16 +60,10 @@ export const routes = [
   },
   {
     slug: slugs.fishingTools(':fishingId'),
-    component: <Fishing />,
-    regExp: new RegExp('^/zvejyba/[0-9]+/irankiai$'),
+    component: <FishingTools />,
     back: true,
   },
-  {
-    slug: slugs.fishingToolFish(':fishingId', ':toolId'),
-    component: <Fishing />,
-    regExp: new RegExp('^/zvejyba/[0-9]+/irankiai[0-9]+/zuvis$'),
-    back: true,
-  },
+
   {
     slug: slugs.fishingToolConnect(':fishingId', ':toolId'),
     component: <Fishing />,
@@ -67,9 +72,8 @@ export const routes = [
   },
   {
     title: 'Tikslus svoris, kg',
-    slug: slugs.fishingWeight(':fishingId'),
-    component: <Fishing />,
-    regExp: new RegExp('^/zvejyba/[0-9]+/svoris$'),
+    slug: slugs.fishingWeight(Ids.FISHING_ID),
+    component: <FishingWeight />,
     back: true,
   },
   {
@@ -90,7 +94,15 @@ export const routes = [
   },
   {
     title: 'Nario informacija',
-    slug: slugs.user(':id'),
+    slug: slugs.user(Ids.ID),
+    component: <UserForm />,
+    tenantOwner: true,
+    back: true,
+  },
+
+  {
+    title: 'Nario informacija',
+    slug: slugs.user(Ids.ID),
     component: <UserForm />,
     tenantOwner: true,
     back: true,
@@ -112,9 +124,14 @@ export const routes = [
     iconName: IconName.settings,
   },
   {
-    title: 'Profilis',
-    slug: slugs.profile,
-    component: <Profile />,
-    iconName: IconName.profile,
+    title: 'Įrankio informacija',
+    slug: slugs.tool(Ids.ID),
+    component: <Tool />,
+  },
+  {
+    title: 'Apytikslis svoris, kg',
+    slug: slugs.fishingToolCaughtFishes(Ids.FISHING_ID, Ids.TOOL_ID),
+    component: <CaughtFishesWithTool />,
+    bacK: true,
   },
 ];

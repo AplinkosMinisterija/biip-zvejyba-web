@@ -25,6 +25,10 @@ const Container = styled.div<{ width?: string; $backgroundImg?: boolean }>`
   background-color: white;
   position: relative;
   width: 100%;
+  max-width: 700px;
+  padding: 40px;
+  flex-basis: auto;
+  border-radius: 16px;
   ${({ $backgroundImg }) =>
     $backgroundImg
       ? ` background-image: url('/empty-bg.svg');
@@ -32,13 +36,10 @@ const Container = styled.div<{ width?: string; $backgroundImg?: boolean }>`
                 background-position: 50%;
                 background-size: cover;`
       : ''}
-  padding: 0 16px;
   overflow-y: auto;
-  @media ${device.desktop} {
-    max-width: 700px;
-    padding: 40px;
-    flex-basis: auto;
-    border-radius: 16px;
+  @media ${device.mobileL} {
+    padding: 16px;
+    border-radius: 0px;
   }
 `;
 

@@ -1,4 +1,4 @@
-import { RoleTypes } from './constants';
+import { RoleTypes, ToolTypeType } from './constants';
 
 export type ProfileId = 'personal' | string;
 export interface Profile {
@@ -55,18 +55,69 @@ export type FileProps = {
 export interface ToolType {
   id: number;
   label: string;
+  type: ToolTypeType;
+}
+
+export interface BuiltTool {
+  buildEvent: {
+    id: string;
+    data: any;
+    geom: any;
+    location: Location;
+  };
+  weighingEvent: {
+    id: string;
+    data: { [key: string | number]: string };
+  };
+  type: string;
+  tools: Tool[];
+}
+
+export interface Location {
+  id: string;
+  name: string;
+  municipality: string;
 }
 
 export interface Tool {
   id: number;
   sealNr: string;
-  eyeSize: number;
-  eyeSize2: number;
-  netLength: number;
-  toolType: ToolType['id'];
+  data: {
+    eyeSize: number;
+    eyeSize2: number;
+    eyeSize3: number;
+    netLength: number;
+  };
+  toolType: ToolType;
   toolGroup: ToolGroup['id'];
   tenant: Tenant['id'];
   user: User['id'];
+}
+
+export interface Tool {
+  id: number;
+  sealNr: string;
+  data: {
+    eyeSize: number;
+    eyeSize2: number;
+    eyeSize3: number;
+    netLength: number;
+  };
+  toolType: ToolType;
+  toolGroup: ToolGroup['id'];
+  tenant: Tenant['id'];
+  user: User['id'];
+}
+
+export interface ToolFormProps {
+  toolType?: ToolType;
+  sealNr?: string;
+  data: {
+    eyeSize?: string;
+    eyeSize2?: string;
+    eyeSize3?: string;
+    netLength?: string;
+  };
 }
 
 export interface ToolGroup {

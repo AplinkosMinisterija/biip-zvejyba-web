@@ -48,26 +48,6 @@ const IconContainer = styled.div`
   align-items: center;
   justify-content: center;
 `;
-const StyledIcon = styled(Icon)`
-  svg {
-    stroke: ${({ theme }) => theme.colors.primary};
-  }
-
-  rect {
-    stroke: ${({ theme }) => theme.colors.primary};
-  }
-  path {
-    stroke: ${({ theme }) => theme.colors.primary};
-  }
-  circle {
-    stroke: ${({ theme }) => theme.colors.primary};
-  }
-  polyline {
-    stroke: ${({ theme }) => theme.colors.primary};
-  }
-  line {
-    stroke: ${({ theme }) => theme.colors.primary};
-  }
-`;
+const StyledIcon = styled(Icon)``;
 
 export default MenuButton;
