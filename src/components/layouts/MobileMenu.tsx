@@ -54,7 +54,7 @@ const Container = styled.div<{ width?: string }>`
   background-color: white;
   position: relative;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   padding: 0 16px;
 
   @media ${device.desktop} {
@@ -63,6 +63,7 @@ const Container = styled.div<{ width?: string }>`
     padding: 40px;
     flex-basis: auto;
     border-radius: 16px;
+    min-height: fit-content;
   }
 `;
 

@@ -32,11 +32,15 @@ const FormLayout = ({
             </IconContainer>
           </GridItem>
           <GridItem justify={'center'}>
-            <TitleGridRow>
-              <FormTitle>{title}</FormTitle>
-              <IconContainer onClick={() => onEdit()}>
-                <EditIcon name={IconName.edit} />
-              </IconContainer>
+            <TitleGridRow widthEdit={!!onEdit}>
+              <GridItem justify={'center'}>
+                <FormTitle>{title}</FormTitle>
+              </GridItem>
+              {onEdit && (
+                <IconContainer onClick={() => onEdit()}>
+                  <EditIcon name={IconName.edit} />
+                </IconContainer>
+              )}
             </TitleGridRow>
           </GridItem>
           {deleteInfo && (
@@ -57,9 +61,9 @@ const FormLayout = ({
   );
 };
 
-export const TitleGridRow = styled.div`
+export const TitleGridRow = styled.div<{ widthEdit: boolean }>`
   display: grid;
-  grid-template-columns: 1fr 30px;
+  grid-template-columns: 1fr ${({ widthEdit }) => (widthEdit ? '30px' : '')};
   gap: 16px;
 `;
 

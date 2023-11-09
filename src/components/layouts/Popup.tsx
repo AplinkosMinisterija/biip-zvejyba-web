@@ -38,7 +38,6 @@ const Container = styled.div<{ width?: string; $backgroundImg?: boolean }>`
       : ''}
   overflow-y: auto;
   @media ${device.mobileL} {
-    height: 100%;
     padding: 16px;
     border-radius: 0px;
   }

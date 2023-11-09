@@ -5,7 +5,7 @@ import { device } from '../../utils/theme';
 import LogoHeader from '../headers/LogoHeader';
 import SideBar from '../other/SideBar';
 
-const DefaultLayoutWrapper = ({ children, back }: any) => {
+const DefaultLayoutWrapper = ({ children }: any) => {
   const isMobile = useWindowSize(device.mobileL);
 
   return (
@@ -13,7 +13,7 @@ const DefaultLayoutWrapper = ({ children, back }: any) => {
       {!isMobile && <SideBar />}
       <ScrollableContainer>
         <InnerContainer>
-          <LogoHeader back={back} />
+          <LogoHeader />
           <Content>{children}</Content>
         </InnerContainer>
       </ScrollableContainer>
@@ -25,7 +25,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   align-self: center;
   align-items: center;
   padding: 0 16px 0 16px;
@@ -47,7 +47,7 @@ const Container = styled(Div100vh)`
 
 const ScrollableContainer = styled.div`
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   overflow-y: scroll;
   background-color: white;
 `;
