@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { device } from '../../utils/theme';
+import { device } from '../../utils';
 import Icon from '../other/Icon';
 import Modal from './Modal';
 

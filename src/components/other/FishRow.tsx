@@ -19,7 +19,7 @@ const FishRow = ({ onChange, fish }: FishRowProp) => {
       />
       <Column>
         <TextColumn>
-          <Title>{label}</Title>
+          <Title>{label.charAt(0).toUpperCase() + label.slice(1)}</Title>
           {preliminaryAmount && <Caught>{`Sagauta ${preliminaryAmount} kg`}</Caught>}
         </TextColumn>
         <InnerRow>

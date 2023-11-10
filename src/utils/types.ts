@@ -67,7 +67,7 @@ export interface BuiltTool {
   };
   weighingEvent: {
     id: string;
-    data: { [key: string | number]: string };
+    data: { [key: string | number]: string | number };
   };
   type: string;
   tools: Tool[];

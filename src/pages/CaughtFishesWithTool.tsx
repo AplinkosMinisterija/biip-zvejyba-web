@@ -7,18 +7,20 @@ import { useAppSelector, useFishTypes, useGetCurrentRoute } from '../utils/hooks
 import styled from 'styled-components';
 import Button from '../components/buttons/Button';
 import FishRow from '../components/other/FishRow';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 
 export const CaughtFishesWithTool = () => {
+  const queryClient = useQueryClient();
   const currentRoute = useGetCurrentRoute();
   const { fishTypes, isLoading } = useFishTypes();
   const coordinates = useAppSelector((state) => state.fishing.coordinates);
   const { toolId, fishingId } = useParams();
   const navigate = useNavigate();
-
   const [amounts, setAmounts] = useState<{ [key: number]: number }>({});
 
+  //TODO: if single page approach would be used location query would be unnecessary
+  // since location could be passed via props from parent
   const { data: location } = useQuery(
     ['location'],
     () =>
@@ -34,6 +36,9 @@ export const CaughtFishesWithTool = () => {
     ['builtTool', toolId],
     () => api.getBuiltTool(toolId!),
     {
+      onSuccess: (e) => {
+        setAmounts(e?.weighingEvent?.data as { [key: number]: number });
+      },
       onError: () => {
         navigate(slugs.fishingTools(fishingId!));
       },
@@ -43,7 +48,8 @@ export const CaughtFishesWithTool = () => {
   const { mutateAsync: weighToolsMutation, isLoading: weighToolsIsLoading } = useMutation(
     (data: any) => api.weighTools(data, toolId!),
     {
-      onSuccess: () => {
+      onSuccess: async () => {
+        queryClient.invalidateQueries(['builtTool', toolId]);
         navigate(slugs.fishingTools(fishingId!));
       },
       onError: () => {
@@ -51,6 +57,12 @@ export const CaughtFishesWithTool = () => {
       },
     },
   );
+
+  useEffect(() => {
+    if (builtToolsGroup?.weighingEvent?.data && !Object.keys(amounts).length) {
+      setAmounts(builtToolsGroup?.weighingEvent?.data as { [key: number]: number });
+    }
+  }, [builtToolsGroup]);
 
   if (isLoading || toolLoading) return <LoaderComponent />;
 
@@ -66,7 +78,7 @@ export const CaughtFishesWithTool = () => {
 
   return (
     <>
-      <DefaultLayout infoSubTitle={sealNr} back={currentRoute?.back}>
+      <DefaultLayout back={currentRoute?.back}>
         <Container>
           <Title>{currentRoute?.title}</Title>
           <Heading>{label}</Heading>

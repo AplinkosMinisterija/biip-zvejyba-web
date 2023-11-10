@@ -14,14 +14,13 @@ import ToolsGroupCard from '../components/other/ToolsGroupCard';
 import { RootState } from '../state/store';
 import { getBars, handleAlert, useGetCurrentRoute } from '../utils';
 import api from '../utils/api';
-import { LocationType } from '../utils/constants';
-import { device } from '../utils/theme';
-import { ToolGroup } from '../utils/types';
+import { LocationType } from '../utils';
+import { device } from '../utils';
+import { ToolGroup } from '../utils';
 import LocationForm from '../components/forms/LocationForm';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import { IconContainer } from '../components/other/CommonStyles';
 import Icon, { IconName } from '../components/other/Icon';
-import InnerPageLayout from '../components/layouts/InnerPageLayout';
 
 const FishingTools = () => {
   const queryClient = useQueryClient();
