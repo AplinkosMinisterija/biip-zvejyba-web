@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
-import { slugs } from '../../utils';
+import { LocationType, slugs } from '../../utils';
 import api from '../../utils/api';
 import MenuButton from '../buttons/MenuButton';
 import PopUpWithTitles from '../layouts/PopUpWithTitle';
@@ -14,6 +14,11 @@ const ToolActions = ({ toolGroup, onReturn, visible, coordinates, location }: an
   const navigate = useNavigate();
   const { fishingId } = useParams();
 
+  const { data: currentFishing, isLoading: currentFishingLoading } = useQuery(
+    ['currentFishing'],
+    () => api.getCurrentFishing(),
+    {},
+  );
   const { mutateAsync: returnToolsMutation } = useMutation(
     () =>
       api.removeTool(
@@ -42,14 +47,15 @@ const ToolActions = ({ toolGroup, onReturn, visible, coordinates, location }: an
       subTitle={toolGroup?.tools?.map((tool: any) => tool.sealNr).join(', ')}
     >
       <PopupContainer>
-        <MenuButton
-          label="Sverti žuvį laive "
-          icon={IconName.scales}
-          onClick={() => {
-            navigate(slugs.fishingToolCaughtFishes(fishingId!, toolGroup?.id));
-          }}
-        />
-        {/*<MenuButton label="Sujungti įrankius " icon={IconName.connection} onClick={() => {}} />*/}
+        {currentFishing?.type !== LocationType.INLAND_WATERS && (
+          <MenuButton
+            label="Sverti žuvį laive "
+            icon={IconName.scales}
+            onClick={() => {
+              navigate(slugs.fishingToolCaughtFishes(fishingId!, toolGroup?.id));
+            }}
+          />
+        )}
         <MenuButton
           label="Sugrąžinti į sandėlį "
           icon={IconName.return}

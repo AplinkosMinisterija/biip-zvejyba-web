@@ -14,7 +14,7 @@ const ToolsGroupCard = ({
   selected?: boolean;
   onSelect: any;
 }) => {
-  const isCheckedTool = !!toolsGroup?.weighingEvent;
+  const isCheckedTool = !!toolsGroup?.weightEvent;
 
   const { label, sealNr, locationName } = getBuiltToolInfo(toolsGroup);
 

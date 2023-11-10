@@ -41,7 +41,7 @@ export const CaughtFishesWithTool = () => {
     {},
   );
 
-  const { data: builtToolsGroup, isLoading: builtToolsGroupLoading } = useQuery(
+  const { data: toolsGroup, isLoading: toolsGroupLoading } = useQuery(
     ['builtTool', toolId],
     () => api.getBuiltTool(toolId!),
     {
@@ -56,7 +56,7 @@ export const CaughtFishesWithTool = () => {
     {
       onSuccess: async () => {
         queryClient.invalidateQueries(['builtTool', toolId]);
-        navigate(slugs.fishingTools(fishingId!));
+        navigate(-1);
       },
       onError: () => {
         handleAlert();
@@ -65,14 +65,14 @@ export const CaughtFishesWithTool = () => {
   );
 
   useEffect(() => {
-    if (builtToolsGroup?.weighingEvent?.data && !Object.keys(amounts).length) {
-      setAmounts(builtToolsGroup?.weighingEvent?.data as { [key: number]: number });
+    if (toolsGroup?.weightEvent?.data && !Object.keys(amounts).length) {
+      setAmounts(toolsGroup?.weightEvent?.data as { [key: number]: number });
     }
-  }, [builtToolsGroup]);
+  }, [toolsGroup]);
 
-  if (isLoading || builtToolsGroupLoading || locationLoading) return <LoaderComponent />;
+  if (isLoading || toolsGroupLoading || locationLoading) return <LoaderComponent />;
 
-  const { label, sealNr } = getBuiltToolInfo(builtToolsGroup!);
+  const { label, sealNr } = getBuiltToolInfo(toolsGroup!);
 
   const updateAmounts = (value: { [key: number]: number }) => {
     setAmounts({ ...amounts, ...value });

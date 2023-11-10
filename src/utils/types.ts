@@ -65,7 +65,7 @@ export interface BuiltTool {
     geom: any;
     location: Location;
   };
-  weighingEvent: {
+  weightEvent: {
     id: string;
     data: { [key: string | number]: string | number };
   };

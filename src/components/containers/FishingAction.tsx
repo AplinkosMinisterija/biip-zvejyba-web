@@ -1,16 +1,23 @@
 import { useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { buttonLabels, handleAlert, handleSuccessToast, validationTexts } from '../../utils';
+import {
+  buttonLabels,
+  handleAlert,
+  handleSuccessToast,
+  LocationType,
+  validationTexts,
+  slugs,
+} from '../../utils';
 import api from '../../utils/api';
-import { slugs } from '../../utils/routes';
 import Button, { ButtonColors } from '../buttons/Button';
 import { Variant } from '../buttons/FishingLocationButton';
 import LargeButton from '../buttons/LargeButton';
 import PopUpWithImage from '../layouts/PopUpWithImage';
 import { Grid } from '../other/CommonStyles';
 import { IconName } from '../other/Icon';
+import LoaderComponent from '../other/LoaderComponent';
 
 const FishingAction = ({ fishing }: any) => {
   const queryClient = useQueryClient();
@@ -29,6 +36,10 @@ const FishingAction = ({ fishing }: any) => {
       retry: false,
     },
   );
+  const { data: preliminaryWeights, isLoading: preliminaryFishWeightLoading } = useQuery(
+    ['preliminaryFishWeights'],
+    api.preliminaryFishWeights,
+  );
 
   const handleFinishFishing = () => {
     if (fishing?.id) {
@@ -36,7 +47,14 @@ const FishingAction = ({ fishing }: any) => {
     }
   };
 
-  return (
+  const loading = finishFishingLoading || preliminaryFishWeightLoading;
+
+  const canWeigh =
+    fishing?.type === LocationType.INLAND_WATERS || !!Object.keys(preliminaryWeights || [])?.length;
+
+  return loading ? (
+    <LoaderComponent />
+  ) : (
     <>
       <Container>
         <LargeButton
@@ -49,16 +67,18 @@ const FishingAction = ({ fishing }: any) => {
             navigate(location);
           }}
         />
-        <LargeButton
-          variant={Variant.GHOST_WHITE}
-          title="Žuvies svoris</br>krante"
-          subtitle="Pasverkite bendrą svorį"
-          buttonLabel="Sverti"
-          onClick={() => {
-            const location = slugs.fishingWeight(fishing?.id);
-            navigate(location);
-          }}
-        />
+        {canWeigh && (
+          <LargeButton
+            variant={Variant.GHOST_WHITE}
+            title="Žuvies svoris</br>krante"
+            subtitle="Pasverkite bendrą svorį"
+            buttonLabel="Sverti"
+            onClick={() => {
+              const location = slugs.fishingWeight(fishing?.id);
+              navigate(location);
+            }}
+          />
+        )}
         <LargeButton
           variant={Variant.AZURE}
           title="Žvejybos baigimo</br>nustatymas"

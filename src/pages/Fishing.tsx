@@ -6,9 +6,7 @@ import FishingLocation from '../components/containers/FishingLocation';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import LoaderComponent from '../components/other/LoaderComponent';
 import api from '../utils/api';
-import { getCurrentRoute } from '../utils/functions';
-import { useGeolocationWatcher } from '../utils/hooks';
-import { slugs } from '../utils/routes';
+import { getCurrentRoute, useGeolocationWatcher, slugs } from '../utils';
 export const Fishing = () => {
   const navigate = useNavigate();
   const currentRoute = getCurrentRoute(window.location.pathname);

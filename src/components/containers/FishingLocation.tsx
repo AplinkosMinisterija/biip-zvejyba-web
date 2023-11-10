@@ -1,6 +1,6 @@
 import { map } from 'lodash';
 import { useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { RootState } from '../../state/store';
@@ -13,6 +13,7 @@ import FishingLocationButton, { Variant } from '../buttons/FishingLocationButton
 import PopUpWithImage from '../layouts/PopUpWithImage';
 import { Grid } from '../other/CommonStyles';
 import { IconName } from '../other/Icon';
+import LoaderComponent from '../other/LoaderComponent';
 
 const FishingLocation = () => {
   const queryClient = useQueryClient();
@@ -21,6 +22,7 @@ const FishingLocation = () => {
   const [skipReason, setSkipReason] = useState(SickReasons.BAD_WEATHER);
   const [location, setLocation] = useState<LocationType | null>(null);
   const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
+
   const { isLoading: startLoading, mutateAsync: startFishing } = useMutation(api.startFishing, {
     onError: ({ response }) => {
       handleAlert(response);
