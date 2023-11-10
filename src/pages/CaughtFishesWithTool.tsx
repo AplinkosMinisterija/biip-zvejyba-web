@@ -1,9 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import LoaderComponent from '../components/other/LoaderComponent';
-import { device, getBuiltToolInfo, handleAlert, slugs } from '../utils';
 import api from '../utils/api';
-import { useAppSelector, useFishTypes, useGetCurrentRoute } from '../utils/hooks';
+import {
+  useAppSelector,
+  useFishTypes,
+  useGetCurrentRoute,
+  device,
+  getBuiltToolInfo,
+  handleAlert,
+  slugs,
+} from '../utils';
 import styled from 'styled-components';
 import Button from '../components/buttons/Button';
 import FishRow from '../components/other/FishRow';
@@ -19,26 +26,25 @@ export const CaughtFishesWithTool = () => {
   const navigate = useNavigate();
   const [amounts, setAmounts] = useState<{ [key: number]: number }>({});
 
-  //TODO: if single page approach would be used location query would be unnecessary
+  // TODO: if single page approach would be used location query would be unnecessary
   // since location could be passed via props from parent
-  const { data: location } = useQuery(
+  const { data: location, isLoading: locationLoading } = useQuery(
     ['location'],
     () =>
-      api.getLocation({
-        query: {
-          coordinates,
-        },
-      }),
+      coordinates
+        ? api.getLocation({
+            query: {
+              coordinates,
+            },
+          })
+        : {},
     {},
   );
 
-  const { data: builtToolsGroup, isLoading: toolLoading } = useQuery(
+  const { data: builtToolsGroup, isLoading: builtToolsGroupLoading } = useQuery(
     ['builtTool', toolId],
     () => api.getBuiltTool(toolId!),
     {
-      onSuccess: (e) => {
-        setAmounts(e?.weighingEvent?.data as { [key: number]: number });
-      },
       onError: () => {
         navigate(slugs.fishingTools(fishingId!));
       },
@@ -64,7 +70,7 @@ export const CaughtFishesWithTool = () => {
     }
   }, [builtToolsGroup]);
 
-  if (isLoading || toolLoading) return <LoaderComponent />;
+  if (isLoading || builtToolsGroupLoading || locationLoading) return <LoaderComponent />;
 
   const { label, sealNr } = getBuiltToolInfo(builtToolsGroup!);
 

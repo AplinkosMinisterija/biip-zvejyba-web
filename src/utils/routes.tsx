@@ -129,6 +129,6 @@ export const routes = [
     title: 'Apytikslis svoris, kg',
     slug: slugs.fishingToolCaughtFishes(Ids.FISHING_ID, Ids.TOOL_ID),
     component: <CaughtFishesWithTool />,
-    bacK: true,
+    back: true,
   },
 ];

@@ -1,11 +1,15 @@
 import Icon, { IconName } from '../other/Icon';
 import styled from 'styled-components';
 import { device } from '../../utils/theme';
+import { useNavigate } from 'react-router-dom';
 
 const BackHeader = ({ title }: any) => {
+  const navigate = useNavigate();
   return (
     <Container>
-      <BackIcon name={IconName.back} />
+      <div onClick={() => navigate(-1)}>
+        <BackIcon name={IconName.back} />
+      </div>
       {title ? <Title>{title}</Title> : null}
       <Menu>
         <MenuIcon name={IconName.burger} />
