@@ -1,20 +1,20 @@
 import DefaultLayoutWrapper from './DefaultLayoutWrapper';
 import styled from 'styled-components';
 
-const DefaultLayout = ({ children, title, subtitle, back }: any) => {
+const InnerPageLayout = ({ children, title, customTitle, subtitle, back }: any) => {
   return (
     <DefaultLayoutWrapper back={back}>
-      {title && <Title>{title}</Title>}
+      {customTitle ? customTitle : title && <Title>{title}</Title>}
       {subtitle && <Subtitle>{subtitle}</Subtitle>}
       {children}
     </DefaultLayoutWrapper>
   );
 };
-export default DefaultLayout;
+export default InnerPageLayout;
 
 const Title = styled.div`
   color: ${({ theme }) => theme.colors.text.primary};
-  font-size: 3.2rem;
+  font-size: 2rem;
   font-weight: 800;
   text-align: center;
 `;

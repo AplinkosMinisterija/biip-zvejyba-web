@@ -323,9 +323,9 @@ class Api {
     });
   };
 
-  getToolsGroup = async (id: string): Promise<BuiltTool> => {
+  getBuiltTool = async (id: string): Promise<BuiltTool> => {
     return this.getOne({
-      resource: `toolsGroups`,
+      resource: `builtToolsGroups`,
       populate: ['tools'],
       id,
     });

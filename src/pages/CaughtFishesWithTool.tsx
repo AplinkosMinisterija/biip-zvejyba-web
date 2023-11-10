@@ -1,14 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import LoaderComponent from '../components/other/LoaderComponent';
-import { BuiltTool, device, getBuiltToolInfo, handleAlert, slugs } from '../utils';
+import { device, getBuiltToolInfo, handleAlert, slugs } from '../utils';
 import api from '../utils/api';
 import { useAppSelector, useFishTypes, useGetCurrentRoute } from '../utils/hooks';
-import DefaultLayout from '../components/layouts/DefaultLayout';
 import styled from 'styled-components';
 import Button from '../components/buttons/Button';
 import FishRow from '../components/other/FishRow';
 import { useState } from 'react';
+import DefaultLayout from '../components/layouts/DefaultLayout';
 
 export const CaughtFishesWithTool = () => {
   const currentRoute = useGetCurrentRoute();
@@ -30,9 +30,9 @@ export const CaughtFishesWithTool = () => {
     {},
   );
 
-  const { data: toolsGroup, isLoading: toolLoading } = useQuery(
+  const { data: builtToolsGroup, isLoading: toolLoading } = useQuery(
     ['builtTool', toolId],
-    () => api.getToolsGroup(toolId!),
+    () => api.getBuiltTool(toolId!),
     {
       onError: () => {
         navigate(slugs.fishingTools(fishingId!));
@@ -54,7 +54,7 @@ export const CaughtFishesWithTool = () => {
 
   if (isLoading || toolLoading) return <LoaderComponent />;
 
-  const { label, sealNr } = getBuiltToolInfo(toolsGroup!);
+  const { label, sealNr } = getBuiltToolInfo(builtToolsGroup!);
 
   const updateAmounts = (value: { [key: number]: number }) => {
     setAmounts({ ...amounts, ...value });
@@ -66,14 +66,11 @@ export const CaughtFishesWithTool = () => {
 
   return (
     <>
-      <DefaultLayout
-        title={currentRoute?.title || '--'}
-        infoTitle={label}
-        infoSubTitle={sealNr}
-        back={currentRoute?.back}
-      >
+      <DefaultLayout infoSubTitle={sealNr} back={currentRoute?.back}>
         <Container>
-          <Heading></Heading>
+          <Title>{currentRoute?.title}</Title>
+          <Heading>{label}</Heading>
+          <SealNumbers>{sealNr}</SealNumbers>
           {fishTypes?.map((fishType: any) => (
             <FishRow
               key={`fish_type_${fishType.id}`}
@@ -104,7 +101,7 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin: 40px 0;
+  align-items: center;
 `;
 
 const Footer = styled.div`
@@ -132,9 +129,24 @@ const StyledButton = styled(Button)`
   padding: 0;
 `;
 
+const Title = styled.div`
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: 2rem;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 16px;
+`;
+
 const Heading = styled.div`
   text-align: center;
-  margin: 16px 0 0 16px;
   font-size: 2.4rem;
   font-weight: bold;
+`;
+
+const SealNumbers = styled.div`
+  color: ${({ theme }) => theme.colors.text.primary};
+  line-height: 26px;
+  margin-top: 4px;
+  font-size: 1.6rem;
+  margin-bottom: 32px;
 `;

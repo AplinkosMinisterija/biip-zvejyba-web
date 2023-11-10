@@ -21,6 +21,7 @@ import LocationForm from '../components/forms/LocationForm';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import { IconContainer } from '../components/other/CommonStyles';
 import Icon, { IconName } from '../components/other/Icon';
+import InnerPageLayout from '../components/layouts/InnerPageLayout';
 
 const FishingTools = () => {
   const queryClient = useQueryClient();
@@ -93,22 +94,17 @@ const FishingTools = () => {
   };
 
   return (
-    <DefaultLayout
-      customTitle={
-        !locationLoading && (
-          <TitleWrapper>
-            <Title>{location.name || 'Nenustatytas vandens telkinys'}</Title>
-            {location.name && (
-              <IconContainer onClick={() => setShowLocationPopUp(true)}>
-                <EditIcon name={IconName.edit} />
-              </IconContainer>
-            )}
-          </TitleWrapper>
-        )
-      }
-      onEdit={() => setShowLocationPopUp(true)}
-      back={currentRoute?.back}
-    >
+    <DefaultLayout onEdit={() => setShowLocationPopUp(true)} back={currentRoute?.back}>
+      {!locationLoading && (
+        <TitleWrapper>
+          <Title>{location.name || 'Nenustatytas vandens telkinys'}</Title>
+          {location.name && (
+            <IconContainer onClick={() => setShowLocationPopUp(true)}>
+              <EditIcon name={IconName.edit} />
+            </IconContainer>
+          )}
+        </TitleWrapper>
+      )}
       <Container>
         {locationLoading ? (
           <LoaderComponent />
@@ -231,8 +227,8 @@ const Footer = styled.div`
 
 const Title = styled.div`
   color: ${({ theme }) => theme.colors.text.primary};
-  font-size: 3.2rem;
-  font-weight: 800;
+  font-size: 2rem;
+  font-weight: 900;
   text-align: center;
 `;
 
@@ -260,7 +256,7 @@ const TitleWrapper = styled.div`
 `;
 
 const EditIcon = styled(Icon)`
-  font-size: 2.8rem;
+  font-size: 2.4rem;
 `;
 
 export default FishingTools;
