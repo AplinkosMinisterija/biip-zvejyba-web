@@ -165,10 +165,8 @@ function getCentroid(bbox: number[]) {
 
 export const getBars = async () => {
   const bars = await api.getBars();
-
   return bars?.features.map((item: any) => {
     const { x, y } = getCentroid(item?.bbox.map((coordinate: string) => Number(coordinate)));
-
     return {
       x,
       y,

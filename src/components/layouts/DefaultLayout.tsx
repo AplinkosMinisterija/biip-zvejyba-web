@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { IconContainer } from '../other/CommonStyles';
 import Icon, { IconName } from '../other/Icon';
 
-const DefaultLayout = ({ children, title, customTitle, subtitle, back, onEdit }: any) => {
+const DefaultLayout = ({ children, title, customTitle, subtitle, back }: any) => {
   return (
     <DefaultLayoutWrapper back={back}>
       {customTitle ? customTitle : title && <Title>{title}</Title>}

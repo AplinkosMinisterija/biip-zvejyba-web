@@ -11,7 +11,7 @@ import {
   useNavigationType,
 } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
-import { StyleSheetManager, ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'styled-components';
 import App from './App';
 import redux from './state/store';
 import { GlobalStyle, theme } from './utils/theme';

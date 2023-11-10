@@ -3,12 +3,11 @@ import NumericTextField from '../fields/NumericTextField';
 
 interface FishRowProp {
   onChange: (value: any) => void;
-  fish: { label: string; photo: any; amount: any; preliminaryAmount: any };
+  fish: { label: string; photo: any; amount: number; preliminaryAmount?: number };
 }
 
 const FishRow = ({ onChange, fish }: FishRowProp) => {
   const { label, photo, amount, preliminaryAmount } = fish;
-
   return (
     <Row>
       <Image
@@ -24,7 +23,7 @@ const FishRow = ({ onChange, fish }: FishRowProp) => {
           {preliminaryAmount && <Caught>{`Sagauta ${preliminaryAmount} kg`}</Caught>}
         </TextColumn>
         <InnerRow>
-          <Button type="button" onClick={() => Number(amount) && onChange(Number(amount))}>
+          <Button type="button" onClick={() => amount > 0 && onChange(amount - 1)}>
             -
           </Button>
           <StyledNumericTextField
@@ -34,7 +33,8 @@ const FishRow = ({ onChange, fish }: FishRowProp) => {
             value={amount}
             onChange={(amount) => onChange(amount)}
           />
-          <Button type="button" onClick={() => onChange(Number(amount) + 1)}>
+
+          <Button type="button" onClick={() => onChange(amount + 1)}>
             +
           </Button>
         </InnerRow>
@@ -48,11 +48,11 @@ const StyledNumericTextField = styled(NumericTextField)`
 `;
 
 const Row = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 88px 1fr;
   gap: 16px;
-  height: 119px;
-  color: ${({ theme }) => theme.colors.text.primary};
-  width: 100%;
+  align-items: center;
+  margin: 32px 0;
 `;
 
 const InnerRow = styled.div`
@@ -96,9 +96,10 @@ const Button = styled.button`
 `;
 
 const Image = styled.img`
-  height: 119px;
+  height: 100%;
   object-fit: cover;
   width: 88px;
+  border-radius: 4px;
 `;
 
 export default FishRow;

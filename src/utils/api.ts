@@ -283,7 +283,7 @@ class Api {
   };
   weighTools = async (
     params: {
-      data: { [key: string]: number };
+      data: { [key: number]: number };
       coordinates: { x: number; y: number };
       location: Location;
     },
@@ -323,9 +323,9 @@ class Api {
     });
   };
 
-  getBuiltTool = async (id: string): Promise<BuiltTool> => {
+  getToolsGroup = async (id: string): Promise<BuiltTool> => {
     return this.getOne({
-      resource: `builtToolsGroups`,
+      resource: `toolsGroups`,
       populate: ['tools'],
       id,
     });

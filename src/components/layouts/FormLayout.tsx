@@ -32,7 +32,7 @@ const FormLayout = ({
             </IconContainer>
           </GridItem>
           <GridItem justify={'center'}>
-            <TitleGridRow widthEdit={!!onEdit}>
+            <TitleGridRow $widthEdit={!!onEdit}>
               <GridItem justify={'center'}>
                 <FormTitle>{title}</FormTitle>
               </GridItem>
@@ -61,9 +61,9 @@ const FormLayout = ({
   );
 };
 
-export const TitleGridRow = styled.div<{ widthEdit: boolean }>`
+export const TitleGridRow = styled.div<{ $widthEdit: boolean }>`
   display: grid;
-  grid-template-columns: 1fr ${({ widthEdit }) => (widthEdit ? '30px' : '')};
+  grid-template-columns: 1fr ${({ $widthEdit }) => ($widthEdit ? '30px' : '')};
   gap: 16px;
 `;
 
