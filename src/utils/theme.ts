@@ -11,6 +11,7 @@ export interface Theme {
     success: string;
     powder: string;
     purple: string;
+    lightSteelBlue: string;
     hover: {
       primary: string;
       secondary: string;
@@ -29,6 +30,7 @@ export interface Theme {
       input: string;
       powder: string;
       retroBlack: string;
+      royalBlue: string;
     };
     border: string;
     background: { primary: string; success: string };
@@ -54,7 +56,7 @@ export const theme: Theme = {
     success: '#258800',
     powder: '#FFFFFFCC',
     purple: '#8a33fe',
-
+    lightSteelBlue: '#cdd5df',
     hover: {
       primary: '#102EB1',
       secondary: '#121A55',
@@ -73,6 +75,7 @@ export const theme: Theme = {
       input: '#231f20',
       powder: '#FFFFFFCC',
       retroBlack: '#101010',
+      royalBlue: '#1121DA',
     },
     border: '#CDD5DF',
     background: { primary: '#f7f7f7', success: '#eafbf6' },

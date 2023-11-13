@@ -4,6 +4,7 @@ import Fishing from '../pages/Fishing';
 import FishingTools from '../pages/FishingTools';
 import FishingWeight from '../pages/FishingWeight';
 import Profiles from '../pages/Profiles';
+import Research from '../pages/Research';
 import Tool from '../pages/Tool';
 import Tools from '../pages/Tools';
 import UserForm from '../pages/User';
@@ -23,10 +24,12 @@ export const slugs = {
     `/zvejyba/${fishingId}/irankiai/${toolId}/irankiu_jungimas`,
   tools: '/irankiai',
   tool: (id: string) => `/irankiai/${id}`,
-
   users: '/nariai',
   user: (id: string) => `/nariai/${id}`,
   profile: '/profilis',
+  researches: '/moksliniai-tyrimai',
+  research: (id: string) => `/moksliniai-tyrimai/${id}`,
+  newResearch: `/moksliniai-tyrimai/naujas`,
 };
 
 export type RouteType = (typeof routes)[0];
@@ -133,5 +136,13 @@ export const routes = [
     slug: slugs.fishingToolCaughtFishes(Ids.FISHING_ID, Ids.TOOL_ID),
     component: <CaughtFishesWithTool />,
     bacK: true,
+  },
+  {
+    title: 'Moksliniai tyrimai',
+    subtitle: 'Mokslinių tyrimų duomenys',
+    slug: slugs.researches,
+    component: <Research />,
+    iconName: IconName.researches,
+    isInvestigator: true,
   },
 ];

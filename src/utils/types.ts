@@ -7,6 +7,7 @@ export interface Profile {
   code?: string;
   email?: string;
   role: RoleTypes;
+  isInvestigator: boolean;
   phone: string;
 }
 export interface User {
@@ -149,6 +150,42 @@ export interface Fishing {
 export interface FishType {
   id: number;
   label: string;
+  photo: any;
+}
+
+export interface Research {
+  id?: number;
+  cadastralId?: string;
+  waterBodyData?: { name: string; municipality?: string; area: number };
+  startAt?: Date;
+  endAt?: Date;
+  predatoryFishesRelativeAbundance?: number;
+  predatoryFishesRelativeBiomass?: number;
+  averageWeight?: number;
+  valuableFishesRelativeBiomass?: number;
+  conditionIndex?: number;
+  files?: Array<{
+    url: string;
+    name: string;
+  }>;
+  previousResearchData?: {
+    year: number;
+    conditionIndex: number;
+    totalAbundance: number;
+    totalBiomass: number;
+  };
+  fishes?: ResearchFish[];
+  tenant?: Tenant;
+  user?: User;
+  previous?: Research;
+}
+
+export interface ResearchFish {
+  fishType?: FishType;
+  abundance: string;
+  biomass: string;
+  abundancePercentage: string;
+  biomassPercentage: string;
 }
 
 export interface DeleteInfoProps {

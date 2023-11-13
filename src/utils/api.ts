@@ -1,7 +1,7 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import Cookies from 'universal-cookie';
 import { LocationType, Populations, Resources } from './constants';
-import { BuiltTool, TenantUser, Tool, ToolFormProps, User } from './types';
+import { BuiltTool, FishType, Research, TenantUser, Tool, ToolFormProps, User } from './types';
 
 const cookies = new Cookies();
 
@@ -432,9 +432,14 @@ class Api {
       resource: this.barSearchUrl,
     });
 
-  getFishTypes = async (): Promise<{ id: string; label: string; photo: any }[]> =>
+  getFishTypes = async (): Promise<FishType[]> =>
     await this.getAll({
       resource: Resources.FISH_TYPES,
+    });
+
+  getResearches = async (): Promise<Research[]> =>
+    await this.get({
+      resource: `researches`,
     });
 }
 

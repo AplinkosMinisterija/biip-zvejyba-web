@@ -1,7 +1,7 @@
 import { CgClose } from 'react-icons/cg';
-import { FaAnchor, FaCheck } from 'react-icons/fa';
+import { FaAnchor, FaCheck, FaTrash } from 'react-icons/fa';
 import { FaChevronRight } from 'react-icons/fa6';
-import { FiArrowLeft, FiClock, FiMail, FiMenu } from 'react-icons/fi';
+import { FiArrowLeft, FiClock, FiDownload, FiMail, FiMenu } from 'react-icons/fi';
 import { HiOutlineUsers } from 'react-icons/hi';
 import { IoMdCalendar } from 'react-icons/io';
 import { IoPersonOutline } from 'react-icons/io5';
@@ -12,6 +12,8 @@ import {
   MdKeyboardArrowDown,
   MdLocationOn,
   MdOutlineEdit,
+  MdOutlineFullscreen,
+  MdOutlineFullscreenExit,
   MdOutlineLocalPhone,
   MdOutlineVisibility,
   MdOutlineVisibilityOff,
@@ -20,6 +22,8 @@ import {
 import { PiArrowBendDownLeftBold } from 'react-icons/pi';
 
 export enum IconName {
+  remove = 'remove',
+  download = 'download',
   logout = 'logout',
   back = 'back',
   burger = 'burger',
@@ -66,6 +70,9 @@ export enum IconName {
   startFishing = 'startFishing',
   endFishing = 'endFishing',
   location = 'location',
+  researches = 'researches',
+  fullscreen = 'fullscreen',
+  exitFullScreen = 'exitFullScreen',
 }
 export interface IconProps {
   name: IconName | string;
@@ -469,6 +476,39 @@ V12l3,3"
 
     case IconName.location:
       return <MdLocationOn className={className} />;
+    case IconName.researches:
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={className}
+        >
+          <path d="m19,5.11c-1.89,2.4-4.8,3.94-8.06,3.94s-6.17-1.54-8.06-3.94c1.89-2.4,4.8-3.94,8.06-3.94s6.26,1.54,8.06,3.94Z" />
+          <path d="m1,1c.26,1.54.94,2.91,1.89,4.11" />
+          <path d="m1,9.23c.26-1.54.94-2.91,1.89-4.11" />
+          <line x1="19.06" y1="18.55" x2="1.06" y2="18.55" />
+          <line x1="1.06" y1="18.55" x2="1.06" y2="12.55" />
+          <line x1="19.06" y1="18.55" x2="19.06" y2="12.55" />
+          <line x1="10.06" y1="18.55" x2="10.06" y2="15.55" />
+        </svg>
+      );
+
+    case IconName.fullscreen:
+      return <MdOutlineFullscreen className={className} />;
+    case IconName.exitFullScreen:
+      return <MdOutlineFullscreenExit className={className} />;
+    case IconName.download:
+      return <FiDownload className={className} />;
+    case IconName.remove:
+      return <FaTrash className={className} />;
+
     default:
       return null;
   }
