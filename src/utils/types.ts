@@ -1,3 +1,4 @@
+import { FeatureCollection } from '../components/other/DrawMap';
 import { RoleTypes, ToolTypeType } from './constants';
 
 export type ProfileId = 'personal' | string;
@@ -156,23 +157,24 @@ export interface FishType {
 export interface Research {
   id?: number;
   cadastralId?: string;
-  waterBodyData?: { name: string; municipality?: string; area: number };
+  waterBodyData?: { name: string; municipality?: string; area: string };
   startAt?: Date;
   endAt?: Date;
-  predatoryFishesRelativeAbundance?: number;
-  predatoryFishesRelativeBiomass?: number;
-  averageWeight?: number;
-  valuableFishesRelativeBiomass?: number;
-  conditionIndex?: number;
+  geom?: FeatureCollection;
+  predatoryFishesRelativeAbundance?: string;
+  predatoryFishesRelativeBiomass?: string;
+  averageWeight?: string;
+  valuableFishesRelativeBiomass?: string;
+  conditionIndex?: string;
   files?: Array<{
     url: string;
     name: string;
   }>;
   previousResearchData?: {
-    year: number;
-    conditionIndex: number;
-    totalAbundance: number;
-    totalBiomass: number;
+    year: string;
+    conditionIndex: string;
+    totalAbundance: string;
+    totalBiomass: string;
   };
   fishes?: ResearchFish[];
   tenant?: Tenant;

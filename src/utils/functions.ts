@@ -190,4 +190,4 @@ export const getBuiltToolInfo = (toolsGroup: BuiltTool) => {
 export const getReactQueryErrorMessage = (response: any) => response?.data?.message;
 
 export const formatDate = (date?: Date | string) =>
-  date ? moment(new Date(date)).format('yyyy-MM-dd') : '-';
+  date ? moment(new Date(date)).format('YYYY-MM-DD') : '-';

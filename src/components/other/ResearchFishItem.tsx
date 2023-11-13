@@ -52,7 +52,7 @@ const ResearchFishItem = ({
           name="abundance"
           value={abundance}
           error={errors?.abundance}
-          onChange={(value) => onSetFieldValue(`fishes.${index}.reportedAmount`, value)}
+          onChange={(value) => onSetFieldValue(`fishes.${index}.abundance`, value)}
           digitsAfterComma={1}
         />
         <NumericTextField

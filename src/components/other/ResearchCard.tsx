@@ -2,10 +2,11 @@ import styled from 'styled-components';
 import { formatDate, Research } from '../../utils';
 
 const ResearchCard = ({ research, onClick }: { research: Research; onClick: () => void }) => {
+  console.log(research, 'research');
   const { waterBodyData, startAt, endAt, user } = research;
 
   const title = `${waterBodyData?.name} ${waterBodyData?.municipality}`;
-  const date = `${formatDate(startAt)}-${formatDate(endAt)}`;
+  const date = `${formatDate(startAt)} - ${formatDate(endAt)}`;
   const userInitials = `${user?.firstName?.[0]}. ${user?.lastName}`;
 
   return (

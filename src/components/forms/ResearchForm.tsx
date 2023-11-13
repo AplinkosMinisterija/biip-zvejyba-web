@@ -1,7 +1,9 @@
 import { FieldArray, Form, Formik } from 'formik';
 import { filter, map, some } from 'lodash';
+import { useMutation } from 'react-query';
 import styled from 'styled-components';
-import { getLocationList, ResearchFish, useFishTypes } from '../../utils';
+import { getLocationList, Research, useFishTypes } from '../../utils';
+import api from '../../utils/api';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
 import AsyncSelectField from '../fields/AsyncSelect';
@@ -10,7 +12,7 @@ import DragAndDropUploadField from '../fields/DragAndDropField';
 import NumericTextField from '../fields/NumericTextField';
 import TextField from '../fields/TextField';
 import { Grid } from '../other/CommonStyles';
-import DrawMap, { FeatureCollection } from '../other/DrawMap';
+import DrawMap from '../other/DrawMap';
 import ResearchFishItem from '../other/ResearchFishItem';
 
 export enum FormTypes {
@@ -23,47 +25,30 @@ const ResearchTypeOptions = [
   { label: 'Ne UETK objektas', value: FormTypes.NOT_UETK },
 ];
 
-export interface ResearchProps {
-  id?: number;
-  cadastralId?: string;
+export interface ResearchProps extends Research {
   formType?: FormTypes;
-  waterBodyData?: { name: string; municipality?: string; area: string };
-  geom?: FeatureCollection;
-  startAt?: Date;
-  endAt?: Date;
-  predatoryFishesRelativeAbundance?: string;
-  predatoryFishesRelativeBiomass?: string;
-  averageWeight?: string;
-  valuableFishesRelativeBiomass?: string;
-  conditionIndex?: string;
-  files?: Array<{
-    url?: string;
-    name?: string;
-  }>;
-  previousResearchData?: {
-    year: string;
-    conditionIndex: string;
-    totalAbundance: string;
-    totalBiomass: string;
-  };
-  fishes?: ResearchFish[];
 }
 
 const ResearchForm = ({
   initialValues,
   onSubmit,
+  disableMainFields = false,
 }: {
   initialValues: ResearchProps;
   onSubmit: (values: ResearchProps) => void;
+  disableMainFields?: boolean;
 }) => {
   const { fishTypes } = useFishTypes();
+
+  const uploadedFiletMutation = useMutation((files: File[]) => api.uploadFiles(files));
+
   return (
     <Formik
       enableReinitialize={true}
       initialValues={initialValues}
       onSubmit={onSubmit}
       validateOnChange={false}
-      validationSchema={() => {}}
+      // validationSchema={() => {}}
     >
       {({ values, errors, setFieldValue, resetForm }: any) => {
         const isUetkFormType = values.formType === FormTypes.UETK;
@@ -74,6 +59,8 @@ const ResearchForm = ({
               options={ResearchTypeOptions}
               value={values.formType}
               onChange={(value: string) => {
+                if (disableMainFields) return;
+
                 resetForm();
                 setFieldValue('formType', value);
               }}
@@ -306,9 +293,17 @@ const ResearchForm = ({
               />
             </Grid>
             <Grid columns={1}>
-              <DragAndDropUploadField files={values.files} label={'Mokslinio tyrimo dokumentas'} />
+              <DragAndDropUploadField
+                files={values.files}
+                label={'Mokslinio tyrimo dokumentas'}
+                onUpload={async (files) => {
+                  const uploadedFiles = await uploadedFiletMutation.mutateAsync(files);
+                  setFieldValue('files', uploadedFiles);
+                }}
+                onDelete={(files: File[]) => setFieldValue('file', files)}
+              />
             </Grid>
-            <Button loading={false} disabled={false}>
+            <Button type="submit" loading={false} disabled={false}>
               Saugoti
             </Button>
           </FormContainer>

@@ -28,7 +28,7 @@ export const slugs = {
   user: (id: string) => `/nariai/${id}`,
   profile: '/profilis',
   researches: '/moksliniai-tyrimai',
-  research: (id: string) => `/moksliniai-tyrimai/${id}`,
+  updateResearch: (id: number | string) => `/moksliniai-tyrimai/${id}`,
   newResearch: `/moksliniai-tyrimai/naujas`,
 };
 
@@ -143,6 +143,22 @@ export const routes = [
     slug: slugs.researches,
     component: <Research />,
     iconName: IconName.researches,
+    isInvestigator: true,
+  },
+  {
+    title: 'Mokslinio tyrimo ataskaita',
+    subtitle: 'Įveskite duomenis iš savo mokslinio tyrimo',
+    back: true,
+    slug: slugs.newResearch,
+    component: <Research />,
+    isInvestigator: true,
+  },
+  {
+    title: 'Mokslinio tyrimo ataskaita',
+    subtitle: 'Atnaujinkite duomenis iš savo mokslinio tyrimo',
+    back: true,
+    slug: slugs.updateResearch(Ids.ID),
+    component: <Research />,
     isInvestigator: true,
   },
 ];

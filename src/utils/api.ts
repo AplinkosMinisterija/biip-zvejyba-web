@@ -1,4 +1,5 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { isEmpty } from 'lodash';
 import Cookies from 'universal-cookie';
 import { LocationType, Populations, Resources } from './constants';
 import { BuiltTool, FishType, Research, TenantUser, Tool, ToolFormProps, User } from './types';
@@ -437,10 +438,60 @@ class Api {
       resource: Resources.FISH_TYPES,
     });
 
-  getResearches = async (): Promise<Research[]> =>
+  getResearches = async (): Promise<GetAllResponse<Research>> =>
     await this.get({
       resource: `researches`,
+      populate: ['user'],
     });
+
+  createResearch = async (params: any): Promise<Research> =>
+    await this.post({
+      resource: `researches`,
+      params,
+    });
+
+  updateResearch = async (params: any, id: string): Promise<Research> =>
+    await this.patch({
+      resource: `researches`,
+      params,
+      id,
+    });
+
+  getResearch = async (id: string): Promise<Research> =>
+    await this.getOne({
+      resource: `researches`,
+      id,
+      populate: ['fishes', 'geom'],
+    });
+
+  uploadFiles = async (files: File[] = []): Promise<any> => {
+    if (isEmpty(files)) return [];
+
+    const config = {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    };
+
+    try {
+      const data = await Promise.all(
+        files?.map(async (file) => {
+          const formData = new FormData();
+          formData.append('file', file);
+          const { data } = await this.fishingAxios.post(`researches/upload`, formData, config);
+          return data;
+        }),
+      );
+
+      return data?.map((file) => {
+        return {
+          name: file.filename,
+          size: file.size,
+          url: file?.url,
+        };
+      });
+    } catch (e: any) {
+      return { error: e.response.data.message };
+    }
+  };
 }
 
 export default new Api();
