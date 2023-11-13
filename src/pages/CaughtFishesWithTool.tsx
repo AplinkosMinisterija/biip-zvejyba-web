@@ -38,7 +38,9 @@ export const CaughtFishesWithTool = () => {
             },
           })
         : {},
-    {},
+    {
+      retry: false,
+    },
   );
 
   const { data: toolsGroup, isLoading: toolsGroupLoading } = useQuery(
@@ -48,6 +50,7 @@ export const CaughtFishesWithTool = () => {
       onError: () => {
         navigate(slugs.fishingTools(fishingId!));
       },
+      retry: false,
     },
   );
 

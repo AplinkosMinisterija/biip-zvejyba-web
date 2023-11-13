@@ -4,8 +4,12 @@ const SwitchButton = ({ options, onChange, value, className }: any) => {
   return (
     <Container className={className}>
       <Content $numberOfColumns={options.length}>
-        {options.map((option: any) => (
-          <Button onClick={() => onChange(option.value)} $selected={option.value === value}>
+        {options.map((option: any, index: number) => (
+          <Button
+            key={`switch_btn_${index}`}
+            onClick={() => onChange(option.value)}
+            $selected={option.value === value}
+          >
             {option.label}
           </Button>
         ))}

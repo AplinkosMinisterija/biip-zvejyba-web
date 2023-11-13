@@ -14,7 +14,9 @@ export const Fishing = () => {
   const { data: currentFishing, isLoading: currentFishingLoading } = useQuery(
     ['currentFishing'],
     () => api.getCurrentFishing(),
-    {},
+    {
+      retry: false,
+    },
   );
 
   useEffect(() => {

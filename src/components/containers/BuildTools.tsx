@@ -21,7 +21,9 @@ const BuildTools = ({ onClose, location, coordinates }: any) => {
   const [type, setType] = useState<FishingToolsType>(FishingToolsType.SINGLE);
   const [toolType, setToolType] = useState<number | null>(null);
 
-  const { data: availableTools } = useQuery(['availableTools'], () => api.getAvailableTools());
+  const { data: availableTools } = useQuery(['availableTools'], () => api.getAvailableTools(), {
+    retry: false,
+  });
 
   const { mutateAsync: buildToolsMutation, isLoading: buildToolsIsLoading } = useMutation(
     api.buildTools,

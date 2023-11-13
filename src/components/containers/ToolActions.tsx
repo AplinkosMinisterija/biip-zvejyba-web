@@ -17,7 +17,9 @@ const ToolActions = ({ toolGroup, onReturn, visible, coordinates, location }: an
   const { data: currentFishing, isLoading: currentFishingLoading } = useQuery(
     ['currentFishing'],
     () => api.getCurrentFishing(),
-    {},
+    {
+      retry: false,
+    },
   );
   const { mutateAsync: returnToolsMutation } = useMutation(
     () =>

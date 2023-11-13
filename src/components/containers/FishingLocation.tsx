@@ -6,14 +6,13 @@ import styled from 'styled-components';
 import { RootState } from '../../state/store';
 import { buttonLabels, skipOptions } from '../../utils';
 import api from '../../utils/api';
-import { LocationType, SickReasons } from '../../utils/constants';
-import { handleAlert } from '../../utils/functions';
+import { LocationType, SickReasons } from '../../utils';
+import { handleAlert } from '../../utils';
 import Button, { ButtonColors } from '../buttons/Button';
 import FishingLocationButton, { Variant } from '../buttons/FishingLocationButton';
 import PopUpWithImage from '../layouts/PopUpWithImage';
 import { Grid } from '../other/CommonStyles';
 import { IconName } from '../other/Icon';
-import LoaderComponent from '../other/LoaderComponent';
 
 const FishingLocation = () => {
   const queryClient = useQueryClient();
@@ -60,8 +59,8 @@ const FishingLocation = () => {
   };
 
   const handleSkipFishing = () => {
-    if (location) {
-      skipFishing({ type: location });
+    if (location && coordinates) {
+      skipFishing({ type: location, coordinates: coordinates });
     }
   };
 

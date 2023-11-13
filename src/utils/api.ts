@@ -241,15 +241,16 @@ class Api {
       params,
     });
   };
-  skipFishing = async (params: { type: LocationType }) => {
+  skipFishing = async (params: { type: LocationType; coordinates: { x: number; y: number } }) => {
     return this.post({
       resource: 'fishings/skip',
       params,
     });
   };
-  finishFishing = async () => {
-    return this.patch({
-      resource: `fishings/finish`,
+  finishFishing = async (params: { coordinates: { x: number; y: number } }) => {
+    return this.post({
+      resource: `fishings/end`,
+      params,
     });
   };
   toolTypes = async (params: any) => {
@@ -296,15 +297,15 @@ class Api {
     });
   };
 
-  preliminaryFishWeights = async () => {
+  getFishingWeights = async () => {
     return this.get({
-      resource: 'fishWeights/preliminary',
+      resource: 'fishings/weights',
     });
   };
 
   createFishingFishWeights = async (params: { params: { [key: string]: number } }) => {
     return this.post({
-      resource: 'fishWeights',
+      resource: 'fishings/weight',
       params,
     });
   };

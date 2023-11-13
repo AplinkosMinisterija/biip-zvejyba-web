@@ -60,7 +60,7 @@ export const useEGatesSign = () => {
 };
 
 export const useFishTypes = () => {
-  const { data = [], isLoading } = useQuery(['fishTypes'], api.getFishTypes);
+  const { data = [], isLoading } = useQuery(['fishTypes'], api.getFishTypes, { retry: false });
 
   return { fishTypes: data, isLoading };
 };

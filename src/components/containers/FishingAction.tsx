@@ -18,11 +18,15 @@ import PopUpWithImage from '../layouts/PopUpWithImage';
 import { Grid } from '../other/CommonStyles';
 import { IconName } from '../other/Icon';
 import LoaderComponent from '../other/LoaderComponent';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../state/store';
 
 const FishingAction = ({ fishing }: any) => {
   const queryClient = useQueryClient();
   const [showFinishFishing, setShowFinishFishing] = useState(false);
   const navigate = useNavigate();
+  const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
+
   const { mutateAsync: finishFishing, isLoading: finishFishingLoading } = useMutation(
     api.finishFishing,
     {
@@ -36,21 +40,26 @@ const FishingAction = ({ fishing }: any) => {
       retry: false,
     },
   );
-  const { data: preliminaryWeights, isLoading: preliminaryFishWeightLoading } = useQuery(
-    ['preliminaryFishWeights'],
-    api.preliminaryFishWeights,
+
+  const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
+    ['fishingWeights'],
+    api.getFishingWeights,
+    {
+      retry: false,
+    },
   );
 
   const handleFinishFishing = () => {
-    if (fishing?.id) {
-      finishFishing(fishing.id);
+    if (coordinates) {
+      finishFishing({ coordinates });
     }
   };
 
-  const loading = finishFishingLoading || preliminaryFishWeightLoading;
+  const loading = finishFishingLoading || fishingWeightsLoading;
 
   const canWeigh =
-    fishing?.type === LocationType.INLAND_WATERS || !!Object.keys(preliminaryWeights || [])?.length;
+    fishing?.type === LocationType.INLAND_WATERS ||
+    !!Object.keys(fishingWeights?.preliminary || {})?.length;
 
   return loading ? (
     <LoaderComponent />

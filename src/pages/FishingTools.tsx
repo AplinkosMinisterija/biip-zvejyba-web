@@ -29,7 +29,9 @@ const FishingTools = () => {
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
   const [selectedToolsGroup, setSelectedToolsGroup] = useState<ToolGroup | null>(null);
 
-  const { data: currentFishing } = useQuery(['currentFishing'], () => api.getCurrentFishing(), {});
+  const { data: currentFishing } = useQuery(['currentFishing'], () => api.getCurrentFishing(), {
+    retry: false,
+  });
   const locationType: LocationType = currentFishing?.type;
   const currentRoute = useGetCurrentRoute();
   const isEstuary = locationType === LocationType.ESTUARY;
@@ -64,11 +66,12 @@ const FishingTools = () => {
           coordinates,
         },
       }),
-    {},
+    { retry: false },
   );
 
   const { data: bars } = useQuery(['bars'], async () => getBars(), {
     enabled: isEstuary,
+    retry: false,
   });
 
   const handleRefreshLocation = () => {
@@ -78,7 +81,9 @@ const FishingTools = () => {
   const { data: builtTools } = useQuery(
     ['builtTools', location?.id],
     () => api.getBuiltTools({ locationId: location?.id }),
-    {},
+    {
+      retry: false,
+    },
   );
 
   const initialValues = { location: '', x: '', y: '' };

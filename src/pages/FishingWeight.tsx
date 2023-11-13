@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import SwitchButton from '../components/buttons/SwitchButton';
@@ -9,6 +9,7 @@ import {
   FishingWeighType,
   handleAlert,
   slugs,
+  useAppSelector,
   useFishTypes,
   useGetCurrentRoute,
 } from '../utils';
@@ -23,42 +24,47 @@ const FishingWeightOptions = [
 ];
 
 const FishingWeight = () => {
+  const queryClient = useQueryClient();
   const [type, setType] = useState<FishingWeighType>(FishingWeighType.CAUGHT);
   const currentRoute = useGetCurrentRoute();
   const { fishingId } = useParams();
   const { fishTypes, isLoading } = useFishTypes();
   const isCaught = type === FishingWeighType.CAUGHT;
   const navigate = useNavigate();
+  const coordinates = useAppSelector((state) => state.fishing.coordinates);
   const [amounts, setAmounts] = useState<{ [key: number]: number }>({});
 
-  const { data = [], isLoading: preliminaryFishWeightLoading } = useQuery(
-    ['preliminaryFishWeights'],
-    api.preliminaryFishWeights,
-  );
+  const {
+    data: fishingWeights = { preliminary: {}, total: {} },
+    isLoading: fishingWeightsLoading,
+  } = useQuery(['fishingWeights'], api.getFishingWeights, { retry: false });
 
   const initialValues = fishTypes
-    .filter((fishType) => (isCaught ? !!data[fishType.id] : true))
+    .filter((fishType) => (isCaught ? !!fishingWeights.preliminary[fishType.id] : true))
     .map((fishType) => ({
       ...fishType,
-      preliminaryAmount: data[fishType.id],
-      amount: data[fishType.id] || '',
+      preliminaryAmount: fishingWeights.preliminary[fishType.id],
+      amount: fishingWeights.preliminary[fishType.id] || '',
     }));
 
-  const { mutateAsync: fishingFishWeightsMutation, isLoading: fishingFishWeightsLoading } =
-    useMutation((data: any) => api.createFishingFishWeights(data), {
+  const { mutateAsync: fishingWeightMutation, isLoading: fishingWeightLoading } = useMutation(
+    (data: any) => api.createFishingFishWeights(data),
+    {
       onSuccess: () => {
+        queryClient.invalidateQueries(['fishingWeights']);
         navigate(slugs.fishing(fishingId!));
       },
       onError: () => {
         handleAlert();
       },
-    });
+    },
+  );
 
   const handleSubmit = () => {
-    fishingFishWeightsMutation({ data: amounts });
+    fishingWeightMutation({ data: amounts, coordinates });
   };
 
-  if (isLoading || preliminaryFishWeightLoading) return <LoaderComponent />;
+  if (isLoading || fishingWeightsLoading) return <LoaderComponent />;
 
   const updateAmounts = (value: { [key: number]: number }) => {
     setAmounts({ ...amounts, ...value });
@@ -77,7 +83,11 @@ const FishingWeight = () => {
         />
       ))}
       <Footer>
-        <StyledButton loading={false} disabled={false} onClick={handleSubmit}>
+        <StyledButton
+          loading={fishingWeightLoading}
+          disabled={fishingWeightLoading}
+          onClick={handleSubmit}
+        >
           Saugoti pakeitimus
         </StyledButton>
       </Footer>
