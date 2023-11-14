@@ -471,26 +471,22 @@ class Api {
       headers: { 'Content-Type': 'multipart/form-data' },
     };
 
-    try {
-      const data = await Promise.all(
-        files?.map(async (file) => {
-          const formData = new FormData();
-          formData.append('file', file);
-          const { data } = await this.fishingAxios.post(`/researches/upload`, formData, config);
-          return data;
-        }),
-      );
+    const data = await Promise.all(
+      files?.map(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const { data } = await this.fishingAxios.post(`/researches/upload`, formData, config);
+        return data;
+      }),
+    );
 
-      return data?.map((file) => {
-        return {
-          name: file.filename,
-          size: file.size,
-          url: file?.url,
-        };
-      });
-    } catch (e: any) {
-      return { error: e.response.data.message };
-    }
+    return data?.map((file) => {
+      return {
+        name: file.filename,
+        size: file.size,
+        url: file?.url,
+      };
+    });
   };
 }
 
