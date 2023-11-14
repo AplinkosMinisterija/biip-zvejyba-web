@@ -41,7 +41,7 @@ const NewResearch = () => {
     ],
   };
 
-  const updateTokensMutation = useMutation(api.createResearch, {
+  const createResearch = useMutation(api.createResearch, {
     onError: ({ response }: any) => {
       handleAlert(response);
     },
@@ -64,10 +64,16 @@ const NewResearch = () => {
         };
       }),
     };
-    updateTokensMutation.mutateAsync(params);
+    createResearch.mutateAsync(params);
   };
 
-  return <ResearchForm initialValues={initialValues} onSubmit={handleSubmit} />;
+  return (
+    <ResearchForm
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      loading={createResearch.isLoading}
+    />
+  );
 };
 
 export default NewResearch;

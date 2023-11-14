@@ -15,7 +15,7 @@ const UpdateResearch = () => {
     {},
   );
 
-  const updateTokensMutation = useMutation((values: any) => api.updateResearch(values, id!), {
+  const updateResearch = useMutation((values: any) => api.updateResearch(values, id!), {
     onError: ({ response }: any) => {
       handleAlert(response);
     },
@@ -43,13 +43,18 @@ const UpdateResearch = () => {
         };
       }),
     };
-    updateTokensMutation.mutateAsync(params);
+    updateResearch.mutateAsync(params);
   };
 
   if (researchLoading) return <LoaderComponent />;
 
   return (
-    <ResearchForm initialValues={initialValues!} onSubmit={handleSubmit} disableMainFields={true} />
+    <ResearchForm
+      initialValues={initialValues!}
+      onSubmit={handleSubmit}
+      disableMainFields={true}
+      loading={updateResearch.isLoading}
+    />
   );
 };
 

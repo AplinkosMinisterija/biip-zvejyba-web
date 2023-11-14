@@ -78,10 +78,12 @@ const ResearchForm = ({
   initialValues,
   onSubmit,
   disableMainFields = false,
+  loading,
 }: {
   initialValues: ResearchProps;
   onSubmit: (values: ResearchProps) => void;
   disableMainFields?: boolean;
+  loading: boolean;
 }) => {
   const { fishTypes } = useFishTypes();
 
@@ -351,7 +353,7 @@ const ResearchForm = ({
                 onDelete={(files: File[]) => setFieldValue('files', files)}
               />
             </Grid>
-            <Button type="submit" loading={false} disabled={false}>
+            <Button type="submit" loading={loading} disabled={loading}>
               Saugoti
             </Button>
           </FormContainer>
