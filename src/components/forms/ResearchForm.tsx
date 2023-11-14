@@ -1,9 +1,18 @@
 import { FieldArray, Form, Formik } from 'formik';
 import { filter, map, some } from 'lodash';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import * as Yup from 'yup';
-import { getLocationList, Research, useFishTypes, validationTexts } from '../../utils';
+import {
+  getLocationList,
+  handleAlert,
+  isNew,
+  Research,
+  slugs,
+  useFishTypes,
+  validationTexts,
+} from '../../utils';
 import api from '../../utils/api';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
@@ -14,6 +23,7 @@ import NumericTextField from '../fields/NumericTextField';
 import TextField from '../fields/TextField';
 import { Grid } from '../other/CommonStyles';
 import DrawMap from '../other/DrawMap';
+import LoaderComponent from '../other/LoaderComponent';
 import ResearchFishItem from '../other/ResearchFishItem';
 
 export enum FormTypes {
@@ -74,26 +84,103 @@ export const validateSchema = Yup.object().shape({
   conditionIndex: Yup.string().required(validationTexts.requireText),
 });
 
-const ResearchForm = ({
-  initialValues,
-  onSubmit,
-  disableMainFields = false,
-  loading,
-}: {
-  initialValues: ResearchProps;
-  onSubmit: (values: ResearchProps) => void;
-  disableMainFields?: boolean;
-  loading: boolean;
-}) => {
+const ResearchForm = () => {
   const { fishTypes } = useFishTypes();
-
   const uploadedFiletMutation = useMutation((files: File[]) => api.uploadFiles(files));
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const disableMainFields = !isNew(id);
+
+  const { data: research, isLoading: researchLoading } = useQuery(
+    ['research', id],
+    () => api.getResearch(id!),
+    { retry: false },
+  );
+
+  const updateResearch = useMutation((values: any) => api.updateResearch(values, id!), {
+    onError: ({ response }: any) => {
+      handleAlert(response);
+    },
+    onSuccess: () => {
+      navigate(slugs.researches);
+    },
+  });
+
+  const createResearch = useMutation(api.createResearch, {
+    onError: ({ response }: any) => {
+      handleAlert(response);
+    },
+    onSuccess: () => {
+      navigate(slugs.researches);
+    },
+  });
+
+  const initialValues = isNew(id)
+    ? {
+        ...research,
+        formType: !research?.cadastralId ? FormTypes.NOT_UETK : FormTypes.UETK,
+      }
+    : {
+        cadastralId: '',
+        formType: FormTypes.UETK,
+        waterBodyData: {
+          name: '',
+          municipality: '',
+          area: '',
+        },
+        startAt: undefined,
+        endAt: undefined,
+        predatoryFishesRelativeAbundance: '',
+        predatoryFishesRelativeBiomass: '',
+        averageWeight: '',
+        valuableFishesRelativeBiomass: '',
+        conditionIndex: '',
+        files: [],
+        previousResearchData: {
+          year: '',
+          conditionIndex: '',
+          totalAbundance: '',
+          totalBiomass: '',
+        },
+        fishes: [
+          {
+            fishType: undefined,
+            abundance: '',
+            abundancePercentage: '',
+            biomass: '',
+            biomassPercentage: '',
+          },
+        ],
+      };
+
+  const handleSubmit = (values: ResearchProps) => {
+    const { formType, cadastralId, previousResearchData, geom, ...rest } = values;
+    const isUetkFormType = values.formType === FormTypes.UETK;
+    const params = {
+      ...rest,
+      ...(!!isUetkFormType && { cadastralId }),
+      ...(!isUetkFormType && { previousResearchData, geom }),
+      fishes: rest.fishes?.map((fish) => {
+        return {
+          ...fish,
+          fishType: fish.fishType?.id,
+        };
+      }),
+    };
+    isNew(id) ? createResearch.mutateAsync(params) : updateResearch.mutateAsync(params);
+  };
+
+  const submitLoading = [createResearch.isLoading, updateResearch.isLoading].some(
+    (loading) => loading,
+  );
+
+  if (researchLoading) return <LoaderComponent />;
 
   return (
     <Formik
       enableReinitialize={true}
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       validateOnChange={false}
       validationSchema={validateSchema}
     >
@@ -353,7 +440,7 @@ const ResearchForm = ({
                 onDelete={(files: File[]) => setFieldValue('files', files)}
               />
             </Grid>
-            <Button type="submit" loading={loading} disabled={loading}>
+            <Button type="submit" loading={submitLoading} disabled={submitLoading}>
               Saugoti
             </Button>
           </FormContainer>

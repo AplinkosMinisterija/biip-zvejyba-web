@@ -12,6 +12,7 @@ const Researches = () => {
   const { data: researches, isLoading: researchLoading } = useQuery(
     ['researches'],
     api.getResearches,
+    { retry: false },
   );
   const navigate = useNavigate();
 
@@ -21,10 +22,10 @@ const Researches = () => {
         {researchLoading ? (
           <LoaderComponent />
         ) : (
-          map(researches?.rows, (research, index) => {
+          map(researches?.rows, (research) => {
             return (
               <ResearchCard
-                key={index}
+                key={research?.id!}
                 research={research}
                 onClick={() => navigate(slugs.updateResearch(research.id!))}
               />
