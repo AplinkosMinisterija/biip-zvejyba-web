@@ -100,8 +100,6 @@ const ResearchForm = ({
       {({ values, errors, setFieldValue, resetForm }: any) => {
         const isUetkFormType = values.formType === FormTypes.UETK;
 
-        console.log(values.formType, 'cadastralId');
-
         return (
           <FormContainer>
             <SwitchButton
@@ -374,7 +372,6 @@ const FormLabel = styled.div`
   font-size: 1.6rem;
   font-weight: bold;
   color: ${({ theme }) => theme.colors.text.royalBlue};
-  opacity: 1;
 `;
 
 const FormSubLabel = styled.div`
