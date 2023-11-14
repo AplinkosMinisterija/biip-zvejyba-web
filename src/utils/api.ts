@@ -476,7 +476,7 @@ class Api {
         files?.map(async (file) => {
           const formData = new FormData();
           formData.append('file', file);
-          const { data } = await this.fishingAxios.post(`researches/upload`, formData, config);
+          const { data } = await this.fishingAxios.post(`/researches/upload`, formData, config);
           return data;
         }),
       );
