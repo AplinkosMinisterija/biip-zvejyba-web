@@ -46,6 +46,7 @@ export const theme: Theme = {
     success: '#258800',
     powder: '#FFFFFFCC',
     purple: '#8a33fe',
+    lightSteelBlue: '#cdd5df',
     hover: {
       primary: '#102EB1',
       secondary: '#121A55',
@@ -64,6 +65,7 @@ export const theme: Theme = {
       input: '#231f20',
       powder: '#FFFFFFCC',
       retroBlack: '#101010',
+      royalBlue: '#1121DA',
     },
     border: '#CDD5DF',
     background: '#f7f7f7',
@@ -84,7 +86,6 @@ export const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
-
   html {
     font-size: 62.5%;
     width: 100vw;
@@ -99,21 +100,17 @@ export const GlobalStyle = createGlobalStyle`
     overflow: hidden;
     justify-content: center;
   }
-
   h1 {
     font-size: 3.2rem;
     color: ${theme.colors.text.primary};
   }
-
   a {
     text-decoration: none;
     color: inherit;
-
     :hover {
       color: inherit;
     }
   }
-
   button {
     outline: none;
     text-decoration: none;
@@ -121,22 +118,16 @@ export const GlobalStyle = createGlobalStyle`
     border: none;
     background-color: transparent;
   }
-
   #__next {
     height: 100%;
   }
-
   textarea {
     font-size: 1.6rem;
   }
-
-
   .leaflet-div-icon {
     background: transparent;
     border: none;
   }
-
-
 `;
 
 export const device = {

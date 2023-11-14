@@ -1,3 +1,4 @@
+import format from 'date-fns/format';
 import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
 import api from './api';
@@ -185,3 +186,10 @@ export const getBuiltToolInfo = (toolsGroup: BuiltTool) => {
 };
 
 export const getReactQueryErrorMessage = (response: any) => response?.data?.message;
+
+export const formatDate = (date?: Date | string) =>
+  date ? format(new Date(date), 'yyyy-MM-dd') : '-';
+
+export const isEmpty = (arr: any[]) => !!arr.length;
+
+export const isNew = (id?: string) => id === 'naujas';

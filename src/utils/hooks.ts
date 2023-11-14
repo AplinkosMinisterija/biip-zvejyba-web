@@ -79,6 +79,11 @@ export const useFilteredRoutes = () => {
     if (route.tenantOwner) {
       return [RoleTypes.USER_ADMIN, RoleTypes.OWNER].some((r) => r === profile?.role);
     }
+
+    if (route.isInvestigator) {
+      return !!profile?.isInvestigator;
+    }
+
     return true;
   });
 };

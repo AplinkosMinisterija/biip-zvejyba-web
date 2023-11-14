@@ -1,5 +1,8 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { isEmpty } from 'lodash';
 import Cookies from 'universal-cookie';
+import { LocationType, Populations, Resources } from './constants';
+import { BuiltTool, FishType, Research, TenantUser, Tool, ToolFormProps, User } from './types';
 import { LocationType } from './constants';
 import { BuiltTool, TenantUser, Tool, ToolFormProps, User } from './types';
 
@@ -260,7 +263,6 @@ class Api {
     });
   };
   getLocation = async (params: any) => {
-    console.log('get location', params);
     return this.get({
       resource: 'locations',
       ...params,
@@ -272,6 +274,7 @@ class Api {
       populate: ['toolType'],
     });
   };
+
   buildTools = async (params: {
     tools: number[];
     coordinates: { x: number; y: number };
@@ -282,6 +285,7 @@ class Api {
       params,
     });
   };
+
   weighTools = async (
     params: {
       data: { [key: number]: number };
@@ -425,10 +429,61 @@ class Api {
       resource: this.barSearchUrl,
     });
 
-  getFishTypes = async (): Promise<{ id: string; label: string; photo: any }[]> =>
+  getFishTypes = async (): Promise<FishType[]> =>
     await this.getAll({
       resource: 'fishTypes',
     });
+
+  getResearches = async (): Promise<GetAllResponse<Research>> =>
+    await this.get({
+      resource: `researches`,
+      populate: ['user'],
+    });
+
+  createResearch = async (params: any): Promise<Research> =>
+    await this.post({
+      resource: `researches`,
+      params,
+    });
+
+  updateResearch = async (params: any, id: string): Promise<Research> =>
+    await this.patch({
+      resource: `researches`,
+      params,
+      id,
+    });
+
+  getResearch = async (id: string): Promise<Research> =>
+    await this.getOne({
+      resource: `researches`,
+      id,
+      populate: ['fishes', 'geom'],
+    });
+
+  uploadFiles = async (files: File[] = []): Promise<any> => {
+    if (isEmpty(files)) return [];
+
+    const config = {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    };
+
+    const data = await Promise.all(
+      files?.map(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const { data } = await this.fishingAxios.post(`/researches/upload`, formData, config);
+        return data;
+      }),
+    );
+
+    return data?.map((file) => {
+      return {
+        name: file.filename,
+        size: file.size,
+        url: file?.url,
+      };
+    });
+  };
 
   getFishingJournal = async (params: any): Promise<any> => {
     //TODO: infinite scrolling react query thingy
