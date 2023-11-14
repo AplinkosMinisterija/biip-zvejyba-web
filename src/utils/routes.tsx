@@ -8,6 +8,7 @@ import Tool from '../pages/Tool';
 import Tools from '../pages/Tools';
 import UserForm from '../pages/User';
 import Users from '../pages/Users';
+import FishingJournal from '../pages/FishingJournal';
 
 export const slugs = {
   login: `/prisijungimas`,
@@ -26,6 +27,7 @@ export const slugs = {
   users: '/nariai',
   user: (id: string) => `/nariai/${id}`,
   profile: '/profilis',
+  fishingJournal: '/zvejybos_zurnalas',
 };
 
 export type RouteType = (typeof routes)[0];
@@ -77,8 +79,8 @@ export const routes = [
   {
     title: 'Žvejybos žurnalas',
     subtitle: 'Žvejybos istorija',
-    slug: slugs.tools,
-    component: <Tools />,
+    slug: slugs.fishingJournal,
+    component: <FishingJournal />,
     regExp: new RegExp('^/irankiai$'),
     iconName: IconName.journal,
   },

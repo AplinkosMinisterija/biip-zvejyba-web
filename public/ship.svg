@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+    <polyline class="st0" points="5.7,19.3 2,14.4 22,9.9 18.5,18.9 "></polyline>
+    <polyline class="st0" points="16.7,11.1 11.2,7.2 4.5,7.2 4,13.9 "></polyline>
+    <line class="st0" x1="8" y1="4.6" x2="8" y2="7.2"></line>
+    <path class="st0" d="M2.1,18.4c2.4,0,2.4,1,4.7,1c2.4,0,2.4-1,4.7-1c2.4,0,2.4,1,4.7,1s2.4-1,4.7-1"></path>
+</svg>

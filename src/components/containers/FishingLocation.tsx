@@ -1,6 +1,6 @@
 import { map } from 'lodash';
 import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { RootState } from '../../state/store';
@@ -160,7 +160,7 @@ const SelectButton = styled.button<{ $selected: boolean }>`
   padding: 20px;
   width: 100%;
   background-color: ${({ $selected, theme }) =>
-    $selected ? '#f5f6fe' : theme.colors.background.primary};
+    $selected ? '#f5f6fe' : theme.colors.cardBackground.primary};
   color: ${({ theme }) => theme.colors.text.primary};
   border: 1px solid ${({ $selected, theme }) => ($selected ? theme.colors.primary : 'transparent')};
   cursor: pointer;

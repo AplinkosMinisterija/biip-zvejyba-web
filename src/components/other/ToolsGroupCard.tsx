@@ -44,7 +44,7 @@ const Container = styled.div<{ $isCheckedTool: boolean }>`
   display: flex;
   justify-content: space-between;
   background-color: ${({ theme, $isCheckedTool }) =>
-    $isCheckedTool ? theme.colors.background.success : theme.colors.largeButton.GREY};
+    $isCheckedTool ? theme.colors.cardBackground.success : theme.colors.largeButton.GREY};
   border: 1px solid
     ${({ theme, $isCheckedTool }) => ($isCheckedTool ? theme.colors.success : 'transparent')};
   border-radius: 12px;

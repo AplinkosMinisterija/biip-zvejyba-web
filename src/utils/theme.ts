@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 
-export interface Theme {
+//Let's keep theme generic, so that it would be easier to move it to components library later.
+interface Theme {
   colors: {
     primary: string;
     secondary: string;
@@ -9,8 +10,6 @@ export interface Theme {
     label: string;
     error: string;
     success: string;
-    powder: string;
-    purple: string;
     hover: {
       primary: string;
       secondary: string;
@@ -18,6 +17,7 @@ export interface Theme {
       transparent: string;
       danger: string;
       success: string;
+      [key: string]: string;
     };
     text: {
       primary: string;
@@ -27,19 +27,11 @@ export interface Theme {
       accent: string;
       error: string;
       input: string;
-      powder: string;
-      retroBlack: string;
+      [key: string]: string;
     };
     border: string;
-    background: { primary: string; success: string };
-    largeButton: {
-      FLORAL_WHITE: string;
-      GHOST_WHITE: string;
-      AZURE: string;
-      HONEY_DEW: string;
-      ALICE_BLUE: string;
-      GREY: string;
-    };
+    background: string;
+    [key: string]: string | object;
   };
 }
 
@@ -54,7 +46,6 @@ export const theme: Theme = {
     success: '#258800',
     powder: '#FFFFFFCC',
     purple: '#8a33fe',
-
     hover: {
       primary: '#102EB1',
       secondary: '#121A55',
@@ -75,7 +66,8 @@ export const theme: Theme = {
       retroBlack: '#101010',
     },
     border: '#CDD5DF',
-    background: { primary: '#f7f7f7', success: '#eafbf6' },
+    background: '#f7f7f7',
+    cardBackground: { primary: '#f7f7f7', success: '#eafbf6' },
     largeButton: {
       FLORAL_WHITE: '#FFF5E8',
       GHOST_WHITE: '#EBEDFD', //'#F0F0FF'
@@ -88,7 +80,6 @@ export const theme: Theme = {
 };
 
 export const GlobalStyle = createGlobalStyle`
-
   * {
     box-sizing: border-box;
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -97,15 +88,13 @@ export const GlobalStyle = createGlobalStyle`
   html {
     font-size: 62.5%;
     width: 100vw;
-    color: #2C2C2C;
-
+    color: ${theme.colors.text.primary};
   }
-
   body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background-color: #f7f7f7;
+    background-color: ${theme.colors.background};
     font-size: 1.6rem;
     overflow: hidden;
     justify-content: center;
@@ -113,7 +102,7 @@ export const GlobalStyle = createGlobalStyle`
 
   h1 {
     font-size: 3.2rem;
-    color: #2C2C2C;
+    color: ${theme.colors.text.primary};
   }
 
   a {

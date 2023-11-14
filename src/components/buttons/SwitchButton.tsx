@@ -30,7 +30,7 @@ const Content = styled.div<{ $numberOfColumns?: number }>`
     Array($numberOfColumns || 2)
       .fill('1fr')
       .join(' ')};
-  background-color: ${({ theme }) => theme.colors.background.primary};
+  background-color: ${({ theme }) => theme.colors.cardBackground.primary};
   padding: 4px;
   border-radius: 99px;
 `;

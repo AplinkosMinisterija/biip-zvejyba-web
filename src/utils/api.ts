@@ -429,6 +429,15 @@ class Api {
     await this.getAll({
       resource: 'fishTypes',
     });
+
+  getFishingJournal = async (params: any): Promise<any> => {
+    //TODO: infinite scrolling react query thingy
+    const response = await this.get({
+      resource: 'fishings',
+      populate: ['startEvent', 'endEvent', 'skipEvent'],
+    });
+    return response.rows;
+  };
 }
 
 export default new Api();
