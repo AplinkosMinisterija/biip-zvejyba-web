@@ -2,7 +2,8 @@ import { FieldArray, Form, Formik } from 'formik';
 import { filter, map, some } from 'lodash';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
-import { getLocationList, Research, useFishTypes } from '../../utils';
+import * as Yup from 'yup';
+import { getLocationList, Research, useFishTypes, validationTexts } from '../../utils';
 import api from '../../utils/api';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
@@ -29,6 +30,50 @@ export interface ResearchProps extends Research {
   formType?: FormTypes;
 }
 
+export const validateSchema = Yup.object().shape({
+  startAt: Yup.date().required(validationTexts.requireSelect).nullable(),
+  endAt: Yup.date().required(validationTexts.requireSelect).nullable(),
+  cadastralId: Yup.string().when('formType', (formType: any, schema) => {
+    if (formType[0] === FormTypes.UETK) {
+      return schema.required(validationTexts.requireText);
+    }
+    return schema.nullable();
+  }),
+  geom: Yup.object().when('formType', (formType: any, schema) => {
+    if (formType[0] === FormTypes.NOT_UETK) {
+      return schema.required(validationTexts.requireText);
+    }
+    return schema.nullable();
+  }),
+  files: Yup.array()
+    .required(validationTexts.requireSelect)
+    .min(1, validationTexts.requireSelect)
+    .nullable(),
+  fishes: Yup.array().of(
+    Yup.object().shape({
+      fishType: Yup.object().required(validationTexts.requireText),
+      abundance: Yup.string().required(validationTexts.requireText),
+      abundancePercentage: Yup.string().required(validationTexts.requireText),
+      biomass: Yup.string().required(validationTexts.requireText),
+      biomassPercentage: Yup.string().required(validationTexts.requireText),
+    }),
+  ),
+  waterBodyData: Yup.object().when('formType', (formType: any, schema) => {
+    if (formType[0] === FormTypes.NOT_UETK) {
+      return schema.shape({
+        name: Yup.string().required(validationTexts.requireText),
+        area: Yup.string().required(validationTexts.requireText),
+      });
+    }
+    return schema.nullable();
+  }),
+  predatoryFishesRelativeAbundance: Yup.string().required(validationTexts.requireText),
+  predatoryFishesRelativeBiomass: Yup.string().required(validationTexts.requireText),
+  averageWeight: Yup.string().required(validationTexts.requireText),
+  valuableFishesRelativeBiomass: Yup.string().required(validationTexts.requireText),
+  conditionIndex: Yup.string().required(validationTexts.requireText),
+});
+
 const ResearchForm = ({
   initialValues,
   onSubmit,
@@ -48,10 +93,12 @@ const ResearchForm = ({
       initialValues={initialValues}
       onSubmit={onSubmit}
       validateOnChange={false}
-      // validationSchema={() => {}}
+      validationSchema={validateSchema}
     >
       {({ values, errors, setFieldValue, resetForm }: any) => {
         const isUetkFormType = values.formType === FormTypes.UETK;
+
+        console.log(values.formType, 'cadastralId');
 
         return (
           <FormContainer>
@@ -232,7 +279,7 @@ const ResearchForm = ({
                   <AddFishButton
                     onClick={() =>
                       arrayHelpers.push({
-                        fishType: {},
+                        fishType: undefined,
                         abundance: '',
                         abundancePercentage: '',
                         biomass: '',
@@ -294,13 +341,14 @@ const ResearchForm = ({
             </Grid>
             <Grid columns={1}>
               <DragAndDropUploadField
+                error={errors?.files}
                 files={values.files}
                 label={'Mokslinio tyrimo dokumentas'}
                 onUpload={async (files) => {
                   const uploadedFiles = await uploadedFiletMutation.mutateAsync(files);
                   setFieldValue('files', uploadedFiles);
                 }}
-                onDelete={(files: File[]) => setFieldValue('file', files)}
+                onDelete={(files: File[]) => setFieldValue('files', files)}
               />
             </Grid>
             <Button type="submit" loading={false} disabled={false}>
