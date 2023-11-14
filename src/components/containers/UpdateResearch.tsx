@@ -26,7 +26,7 @@ const UpdateResearch = () => {
 
   const initialValues = {
     ...research,
-    formType: !!research?.previousResearchData ? FormTypes.NOT_UETK : FormTypes.UETK,
+    formType: !research?.cadastralId ? FormTypes.NOT_UETK : FormTypes.UETK,
   };
 
   const handleSubmit = (values: ResearchProps) => {
