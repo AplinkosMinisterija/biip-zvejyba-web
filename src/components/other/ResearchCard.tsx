@@ -1,8 +1,15 @@
 import styled from 'styled-components';
 import { formatDate, Research } from '../../utils';
 
-const ResearchCard = ({ research, onClick }: { research: Research; onClick: () => void }) => {
-  console.log(research, 'research');
+const ResearchCard = ({
+  research,
+  onClick,
+  key,
+}: {
+  research: Research;
+  onClick: () => void;
+  key: number;
+}) => {
   const { waterBodyData, startAt, endAt, user } = research;
 
   const title = `${waterBodyData?.name} ${waterBodyData?.municipality}`;
@@ -10,7 +17,7 @@ const ResearchCard = ({ research, onClick }: { research: Research; onClick: () =
   const userInitials = `${user?.firstName?.[0]}. ${user?.lastName}`;
 
   return (
-    <Container onClick={onClick}>
+    <Container key={`research-card-${key}`} onClick={onClick}>
       <Column>
         <Title>{title}</Title>
         <Row>

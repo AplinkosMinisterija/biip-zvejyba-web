@@ -21,9 +21,10 @@ const Researches = () => {
         {researchLoading ? (
           <LoaderComponent />
         ) : (
-          map(researches?.rows, (research) => {
+          map(researches?.rows, (research, index) => {
             return (
               <ResearchCard
+                key={index}
                 research={research}
                 onClick={() => navigate(slugs.updateResearch(research.id!))}
               />
