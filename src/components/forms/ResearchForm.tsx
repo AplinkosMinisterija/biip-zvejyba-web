@@ -176,6 +176,7 @@ const ResearchForm = ({
                 name={'startAt'}
                 label={'Mokslinio tyrimo pradžia'}
                 value={values.startAt}
+                maxDate={values.endAt}
                 error={errors.startAt}
                 onChange={(startAt) => setFieldValue('startAt', startAt)}
               />
@@ -183,6 +184,7 @@ const ResearchForm = ({
                 name={'endAt'}
                 label={'Mokslinio tyrimo pabaiga'}
                 value={values.endAt}
+                minDate={values.startAt}
                 error={errors.endAt}
                 onChange={(endAt) => setFieldValue('endAt', endAt)}
               />

@@ -95,7 +95,7 @@ const DateField = ({
   const textValue = validDate(inputValue) ? format(new Date(inputValue), 'yyyy-MM-dd') : inputValue;
 
   return (
-    <Container bottom={bottom} tabIndex={1} onBlur={handleBlur} disabled={disabled}>
+    <Container $bottom={bottom} tabIndex={1} onBlur={handleBlur} $disabled={disabled}>
       <div tabIndex={2} onBlur={handleBlurInput}>
         <TextField
           placeholder="2000-01-01"
@@ -108,11 +108,14 @@ const DateField = ({
           rightIcon={
             <>
               {value && !disabled && (
-                <IconContainer disabled={disabled} onClick={() => !disabled && onChange(undefined)}>
-                  <ClearIcon disabled={disabled!} name={IconName.close} />
+                <IconContainer
+                  $disabled={disabled}
+                  onClick={() => !disabled && onChange(undefined)}
+                >
+                  <ClearIcon $disabled={disabled!} name={IconName.close} />
                 </IconContainer>
               )}
-              <IconContainer disabled={disabled} onClick={() => setOpen(!open)}>
+              <IconContainer $disabled={disabled} onClick={() => setOpen(!open)}>
                 <CalendarIcon name={IconName.calendar} />
               </IconContainer>
             </>
@@ -193,14 +196,14 @@ const CloseIcon = styled(Icon)`
   cursor: pointer;
 `;
 
-const IconContainer = styled.div<{ disabled: boolean }>`
+const IconContainer = styled.div<{ $disabled: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
 `;
 
-const Container = styled.div<{ disabled: boolean; bottom: boolean }>`
+const Container = styled.div<{ $disabled: boolean; $bottom: boolean }>`
   width: 100%;
   &:focus {
     outline: none;
@@ -229,13 +232,14 @@ const Container = styled.div<{ disabled: boolean; bottom: boolean }>`
     }
     margin: 26px 32px 0px 0px;
     position: relative;
-    font: normal normal normal 1.5rem/21px Atkinson Hyperlegible;
+    font-size: 1.5rem;
     &:hover {
-      background-color: #febc1d;
+      background-color: ${({ theme }) => theme.colors.text.royalBlue};
+      color: white;
       &::before {
         content: '';
         position: absolute;
-        background-color: #febc1d;
+        background-color: ${({ theme }) => theme.colors.text.royalBlue};
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -263,7 +267,7 @@ const Container = styled.div<{ disabled: boolean; bottom: boolean }>`
   .react-datepicker {
     width: 364px;
     position: absolute;
-    top: ${({ bottom }) => (bottom ? '-450px' : '0px')};
+    top: ${({ $bottom }) => ($bottom ? '-450px' : '0px')};
     z-index: 8;
     background-color: #ffffff;
     box-shadow: 0px 2px 16px #121a5529;
@@ -280,7 +284,7 @@ const Container = styled.div<{ disabled: boolean; bottom: boolean }>`
     }
   }
   .react-datepicker-time__caption {
-    font: normal normal 600 1.6rem/40px Atkinson Hyperlegible;
+    font-size: 1.6rem;
     display: block !important;
     margin: 15px 0px 10px 0px;
     text-align: center;
@@ -298,11 +302,11 @@ const Container = styled.div<{ disabled: boolean; bottom: boolean }>`
     background-color: white;
     position: relative;
     z-index: 1;
-    font: normal normal normal 1.5rem/21px Atkinson Hyperlegible;
+    font-size: 1.5rem;
   }
   .react-datepicker__day--keyboard-selected {
     background-color: white;
-    font: normal normal normal 1.5rem/21px Atkinson Hyperlegible;
+    font-size: 1.5rem;
     color: #121a55;
   }
   .react-datepicker__day--selected::before {
@@ -312,7 +316,8 @@ const Container = styled.div<{ disabled: boolean; bottom: boolean }>`
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: -1;
-    background: #febc1d 0% 0% no-repeat padding-box;
+
+    background-color: ${({ theme }) => theme.colors.text.royalBlue};
     width: 50px;
     height: 50px;
     border-radius: 25px;
@@ -326,7 +331,9 @@ const Container = styled.div<{ disabled: boolean; bottom: boolean }>`
     }
   }
   .react-datepicker__day-name {
-    font: normal normal bold 14px/19px Atkinson Hyperlegible;
+    font-size: 1.4rem;
+    font-weight: bold;
+
     letter-spacing: 0px;
     color: #151229;
     margin: 26px 32px 0px 0px;
@@ -343,7 +350,7 @@ const Container = styled.div<{ disabled: boolean; bottom: boolean }>`
   }
   .react-datepicker__current-month {
     text-align: center;
-    font: normal normal 600 1.6rem/22px Atkinson Hyperlegible;
+    font-size: 1.6rem;
     letter-spacing: 0px;
     color: #121a55;
     margin-top: 13px;
@@ -360,12 +367,12 @@ const Container = styled.div<{ disabled: boolean; bottom: boolean }>`
   }
 `;
 
-const ClearIcon = styled(Icon)<{ disabled: boolean }>`
+const ClearIcon = styled(Icon)<{ $disabled: boolean }>`
   color: #cdd5df;
   font-size: 2.4rem;
   margin-right: 12px;
 
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
 `;
 
 export default DateField;
