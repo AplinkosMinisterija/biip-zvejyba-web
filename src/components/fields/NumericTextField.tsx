@@ -4,7 +4,7 @@ import TextFieldInput from './components/TextFieldInput';
 export interface NumericTextFieldProps {
   value?: string | number;
   name?: string;
-  error?: string;
+  error?: any;
   showError?: boolean;
   label?: string;
   icon?: JSX.Element;
@@ -20,7 +20,7 @@ export interface NumericTextFieldProps {
   readOnly?: boolean;
   onInputClick?: () => void;
   placeholder?: string;
-  wholeNumber?: boolean;
+  digitsAfterComma?: number;
   secondLabel?: JSX.Element;
   subLabel?: string;
   type?: string;
@@ -41,7 +41,7 @@ const NumericTextField = ({
   disabled,
   height,
   showError,
-  wholeNumber = false,
+  digitsAfterComma,
   bottomLabel,
   onInputClick,
 }: NumericTextFieldProps) => {
@@ -55,7 +55,9 @@ const NumericTextField = ({
   };
 
   const handleChange = (input: string) => {
-    const regex = wholeNumber ? /^[0-9]{0,16}$/ : /^\d{0,100}$|(?=^.{1,10}$)^\d+[\.\,]\d{0,10}$/;
+    const regex = !digitsAfterComma
+      ? new RegExp(/^\d*$/)
+      : new RegExp(`^(?:\\d+)?(?:[.,]\\d{0,${digitsAfterComma}})?$`);
 
     if (regex.test(input)) onChange(input.replaceAll(',', '.'));
   };

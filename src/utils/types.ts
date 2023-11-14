@@ -1,3 +1,4 @@
+import { FeatureCollection } from '../components/other/DrawMap';
 import { RoleTypes, ToolTypeType } from './constants';
 
 export type ProfileId = 'personal' | string;
@@ -7,6 +8,7 @@ export interface Profile {
   code?: string;
   email?: string;
   role: RoleTypes;
+  isInvestigator: boolean;
   phone: string;
 }
 export interface User {
@@ -149,6 +151,43 @@ export interface Fishing {
 export interface FishType {
   id: number;
   label: string;
+  photo: any;
+}
+
+export interface Research {
+  id?: number;
+  cadastralId?: string;
+  waterBodyData?: { name: string; municipality?: string; area: string };
+  startAt?: Date;
+  endAt?: Date;
+  geom?: FeatureCollection;
+  predatoryFishesRelativeAbundance?: string;
+  predatoryFishesRelativeBiomass?: string;
+  averageWeight?: string;
+  valuableFishesRelativeBiomass?: string;
+  conditionIndex?: string;
+  files?: Array<{
+    url: string;
+    name: string;
+  }>;
+  previousResearchData?: {
+    year: string;
+    conditionIndex: string;
+    totalAbundance: string;
+    totalBiomass: string;
+  };
+  fishes?: ResearchFish[];
+  tenant?: Tenant;
+  user?: User;
+  previous?: Research;
+}
+
+export interface ResearchFish {
+  fishType?: FishType;
+  abundance: string;
+  biomass: string;
+  abundancePercentage: string;
+  biomassPercentage: string;
 }
 
 export interface DeleteInfoProps {
