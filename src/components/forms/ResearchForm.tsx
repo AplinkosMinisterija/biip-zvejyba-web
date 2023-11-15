@@ -87,14 +87,14 @@ export const validateSchema = Yup.object().shape({
 const ResearchForm = () => {
   const { fishTypes } = useFishTypes();
   const uploadedFiletMutation = useMutation((files: File[]) => api.uploadFiles(files));
-  const { id } = useParams();
+  const { id = '' } = useParams();
   const navigate = useNavigate();
   const disableMainFields = !isNew(id);
 
   const { data: research, isLoading: researchLoading } = useQuery(
     ['research', id],
-    () => api.getResearch(id!),
-    { retry: false },
+    () => api.getResearch(id),
+    { retry: false, enabled: !isNew(id) },
   );
 
   const updateResearch = useMutation((values: any) => api.updateResearch(values, id!), {
@@ -317,6 +317,7 @@ const ResearchForm = () => {
                     name="previousResearchDataTotalAbundance"
                     value={values?.previousResearchData?.totalAbundance}
                     error={errors?.previousResearchData?.totalAbundance}
+                    rightIcon={<MeasurementLabel>vnt./ha</MeasurementLabel>}
                     onChange={(e) =>
                       setFieldValue('previousResearchData.totalAbundance', Number(e))
                     }
@@ -326,6 +327,7 @@ const ResearchForm = () => {
                     name="previousResearchDataTotalBiomass"
                     value={values?.previousResearchData?.totalBiomass}
                     error={errors?.previousResearchData?.totalBiomass}
+                    rightIcon={<MeasurementLabel>kg/ha</MeasurementLabel>}
                     onChange={(e) => setFieldValue('previousResearchData.totalBiomass', Number(e))}
                   />
                 </Grid>
@@ -409,6 +411,7 @@ const ResearchForm = () => {
                 value={values.averageWeight}
                 error={errors.averageWeight}
                 onChange={(value) => setFieldValue('averageWeight', value)}
+                rightIcon={<MeasurementLabel>g</MeasurementLabel>}
                 digitsAfterComma={2}
               />
               <NumericTextField
@@ -482,6 +485,12 @@ const AddFishButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const MeasurementLabel = styled.div`
+  font-size: 1.6rem;
+  color: ${({ theme }) => theme.colors.tertiary};
+  padding: 16px;
 `;
 
 export default ResearchForm;
