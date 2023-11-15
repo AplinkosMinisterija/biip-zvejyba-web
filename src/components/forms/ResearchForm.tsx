@@ -4,15 +4,8 @@ import { useMutation, useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import * as Yup from 'yup';
-import {
-  getLocationList,
-  handleAlert,
-  isNew,
-  Research,
-  slugs,
-  useFishTypes,
-  validationTexts,
-} from '../../utils';
+import { getLocationList, handleAlert, isNew, Research, slugs, useFishTypes } from '../../utils';
+import { validationTexts } from '../../utils/texts';
 import api from '../../utils/api';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
@@ -40,7 +33,7 @@ export interface ResearchProps extends Research {
   formType?: FormTypes;
 }
 
-export const validateSchema = Yup.object().shape({
+const validateSchema = Yup.object().shape({
   startAt: Yup.date().required(validationTexts.requireSelect).nullable(),
   endAt: Yup.date().required(validationTexts.requireSelect).nullable(),
   cadastralId: Yup.string().when('formType', (formType: any, schema) => {
@@ -249,7 +242,7 @@ const ResearchForm = () => {
                   <Grid columns={1}>
                     <DrawMap
                       label="Vandens telkinio vieta"
-                      value={values?.geom!}
+                      value={values?.geom}
                       error={errors?.geom}
                       onSave={(data) => setFieldValue('geom', data)}
                       height={'300px'}
@@ -340,7 +333,7 @@ const ResearchForm = () => {
                 <Grid columns={1}>
                   {map(values.fishes, (currentFish, index: number) => {
                     const rowErrors = errors?.fishes?.[index];
-                    const showDelete = values?.fishes?.length! > 1;
+                    const showDelete = values?.fishes?.length > 1;
 
                     const filteredFishTypes = filter(
                       fishTypes,

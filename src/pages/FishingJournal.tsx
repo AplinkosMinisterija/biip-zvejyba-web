@@ -2,23 +2,54 @@ import DefaultLayout from '../components/layouts/DefaultLayout';
 import { useGetCurrentRoute } from '../utils';
 import { useInfiniteQuery } from 'react-query';
 import api from '../utils/api';
-import { useEffect } from 'react';
 import LoaderComponent from '../components/other/LoaderComponent';
 import FishingCard from '../components/cards/FishingCard';
+import styled from 'styled-components';
 
 const FishingJournal = () => {
   const currentRoute: any = useGetCurrentRoute();
-  const { data, isLoading } = useInfiniteQuery({
-    queryKey: ['fishingJournal'],
-    queryFn: api.getFishingJournal,
-    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-    retry: false,
-  });
+
+  const fetchFishings = async (page: number) => {
+    const fishings = await api.getFishingJournal({ page });
+    return {
+      data: fishings.rows,
+      page: fishings.page < fishings.totalPages ? fishings.page + 1 : undefined,
+    };
+  };
+
+  const { data, hasNextPage, fetchNextPage, isLoading } = useInfiniteQuery(
+    'fishingJournal',
+    ({ pageParam }) => fetchFishings(pageParam),
+    {
+      getNextPageParam: (lastPage) => lastPage.page,
+      cacheTime: 60000,
+      retry: false,
+    },
+  );
+
+  const handleScroll = async (e: any) => {
+    const element = e.currentTarget;
+    const isTheBottom =
+      Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) <= 1;
+
+    if (isTheBottom && hasNextPage && !isLoading) {
+      fetchNextPage();
+    }
+  };
+
+  const fishings = data?.pages
+    .flat()
+    .map((item) => item?.data)
+    .flat();
 
   return (
-    <DefaultLayout title={currentRoute.title}>
-      {data?.pages?.map((page) => {
-        return page?.map((fishing: any) => {
+    <DefaultLayout
+      title={currentRoute.title}
+      subtitle={currentRoute.subtitle}
+      onScroll={handleScroll}
+    >
+      <Container>
+        {fishings?.map((fishing: any) => {
           return (
             <FishingCard
               key={`fishing_${fishing.id}`}
@@ -26,11 +57,18 @@ const FishingJournal = () => {
               endDate={fishing?.endEvent?.createdAt}
             />
           );
-        });
-      })}
-      {isLoading && <LoaderComponent />}
+        })}
+        {isLoading && <LoaderComponent />}
+      </Container>
     </DefaultLayout>
   );
 };
 
 export default FishingJournal;
+const Container = styled.div`
+  width: 100%;
+  display: block;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+`;

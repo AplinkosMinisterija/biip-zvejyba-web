@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { device, User } from '../../utils';
+import { device, theme, User } from '../../utils';
 import Avatar from './Avatar';
 
 export interface FishStockerItemProps {
@@ -9,7 +9,12 @@ export interface FishStockerItemProps {
   color?: string;
 }
 
-const ProfileCard = ({ fisher, onClick, icon, color }: FishStockerItemProps) => {
+const ProfileCard = ({
+  fisher,
+  onClick,
+  icon,
+  color = theme.colors.powder as string,
+}: FishStockerItemProps) => {
   const fullName = `${fisher.firstName} ${fisher.lastName}`;
 
   return (

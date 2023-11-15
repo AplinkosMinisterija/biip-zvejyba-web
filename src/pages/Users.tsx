@@ -128,17 +128,18 @@ export const Users = () => {
         <Container>
           <UsersContainer>
             {tenantUsers?.map((tenantUsers) => {
-              const user = tenantUsers.user!;
-              return (
-                <ProfileCard
-                  color={theme.colors.powder}
-                  fisher={user}
-                  icon={<StyledIcon name={IconName.profile} />}
-                  onClick={() => {
-                    navigate(slugs.user(tenantUsers?.id!));
-                  }}
-                />
-              );
+              const user = tenantUsers.user;
+              if (user)
+                return (
+                  <ProfileCard
+                    color={theme.colors.powder as string}
+                    fisher={user}
+                    icon={<StyledIcon name={IconName.profile} />}
+                    onClick={() => {
+                      if (tenantUsers.id) navigate(slugs.user(tenantUsers.id));
+                    }}
+                  />
+                );
             })}
           </UsersContainer>
         </Container>

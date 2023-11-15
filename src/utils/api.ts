@@ -1,10 +1,8 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { isEmpty } from 'lodash';
 import Cookies from 'universal-cookie';
-import { LocationType, Populations, Resources } from './constants';
-import { BuiltTool, FishType, Research, TenantUser, Tool, ToolFormProps, User } from './types';
 import { LocationType } from './constants';
-import { BuiltTool, TenantUser, Tool, ToolFormProps, User } from './types';
+import { BuiltTool, FishType, Research, TenantUser, Tool, ToolFormProps, User } from './types';
 
 enum Populations {
   USER = 'user',
@@ -485,13 +483,13 @@ class Api {
     });
   };
 
-  getFishingJournal = async (params: any): Promise<any> => {
+  getFishingJournal = async ({ page = 0 }: any): Promise<any> => {
     //TODO: infinite scrolling react query thingy
-    const response = await this.get({
+    return await this.get({
       resource: 'fishings',
       populate: ['startEvent', 'endEvent', 'skipEvent'],
+      page,
     });
-    return response.rows;
   };
 }
 
