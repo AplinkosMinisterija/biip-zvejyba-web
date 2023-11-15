@@ -11,7 +11,7 @@ import PopUpWithTitles from '../components/layouts/PopUpWithTitle';
 import { ListContainer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
 import { NotFound } from '../components/other/NotFound';
-import ToolCard from '../components/other/ToolCard';
+import ToolCard from '../components/cards/ToolCard';
 import { slugs, useGetCurrentRoute } from '../utils';
 import api from '../utils/api';
 import { ToolTypeType } from '../utils/constants';

@@ -9,7 +9,7 @@ import { device } from '../../utils/theme';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
 import { NotFound } from '../other/NotFound';
-import ToolCardSelectable from '../other/ToolCardSelecetable';
+import ToolCardSelectable from '../cards/ToolCardSelecetable';
 
 const FishingOptions = [
   { label: 'Atskiras įrankis', value: FishingToolsType.SINGLE },

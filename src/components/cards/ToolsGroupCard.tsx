@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { BuiltTool, getBuiltToolInfo, theme } from '../../utils';
 import Icon, { IconName } from '../other/Icon';
-import Tag from './Tag';
+import Tag from '../other/Tag';
 
 const ToolsGroupCard = ({
   isEstuary,

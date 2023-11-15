@@ -20,6 +20,7 @@ import {
   MdUnfoldMore,
 } from 'react-icons/md';
 import { PiArrowBendDownLeftBold } from 'react-icons/pi';
+import { IoLocationOutline } from 'react-icons/io5';
 
 export enum IconName {
   remove = 'remove',
@@ -68,8 +69,12 @@ export enum IconName {
   net = 'net',
   connection = 'connection',
   startFishing = 'startFishing',
+  beginFishing = 'beginFishong',
+  finishFishing = 'finishFishing',
+  fish = 'fish',
   endFishing = 'endFishing',
   location = 'location',
+  locationOutline = 'locationOutline',
   researches = 'researches',
   fullscreen = 'fullscreen',
   exitFullScreen = 'exitFullScreen',
@@ -455,6 +460,29 @@ V12l3,3"
           ></path>
         </svg>
       );
+    case IconName.beginFishing:
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          className={className}
+        >
+          <polyline className="st0" points="5.7,19.3 2,14.4 22,9.9 18.5,18.9 "></polyline>
+          <polyline className="st0" points="16.7,11.1 11.2,7.2 4.5,7.2 4,13.9 "></polyline>
+          <line className="st0" x1="8" y1="4.6" x2="8" y2="7.2"></line>
+          <path
+            className="st0"
+            d="M2.1,18.4c2.4,0,2.4,1,4.7,1c2.4,0,2.4-1,4.7-1c2.4,0,2.4,1,4.7,1s2.4-1,4.7-1"
+          ></path>
+        </svg>
+      );
     case IconName.endFishing:
       return (
         <svg
@@ -508,6 +536,48 @@ V12l3,3"
       return <FiDownload className={className} />;
     case IconName.remove:
       return <FaTrash className={className} />;
+
+    case IconName.finishFishing:
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          className={className}
+        >
+          <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+          <line x1="4" y1="22" x2="4" y2="15"></line>
+        </svg>
+      );
+
+    case IconName.fish:
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          className={className}
+        >
+          <path d="M22.5,12c-2.2,2.8-5.6,4.6-9.4,4.6c-3.8,0-7.2-1.8-9.4-4.6c2.2-2.8,5.6-4.6,9.4-4.6S20.4,9.2,22.5,12z"></path>
+          <path d="M1.5,7.2C1.8,9,2.6,10.6,3.7,12"></path>
+          <path d="M1.5,16.8C1.8,15,2.6,13.4,3.7,12"></path>
+        </svg>
+      );
+
+    case IconName.locationOutline:
+      return <IoLocationOutline className={className} />;
 
     default:
       return null;

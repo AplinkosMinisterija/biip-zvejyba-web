@@ -46,6 +46,7 @@ export const theme: Theme = {
     success: '#258800',
     powder: '#FFFFFFCC',
     purple: '#8a33fe',
+    purpleBrighter: '#b020a2',
     yellow: '#ffb400',
     yellowDarker: '#ffd399',
     greyDarker: '#d4d5de',

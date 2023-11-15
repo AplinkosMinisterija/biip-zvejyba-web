@@ -91,9 +91,9 @@ export const routes = [
   {
     title: 'Žvejybos informacija',
     slug: slugs.fishing(':fishingId'),
-    iconName: IconName.home,
     component: <Fishing />,
     regExp: new RegExp('^/zvejyba/[0-9]+$'),
+    back: true,
   },
   {
     title: 'Nariai',

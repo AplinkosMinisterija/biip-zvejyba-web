@@ -1,7 +1,7 @@
 import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Button, { ButtonColors } from '../components/buttons/Button';
 import BuildTools from '../components/containers/BuildTools';
@@ -10,7 +10,7 @@ import Popup from '../components/layouts/Popup';
 import PopUpWithImage from '../components/layouts/PopUpWithImage';
 import LoaderComponent from '../components/other/LoaderComponent';
 import { NotFound } from '../components/other/NotFound';
-import ToolsGroupCard from '../components/other/ToolsGroupCard';
+import ToolsGroupCard from '../components/cards/ToolsGroupCard';
 import { RootState } from '../state/store';
 import { getBars, handleAlert, useGetCurrentRoute } from '../utils';
 import api from '../utils/api';
@@ -21,9 +21,11 @@ import LocationForm from '../components/forms/LocationForm';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import { IconContainer } from '../components/other/CommonStyles';
 import Icon, { IconName } from '../components/other/Icon';
+import { actions } from '../state/fishing/reducer';
 
 const CurrentFishingTools = () => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
   const [showBuildTools, setShowBuildTools] = useState(false);
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
@@ -46,6 +48,7 @@ const CurrentFishingTools = () => {
       }),
     {
       onSuccess: (value) => {
+        dispatch(actions.setLocation(value));
         queryClient.setQueryData('location', value);
       },
       onError: () => {
@@ -66,7 +69,14 @@ const CurrentFishingTools = () => {
           coordinates,
         },
       }),
-    { retry: false },
+    {
+      onSuccess: (data) => {
+        dispatch(actions.setLocation(data));
+      },
+      retry: false,
+      cacheTime: 60000,
+      staleTime: 60000,
+    },
   );
 
   const { data: bars } = useQuery(['bars'], async () => getBars(), {

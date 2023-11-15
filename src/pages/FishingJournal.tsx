@@ -45,18 +45,14 @@ const FishingJournal = () => {
     .flat();
 
   return (
-    <DefaultLayout
-      title={currentRoute.title}
-      subtitle={currentRoute.subtitle}
-      onScroll={handleScroll}
-    >
+    <DefaultLayout onScroll={handleScroll}>
       <Container>
         {fishings?.map((fishing: any) => {
           return (
             <FishingCard
               key={`fishing_${fishing.id}`}
-              startDate={fishing?.startEvent?.createdAt}
-              endDate={fishing?.endEvent?.createdAt}
+              startDate={fishing?.startEvent?.createdAt || fishing?.skipEvent?.createdAt}
+              endDate={fishing?.endEvent?.createdAt || fishing?.skipEvent?.createdAt}
               onClick={() => {
                 navigate(slugs.fishing(fishing.id));
               }}

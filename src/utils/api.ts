@@ -491,6 +491,12 @@ class Api {
       page,
     });
   };
+
+  getFishingHistory = async (params: any): Promise<any> =>
+    this.get({
+      resource: `fishings/history`,
+      ...params,
+    });
 }
 
 export default new Api();

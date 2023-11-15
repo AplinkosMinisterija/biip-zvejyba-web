@@ -1,7 +1,7 @@
 import { useMatch } from 'react-router';
 import styled from 'styled-components';
 import { RouteType } from '../../utils';
-import Icon from './Icon';
+import Icon from '../other/Icon';
 
 const SideBarItem = ({ route }: { route: RouteType }) => {
   const isActive = useMatch(route.slug);

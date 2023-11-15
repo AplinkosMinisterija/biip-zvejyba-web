@@ -1,8 +1,8 @@
 import { matchPath, useLocation, useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { buttonLabels, useLogoutMutation, useMenuRouters } from '../../utils';
-import Icon, { IconName } from './Icon';
-import ProfilesDropdown from './ProfileDropdown';
+import Icon, { IconName } from '../other/Icon';
+import ProfilesDropdown from '../other/ProfileDropdown';
 
 const SideBar = () => {
   const routes = useMenuRouters();

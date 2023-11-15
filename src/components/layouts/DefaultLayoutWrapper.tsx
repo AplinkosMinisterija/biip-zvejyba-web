@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useGetCurrentRoute, useWindowSize } from '../../utils';
 import { device } from '../../utils';
 import LogoHeader from '../headers/LogoHeader';
-import SideBar from '../other/SideBar';
+import SideBar from './SideBar';
 import BackHeader from '../headers/BackHeader';
 
 const DefaultLayoutWrapper = ({ children }: any) => {

@@ -18,37 +18,22 @@ import { useEffect, useState } from 'react';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 
 export const CaughtFishesWithTool = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const currentRoute = useGetCurrentRoute();
   const { fishTypes, isLoading } = useFishTypes();
   const coordinates = useAppSelector((state) => state.fishing.coordinates);
-  const { toolId, fishingId } = useParams();
-  const navigate = useNavigate();
-  const [amounts, setAmounts] = useState<{ [key: number]: number }>({});
+  const location = useAppSelector((state) => state.fishing.location);
 
-  // TODO: if single page approach would be used location query would be unnecessary
-  // since location could be passed via props from parent
-  const { data: location, isLoading: locationLoading } = useQuery(
-    ['location'],
-    () =>
-      coordinates
-        ? api.getLocation({
-            query: {
-              coordinates,
-            },
-          })
-        : {},
-    {
-      retry: false,
-    },
-  );
+  const { toolId } = useParams();
+  const [amounts, setAmounts] = useState<{ [key: number]: number }>({});
 
   const { data: toolsGroup, isLoading: toolsGroupLoading } = useQuery(
     ['builtTool', toolId],
     () => api.getBuiltTool(toolId!),
     {
       onError: () => {
-        navigate(slugs.fishingTools(fishingId!));
+        navigate(slugs.fishingTools);
       },
       retry: false,
     },
@@ -73,7 +58,7 @@ export const CaughtFishesWithTool = () => {
     }
   }, [toolsGroup]);
 
-  if (isLoading || toolsGroupLoading || locationLoading) return <LoaderComponent />;
+  if (isLoading || toolsGroupLoading) return <LoaderComponent />;
 
   const { label, sealNr } = getBuiltToolInfo(toolsGroup!);
 
