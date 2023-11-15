@@ -72,8 +72,7 @@ const FishingAction = ({ fishing }: any) => {
           subtitle="Esate žvejybos vietoje"
           buttonLabel="Atidaryti"
           onClick={() => {
-            const location = slugs.fishingTools(fishing?.id);
-            navigate(location);
+            navigate(slugs.fishingTools);
           }}
         />
         {canWeigh && (
@@ -83,8 +82,7 @@ const FishingAction = ({ fishing }: any) => {
             subtitle="Pasverkite bendrą svorį"
             buttonLabel="Sverti"
             onClick={() => {
-              const location = slugs.fishingWeight(fishing?.id);
-              navigate(location);
+              navigate(slugs.fishingWeight);
             }}
           />
         )}

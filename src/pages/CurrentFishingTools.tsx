@@ -22,7 +22,7 @@ import DefaultLayout from '../components/layouts/DefaultLayout';
 import { IconContainer } from '../components/other/CommonStyles';
 import Icon, { IconName } from '../components/other/Icon';
 
-const FishingTools = () => {
+const CurrentFishingTools = () => {
   const queryClient = useQueryClient();
   const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
   const [showBuildTools, setShowBuildTools] = useState(false);
@@ -263,4 +263,4 @@ const EditIcon = styled(Icon)`
   font-size: 2.4rem;
 `;
 
-export default FishingTools;
+export default CurrentFishingTools;

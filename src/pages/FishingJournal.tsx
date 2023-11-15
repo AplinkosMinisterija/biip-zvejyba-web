@@ -1,12 +1,14 @@
 import DefaultLayout from '../components/layouts/DefaultLayout';
-import { useGetCurrentRoute } from '../utils';
+import { slugs, useGetCurrentRoute } from '../utils';
 import { useInfiniteQuery } from 'react-query';
 import api from '../utils/api';
 import LoaderComponent from '../components/other/LoaderComponent';
 import FishingCard from '../components/cards/FishingCard';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const FishingJournal = () => {
+  const navigate = useNavigate();
   const currentRoute: any = useGetCurrentRoute();
 
   const fetchFishings = async (page: number) => {
@@ -55,6 +57,9 @@ const FishingJournal = () => {
               key={`fishing_${fishing.id}`}
               startDate={fishing?.startEvent?.createdAt}
               endDate={fishing?.endEvent?.createdAt}
+              onClick={() => {
+                navigate(slugs.fishing(fishing.id));
+              }}
             />
           );
         })}

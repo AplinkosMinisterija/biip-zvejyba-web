@@ -29,7 +29,7 @@ const Months = [
   'Lapkričio',
   'Gruodžio',
 ];
-const FishingCard = ({ startDate, endDate }: any) => {
+const FishingCard = ({ startDate, endDate, onClick }: any) => {
   const month: string = format(new Date(startDate), 'M');
   const dayOfMonth = format(new Date(startDate), 'd');
   const day = `${Months[Number(month)]} ${dayOfMonth}d.`;
@@ -38,7 +38,7 @@ const FishingCard = ({ startDate, endDate }: any) => {
   const endHours = endDate ? format(new Date(endDate), 'hh:mm') : 'Žvejojama';
   const active = !endDate;
   return (
-    <Container $active={active}>
+    <Container $active={active} onClick={onClick}>
       <Row>
         <FishingDate>{day}</FishingDate>
         <FishingWeight></FishingWeight>

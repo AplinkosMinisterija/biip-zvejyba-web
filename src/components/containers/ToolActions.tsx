@@ -54,7 +54,7 @@ const ToolActions = ({ toolGroup, onReturn, visible, coordinates, location }: an
             label="Sverti žuvį laive "
             icon={IconName.scales}
             onClick={() => {
-              navigate(slugs.fishingToolCaughtFishes(fishingId!, toolGroup?.id));
+              navigate(slugs.fishingToolCaughtFishes(toolGroup?.id));
             }}
           />
         )}

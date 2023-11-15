@@ -19,7 +19,7 @@ import DrawMap from '../other/DrawMap';
 import LoaderComponent from '../other/LoaderComponent';
 import ResearchFishItem from '../other/ResearchFishItem';
 
-export enum FormTypes {
+enum FormTypes {
   UETK = 'UETK',
   NOT_UETK = 'NOT_UETK',
 }
@@ -29,7 +29,7 @@ const ResearchTypeOptions = [
   { label: 'Ne UETK objektas', value: FormTypes.NOT_UETK },
 ];
 
-export interface ResearchProps extends Research {
+interface ResearchProps extends Research {
   formType?: FormTypes;
 }
 

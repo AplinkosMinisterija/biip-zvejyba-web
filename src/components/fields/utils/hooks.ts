@@ -51,7 +51,7 @@ export const useAsyncSelectData = ({
       onSuccess: (response: any) => {
         setCurrentPage(response.page);
 
-        const data = !!response?.[optionsKey] ? response?.[optionsKey] : response;
+        const data = response?.[optionsKey] ? response?.[optionsKey] : response;
 
         setSuggestions(lazyLoading ? [...suggestions, ...data] : data);
 

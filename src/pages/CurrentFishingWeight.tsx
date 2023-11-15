@@ -8,7 +8,6 @@ import {
   device,
   FishingWeighType,
   handleAlert,
-  slugs,
   useAppSelector,
   useFishTypes,
   useGetCurrentRoute,
@@ -23,7 +22,7 @@ const FishingWeightOptions = [
   { label: 'Visos žuvys', value: FishingWeighType.All },
 ];
 
-const FishingWeight = () => {
+const CurrentFishingWeight = () => {
   const queryClient = useQueryClient();
   const [type, setType] = useState<FishingWeighType>(FishingWeighType.CAUGHT);
   const currentRoute = useGetCurrentRoute();
@@ -52,7 +51,7 @@ const FishingWeight = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['fishingWeights']);
-        navigate(slugs.fishing(fishingId!));
+        navigate(-1);
       },
       onError: () => {
         handleAlert();
@@ -95,7 +94,7 @@ const FishingWeight = () => {
   );
 };
 
-export default FishingWeight;
+export default CurrentFishingWeight;
 
 const Footer = styled.div`
   display: block;
