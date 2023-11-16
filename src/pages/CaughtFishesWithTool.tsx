@@ -10,6 +10,7 @@ import {
   getBuiltToolInfo,
   handleAlert,
   slugs,
+  useGeolocationWatcher,
 } from '../utils';
 import styled from 'styled-components';
 import Button from '../components/buttons/Button';
@@ -18,6 +19,7 @@ import { useEffect, useState } from 'react';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 
 export const CaughtFishesWithTool = () => {
+  useGeolocationWatcher();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const currentRoute = useGetCurrentRoute();

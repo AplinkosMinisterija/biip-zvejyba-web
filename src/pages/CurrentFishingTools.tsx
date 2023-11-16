@@ -12,7 +12,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import { NotFound } from '../components/other/NotFound';
 import ToolsGroupCard from '../components/cards/ToolsGroupCard';
 import { RootState } from '../state/store';
-import { getBars, handleAlert, useGetCurrentRoute } from '../utils';
+import { getBars, handleAlert, useGeolocationWatcher, useGetCurrentRoute } from '../utils';
 import api from '../utils/api';
 import { LocationType } from '../utils';
 import { device } from '../utils';
@@ -24,6 +24,7 @@ import Icon, { IconName } from '../components/other/Icon';
 import { actions } from '../state/fishing/reducer';
 
 const CurrentFishingTools = () => {
+  useGeolocationWatcher();
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const coordinates = useSelector((state: RootState) => state.fishing.coordinates);

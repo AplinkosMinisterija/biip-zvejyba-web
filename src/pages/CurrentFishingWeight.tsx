@@ -10,6 +10,7 @@ import {
   handleAlert,
   useAppSelector,
   useFishTypes,
+  useGeolocationWatcher,
   useGetCurrentRoute,
 } from '../utils';
 import api from '../utils/api';
@@ -23,10 +24,11 @@ const FishingWeightOptions = [
 ];
 
 const CurrentFishingWeight = () => {
+  useGeolocationWatcher();
+
   const queryClient = useQueryClient();
   const [type, setType] = useState<FishingWeighType>(FishingWeighType.CAUGHT);
   const currentRoute = useGetCurrentRoute();
-  const { fishingId } = useParams();
   const { fishTypes, isLoading } = useFishTypes();
   const isCaught = type === FishingWeighType.CAUGHT;
   const navigate = useNavigate();

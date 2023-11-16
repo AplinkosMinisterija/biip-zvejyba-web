@@ -8,6 +8,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import api from '../utils/api';
 import { getCurrentRoute, useGeolocationWatcher, slugs } from '../utils';
 export const CurrentFishing = () => {
+  useGeolocationWatcher();
   const navigate = useNavigate();
   const currentRoute = getCurrentRoute(window.location.pathname);
 
@@ -28,8 +29,6 @@ export const CurrentFishing = () => {
       }
     }
   }, [currentFishing, window.location.pathname]);
-
-  useGeolocationWatcher();
 
   if (currentFishingLoading) {
     return <LoaderComponent />;
