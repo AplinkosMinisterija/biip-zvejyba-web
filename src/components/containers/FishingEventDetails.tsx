@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { EventTypes, FishingEventLabels, geomToWgs, useFishTypes } from '../../utils';
+import { EventTypes, FishingEventLabels, useFishTypes } from '../../utils';
 import DrawMap from '../other/DrawMap';
 import format from 'date-fns/format';
 
