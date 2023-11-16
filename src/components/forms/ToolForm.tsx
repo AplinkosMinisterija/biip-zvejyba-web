@@ -13,8 +13,6 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
 
   const disabled = !isNew;
 
-  console.log(disabled, 'disabled');
-
   const preventNumInputFromScrolling = (e: any) =>
     e.target.addEventListener(
       'wheel',
