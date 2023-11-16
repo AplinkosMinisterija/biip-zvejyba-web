@@ -145,7 +145,6 @@ export const Login = () => {
         </ButtonContainer>
       );
     }
-
     return <MobileLoginContainer>{renderLoginFields()}</MobileLoginContainer>;
   };
 

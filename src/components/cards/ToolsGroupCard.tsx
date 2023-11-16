@@ -21,7 +21,7 @@ const ToolsGroupCard = ({
   return (
     <Container $isCheckedTool={isCheckedTool}>
       <InnerContainer onClick={() => onSelect(toolsGroup)}>
-        <IconContainer selected={isCheckedTool}>
+        <IconContainer $selected={isCheckedTool}>
           {isEstuary ? (
             <Estuary>{locationName.replace(/[^\d]/g, '')}</Estuary>
           ) : (
@@ -65,9 +65,9 @@ const InnerContainer = styled.div`
   gap: 12px;
 `;
 
-const IconContainer = styled.div<{ selected: boolean }>`
-  background-color: ${({ selected, theme }) => (selected ? theme.colors.success : 'white')};
-  color: ${({ selected }) => (selected ? 'white' : theme.colors.text.secondary)};
+const IconContainer = styled.div<{ $selected: boolean }>`
+  background-color: ${({ $selected, theme }) => ($selected ? theme.colors.success : 'white')};
+  color: ${({ $selected }) => ($selected ? 'white' : theme.colors.text.secondary)};
   border-radius: 50%;
   width: 48px;
   height: 48px;

@@ -26,14 +26,14 @@ const FormLayout = ({
     <DefaultLayoutWrapper back={back}>
       <FormTitleGrid>
         <>
-          <GridItem justify={'start'}>
+          <GridItem $justify={'start'}>
             <IconContainer onClick={() => navigate(-1)}>
               <Icon name={IconName.back} />
             </IconContainer>
           </GridItem>
-          <GridItem justify={'center'}>
+          <GridItem $justify={'center'}>
             <TitleGridRow $widthEdit={!!onEdit}>
-              <GridItem justify={'center'}>
+              <GridItem $justify={'center'}>
                 <FormTitle>{title}</FormTitle>
               </GridItem>
               {onEdit && (
@@ -44,7 +44,7 @@ const FormLayout = ({
             </TitleGridRow>
           </GridItem>
           {deleteInfo && (
-            <GridItem justify={'end'}>
+            <GridItem $justify={'end'}>
               <DeleteComponent deleteInfo={deleteInfo} />
             </GridItem>
           )}
@@ -79,10 +79,10 @@ const FormTitleGrid = styled.div`
   width: 100%;
 `;
 
-const GridItem = styled.div<{ justify: string }>`
+const GridItem = styled.div<{ $justify: string }>`
   display: grid;
   align-items: center;
-  justify-items: ${({ justify }) => justify};
+  justify-items: ${({ $justify }) => $justify};
   width: 100%;
 `;
 

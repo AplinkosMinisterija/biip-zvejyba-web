@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 
 const FishingJournal = () => {
   const navigate = useNavigate();
-  const currentRoute: any = useGetCurrentRoute();
 
   const fetchFishings = async (page: number) => {
     const fishings = await api.getFishingJournal({ page });

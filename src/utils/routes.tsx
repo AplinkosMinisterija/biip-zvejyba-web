@@ -124,6 +124,7 @@ export const routes = [
     component: <Tools />,
     regExp: new RegExp('^/irankiai$'),
     iconName: IconName.tools,
+    back: true,
   },
   {
     title: 'Nustatymai',

@@ -42,7 +42,7 @@ const FishingEventDetails = ({ event }: any) => {
         <FistWeightsList>
           {weightedFistTypes.map((fishTypeId) => {
             return (
-              <FishWeightRow>
+              <FishWeightRow key={`fish_weight_row_${fishTypeId}`}>
                 <div>{fishTypes?.find((f) => f.id === Number(fishTypeId))?.label || ''}</div>
                 <div>{`${eventFish[fishTypeId]}kg`}</div>
               </FishWeightRow>

@@ -54,11 +54,11 @@ const StyledIcon = styled(Icon)`
   font-size: 2.4rem;
 `;
 
-const Container = styled(Div100vh)<{ width?: string }>`
+const Container = styled(Div100vh)`
   width: 100%;
 `;
 
-const InnerContainer = styled.div<{ width?: string }>`
+const InnerContainer = styled.div`
   background-color: white;
   position: relative;
   width: 100%;

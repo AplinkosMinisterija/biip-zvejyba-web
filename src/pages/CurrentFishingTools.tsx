@@ -76,7 +76,6 @@ const CurrentFishingTools = () => {
       },
       retry: false,
       cacheTime: 60000,
-      staleTime: 60000,
     },
   );
 
