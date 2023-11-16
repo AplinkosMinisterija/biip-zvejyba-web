@@ -20,7 +20,7 @@ const buttonColors = {
   [ButtonColors.DANGER]: theme.colors.error,
   [ButtonColors.SUCCESS]: theme.colors.success,
   [ButtonColors.TRANSPARENT]: 'transparent',
-  [ButtonColors.POWDER]: theme.colors.powder,
+  [ButtonColors.POWDER]: theme.colors.powder as string,
 };
 
 const buttonTextColors = {
