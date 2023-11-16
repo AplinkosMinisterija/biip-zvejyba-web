@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { format, differenceInHours, differenceInMinutes } from 'date-fns';
+import Icon, { IconName } from '../other/Icon';
 const formatDuration = (startDate?: string, endDate?: string) => {
   if (!startDate || !endDate) {
     return '';
@@ -29,7 +30,27 @@ const Months = [
   'Lapkričio',
   'Gruodžio',
 ];
-const FishingCard = ({ startDate, endDate, onClick }: any) => {
+
+const getWeightString = (fishOnBoat: any, fishOnShore: any) => {
+  if (!fishOnShore && !fishOnBoat) {
+    return '';
+  }
+  if (fishOnShore) {
+    const weightOnShore =
+      Object.values(fishOnShore.data)
+        .flat()
+        .reduce((acc: any, current: any) => acc + current, 0) || '';
+    return weightOnShore ? `${weightOnShore}kg` : '';
+  }
+  const weightOnBoat =
+    Object.values(fishOnBoat || {})
+      ?.map((e: any) => Object.values(e.data))
+      .flat()
+      .reduce((acc: any, current: any) => acc + current, 0) || '';
+  return weightOnBoat ? `~${weightOnBoat}kg` : '';
+};
+
+const FishingCard = ({ startDate, endDate, fishOnBoat, fishOnShore, onClick }: any) => {
   const month: string = startDate ? format(new Date(startDate), 'M') : '';
   const dayOfMonth = startDate ? format(new Date(startDate), 'd') : '';
   const day = `${Months[Number(month)]} ${dayOfMonth}d.`;
@@ -37,11 +58,19 @@ const FishingCard = ({ startDate, endDate, onClick }: any) => {
   const startHours = startDate ? format(new Date(startDate), 'HH:mm') : '';
   const endHours = endDate ? format(new Date(endDate), 'HH:mm') : 'Žvejojama';
   const active = !endDate && startDate;
+
+  const weight = getWeightString(fishOnBoat, fishOnShore);
+
   return (
     <Container $active={active} onClick={onClick}>
       <Row>
         <FishingDate>{day}</FishingDate>
-        <FishingWeight></FishingWeight>
+        {weight && (
+          <FishingWeight>
+            <Icon name={IconName.fish} />
+            {weight}
+          </FishingWeight>
+        )}
       </Row>
       <MiddleRow>
         <Circle $active={active} />
@@ -138,7 +167,9 @@ const FishingWeight = styled.div`
   justify-content: flex-end;
   font-size: 20px;
   font-weight: 700;
+  align-items: center;
   color: ${({ theme }) => theme.colors.text.primary};
+  gap: 4px;
 `;
 
 const CellLeft = styled.div`

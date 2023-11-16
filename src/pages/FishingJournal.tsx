@@ -52,6 +52,8 @@ const FishingJournal = () => {
               key={`fishing_${fishing.id}`}
               startDate={fishing?.startEvent?.createdAt || fishing?.skipEvent?.createdAt}
               endDate={fishing?.endEvent?.createdAt || fishing?.skipEvent?.createdAt}
+              fishOnBoat={fishing.weightEvents?.fishOnBoat}
+              fishOnShore={fishing.weightEvents?.fishOnShore}
               onClick={() => {
                 navigate(slugs.fishing(fishing.id));
               }}

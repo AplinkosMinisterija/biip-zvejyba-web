@@ -483,11 +483,10 @@ class Api {
     });
   };
 
-  getFishingJournal = async ({ page = 0 }: any): Promise<any> => {
-    //TODO: infinite scrolling react query thingy
+  getFishingJournal = async ({ page }: any): Promise<any> => {
     return await this.get({
       resource: 'fishings',
-      populate: ['startEvent', 'endEvent', 'skipEvent'],
+      populate: ['startEvent', 'endEvent', 'skipEvent', 'weightEvents'],
       page,
     });
   };
