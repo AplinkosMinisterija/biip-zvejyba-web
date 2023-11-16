@@ -300,9 +300,7 @@ const ResearchForm = () => {
                     name="conditionIndex"
                     value={values?.previousResearchData?.conditionIndex}
                     error={errors?.previousResearchData?.conditionIndex}
-                    onChange={(e) =>
-                      setFieldValue('previousResearchData.conditionIndex', Number(e))
-                    }
+                    onChange={(e) => setFieldValue('previousResearchData.conditionIndex', e)}
                     digitsAfterComma={2}
                   />
                   <NumericTextField
@@ -311,9 +309,7 @@ const ResearchForm = () => {
                     value={values?.previousResearchData?.totalAbundance}
                     error={errors?.previousResearchData?.totalAbundance}
                     rightIcon={<MeasurementLabel>vnt./ha</MeasurementLabel>}
-                    onChange={(e) =>
-                      setFieldValue('previousResearchData.totalAbundance', Number(e))
-                    }
+                    onChange={(e) => setFieldValue('previousResearchData.totalAbundance', e)}
                   />
                   <NumericTextField
                     label={'Bendras žuvų gausumas'}
@@ -321,7 +317,7 @@ const ResearchForm = () => {
                     value={values?.previousResearchData?.totalBiomass}
                     error={errors?.previousResearchData?.totalBiomass}
                     rightIcon={<MeasurementLabel>kg/ha</MeasurementLabel>}
-                    onChange={(e) => setFieldValue('previousResearchData.totalBiomass', Number(e))}
+                    onChange={(e) => setFieldValue('previousResearchData.totalBiomass', e)}
                   />
                 </Grid>
               </>
@@ -412,7 +408,7 @@ const ResearchForm = () => {
                 name="valuableFishesRelativeBiomass"
                 value={values.valuableFishesRelativeBiomass}
                 error={errors.valuableFishesRelativeBiomass}
-                onChange={(e) => setFieldValue('valuableFishesRelativeBiomass', Number(e))}
+                onChange={(e) => setFieldValue('valuableFishesRelativeBiomass', e)}
                 digitsAfterComma={2}
               />
               <NumericTextField
@@ -420,7 +416,7 @@ const ResearchForm = () => {
                 name="conditionIndex"
                 value={values.conditionIndex}
                 error={errors.conditionIndex}
-                onChange={(e) => setFieldValue('conditionIndex', Number(e))}
+                onChange={(e) => setFieldValue('conditionIndex', e)}
                 digitsAfterComma={2}
               />
             </Grid>

@@ -192,4 +192,4 @@ export const formatDate = (date?: Date | string) =>
 
 export const isEmpty = (arr: any[]) => !!arr.length;
 
-export const isNew = (id?: string) => id === 'naujas';
+export const isNew = (id?: string) => !id || id === 'naujas';
