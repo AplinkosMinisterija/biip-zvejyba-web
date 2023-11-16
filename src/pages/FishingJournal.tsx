@@ -51,8 +51,8 @@ const FishingJournal = () => {
           return (
             <FishingCard
               key={`fishing_${fishing.id}`}
-              startDate={fishing?.startEvent?.createdAt || fishing?.skipEvent?.createdAt}
-              endDate={fishing?.endEvent?.createdAt || fishing?.skipEvent?.createdAt}
+              startDate={fishing?.startEvent?.createdAt}
+              endDate={fishing?.endEvent?.createdAt}
               onClick={() => {
                 navigate(slugs.fishing(fishing.id));
               }}

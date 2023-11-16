@@ -3,7 +3,7 @@ import { device } from '../../utils';
 import Icon from '../other/Icon';
 import Modal from './Modal';
 
-const Popup = ({ children, onClose, visible = true }: any) => {
+const Popup = ({ children, onClose, visible = false }: any) => {
   return (
     <Modal visible={visible} onClose={onClose}>
       <Container>

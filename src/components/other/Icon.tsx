@@ -469,9 +469,9 @@ V12l3,3"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
           className={className}
         >
           <polyline className="st0" points="5.7,19.3 2,14.4 22,9.9 18.5,18.9 "></polyline>
@@ -546,9 +546,9 @@ V12l3,3"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
           className={className}
         >
           <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
@@ -565,9 +565,9 @@ V12l3,3"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
           className={className}
         >
           <path d="M22.5,12c-2.2,2.8-5.6,4.6-9.4,4.6c-3.8,0-7.2-1.8-9.4-4.6c2.2-2.8,5.6-4.6,9.4-4.6S20.4,9.2,22.5,12z"></path>

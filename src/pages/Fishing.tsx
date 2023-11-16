@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import format from 'date-fns/format';
 import TimeLineItem from '../components/cards/TimeLineItem';
 import LoaderComponent from '../components/other/LoaderComponent';
+import { useFishTypes } from '../utils';
 export const CurrentFishing = () => {
   const { fishingId } = useParams();
   const { data, isLoading: currentFishingLoading } = useQuery(
@@ -15,55 +16,62 @@ export const CurrentFishing = () => {
       retry: false,
     },
   );
-  const startDate = data?.history.find((e: any) => e.type === 'START').date;
-  const date = startDate ? format(new Date(startDate), 'yyyy-MM-dd') : '-';
-  const fullName = data?.user ? `${data.user.firstName} ${data.user.lastName}` : '-';
-  const totalWeightEvent = data?.history.find((e: any) => e.type === 'WEIGHT_ON_SHORE');
-  const weights: number[] = totalWeightEvent?.data ? Object.values(totalWeightEvent.data) : [];
-  const sum = weights.reduce((partialSum: number = 0, val: number) => partialSum + val, 0);
+  try {
+    const startDate = data?.history.find((e: any) =>
+      ['START', 'SKIP'].some((type) => e.type === type),
+    )?.date;
+    const date = startDate ? format(new Date(startDate), 'yyyy-MM-dd') : '-';
+    const fullName = data?.user ? `${data.user.firstName} ${data.user.lastName}` : '-';
+    const totalWeightEvent = data?.history?.find((e: any) => e.type === 'WEIGHT_ON_SHORE');
+    const weights: number[] = totalWeightEvent?.data ? Object.values(totalWeightEvent.data) : [];
+    const sum = weights.reduce((partialSum: number = 0, val: number) => partialSum + val, 0);
 
-  const total = sum ? `${sum}kg` : '-';
+    const total = sum ? `${sum}kg` : '-';
 
-  return (
-    <DefaultLayout>
-      {currentFishingLoading ? (
-        <LoaderComponent />
-      ) : (
-        <>
-          <FishingInfo>
-            <FishingInfoCell>
-              <InfoLabel>Data</InfoLabel>
-              <div>{date}</div>
-            </FishingInfoCell>
-            <Divider />
-            <FishingInfoCell>
-              <InfoLabel>Tikslus svoris</InfoLabel>
-              <div>{total}</div>
-            </FishingInfoCell>
-            <Divider />
-            <FishingInfoCell>
-              <InfoLabel>Grandininkas</InfoLabel>
-              <div>{fullName}</div>
-            </FishingInfoCell>
-          </FishingInfo>
-          <TimeLineContainer>
-            <ConnectingLine />
-            <InnerContainer>
-              {data?.history?.map((event: any, index: number) => {
-                return (
-                  <TimeLineItem
-                    key={`time_line_item_${index}`}
-                    event={event}
-                    isLast={index + 1 === data.history.length}
-                  />
-                );
-              })}
-            </InnerContainer>
-          </TimeLineContainer>
-        </>
-      )}
-    </DefaultLayout>
-  );
+    return (
+      <DefaultLayout>
+        {currentFishingLoading ? (
+          <LoaderComponent />
+        ) : (
+          <>
+            <FishingInfo>
+              <FishingInfoCell>
+                <InfoLabel>Data</InfoLabel>
+                <div>{date}</div>
+              </FishingInfoCell>
+              <Divider />
+              <FishingInfoCell>
+                <InfoLabel>Tikslus svoris</InfoLabel>
+                <div>{total}</div>
+              </FishingInfoCell>
+              <Divider />
+              <FishingInfoCell>
+                <InfoLabel>Grandininkas</InfoLabel>
+                <div>{fullName}</div>
+              </FishingInfoCell>
+            </FishingInfo>
+            <TimeLineContainer>
+              <ConnectingLine />
+              <InnerContainer>
+                {data?.history?.map((event: any, index: number) => {
+                  return (
+                    <TimeLineItem
+                      key={`time_line_item_${index}`}
+                      event={event}
+                      isLast={index + 1 === data.history.length}
+                    />
+                  );
+                })}
+              </InnerContainer>
+            </TimeLineContainer>
+          </>
+        )}
+      </DefaultLayout>
+    );
+  } catch (e) {
+    console.log('eee', e);
+    return <></>;
+  }
 };
 
 export default CurrentFishing;

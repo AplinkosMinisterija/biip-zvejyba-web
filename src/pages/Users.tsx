@@ -132,6 +132,7 @@ export const Users = () => {
               if (user)
                 return (
                   <ProfileCard
+                    key={`tenant_user_${tenantUsers.id}`}
                     color={theme.colors.powder as string}
                     fisher={user}
                     icon={<StyledIcon name={IconName.profile} />}

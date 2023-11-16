@@ -30,13 +30,13 @@ const Months = [
   'Gruodžio',
 ];
 const FishingCard = ({ startDate, endDate, onClick }: any) => {
-  const month: string = format(new Date(startDate), 'M');
-  const dayOfMonth = format(new Date(startDate), 'd');
+  const month: string = startDate ? format(new Date(startDate), 'M') : '';
+  const dayOfMonth = startDate ? format(new Date(startDate), 'd') : '';
   const day = `${Months[Number(month)]} ${dayOfMonth}d.`;
 
-  const startHours = startDate ? format(new Date(startDate), 'hh:mm') : '';
-  const endHours = endDate ? format(new Date(endDate), 'hh:mm') : 'Žvejojama';
-  const active = !endDate;
+  const startHours = startDate ? format(new Date(startDate), 'HH:mm') : '';
+  const endHours = endDate ? format(new Date(endDate), 'HH:mm') : 'Žvejojama';
+  const active = !endDate && startDate;
   return (
     <Container $active={active} onClick={onClick}>
       <Row>
@@ -53,9 +53,10 @@ const FishingCard = ({ startDate, endDate, onClick }: any) => {
         <Line $active={active} />
         <Circle $active={active} />
       </MiddleRow>
+
       <Row>
-        <CellLeft>{startHours}</CellLeft>
-        <CellRight>{endHours}</CellRight>
+        {startDate && <CellLeft>{startHours}</CellLeft>}
+        {endDate && <CellRight>{endHours}</CellRight>}
       </Row>
     </Container>
   );

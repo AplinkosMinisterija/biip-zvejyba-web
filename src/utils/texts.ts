@@ -1,4 +1,4 @@
-import { LOCATION_ERRORS, RoleTypes, ServerErrors } from './constants';
+import { EventTypes, LOCATION_ERRORS, RoleTypes, ServerErrors } from './constants';
 export const validationTexts = {
   requireMap: 'Privalote pasirinkti vietą žemėlapyje',
   requirePhotos: 'Privalote įkelti nuotrauką',
@@ -95,4 +95,14 @@ export const roleLabels = {
   [RoleTypes.USER]: 'Naudotojas',
   [RoleTypes.USER_ADMIN]: 'Administratorius',
   [RoleTypes.OWNER]: 'Administratorius',
+};
+
+export const FishingEventLabels = {
+  [EventTypes.START]: 'Žvejybos pradžia',
+  [EventTypes.END]: 'Baigta žvejyba',
+  [EventTypes.SKIP]: 'Praleista žvejyba',
+  [EventTypes.BUILD_TOOLS]: 'Pastatytas įrankis',
+  [EventTypes.REMOVE_TOOLS]: 'Ištrauktas įrankis',
+  [EventTypes.WEIGHT_ON_SHORE]: 'Tikslus svoris krante',
+  [EventTypes.WEIGHT_ON_BOAT]: 'Patikrintas įrankis',
 };

@@ -6,6 +6,7 @@ import { slugs } from '../utils/routes';
 export const Research = () => {
   const currentRoute = useGetCurrentRoute();
 
+  //TODO: bereikalinga funkcija
   const renderContainer = () => {
     if (currentRoute?.slug === slugs.researches) return <ResearchesList />;
 

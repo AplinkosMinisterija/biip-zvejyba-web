@@ -44,15 +44,24 @@ export interface MapProps {
   onSave?: (data: any) => void;
   error?: string;
   value?: FeatureCollection;
-  label: string;
+  label?: string;
   showError?: boolean;
+  preview?: boolean;
 }
 
-const DrawMap = ({ height = '230px', onSave, error, value, showError = true, label }: MapProps) => {
+const DrawMap = ({
+  height = '230px',
+  onSave,
+  error,
+  value,
+  showError = true,
+  label,
+  preview,
+}: MapProps) => {
   const [showModal, setShowModal] = useState(false);
   const iframeRef = useRef<any>(null);
 
-  const src = `${mapsHost}/edit?types[]=point`;
+  const src = `${mapsHost}/edit?types[]=point${preview ? '&preview=true' : ''}`;
 
   const handleLoadMap = () => {
     if (!value) return;
@@ -82,11 +91,10 @@ const DrawMap = ({ height = '230px', onSave, error, value, showError = true, lab
       <Container $showModal={showModal} $error={!!error}>
         <InnerContainer $showModal={showModal}>
           <StyledButton
-            popup={showModal}
+            $popup={showModal}
             type="button"
             onClick={(e) => {
               e.preventDefault();
-
               setShowModal(!showModal);
             }}
           >
@@ -172,11 +180,11 @@ const StyledIframe = styled.iframe<{
   height: ${({ $height }) => $height};
 `;
 
-const StyledButton = styled.button<{ popup: boolean }>`
+const StyledButton = styled.button<{ $popup: boolean }>`
   position: absolute;
   z-index: 10;
-  top: ${({ popup }) => (popup ? 30 : 15)}px;
-  right: ${({ popup }) => (popup ? 28 : 11)}px;
+  top: ${({ $popup }) => ($popup ? 30 : 15)}px;
+  right: ${({ $popup }) => ($popup ? 28 : 11)}px;
   min-width: 28px;
 
   height: 28px;

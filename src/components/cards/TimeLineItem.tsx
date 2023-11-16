@@ -1,17 +1,10 @@
 import styled from 'styled-components';
-import { EventTypes, theme } from '../../utils';
+import { EventTypes, FishingEventLabels, theme } from '../../utils';
 import format from 'date-fns/format';
 import Icon, { IconName } from '../other/Icon';
-
-const Labels = {
-  [EventTypes.START]: 'Žvejybos pradžia',
-  [EventTypes.END]: 'Baigta žvejyba',
-  [EventTypes.SKIP]: 'Praleista žvejyba',
-  [EventTypes.BUILD_TOOLS]: 'Patikrintas įrankis',
-  [EventTypes.REMOVE_TOOLS]: 'Ištrauktas įrankis',
-  [EventTypes.WEIGHT_ON_SHORE]: 'Tikslus svoris krante',
-  [EventTypes.WEIGHT_ON_BOAT]: 'Patikrintas įrankis',
-};
+import Popup from '../layouts/Popup';
+import { useState } from 'react';
+import FishingEventDetails from '../containers/FishingEventDetails';
 
 const IconColors = {
   [EventTypes.START]: theme.colors.yellow,
@@ -34,34 +27,79 @@ const IconNames = {
 };
 
 const TimelineItem = ({ event, isLast }: any) => {
-  const date = format(new Date(event.date), 'hh:mm');
+  const [showMore, setShowMore] = useState(false);
+
+  const date = format(new Date(event.date), 'HH:mm');
   const location = event.location?.name;
   const type: EventTypes = event.type;
-  const tools = event.data?.tools?.map((t: any) => t.sealNr).join(',');
+  const eventTools = event.data?.tools || event.data?.toolsGroup?.tools || [];
+  const tools = eventTools.map((t: any) => t.sealNr).join(',');
+
+  const weightTypeEvent = [EventTypes.WEIGHT_ON_BOAT, EventTypes.WEIGHT_ON_SHORE].some(
+    (e) => e === type,
+  );
+  const weights: number[] = weightTypeEvent
+    ? Object.values(event.data?.fish || event.data || {})
+    : [];
+
+  const sum = weights.reduce((partialSum: number = 0, val: number) => partialSum + val, 0);
+
+  const weightLabel =
+    type === EventTypes.WEIGHT_ON_BOAT
+      ? `~${sum}kg`
+      : type === EventTypes.WEIGHT_ON_SHORE
+        ? `${sum}kg`
+        : '';
+
+  const showMoreButton = [
+    EventTypes.BUILD_TOOLS,
+    EventTypes.REMOVE_TOOLS,
+    EventTypes.WEIGHT_ON_SHORE,
+    EventTypes.WEIGHT_ON_BOAT,
+  ].some((e) => e === type);
+
   return (
-    <Container $isLast={isLast}>
-      <ItemIcon $color={IconColors[type] as string}>
-        <StyledImage name={IconNames[type]} />
-      </ItemIcon>
-      <ItemContent>
-        <ItemLabel>{Labels[type]}</ItemLabel>
-        <ItemDate>
-          <div>{date}</div>
-          {location && (
-            <div>
-              <StyledIcon name={IconName.locationOutline} />
-              {location}
-            </div>
+    <>
+      <Container $isLast={isLast}>
+        <ItemIcon $color={IconColors[type] as string}>
+          <StyledImage name={IconNames[type]} />
+        </ItemIcon>
+        <ItemContent>
+          <ItemLabel>
+            {FishingEventLabels[type]}
+            {weightLabel && <WeightLabel>{weightLabel}</WeightLabel>}
+          </ItemLabel>
+          <ItemDate>
+            <div>{date}</div>
+            {location && (
+              <div>
+                <StyledIcon name={IconName.locationOutline} />
+                {location}
+              </div>
+            )}
+            {tools && (
+              <div>
+                <StyledIcon name={IconName.tools} />
+                {`${eventTools[0].toolType?.label}(${tools})`}
+              </div>
+            )}
+          </ItemDate>
+          {showMoreButton && (
+            <MoreButton
+              onClick={() => {
+                setShowMore(true);
+              }}
+            >
+              Plačiau
+              <IconNext name={IconName.right} />
+            </MoreButton>
           )}
-          {tools && (
-            <div>
-              <StyledIcon name={IconName.tools} />
-              {`${event.data.tools[0].toolType?.label}(${tools})`}
-            </div>
-          )}
-        </ItemDate>
-      </ItemContent>
-    </Container>
+        </ItemContent>
+      </Container>
+      <Popup visible={showMore} onClose={() => setShowMore(false)}>
+        <FishingEventDetails event={event} />
+      </Popup>
+    </>
   );
 };
 
@@ -103,6 +141,9 @@ const StyledImage = styled(Icon)`
 
 const ItemLabel = styled.div`
   font-size: 1.8rem;
+  display: grid;
+  grid-template-columns: 1fr 80px;
+  gap: 8px;
 `;
 
 const ItemDate = styled.div`
@@ -122,4 +163,24 @@ const StyledIcon = styled(Icon)`
   height: 1.4rem;
   width: 1.4rem;
   filter: invert(28%) sepia(1%) saturate(0%) hue-rotate(138deg) brightness(104%) contrast(85%);
+`;
+
+const WeightLabel = styled.div`
+  text-align: right;
+  font-size: 20px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.primary};
+`;
+
+const MoreButton = styled.div`
+  color: ${({ theme }) => theme.colors.primary};
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding-top: 16px;
+`;
+
+const IconNext = styled(Icon)`
+  font-size: 14px;
+  margin-top: 3px;
 `;
