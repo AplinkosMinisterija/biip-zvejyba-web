@@ -8,9 +8,12 @@ export const Research = () => {
 
   //TODO: bereikalinga funkcija
   const renderContainer = () => {
+    if (!currentRoute?.slug) return <></>;
+
     if (currentRoute?.slug === slugs.researches) return <ResearchesList />;
 
-    if (currentRoute?.slug === slugs.updateResearch(':id')) return <ResearchForm />;
+    if ([slugs.updateResearch(':id'), slugs.newResearch].includes(currentRoute?.slug))
+      return <ResearchForm />;
 
     return <></>;
   };
