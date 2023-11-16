@@ -65,7 +65,7 @@ const LocationForm = ({
               </SeparatorLabelContainer>
             </Or>
 
-            <Grid columns={2}>
+            <Grid $columns={2}>
               <NumericTextField
                 label={inputLabels.lng}
                 name="x"

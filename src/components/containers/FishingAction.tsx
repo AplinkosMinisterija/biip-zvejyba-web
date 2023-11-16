@@ -101,7 +101,7 @@ const FishingAction = ({ fishing }: any) => {
         title={'Žvejybos pabaiga'}
         description={'Ar esate tikri, kad norite baigti žvejybą?'}
       >
-        <Grid columns={2}>
+        <Grid $columns={2}>
           <Button
             loading={finishFishingLoading}
             disabled={finishFishingLoading}

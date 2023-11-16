@@ -192,7 +192,7 @@ const ResearchForm = () => {
                 setFieldValue('formType', value);
               }}
             />
-            <Grid columns={1}>
+            <Grid $columns={1}>
               {isUetkFormType && (
                 <AsyncSelectField
                   name={'location'}
@@ -223,7 +223,7 @@ const ResearchForm = () => {
               )}
               {!isUetkFormType && (
                 <>
-                  <Grid columns={2}>
+                  <Grid $columns={2}>
                     <TextField
                       label={'Vandens telkinio pavadinimas'}
                       name="waterBodyDataName"
@@ -239,7 +239,7 @@ const ResearchForm = () => {
                       onChange={(value) => setFieldValue('waterBodyData.area', value)}
                     />
                   </Grid>
-                  <Grid columns={1}>
+                  <Grid $columns={1}>
                     <DrawMap
                       label="Vandens telkinio vieta"
                       value={values?.geom}
@@ -251,7 +251,7 @@ const ResearchForm = () => {
                 </>
               )}
             </Grid>
-            <Grid columns={2}>
+            <Grid $columns={2}>
               <DateField
                 name={'startAt'}
                 label={'Mokslinio tyrimo pradžia'}
@@ -271,7 +271,7 @@ const ResearchForm = () => {
             </Grid>
             {!isUetkFormType && (
               <>
-                <Grid columns={1}>
+                <Grid $columns={1}>
                   <div>
                     <FormLabel>
                       Ankstesniais metais bendras žuvų gausumas ir biomasė, išteklių būklės indeksas
@@ -282,7 +282,7 @@ const ResearchForm = () => {
                     </FormSubLabel>
                   </div>
                 </Grid>
-                <Grid columns={2}>
+                <Grid $columns={2}>
                   <TextField
                     label={'Metai'}
                     name="previousResearchDataYear"
@@ -322,13 +322,13 @@ const ResearchForm = () => {
                 </Grid>
               </>
             )}
-            <Grid columns={1}>
+            <Grid $columns={1}>
               <FormLabel>Atskirų žuvų rūšių gausumas ir biomasė</FormLabel>
             </Grid>
             <FieldArray
               name="fishes"
               render={(arrayHelpers) => (
-                <Grid columns={1}>
+                <Grid $columns={1}>
                   {map(values.fishes, (currentFish, index: number) => {
                     const rowErrors = errors?.fishes?.[index];
                     const showDelete = values?.fishes?.length > 1;
@@ -372,10 +372,10 @@ const ResearchForm = () => {
                 </Grid>
               )}
             />
-            <Grid columns={1}>
+            <Grid $columns={1}>
               <FormLabel>Žuvų išteklių būklės indeksas</FormLabel>
             </Grid>
-            <Grid columns={2}>
+            <Grid $columns={2}>
               <NumericTextField
                 label={'Plėšrių žuvų santykinis gausumas'}
                 name="predatoryFishesRelativeAbundance"
@@ -393,7 +393,7 @@ const ResearchForm = () => {
                 digitsAfterComma={2}
               />
             </Grid>
-            <Grid columns={1}>
+            <Grid $columns={1}>
               <NumericTextField
                 label={'Vidutinis individo svoris (gausumas/biomasė)'}
                 name="averageWeight"
@@ -420,7 +420,7 @@ const ResearchForm = () => {
                 digitsAfterComma={2}
               />
             </Grid>
-            <Grid columns={1}>
+            <Grid $columns={1}>
               <DragAndDropUploadField
                 error={errors?.files}
                 files={values.files}

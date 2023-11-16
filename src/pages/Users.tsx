@@ -163,7 +163,7 @@ export const Users = () => {
           {({ values, errors, setFieldValue }) => {
             return (
               <FormContainer>
-                <Grid columns={1}>
+                <Grid $columns={1}>
                   <TextField
                     label={inputLabels.firstName}
                     value={values.firstName}

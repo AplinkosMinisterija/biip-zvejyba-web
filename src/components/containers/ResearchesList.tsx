@@ -17,7 +17,7 @@ const Researches = () => {
   const navigate = useNavigate();
 
   return (
-    <Grid columns={1}>
+    <Grid $columns={1}>
       <>
         {researchLoading ? (
           <LoaderComponent />

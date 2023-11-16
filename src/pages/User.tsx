@@ -105,7 +105,7 @@ export const UserForm = () => {
             {({ values, errors, setFieldValue }) => {
               return (
                 <FormContainer>
-                  <Grid columns={1}>
+                  <Grid $columns={1}>
                     <TextField
                       label={inputLabels.phone}
                       value={values.phone}
@@ -130,7 +130,7 @@ export const UserForm = () => {
                       error={errors.role}
                     />
                   </Grid>
-                  <Grid columns={2}>
+                  <Grid $columns={2}>
                     <Button
                       variant={ButtonColors.TRANSPARENT}
                       onClick={() => navigate(slugs.users)}

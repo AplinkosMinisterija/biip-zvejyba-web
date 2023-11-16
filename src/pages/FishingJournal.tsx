@@ -1,5 +1,5 @@
 import DefaultLayout from '../components/layouts/DefaultLayout';
-import { slugs, useGetCurrentRoute } from '../utils';
+import { slugs } from '../utils';
 import { useInfiniteQuery } from 'react-query';
 import api from '../utils/api';
 import LoaderComponent from '../components/other/LoaderComponent';

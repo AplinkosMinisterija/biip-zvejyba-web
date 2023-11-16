@@ -35,7 +35,7 @@ const ResearchFishItem = ({
           </ButtonRow>
         </TopRow>
       )}
-      <Grid columns={1}>
+      <Grid $columns={1}>
         <SelectField
           options={fishTypes}
           getOptionLabel={(option) => option?.label}
@@ -46,7 +46,7 @@ const ResearchFishItem = ({
           onChange={(value) => onSetFieldValue(`fishes.${index}.fishType`, value)}
         />
       </Grid>
-      <Grid columns={2}>
+      <Grid $columns={2}>
         <NumericTextField
           label={'Gausumas'}
           name="abundance"

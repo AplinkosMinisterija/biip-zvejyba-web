@@ -66,7 +66,7 @@ const Profile = () => {
         {({ values, errors, setFieldValue }) => {
           return (
             <FormContainer>
-              <Grid columns={1}>
+              <Grid $columns={1}>
                 <TextField
                   label={inputLabels.phone}
                   value={values.phone}

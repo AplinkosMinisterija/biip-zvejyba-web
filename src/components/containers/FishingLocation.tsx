@@ -95,7 +95,7 @@ const FishingLocation = () => {
         title={'Žvejybos pradžia'}
         description={'Lengvai ir paprastai praneškite apie žvejybos pradžią'}
       >
-        <Grid columns={2}>
+        <Grid $columns={2}>
           <Button loading={startLoading} disabled={disabledButtons} onClick={handleStartFishing}>
             {buttonLabels.startFishing}
           </Button>
@@ -118,7 +118,7 @@ const FishingLocation = () => {
         title={'Neplaukiu žvejoti'}
         description={'Pasirinkite priežastį, dėl ko negalite žvejoti'}
       >
-        <Grid columns={3}>
+        <Grid $columns={3}>
           {map(skipOptions, (item, index) => (
             <SelectButton
               $selected={item.value === skipReason}
@@ -129,7 +129,7 @@ const FishingLocation = () => {
             </SelectButton>
           ))}
         </Grid>
-        <Grid columns={2}>
+        <Grid $columns={2}>
           <Button loading={startLoading} disabled={disabledButtons} onClick={handleSkipFishing}>
             {buttonLabels.save}
           </Button>
