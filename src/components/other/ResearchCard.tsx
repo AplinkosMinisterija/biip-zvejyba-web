@@ -12,7 +12,7 @@ const ResearchCard = ({
 }) => {
   const { waterBodyData, startAt, endAt, user } = research;
 
-  const title = `${waterBodyData?.name} ${waterBodyData?.municipality}`;
+  const title = `${waterBodyData?.name} ${waterBodyData?.municipality || ''}`;
   const date = `${formatDate(startAt)} - ${formatDate(endAt)}`;
   const userInitials = `${user?.firstName?.[0]}. ${user?.lastName}`;
 
