@@ -72,19 +72,19 @@ const FishingLocation = () => {
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
           title="Kuršių mariose"
-          image={'/marios.avif'}
+          image={'/marios.png'}
           onClick={handleSelectLocation(LocationType.ESTUARY)}
         />
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
           title="Vidaus vandenyse"
-          image={'/vidaus_vandens_telkiniai.avif'}
+          image={'/vidaus_vandens_telkiniai.png'}
           onClick={handleSelectLocation(LocationType.INLAND_WATERS)}
         />
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
           title="Polderiuose"
-          image={'/polderiai.avif'}
+          image={'/polderiai.png'}
           onClick={handleSelectLocation(LocationType.POLDERS)}
         />
       </Container>

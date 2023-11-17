@@ -209,7 +209,6 @@ export const Users = () => {
                     error={errors.role}
                   />
                 </Grid>
-
                 <Button loading={isLoading} disabled={isLoading}>
                   {buttonLabels.addMember}
                 </Button>

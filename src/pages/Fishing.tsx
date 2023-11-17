@@ -20,6 +20,7 @@ export const CurrentFishing = () => {
   const startDate = data?.history.find((e: any) =>
     ['START', 'SKIP'].some((type) => e.type === type),
   )?.date;
+
   const date = startDate ? format(new Date(startDate), 'yyyy-MM-dd') : '-';
   const fullName = data?.user ? `${data.user.firstName} ${data.user.lastName}` : '-';
   const totalWeightEvent = data?.history?.find((e: any) => e.type === 'WEIGHT_ON_SHORE');
@@ -80,7 +81,6 @@ const FishingInfo = styled.div`
   color: ${({ theme }) => theme.colors.text.primary};
   display: grid;
   grid-template-columns: 1fr 8px 1fr 8px 1fr;
-  align-items: center;
   text-decoration: none;
   gap: 12px;
   width: 100%;
@@ -89,7 +89,7 @@ const FishingInfo = styled.div`
 
 const Divider = styled.div`
   width: 1px;
-  height: 50%;
+  //height: 50%;
   background-color: ${({ theme }) => theme.colors.greyDarker};
 `;
 const InfoLabel = styled.div`
