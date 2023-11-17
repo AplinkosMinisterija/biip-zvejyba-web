@@ -9,7 +9,7 @@ export default defineConfig({
     open: '/app',
     proxy: {
       '/api': {
-        target: 'http://0.0.0.0:3000/zvejyba/api/',
+        target: process.env.VITE_PROXY,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },

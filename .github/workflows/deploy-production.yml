@@ -18,5 +18,5 @@ jobs:
       enable-sentry: true
       build-args: |
         NODE_ENV=production
-        REACT_APP_SENTRY_ENV=production
-        REACT_APP_SENTRY_DSN=https://0fadf707c6574ab792a4dd2f8d729ea2@sentry.biip.lt/42
+        VITE_SENTRY_ENV=production
+        VITE_SENTRY_DSN=https://0fadf707c6574ab792a4dd2f8d729ea2@sentry.biip.lt/42
