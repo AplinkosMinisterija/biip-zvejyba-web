@@ -115,7 +115,7 @@ const ResearchForm = () => {
     },
   });
 
-  const initialValues = isNew(id)
+  const formValues = !isNew(id)
     ? {
         ...research,
         formType: !research?.cadastralId ? FormTypes.NOT_UETK : FormTypes.UETK,
@@ -176,10 +176,18 @@ const ResearchForm = () => {
 
   if (researchLoading) return <LoaderComponent />;
 
+  const getWaterBodyLabel = (option: any) => {
+    const { name, municipality, area, cadastralId } = option;
+    if (!name) return '';
+
+    const areaValue = area ? `${(area / 10000).toFixed(3)} ha` : '';
+
+    return `${name || ''} ${cadastralId || ''} ${municipality || ''}  ${areaValue}`;
+  };
   return (
     <Formik
       enableReinitialize={true}
-      initialValues={initialValues}
+      initialValues={formValues}
       onSubmit={handleSubmit}
       validateOnChange={false}
       validationSchema={validateSchema}
@@ -212,17 +220,9 @@ const ResearchForm = () => {
                     setFieldValue('waterBodyData', { name, municipality, area });
                   }}
                   getOptionValue={(option: string) => option}
-                  getInputLabel={(data) => {
-                    const { name, municipality, area, cadastralId } = data;
-                    return `${name || ''} ${cadastralId || ''} ${municipality || ''}  ${
-                      area || ''
-                    }`;
-                  }}
+                  getInputLabel={getWaterBodyLabel}
                   showError={false}
-                  getOptionLabel={(option: any) => {
-                    const { name, municipality, area, cadastralId } = option;
-                    return `${name} ${cadastralId} ${municipality}  ${area}`;
-                  }}
+                  getOptionLabel={getWaterBodyLabel}
                   loadOptions={(input: string, page: number | string) =>
                     getLocationList(input, page, {})
                   }
@@ -238,12 +238,14 @@ const ResearchForm = () => {
                       error={errors.waterBodyData?.name}
                       onChange={(value) => setFieldValue('waterBodyData.name', value)}
                     />
-                    <TextField
+                    <NumericTextField
                       label={'Vandens telkinio plotas'}
                       name="waterBodyDataArea"
                       value={values.waterBodyData?.area}
                       error={errors.waterBodyData?.area}
                       onChange={(value) => setFieldValue('waterBodyData.area', value)}
+                      rightIcon={<MeasurementLabel>ha</MeasurementLabel>}
+                      digitsAfterComma={3}
                     />
                   </Grid>
                   <Grid columns={1}>
@@ -279,7 +281,7 @@ const ResearchForm = () => {
             {!isUetkFormType && (
               <>
                 <Grid columns={1}>
-                  <div>
+                  <Gap>
                     <FormLabel>
                       Ankstesniais metais bendras žuvų gausumas ir biomasė, išteklių būklės indeksas
                     </FormLabel>
@@ -287,7 +289,7 @@ const ResearchForm = () => {
                       Laimikyje, perskaičiuotame standartizuotai žvejybos pastangai vienu selektyviu
                       tinklu
                     </FormSubLabel>
-                  </div>
+                  </Gap>
                 </Grid>
                 <Grid columns={2}>
                   <TextField
@@ -456,7 +458,6 @@ const FormContainer = styled(Form)`
 `;
 
 const FormLabel = styled.div`
-  height: 21px;
   font-size: 1.6rem;
   font-weight: bold;
   color: ${({ theme }) => theme.colors.text.royalBlue};
@@ -487,6 +488,12 @@ const MeasurementLabel = styled.div`
   font-size: 1.6rem;
   color: ${({ theme }) => theme.colors.tertiary};
   padding: 16px;
+`;
+
+const Gap = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `;
 
 export default ResearchForm;
