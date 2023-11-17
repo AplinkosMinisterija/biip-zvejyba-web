@@ -180,7 +180,9 @@ const ResearchForm = () => {
     const { name, municipality, area, cadastralId } = option;
     if (!name) return '';
 
-    return `${name || ''} ${cadastralId || ''} ${municipality || ''}  ${area || ''}`;
+    const areaValue = area ? `${(area / 10000).toFixed(3)} ha` : '';
+
+    return `${name || ''} ${cadastralId || ''} ${municipality || ''}  ${areaValue}`;
   };
   return (
     <Formik
