@@ -4,15 +4,8 @@ import { useMutation, useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import * as Yup from 'yup';
-import {
-  getLocationList,
-  handleAlert,
-  isNew,
-  Research,
-  slugs,
-  useFishTypes,
-  validationTexts,
-} from '../../utils';
+import { getLocationList, handleAlert, isNew, Research, slugs, useFishTypes } from '../../utils';
+import { validationTexts } from '../../utils/texts';
 import api from '../../utils/api';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';

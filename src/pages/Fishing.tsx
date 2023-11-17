@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import format from 'date-fns/format';
 import TimeLineItem from '../components/cards/TimeLineItem';
 import LoaderComponent from '../components/other/LoaderComponent';
-import { useFishTypes } from '../utils';
 export const CurrentFishing = () => {
   const { fishingId } = useParams();
   const { data, isLoading: currentFishingLoading } = useQuery(
