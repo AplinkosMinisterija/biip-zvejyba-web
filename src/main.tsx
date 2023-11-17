@@ -24,7 +24,7 @@ const env = import.meta.env;
 
 if (env.VITE_SENTRY_DSN) {
   Sentry.init({
-    environment: env.VITE,
+    environment: env.VITE_ENVIRONMENT,
     dsn: env.VITE_SENTRY_DSN,
     integrations: [
       new Sentry.BrowserTracing({
