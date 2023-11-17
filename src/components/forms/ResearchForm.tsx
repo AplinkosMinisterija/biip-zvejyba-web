@@ -115,7 +115,7 @@ const ResearchForm = () => {
     },
   });
 
-  const initialValues = !isNew(id)
+  const formValues = !isNew(id)
     ? {
         ...research,
         formType: !research?.cadastralId ? FormTypes.NOT_UETK : FormTypes.UETK,
@@ -187,7 +187,7 @@ const ResearchForm = () => {
   return (
     <Formik
       enableReinitialize={true}
-      initialValues={initialValues}
+      initialValues={formValues}
       onSubmit={handleSubmit}
       validateOnChange={false}
       validationSchema={validateSchema}
