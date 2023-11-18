@@ -58,11 +58,7 @@ const CurrentFishingTools = () => {
     },
   );
 
-  const {
-    data: location,
-    isLoading: locationLoading,
-    isFetching: locationFetching,
-  } = useQuery(
+  const { data: location, isFetching: locationFetching } = useQuery(
     ['location'],
     () =>
       api.getLocation({
@@ -84,19 +80,19 @@ const CurrentFishingTools = () => {
     retry: false,
   });
 
-  const handleRefreshLocation = () => {
-    queryClient.invalidateQueries('location');
-  };
-
   const { data: builtTools } = useQuery(
     ['builtTools', location?.id],
-    () => api.getBuiltTools({ locationId: location?.id }),
+    () => (location?.id ? api.getBuiltTools({ locationId: location?.id }) : {}),
     {
       retry: false,
     },
   );
 
   const initialValues = { location: '', x: '', y: '' };
+
+  const handleRefreshLocation = () => {
+    queryClient.invalidateQueries('location');
+  };
   const handleSetLocationManually = (values: any) => {
     const { location, x, y } = values;
     if (location) {
@@ -109,7 +105,7 @@ const CurrentFishingTools = () => {
 
   return (
     <DefaultLayout onEdit={() => setShowLocationPopUp(true)} back={currentRoute?.back}>
-      {!locationLoading && (
+      {!locationFetching && (
         <TitleWrapper>
           <Title>{location.name || 'Nenustatytas vandens telkinys'}</Title>
           {location.name && (
@@ -120,7 +116,7 @@ const CurrentFishingTools = () => {
         </TitleWrapper>
       )}
       <Container>
-        {locationLoading ? (
+        {locationFetching ? (
           <LoaderComponent />
         ) : (
           <>
