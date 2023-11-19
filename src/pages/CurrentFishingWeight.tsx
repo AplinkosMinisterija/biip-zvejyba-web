@@ -40,8 +40,12 @@ const CurrentFishingWeight = () => {
     isLoading: fishingWeightsLoading,
   } = useQuery(['fishingWeights'], api.getFishingWeights, { retry: false });
 
+  const hasFishOnBoat = !!Object.values(fishingWeights.preliminary || {}).length;
+
   const initialValues = fishTypes
-    .filter((fishType) => (isCaught ? !!fishingWeights.preliminary[fishType.id] : true))
+    .filter((fishType) =>
+      isCaught && hasFishOnBoat ? !!fishingWeights.preliminary[fishType.id] : true,
+    )
     .map((fishType) => ({
       ...fishType,
       preliminaryAmount: fishingWeights.preliminary[fishType.id],
@@ -73,7 +77,9 @@ const CurrentFishingWeight = () => {
 
   return (
     <DefaultLayout title={currentRoute?.title} back={currentRoute?.back}>
-      <SwitchButton options={FishingWeightOptions} value={type} onChange={setType} />
+      {hasFishOnBoat && (
+        <SwitchButton options={FishingWeightOptions} value={type} onChange={setType} />
+      )}
       {initialValues?.map((fishType: any) => (
         <FishRow
           key={`fish_type_${fishType.id}`}

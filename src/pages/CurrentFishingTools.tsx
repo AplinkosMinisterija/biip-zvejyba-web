@@ -91,7 +91,20 @@ const CurrentFishingTools = () => {
   const initialValues = { location: '', x: '', y: '' };
 
   const handleRefreshLocation = () => {
-    queryClient.invalidateQueries('location');
+    const data = queryClient.fetchQuery(
+      ['location'],
+      () =>
+        api.getLocation({
+          query: {
+            coordinates,
+          },
+        }),
+      {
+        retry: false,
+        cacheTime: 60000,
+      },
+    );
+    dispatch(actions.setLocation(data));
   };
   const handleSetLocationManually = (values: any) => {
     const { location, x, y } = values;
