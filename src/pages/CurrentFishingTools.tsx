@@ -71,7 +71,6 @@ const CurrentFishingTools = () => {
         dispatch(actions.setLocation(data));
       },
       retry: false,
-      cacheTime: 60000,
     },
   );
 
@@ -101,7 +100,6 @@ const CurrentFishingTools = () => {
         }),
       {
         retry: false,
-        cacheTime: 60000,
       },
     );
     dispatch(actions.setLocation(data));
