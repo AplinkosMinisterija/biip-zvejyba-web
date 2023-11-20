@@ -186,7 +186,7 @@ export const getBuiltToolInfo = (toolsGroup: ToolsGroup) => {
     label: toolsGroup?.tools?.[0]?.toolType?.label,
     sealNr: toolsGroup.tools?.map((tool: any) => tool?.sealNr)?.join(', '),
     isGroup: toolsGroup?.tools?.length > 1,
-    locationName: (toolsGroup?.buildEvent as ToolsGroupEvent)?.location?.name,
+    locationName: toolsGroup?.buildEvent?.location?.name,
   };
 };
 

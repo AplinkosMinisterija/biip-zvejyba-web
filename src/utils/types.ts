@@ -75,9 +75,9 @@ export interface ToolType {
 export interface ToolsGroup {
   id: number;
   type: string;
-  buildEvent: ToolsGroupEvent['id'];
-  removeEvent: ToolsGroupEvent['id'];
-  weightEvent?: WeightEvent['id'];
+  buildEvent: ToolsGroupEvent;
+  removeEvent: ToolsGroupEvent;
+  weightEvent?: WeightEvent;
   tools: Tool[];
 }
 
@@ -85,8 +85,8 @@ export interface ToolsGroupEvent {
   id: string;
   geom: any;
   location: Location;
-  user: User['id'];
-  tenant: Tenant['id'];
+  user: User;
+  tenant: Tenant;
 }
 
 export interface WeightEvent {
@@ -94,8 +94,8 @@ export interface WeightEvent {
   geom: any;
   location: Location;
   data: { [key: string | number]: string | number };
-  user: User['id'];
-  tenant: Tenant['id'];
+  user: User;
+  tenant: Tenant;
 }
 
 export interface Tool {
@@ -108,27 +108,27 @@ export interface Tool {
     netLength: number;
   };
   toolType: ToolType;
-  toolGroup?: ToolsGroup['id'];
-  tenant: Tenant['id'];
-  user: User['id'];
+  toolGroup?: ToolsGroup;
+  tenant: Tenant;
+  user: User;
 }
 
 export interface Fishing {
   id: number;
   type: LocationType;
-  startEvent: FishingEvent['id'];
-  endEvent: FishingEvent['id'];
-  skipEvent: FishingEvent['id'];
-  tenant: Tenant['id'];
-  user: User['id'];
+  startEvent: FishingEvent;
+  endEvent: FishingEvent;
+  skipEvent: FishingEvent;
+  tenant: Tenant;
+  user: User;
 }
 
 export interface FishingEvent {
   id: number;
   geom: any;
   type: FishingEventType;
-  tenant: Tenant['id'];
-  user: User['id'];
+  tenant: Tenant;
+  user: User;
 }
 
 export interface FishType {

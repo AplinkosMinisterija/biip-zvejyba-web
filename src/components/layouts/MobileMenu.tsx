@@ -1,6 +1,6 @@
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useMenuRouters } from '../../utils';
+import { useLogoutMutation, useMenuRouters } from '../../utils';
 import { device } from '../../utils/theme';
 import MenuButton from '../buttons/MenuButton';
 import Icon, { IconName } from '../other/Icon';
@@ -11,6 +11,7 @@ const MobileMenu = ({ onClose, visible = true }: any) => {
   const navigate = useNavigate();
   const currentLocation = useLocation();
   const routes = useMenuRouters();
+  const { mutateAsync } = useLogoutMutation();
 
   return (
     <Modal visible={visible} onClose={onClose}>
@@ -41,8 +42,7 @@ const MobileMenu = ({ onClose, visible = true }: any) => {
               />
             );
           })}
-
-          <MenuButton label="Atsijungti" icon={IconName.logout} onClick={() => {}} />
+          <MenuButton label="Atsijungti" icon={IconName.logout} onClick={() => mutateAsync()} />
         </InnerContainer>
       </Container>
     </Modal>
@@ -63,7 +63,7 @@ const InnerContainer = styled.div`
   position: relative;
   width: 100%;
   min-height: 100%;
-  padding: 0 16px;
+  padding: 0 16px 24px 16px;
   @media ${device.desktop} {
     max-width: 700px;
     padding: 40px;
