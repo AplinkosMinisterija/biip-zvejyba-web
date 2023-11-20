@@ -1,7 +1,40 @@
 import { FeatureCollection } from '../components/other/DrawMap';
-import { FishingEventType, LocationType, RoleTypes, ToolTypeType } from './constants';
+import { EventTypes, FishingEventType, LocationType, RoleTypes, ToolTypeType } from './constants';
 
 export type ProfileId = 'personal' | string;
+
+export interface ResponseProps {
+  endpoint: () => Promise<any>;
+  onSuccess: (data: any) => void;
+  onError?: (data: any) => void;
+  onOffline?: () => void;
+}
+
+export interface Location {
+  id: string;
+  name: string;
+  municipality: {
+    id: number;
+    name: string;
+  };
+}
+
+export interface Coordinates {
+  x: number;
+  y: number;
+}
+
+export interface DeleteInfoProps {
+  deleteButtonText?: string;
+  deleteDescriptionFirstPart?: string;
+  deleteDescriptionSecondPart?: string;
+  deleteTitle?: string;
+  deleteName?: string;
+  handleDelete?: (props?: any) => void;
+}
+
+//Data model types
+
 export interface Profile {
   id: ProfileId;
   name: string;
@@ -11,6 +44,7 @@ export interface Profile {
   isInvestigator: boolean;
   phone: string;
 }
+
 export interface User {
   id?: string;
   firstName?: string;
@@ -32,35 +66,14 @@ export interface TenantUser {
 export interface Tenant {
   id: number;
 }
-
-export interface UpdateTokenProps {
-  token?: string;
-  error?: string;
-  message?: string;
-  refreshToken?: string;
-}
-
-export interface ResponseProps {
-  endpoint: () => Promise<any>;
-  onSuccess: (data: any) => void;
-  onError?: (data: any) => void;
-  onOffline?: () => void;
-}
-
-export type FileProps = {
-  url: string;
-  name: string;
-  size: number;
-  main?: boolean;
-};
-
 export interface ToolType {
   id: number;
   label: string;
   type: ToolTypeType;
 }
 
-export interface ToolsGroups {
+export interface ToolsGroup {
+  id: number;
   buildEvent: {
     id: string;
     data: any;
@@ -75,20 +88,6 @@ export interface ToolsGroups {
   tools: Tool[];
 }
 
-export interface Location {
-  id: string;
-  name: string;
-  municipality: {
-    id: number;
-    name: string;
-  };
-}
-
-export interface Coordinates {
-  x: number;
-  y: number;
-}
-
 export interface Tool {
   id: number;
   sealNr: string;
@@ -99,48 +98,7 @@ export interface Tool {
     netLength: number;
   };
   toolType: ToolType;
-  toolGroup: ToolGroup['id'];
-  tenant: Tenant['id'];
-  user: User['id'];
-}
-
-export interface Tool {
-  id: number;
-  sealNr: string;
-  data: {
-    eyeSize: number;
-    eyeSize2: number;
-    eyeSize3: number;
-    netLength: number;
-  };
-  toolType: ToolType;
-  toolGroup: ToolGroup['id'];
-  tenant: Tenant['id'];
-  user: User['id'];
-}
-
-export interface ToolFormProps {
-  toolType?: ToolType;
-  sealNr?: string;
-  data: {
-    eyeSize?: string;
-    eyeSize2?: string;
-    eyeSize3?: string;
-    netLength?: string;
-  };
-}
-
-export interface ToolGroup {
-  id: number;
-  tools: any[];
-  startDate: Date;
-  startFishing: Fishing['id'];
-  endDate: Date;
-  endFishing: Fishing['id'];
-  geom: any;
-  locationType: string;
-  locationId: number;
-  locationName: string;
+  toolGroup: ToolsGroup['id'];
   tenant: Tenant['id'];
   user: User['id'];
 }
@@ -205,11 +163,27 @@ export interface ResearchFish {
   biomassPercentage: string;
 }
 
-export interface DeleteInfoProps {
-  deleteButtonText?: string;
-  deleteDescriptionFirstPart?: string;
-  deleteDescriptionSecondPart?: string;
-  deleteTitle?: string;
-  deleteName?: string;
-  handleDelete?: (props?: any) => void;
+//Request & response types
+export interface ToolFormRequest {
+  toolType?: ToolType;
+  sealNr?: string;
+  data: {
+    eyeSize?: string;
+    eyeSize2?: string;
+    eyeSize3?: string;
+    netLength?: string;
+  };
+}
+export interface FishingHistoryResponse {
+  id: number;
+  type: LocationType;
+  tenant: Tenant['id'];
+  user: User;
+  history: {
+    id: number;
+    type: EventTypes;
+    date: string;
+    geom: any;
+    data?: any;
+  }[];
 }

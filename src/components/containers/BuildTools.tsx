@@ -20,7 +20,7 @@ const FishingOptions = [
 interface BuiltToolsProps {
   onClose: () => void;
   location: Location;
-  coordinates: Coordinates;
+  coordinates?: Coordinates;
 }
 const BuildTools = ({ onClose, location, coordinates }: BuiltToolsProps) => {
   const queryClient = useQueryClient();

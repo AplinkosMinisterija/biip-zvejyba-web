@@ -1,11 +1,11 @@
 import styled from 'styled-components';
-import { ToolsGroups, getBuiltToolInfo, theme } from '../../utils';
+import { ToolsGroup, getBuiltToolInfo, theme } from '../../utils';
 import Icon, { IconName } from '../other/Icon';
 import Tag from '../other/Tag';
 
 interface ToolsGroupCardProps {
-  toolsGroup: ToolsGroups;
-  onSelect: (toolsGroup: ToolsGroups) => void;
+  toolsGroup: ToolsGroup;
+  onSelect: (toolsGroup?: ToolsGroup) => void;
   isEstuary?: boolean;
   selected?: boolean;
 }

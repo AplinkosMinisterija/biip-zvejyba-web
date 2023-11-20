@@ -32,7 +32,7 @@ const MobileMenu = ({ onClose, visible = true }: any) => {
               <MenuButton
                 key={`menu_button_${index}`}
                 isActive={!!matchPath({ path: route.slug, end: true }, currentLocation.pathname)}
-                label={route.title}
+                label={route.title || ''}
                 icon={route.iconName}
                 onClick={() => {
                   navigate(route.slug);

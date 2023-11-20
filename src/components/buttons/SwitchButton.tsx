@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import { FishingToolsType } from '../../utils';
 interface SwitchButtonProps {
-  options: { label: string; values: any }[];
+  options: any[];
   onChange: (value: any) => void;
   value: any;
   className?: string;

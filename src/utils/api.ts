@@ -1,17 +1,20 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { isEmpty } from 'lodash';
 import Cookies from 'universal-cookie';
-import { LocationType } from './constants';
+import { EventTypes, LocationType } from './constants';
 import {
-  ToolsGroups,
+  ToolsGroup,
   FishType,
   Research,
   TenantUser,
   Tool,
-  ToolFormProps,
+  ToolFormRequest,
   User,
   Location,
   Coordinates,
+  Tenant,
+  FishingHistoryResponse,
+  Fishing,
 } from './types';
 
 enum Populations {
@@ -336,7 +339,7 @@ class Api {
     });
   };
 
-  getBuiltTool = async (id: string): Promise<ToolsGroups> => {
+  getBuiltTool = async (id: string): Promise<ToolsGroup> => {
     return this.getOne({
       resource: `toolsGroups`,
       populate: ['tools', 'weightEvent'],
@@ -344,7 +347,7 @@ class Api {
     });
   };
 
-  getBuiltTools = async ({ locationId }: { locationId: number }) => {
+  getBuiltTools = async ({ locationId }: { locationId: number }): Promise<any> => {
     return this.get({
       resource: `toolsGroups/location/${locationId}`,
     });
@@ -403,14 +406,14 @@ class Api {
       id,
     });
 
-  newTool = async (params: ToolFormProps): Promise<Tool> => {
+  newTool = async (params: ToolFormRequest): Promise<Tool> => {
     return this.post({
       resource: 'tools',
       params,
     });
   };
 
-  updateTool = async (params: ToolFormProps, id: string): Promise<Tool> => {
+  updateTool = async (params: ToolFormRequest, id: string): Promise<Tool> => {
     return this.patch({
       resource: 'tools',
       params,
@@ -424,7 +427,7 @@ class Api {
       id,
     });
 
-  getLocations = async ({ search, page, query }: any): Promise<any> =>
+  getLocations = async ({ search, page, query }: any): Promise<Location> =>
     await this.getPublic({
       resource: this.riversLakesSearchUrl,
       query,
@@ -493,7 +496,7 @@ class Api {
     });
   };
 
-  getFishingJournal = async ({ page }: any): Promise<any> => {
+  getFishingJournal = async ({ page }: { page: number }): Promise<GetAllResponse<Fishing>> => {
     return await this.get({
       resource: 'fishings',
       populate: ['startEvent', 'endEvent', 'skipEvent', 'weightEvents'],
@@ -501,10 +504,10 @@ class Api {
     });
   };
 
-  getFishingHistory = async (params: any): Promise<any> =>
+  getFishingHistory = async ({ id }: { id: number | string }): Promise<FishingHistoryResponse> =>
     this.get({
       resource: `fishings/history`,
-      ...params,
+      id: id.toString(),
     });
 }
 

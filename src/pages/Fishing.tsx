@@ -6,11 +6,12 @@ import styled from 'styled-components';
 import format from 'date-fns/format';
 import TimeLineItem from '../components/cards/TimeLineItem';
 import LoaderComponent from '../components/other/LoaderComponent';
+import { FishingHistoryResponse } from '../utils';
 export const CurrentFishing = () => {
   const { fishingId } = useParams();
-  const { data, isLoading: currentFishingLoading } = useQuery(
+  const { data, isLoading: currentFishingLoading }: any = useQuery<FishingHistoryResponse | any>(
     ['fishingHistory'],
-    () => api.getFishingHistory({ id: fishingId }),
+    () => (fishingId ? api.getFishingHistory({ id: fishingId }) : null),
     {
       retry: false,
     },

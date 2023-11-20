@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Icon, { IconName } from '../other/Icon';
 interface MenuButtonProps {
   label: string;
-  icon: IconName;
+  icon?: IconName;
   onClick: () => void;
   isActive?: boolean;
 }
@@ -10,9 +10,7 @@ const MenuButton = ({ label, icon, onClick, isActive = false }: MenuButtonProps)
   //TODO: disable option
   return (
     <Container $isActive={isActive} onClick={onClick}>
-      <IconContainer>
-        <StyledIcon name={icon} />
-      </IconContainer>
+      <IconContainer>{icon ? <StyledIcon name={icon} /> : null}</IconContainer>
       {label}
       <Icon name={IconName.right} />
     </Container>

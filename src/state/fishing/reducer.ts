@@ -1,24 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { Coordinates } from '../../utils';
 
 export interface FishingReducerProps {
-  currentFishing: number | null;
-  coordinates: { x: number; y: number } | null;
-  location: {
-    id: string;
-    name: string;
-    municipality: {
-      id: number;
-      name: string;
-    };
-  } | null;
-  error: string | null;
+  currentFishing?: number;
+  coordinates?: Coordinates;
+  location?: Location;
+  error?: string;
 }
 
 export const initialState: FishingReducerProps = {
-  currentFishing: null,
-  coordinates: null,
-  location: null,
-  error: null,
+  currentFishing: undefined,
+  coordinates: undefined,
+  location: undefined,
+  error: undefined,
 };
 
 export const FishingReducer = createSlice({

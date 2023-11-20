@@ -16,12 +16,13 @@ import { getBars, handleAlert, useGeolocationWatcher, useGetCurrentRoute } from 
 import api from '../utils/api';
 import { LocationType } from '../utils';
 import { device } from '../utils';
-import { ToolGroup } from '../utils';
 import LocationForm from '../components/forms/LocationForm';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import { IconContainer } from '../components/other/CommonStyles';
 import Icon, { IconName } from '../components/other/Icon';
 import { actions } from '../state/fishing/reducer';
+
+interface ToolsGroup {}
 
 const CurrentFishingTools = () => {
   useGeolocationWatcher();
@@ -30,7 +31,7 @@ const CurrentFishingTools = () => {
   const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
   const [showBuildTools, setShowBuildTools] = useState(false);
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
-  const [selectedToolsGroup, setSelectedToolsGroup] = useState<ToolGroup | null>(null);
+  const [selectedToolsGroup, setSelectedToolsGroup] = useState<ToolsGroup>();
 
   const { data: currentFishing } = useQuery(['currentFishing'], () => api.getCurrentFishing(), {
     retry: false,
@@ -141,7 +142,7 @@ const CurrentFishingTools = () => {
                       isEstuary={isEstuary}
                       key={toolsGroup.id}
                       toolsGroup={toolsGroup}
-                      onSelect={setSelectedToolsGroup}
+                      onSelect={(toolsGroup) => setSelectedToolsGroup(toolsGroup)}
                     />
                   ))
                 )}
@@ -180,7 +181,7 @@ const CurrentFishingTools = () => {
       )}
       <Popup visible={showBuildTools} onClose={() => setShowBuildTools(false)}>
         <BuildTools
-          coordinates={coordinates}
+          coordinates={coordinates || undefined}
           location={location}
           onClose={() => setShowBuildTools(false)}
         />
@@ -207,7 +208,7 @@ const CurrentFishingTools = () => {
         location={location}
         visible={!!selectedToolsGroup}
         toolGroup={selectedToolsGroup}
-        onReturn={() => setSelectedToolsGroup(null)}
+        onReturn={() => setSelectedToolsGroup(undefined)}
       />
     </DefaultLayout>
   );
