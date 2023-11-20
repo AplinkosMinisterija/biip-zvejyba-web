@@ -33,7 +33,7 @@ export interface DeleteInfoProps {
   handleDelete?: (props?: any) => void;
 }
 
-//Data model types
+//Data model
 
 export interface Profile {
   id: ProfileId;
@@ -74,18 +74,28 @@ export interface ToolType {
 
 export interface ToolsGroup {
   id: number;
-  buildEvent: {
-    id: string;
-    data: any;
-    geom: any;
-    location: Location;
-  };
-  weightEvent: {
-    id: string;
-    data: { [key: string | number]: string | number };
-  };
   type: string;
+  buildEvent: ToolsGroupEvent['id'];
+  removeEvent: ToolsGroupEvent['id'];
+  weightEvent?: WeightEvent['id'];
   tools: Tool[];
+}
+
+export interface ToolsGroupEvent {
+  id: string;
+  geom: any;
+  location: Location;
+  user: User['id'];
+  tenant: Tenant['id'];
+}
+
+export interface WeightEvent {
+  id: string;
+  geom: any;
+  location: Location;
+  data: { [key: string | number]: string | number };
+  user: User['id'];
+  tenant: Tenant['id'];
 }
 
 export interface Tool {
@@ -98,7 +108,7 @@ export interface Tool {
     netLength: number;
   };
   toolType: ToolType;
-  toolGroup: ToolsGroup['id'];
+  toolGroup?: ToolsGroup['id'];
   tenant: Tenant['id'];
   user: User['id'];
 }

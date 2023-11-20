@@ -11,6 +11,7 @@ import {
   handleAlert,
   slugs,
   useGeolocationWatcher,
+  ToolsGroup,
 } from '../utils';
 import styled from 'styled-components';
 import Button from '../components/buttons/Button';
@@ -30,7 +31,7 @@ export const CaughtFishesWithTool = () => {
   const { toolId } = useParams();
   const [amounts, setAmounts] = useState<{ [key: number]: number }>({});
 
-  const { data: toolsGroup, isLoading: toolsGroupLoading } = useQuery(
+  const { data: toolsGroup, isLoading: toolsGroupLoading } = useQuery<ToolsGroup | any>(
     ['builtTool', toolId],
     () => api.getBuiltTool(toolId!),
     {

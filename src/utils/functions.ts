@@ -5,7 +5,7 @@ import api from './api';
 import { LOCATION_ERRORS, ToolTypeType } from './constants';
 import { routes } from './routes';
 import { validationTexts } from './texts';
-import { ToolsGroup, Profile, ProfileId, ResponseProps } from './types';
+import { Profile, ProfileId, ResponseProps, ToolsGroup, ToolsGroupEvent } from './types';
 const cookies = new Cookies();
 
 export const clearCookies = () => {
@@ -186,7 +186,7 @@ export const getBuiltToolInfo = (toolsGroup: ToolsGroup) => {
     label: toolsGroup?.tools?.[0]?.toolType?.label,
     sealNr: toolsGroup.tools?.map((tool: any) => tool?.sealNr)?.join(', '),
     isGroup: toolsGroup?.tools?.length > 1,
-    locationName: toolsGroup?.buildEvent?.location?.name,
+    locationName: (toolsGroup?.buildEvent as ToolsGroupEvent)?.location?.name,
   };
 };
 
