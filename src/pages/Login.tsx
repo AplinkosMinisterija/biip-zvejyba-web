@@ -84,7 +84,7 @@ export const Login = () => {
             {buttonLabels.login}
           </Button>
           <TransparentButton
-            $color={theme.colors.powder as string}
+            $color={theme.colors.powder}
             type="button"
             onClick={() => eGatesMutation()}
           >
@@ -109,7 +109,7 @@ export const Login = () => {
             {buttonLabels.eGate}
           </Button>
           <TransparentButton
-            $color={theme.colors.powder as string}
+            $color={theme.colors.powder}
             type="button"
             onClick={() => setShowLocalLogin(true)}
           >
@@ -136,7 +136,7 @@ export const Login = () => {
             {buttonLabels.eGate}
           </Button>
           <TransparentButton
-            $color={theme.colors.powder as string}
+            $color={theme.colors.powder}
             type="button"
             onClick={() => setShowLocalLogin(true)}
           >

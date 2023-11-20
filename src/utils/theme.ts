@@ -1,41 +1,57 @@
 import { createGlobalStyle } from 'styled-components';
 
-//Let's keep theme generic, so that it would be easier to move it to components library later.
-interface Theme {
-  colors: {
+interface ThemeColors {
+  primary: string;
+  secondary: string;
+  tertiary: string;
+  transparent: string;
+  label: string;
+  error: string;
+  success: string;
+  hover: {
     primary: string;
     secondary: string;
     tertiary: string;
     transparent: string;
-    label: string;
-    error: string;
+    danger: string;
     success: string;
-    hover: {
-      primary: string;
-      secondary: string;
-      tertiary: string;
-      transparent: string;
-      danger: string;
-      success: string;
-      [key: string]: string;
-    };
-    text: {
-      primary: string;
-      secondary: string;
-      tertiary: string;
-      labels: string;
-      accent: string;
-      error: string;
-      input: string;
-      [key: string]: string;
-    };
-    border: string;
-    background: string;
-    [key: string]: string | object;
+    [key: string]: string;
   };
+  text: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+    labels: string;
+    accent: string;
+    error: string;
+    input: string;
+    [key: string]: string;
+  };
+  border: string;
+  background: string;
+}
+interface Theme<T> {
+  colors: T & ThemeColors;
 }
 
-export const theme: Theme = {
+export const theme: Theme<{
+  powder: string;
+  purple: string;
+  purpleBrighter: string;
+  yellow: string;
+  yellowDarker: string;
+  greyDarker: string;
+  lightSteelBlue: string;
+  cardBackground: { primary: string; success: string };
+  largeButton: {
+    FLORAL_WHITE: string;
+    GHOST_WHITE: string;
+    AZURE: string;
+    HONEY_DEW: string;
+    ALICE_BLUE: string;
+    GREY: string;
+  };
+}> = {
   colors: {
     primary: '#102eb1',
     secondary: '#121A55',

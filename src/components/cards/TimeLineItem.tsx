@@ -61,7 +61,7 @@ const TimelineItem = ({ event, isLast }: any) => {
   return (
     <>
       <Container $isLast={isLast}>
-        <ItemIcon $color={IconColors[type] as string}>
+        <ItemIcon $color={IconColors[type]}>
           <StyledImage name={IconNames[type]} />
         </ItemIcon>
         <ItemContent>

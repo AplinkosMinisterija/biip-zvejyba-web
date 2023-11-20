@@ -1,13 +1,7 @@
 import styled from 'styled-components';
 import { theme } from '../../utils';
 
-const Tag = ({
-  color = theme.colors.powder as string,
-  label,
-}: {
-  color: string;
-  label: string;
-}) => {
+const Tag = ({ color = theme.colors.powder, label }: { color: string; label: string }) => {
   return <Container $color={color}>{label}</Container>;
 };
 

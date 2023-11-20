@@ -13,7 +13,7 @@ const ProfileCard = ({
   fisher,
   onClick,
   icon,
-  color = theme.colors.powder as string,
+  color = theme.colors.powder,
 }: FishStockerItemProps) => {
   const fullName = `${fisher.firstName} ${fisher.lastName}`;
 

@@ -133,7 +133,7 @@ export const Users = () => {
                 return (
                   <ProfileCard
                     key={`tenant_user_${tenantUsers.id}`}
-                    color={theme.colors.powder as string}
+                    color={theme.colors.powder}
                     fisher={user}
                     icon={<StyledIcon name={IconName.profile} />}
                     onClick={() => {
