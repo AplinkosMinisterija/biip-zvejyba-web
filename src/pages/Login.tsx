@@ -84,7 +84,7 @@ export const Login = () => {
             {buttonLabels.login}
           </Button>
           <TransparentButton
-            $color={theme.colors.powder}
+            $color={theme.colors.text.retroBlack}
             type="button"
             onClick={() => eGatesMutation()}
           >
@@ -94,58 +94,6 @@ export const Login = () => {
         </ButtonContainer>
       </>
     );
-  };
-
-  const renderContent = () => {
-    if (!showLocalLogin) {
-      return (
-        <ButtonContainer>
-          <Button
-            leftIcon={<StyledEGateIcon name={IconName.eGate} />}
-            loading={eGatesSignLoading}
-            type="button"
-            onClick={() => eGatesMutation()}
-          >
-            {buttonLabels.eGate}
-          </Button>
-          <TransparentButton
-            $color={theme.colors.powder}
-            type="button"
-            onClick={() => setShowLocalLogin(true)}
-          >
-            {buttonLabels.loginWithPassword}
-          </TransparentButton>
-        </ButtonContainer>
-      );
-    }
-
-    return renderLoginFields();
-  };
-
-  const renderMobileContent = () => {
-    if (!showLocalLogin) {
-      return (
-        <ButtonContainer>
-          <Button
-            leftIcon={<Icon name={IconName.eGate} />}
-            loading={eGatesSignLoading}
-            variant={ButtonColors.POWDER}
-            type="button"
-            onClick={() => eGatesMutation()}
-          >
-            {buttonLabels.eGate}
-          </Button>
-          <TransparentButton
-            $color={theme.colors.powder}
-            type="button"
-            onClick={() => setShowLocalLogin(true)}
-          >
-            {buttonLabels.loginWithPassword}
-          </TransparentButton>
-        </ButtonContainer>
-      );
-    }
-    return <MobileLoginContainer>{renderLoginFields()}</MobileLoginContainer>;
   };
 
   if (isMobile) {
@@ -159,7 +107,30 @@ export const Login = () => {
             }
           }}
         >
-          <InnerContainer>{renderMobileContent()}</InnerContainer>
+          <InnerContainer>
+            {!showLocalLogin ? (
+              <ButtonContainer>
+                <Button
+                  leftIcon={<Icon name={IconName.eGate} />}
+                  loading={eGatesSignLoading}
+                  variant={ButtonColors.POWDER}
+                  type="button"
+                  onClick={() => eGatesMutation()}
+                >
+                  {buttonLabels.eGate}
+                </Button>
+                <TransparentButton
+                  $color={theme.colors.powder}
+                  type="button"
+                  onClick={() => setShowLocalLogin(true)}
+                >
+                  {buttonLabels.loginWithPassword}
+                </TransparentButton>
+              </ButtonContainer>
+            ) : (
+              <MobileLoginContainer>{renderLoginFields()}</MobileLoginContainer>
+            )}
+          </InnerContainer>
         </FormContainer>
       </MobileLoginLayout>
     );
@@ -175,7 +146,29 @@ export const Login = () => {
           }
         }}
       >
-        <InnerContainer>{renderContent()}</InnerContainer>
+        <InnerContainer>
+          {!showLocalLogin ? (
+            <ButtonContainer>
+              <Button
+                leftIcon={<StyledEGateIcon name={IconName.eGate} />}
+                loading={eGatesSignLoading}
+                type="button"
+                onClick={() => eGatesMutation()}
+              >
+                {buttonLabels.eGate}
+              </Button>
+              <TransparentButton
+                $color={theme.colors.text.retroBlack}
+                type="button"
+                onClick={() => setShowLocalLogin(true)}
+              >
+                {buttonLabels.loginWithPassword}
+              </TransparentButton>
+            </ButtonContainer>
+          ) : (
+            renderLoginFields()
+          )}
+        </InnerContainer>
       </FormContainer>
     </LoginLayout>
   );
