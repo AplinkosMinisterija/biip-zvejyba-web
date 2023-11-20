@@ -22,7 +22,7 @@ const Container = styled.div<{ $isActive: boolean }>`
   font-size: 2rem;
   font-weight: 600;
   background-color: ${({ theme }) => theme.colors.largeButton.GREY};
-  border: 1px solid var(--transparent-color);
+  border: 1px solid transparent;
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;

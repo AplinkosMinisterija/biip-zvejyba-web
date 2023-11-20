@@ -6,6 +6,7 @@ import MenuButton from '../buttons/MenuButton';
 import Icon, { IconName } from '../other/Icon';
 import Modal from './Modal';
 import Div100vh from 'react-div-100vh';
+import ProfilesDropdown from '../other/ProfileDropdown';
 
 const MobileMenu = ({ onClose, visible = true }: any) => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const MobileMenu = ({ onClose, visible = true }: any) => {
             <Title>Meniu</Title>
             <Subtitle>Pasirinkite dominančią sritį</Subtitle>
           </Headings>
-
+          <ProfilesDropdown />
           {routes.map((route, index) => {
             return (
               <MenuButton

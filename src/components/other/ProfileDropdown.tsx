@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { handleSelectProfile } from '../../utils';
+import { device, handleSelectProfile } from '../../utils';
 import { useAppSelector, useGetCurrentProfile } from '../../utils/hooks';
 import Icon, { IconName } from './Icon';
 
@@ -58,16 +58,20 @@ const SelectorContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px 10px 10px;
+  padding: 16px;
   margin-bottom: 4px;
   color: #f8fafc;
   background-color: ${({ theme }) => theme.colors.largeButton.GREY};
-  border-radius: 4px;
+  border-radius: 12px;
   cursor: pointer;
   min-width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  @media ${device.desktop} {
+    border-radius: 4px;
+    padding: 10px 16px 10px 10px;
+  }
 `;
 
 const OptionsContainer = styled.div`
@@ -76,34 +80,36 @@ const OptionsContainer = styled.div`
   width: 100%;
   padding: 9px 6px 11px 6px;
   background-color: ${({ theme }) => theme.colors.largeButton.GREY};
-  border-radius: 4px;
+  border-radius: 12px;
   opacity: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  @media ${device.desktop} {
+    border-radius: 4px;
+  }
 `;
 
 const Option = styled.div<{ $isActive: boolean }>`
   padding: 12px;
   font-size: 1.6rem;
-  border-radius: 2px;
+  border-radius: 8px;
   display: flex;
   justify-content: space-between;
   gap: 12px;
-
+  @media ${device.desktop} {
+    border-radius: 2px;
+  }
   &:hover {
     background-color: #f5f6fe;
     border: 1px solid ${({ theme }) => theme.colors.primary};
   }
-
   ${({ $isActive, theme }) =>
     $isActive &&
     `
     background-color: #f5f6fe;
     border: 1px solid ${theme.colors.primary};
-  
-  `};
-
+`};
   cursor: pointer;
 `;
 
@@ -133,14 +139,21 @@ const SelectedIcon = styled(Icon)`
 `;
 
 const Name = styled.div`
-  font-size: 1.4rem;
-  color: #121926;
-  line-height: 17px;
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: 2rem;
+  font-weight: 600;
+  @media ${device.desktop} {
+    font-size: 1.4rem;
+    line-height: 17px;
+  }
 `;
 
 const Email = styled.div`
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: #4b5565;
+  @media ${device.desktop} {
+    font-size: 1.2rem;
+  }
 `;
 
 export default ProfilesDropdown;
