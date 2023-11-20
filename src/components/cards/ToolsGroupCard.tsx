@@ -1,19 +1,20 @@
 import styled from 'styled-components';
-import { BuiltTool, getBuiltToolInfo, theme } from '../../utils';
+import { ToolsGroups, getBuiltToolInfo, theme } from '../../utils';
 import Icon, { IconName } from '../other/Icon';
 import Tag from '../other/Tag';
 
-const ToolsGroupCard = ({
-  isEstuary,
-  toolsGroup,
-  selected,
-  onSelect,
-}: {
-  isEstuary: boolean;
-  toolsGroup: BuiltTool;
+interface ToolsGroupCardProps {
+  toolsGroup: ToolsGroups;
+  onSelect: (toolsGroup: ToolsGroups) => void;
+  isEstuary?: boolean;
   selected?: boolean;
-  onSelect: any;
-}) => {
+}
+const ToolsGroupCard = ({
+  toolsGroup,
+  onSelect,
+  selected = false,
+  isEstuary = false,
+}: ToolsGroupCardProps) => {
   const isCheckedTool = !!toolsGroup?.weightEvent;
 
   const { label, sealNr, locationName } = getBuiltToolInfo(toolsGroup);

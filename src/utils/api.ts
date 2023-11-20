@@ -2,7 +2,17 @@ import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { isEmpty } from 'lodash';
 import Cookies from 'universal-cookie';
 import { LocationType } from './constants';
-import { BuiltTool, FishType, Research, TenantUser, Tool, ToolFormProps, User } from './types';
+import {
+  ToolsGroups,
+  FishType,
+  Research,
+  TenantUser,
+  Tool,
+  ToolFormProps,
+  User,
+  Location,
+  Coordinates,
+} from './types';
 
 enum Populations {
   USER = 'user',
@@ -275,7 +285,7 @@ class Api {
 
   buildTools = async (params: {
     tools: number[];
-    coordinates: { x: number; y: number };
+    coordinates: Coordinates;
     location: Location;
   }) => {
     return this.post({
@@ -287,7 +297,7 @@ class Api {
   weighTools = async (
     params: {
       data: { [key: number]: number };
-      coordinates: { x: number; y: number };
+      coordinates: Coordinates;
       location: Location;
     },
     id: string,
@@ -326,7 +336,7 @@ class Api {
     });
   };
 
-  getBuiltTool = async (id: string): Promise<BuiltTool> => {
+  getBuiltTool = async (id: string): Promise<ToolsGroups> => {
     return this.getOne({
       resource: `toolsGroups`,
       populate: ['tools', 'weightEvent'],

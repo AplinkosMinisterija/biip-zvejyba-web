@@ -7,7 +7,7 @@ import MobileMenu from '../layouts/MobileMenu';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state/store';
 
-const BackHeader = ({ title }: any) => {
+const BackHeader = () => {
   const [showMenu, setShowMenu] = useState(false);
   const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
 
@@ -20,7 +20,6 @@ const BackHeader = ({ title }: any) => {
           <BackIcon name={IconName.back} />
         </div>
         <Coordinates>{`${coordinates?.x},${coordinates?.y}`}</Coordinates>
-        {title ? <Title>{title}</Title> : null}
         <Menu onClick={() => setShowMenu(true)}>
           <MenuIcon name={IconName.burger} />
           Meniu

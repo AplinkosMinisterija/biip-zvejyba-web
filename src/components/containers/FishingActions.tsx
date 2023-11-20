@@ -9,6 +9,7 @@ import {
   LocationType,
   validationTexts,
   slugs,
+  Fishing,
 } from '../../utils';
 import api from '../../utils/api';
 import Button, { ButtonColors } from '../buttons/Button';
@@ -21,7 +22,10 @@ import LoaderComponent from '../other/LoaderComponent';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state/store';
 
-const FishingAction = ({ fishing }: any) => {
+interface FishingActionsProps {
+  fishing: Fishing;
+}
+const FishingActions = ({ fishing }: FishingActionsProps) => {
   const queryClient = useQueryClient();
   const [showFinishFishing, setShowFinishFishing] = useState(false);
   const navigate = useNavigate();
@@ -132,4 +136,4 @@ const Container = styled.div`
   margin-bottom: 40px;
 `;
 
-export default FishingAction;
+export default FishingActions;

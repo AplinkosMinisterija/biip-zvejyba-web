@@ -1,6 +1,18 @@
 import styled from 'styled-components';
-
-const ToolTypeButton = ({ label, icon, active, onClick, disabled }: any) => {
+interface ToolTypeButtonProps {
+  label: string;
+  icon: string;
+  onClick: () => void;
+  disabled?: boolean;
+  active?: boolean;
+}
+const ToolTypeButton = ({
+  label,
+  icon,
+  onClick,
+  disabled = false,
+  active = false,
+}: ToolTypeButtonProps) => {
   return (
     <Container disabled={disabled} onClick={() => !disabled && onClick()} $active={active}>
       <StyledImage src={icon} $active={active} />

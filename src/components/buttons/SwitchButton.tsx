@@ -1,6 +1,11 @@
 import styled from 'styled-components';
-
-const SwitchButton = ({ options, onChange, value, className }: any) => {
+interface SwitchButtonProps {
+  options: { label: string; values: any }[];
+  onChange: (value: any) => void;
+  value: any;
+  className?: string;
+}
+const SwitchButton = ({ options, onChange, value, className = '' }: SwitchButtonProps) => {
   return (
     <Container className={className}>
       <Content $numberOfColumns={options.length}>
@@ -19,7 +24,6 @@ const SwitchButton = ({ options, onChange, value, className }: any) => {
 };
 
 const Container = styled.div`
-  padding: 2px 0;
   width: 100%;
   padding: 32px 0;
 `;

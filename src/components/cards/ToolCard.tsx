@@ -1,7 +1,11 @@
 import styled from 'styled-components';
 import Icon, { IconName } from '../other/Icon';
-
-const ToolCard = ({ tool, onClick }: any) => {
+import { Tool } from '../../utils';
+interface ToolCardProps {
+  tool: Tool;
+  onClick: () => void;
+}
+const ToolCard = ({ tool, onClick }: ToolCardProps) => {
   return (
     <Container onClick={onClick}>
       <IconContainer>

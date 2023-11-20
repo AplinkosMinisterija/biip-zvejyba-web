@@ -1,7 +1,12 @@
 import styled from 'styled-components';
 import Icon, { IconName } from '../other/Icon';
-
-const ToolCardSelectable = ({ tool, selected, onSelect }: any) => {
+import { Tool } from '../../utils';
+interface ToolCardSelectable {
+  tool: Tool;
+  onSelect: (toolId: number) => void;
+  selected?: boolean;
+}
+const ToolCardSelectable = ({ tool, onSelect, selected = false }: ToolCardSelectable) => {
   return (
     <Container onClick={() => onSelect(tool.id)}>
       <IconContainer $selected={selected}>

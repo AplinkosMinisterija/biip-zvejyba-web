@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import FishingAction from '../components/containers/FishingAction';
+import FishingActions from '../components/containers/FishingActions';
 import FishingLocation from '../components/containers/FishingLocation';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import LoaderComponent from '../components/other/LoaderComponent';
@@ -41,7 +41,7 @@ export const CurrentFishing = () => {
       back={currentRoute?.back}
     >
       {currentRoute?.slug === slugs.fishingLocation && <FishingLocation />}
-      {currentRoute?.slug === slugs.fishingCurrent && <FishingAction fishing={currentFishing} />}
+      {currentRoute?.slug === slugs.fishingCurrent && <FishingActions fishing={currentFishing} />}
     </DefaultLayout>
   );
 };

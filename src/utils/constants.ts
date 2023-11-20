@@ -66,3 +66,9 @@ export enum EventTypes {
   WEIGHT_ON_SHORE = 'WEIGHT_ON_SHORE',
   WEIGHT_ON_BOAT = 'WEIGHT_ON_BOAT',
 }
+
+export enum FishingEventType {
+  START = 'START',
+  END = 'END',
+  SKIP = 'SKIP',
+}

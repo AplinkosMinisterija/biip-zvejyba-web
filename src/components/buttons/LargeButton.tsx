@@ -10,7 +10,21 @@ enum Variant {
   GREY = 'GREY',
 }
 
-const LargeButton = ({ variant = Variant.GREY, title, subtitle, buttonLabel, onClick }: any) => {
+interface LargeButtonProps {
+  title: string;
+  subtitle: string;
+  buttonLabel: string;
+  onClick: () => void;
+  variant?: Variant;
+}
+
+const LargeButton = ({
+  variant = Variant.GREY,
+  title,
+  subtitle,
+  buttonLabel,
+  onClick,
+}: LargeButtonProps) => {
   return (
     <Container $variant={variant} onClick={onClick}>
       <Title dangerouslySetInnerHTML={{ __html: title }} />

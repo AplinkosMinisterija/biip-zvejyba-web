@@ -5,7 +5,7 @@ import api from './api';
 import { LOCATION_ERRORS, ToolTypeType } from './constants';
 import { routes } from './routes';
 import { validationTexts } from './texts';
-import { BuiltTool, Profile, ProfileId, ResponseProps, UpdateTokenProps } from './types';
+import { ToolsGroups, Profile, ProfileId, ResponseProps, UpdateTokenProps } from './types';
 const cookies = new Cookies();
 
 export const clearCookies = () => {
@@ -176,7 +176,7 @@ export const getBars = async () => {
   });
 };
 
-export const getBuiltToolInfo = (toolsGroup: BuiltTool) => {
+export const getBuiltToolInfo = (toolsGroup: ToolsGroups) => {
   return {
     label: toolsGroup?.tools?.[0]?.toolType?.label,
     sealNr: toolsGroup.tools?.map((tool: any) => tool?.sealNr)?.join(', '),

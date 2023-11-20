@@ -1,5 +1,5 @@
 import { FeatureCollection } from '../components/other/DrawMap';
-import { RoleTypes, ToolTypeType } from './constants';
+import { FishingEventType, LocationType, RoleTypes, ToolTypeType } from './constants';
 
 export type ProfileId = 'personal' | string;
 export interface Profile {
@@ -60,7 +60,7 @@ export interface ToolType {
   type: ToolTypeType;
 }
 
-export interface BuiltTool {
+export interface ToolsGroups {
   buildEvent: {
     id: string;
     data: any;
@@ -78,7 +78,15 @@ export interface BuiltTool {
 export interface Location {
   id: string;
   name: string;
-  municipality: string;
+  municipality: {
+    id: number;
+    name: string;
+  };
+}
+
+export interface Coordinates {
+  x: number;
+  y: number;
 }
 
 export interface Tool {
@@ -139,11 +147,18 @@ export interface ToolGroup {
 
 export interface Fishing {
   id: number;
-  startDate: Date;
-  endDate: Date;
-  skipDate: Date;
+  type: LocationType;
+  startEvent: FishingEvent['id'];
+  endEvent: FishingEvent['id'];
+  skipEvent: FishingEvent['id'];
+  tenant: Tenant['id'];
+  user: User['id'];
+}
+
+export interface FishingEvent {
+  id: number;
   geom: any;
-  type: FishType['id'];
+  type: FishingEventType;
   tenant: Tenant['id'];
   user: User['id'];
 }

@@ -2,7 +2,8 @@ import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { handleAlert } from '../../utils';
+import { Coordinates, handleAlert } from '../../utils';
+import { Location } from '../../utils/types';
 import api from '../../utils/api';
 import { FishingToolsType } from '../../utils/constants';
 import { device } from '../../utils/theme';
@@ -15,7 +16,13 @@ const FishingOptions = [
   { label: 'Atskiras įrankis', value: FishingToolsType.SINGLE },
   { label: 'Įrankių grupė', value: FishingToolsType.GROUP },
 ];
-const BuildTools = ({ onClose, location, coordinates }: any) => {
+
+interface BuiltToolsProps {
+  onClose: () => void;
+  location: Location;
+  coordinates: Coordinates;
+}
+const BuildTools = ({ onClose, location, coordinates }: BuiltToolsProps) => {
   const queryClient = useQueryClient();
   const [selectedTools, setSelectedTools] = useState<number[]>([]);
   const [type, setType] = useState<FishingToolsType>(FishingToolsType.SINGLE);
