@@ -173,7 +173,7 @@ export interface ResearchFish {
   biomassPercentage: string;
 }
 
-//Request & response types
+//Requests & responses
 export interface ToolFormRequest {
   toolType?: ToolType;
   sealNr?: string;
