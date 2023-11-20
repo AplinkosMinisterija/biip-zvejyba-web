@@ -4,12 +4,9 @@ import { device } from '../../utils/theme';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import MobileMenu from '../layouts/MobileMenu';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../state/store';
 
 const BackHeader = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
 
   const navigate = useNavigate();
 
@@ -19,7 +16,6 @@ const BackHeader = () => {
         <div onClick={() => navigate(-1)}>
           <BackIcon name={IconName.back} />
         </div>
-        <Coordinates>{`${coordinates?.x},${coordinates?.y}`}</Coordinates>
         <Menu onClick={() => setShowMenu(true)}>
           <MenuIcon name={IconName.burger} />
           Meniu
@@ -67,10 +63,6 @@ const BackIcon = styled(Icon)`
 const Title = styled.div`
   flex-grow: 1;
   text-align: center;
-`;
-
-const Coordinates = styled.div`
-  font-size: 10px;
 `;
 
 export default BackHeader;
