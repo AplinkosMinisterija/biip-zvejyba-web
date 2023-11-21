@@ -1,15 +1,25 @@
 import styled from 'styled-components';
 import Icon, { IconName } from '../other/Icon';
-import { Tool } from '../../utils';
+import { Tool } from '../../utils/types';
+import { LocationType } from '../../utils';
+
 interface ToolCardProps {
   tool: Tool;
   onClick: () => void;
 }
 const ToolCard = ({ tool, onClick }: ToolCardProps) => {
+  console.log('tool', tool);
+  const isInWater = !!tool.toolsGroup && !tool.toolsGroup.removeEvent;
+  const location = isInWater ? tool.toolsGroup?.buildEvent.location : undefined;
+
+  const isEstuary = location?.name?.includes('baras');
+
   return (
     <Container onClick={onClick}>
       <IconContainer>
-        <StyledIcon name={IconName.home} />
+        {!isInWater && <StyledIcon name={IconName.home} />}
+        {isEstuary && <BarNumber>{location?.name.replace(/[^\d]/g, '')}</BarNumber>}
+        {isInWater && !isEstuary && <StyledIcon name={IconName.tools} />}
       </IconContainer>
       <div>
         <ToolName>{tool.toolType.label}</ToolName>
@@ -50,6 +60,8 @@ const IconContainer = styled.div`
 const StyledIcon = styled(Icon)`
   //filter: invert(15%) sepia(56%) saturate(5078%) hue-rotate(226deg) brightness(92%) contrast(97%);
 `;
+
+const BarNumber = styled.div``;
 
 const ToolName = styled.div`
   font-size: 2rem;

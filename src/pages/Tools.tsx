@@ -26,7 +26,7 @@ const Tools = () => {
 
   const { data: tools, isLoading: toolsLoading } = useQuery(
     ['tools'],
-    () => api.tools({ filter: {} }),
+    () => api.tools({ populate: ['toolType', 'toolsGroup'] }),
     {
       onError: ({ response }) => {
         handleAlert(response);
@@ -104,19 +104,6 @@ const Container = styled.div`
   flex-direction: column;
   gap: 40px;
   width: 100%;
-`;
-
-const FormContainer = styled(Form)`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-`;
-
-const SectionTitle = styled.div`
-  font-weight: 600;
-  font-size: 1.8rem;
-  color: ${({ theme }) => theme.colors.text.accent};
 `;
 
 export default Tools;
