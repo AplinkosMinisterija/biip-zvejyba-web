@@ -7,7 +7,6 @@ interface ToolCardProps {
   onClick: () => void;
 }
 const ToolCard = ({ tool, onClick }: ToolCardProps) => {
-  console.log('tool', tool);
   const isInWater = !!tool.toolsGroup && !tool.toolsGroup.removeEvent;
   const location = isInWater ? tool.toolsGroup?.buildEvent.location : undefined;
 
