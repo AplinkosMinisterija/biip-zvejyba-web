@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import Icon, { IconName } from '../other/Icon';
 import { Tool } from '../../utils/types';
-import { LocationType } from '../../utils';
 
 interface ToolCardProps {
   tool: Tool;
