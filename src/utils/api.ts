@@ -1,8 +1,25 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { isEmpty } from 'lodash';
 import Cookies from 'universal-cookie';
-import { LocationType, Populations, Resources } from './constants';
-import { BuiltTool, FishType, Research, TenantUser, Tool, ToolFormProps, User } from './types';
+import { EventTypes, LocationType } from './constants';
+import {
+  ToolsGroup,
+  FishType,
+  Research,
+  TenantUser,
+  Tool,
+  ToolFormRequest,
+  User,
+  Location,
+  Coordinates,
+  Tenant,
+  FishingHistoryResponse,
+  Fishing,
+} from './types';
+
+enum Populations {
+  USER = 'user',
+}
 
 const cookies = new Cookies();
 
@@ -31,16 +48,6 @@ export interface GetAllResponse<T> {
   pageSize: number;
   error?: any;
 }
-
-// interface TableList<T = any> {
-//   filter?: T;
-//   page?: number;
-//   id?: string;
-//   pageSize?: string;
-//   scope?: string;
-//   fields?: string[];
-//   populate?: string[];
-// }
 
 interface AuthApiProps {
   resource: string;
@@ -248,15 +255,16 @@ class Api {
       params,
     });
   };
-  skipFishing = async (params: { type: LocationType }) => {
+  skipFishing = async (params: { type: LocationType; coordinates: { x: number; y: number } }) => {
     return this.post({
       resource: 'fishings/skip',
       params,
     });
   };
-  finishFishing = async () => {
-    return this.patch({
-      resource: `fishings/finish`,
+  finishFishing = async (params: { coordinates: { x: number; y: number } }) => {
+    return this.post({
+      resource: `fishings/end`,
+      params,
     });
   };
   toolTypes = async (params: any) => {
@@ -265,7 +273,6 @@ class Api {
       ...params,
     });
   };
-
   getLocation = async (params: any) => {
     return this.get({
       resource: 'locations',
@@ -281,7 +288,7 @@ class Api {
 
   buildTools = async (params: {
     tools: number[];
-    coordinates: { x: number; y: number };
+    coordinates: Coordinates;
     location: Location;
   }) => {
     return this.post({
@@ -292,8 +299,8 @@ class Api {
 
   weighTools = async (
     params: {
-      data: { [key: string]: number };
-      coordinates: { x: number; y: number };
+      data: { [key: number]: number };
+      coordinates: Coordinates;
       location: Location;
     },
     id: string,
@@ -305,15 +312,15 @@ class Api {
     });
   };
 
-  preliminaryFishWeights = async () => {
+  getFishingWeights = async () => {
     return this.get({
-      resource: 'fishWeights/preliminary',
+      resource: 'fishings/weights',
     });
   };
 
   createFishingFishWeights = async (params: { params: { [key: string]: number } }) => {
     return this.post({
-      resource: 'fishWeights',
+      resource: 'fishings/weight',
       params,
     });
   };
@@ -332,15 +339,15 @@ class Api {
     });
   };
 
-  getBuiltTool = async (id: string): Promise<BuiltTool> => {
+  getBuiltTool = async (id: string): Promise<ToolsGroup> => {
     return this.getOne({
-      resource: `builtToolsGroups`,
-      populate: ['tools'],
+      resource: `toolsGroups`,
+      populate: ['tools', 'weightEvent'],
       id,
     });
   };
 
-  getBuiltTools = async ({ locationId }: { locationId: number }) => {
+  getBuiltTools = async ({ locationId }: { locationId: number }): Promise<any> => {
     return this.get({
       resource: `toolsGroups/location/${locationId}`,
     });
@@ -348,33 +355,33 @@ class Api {
 
   updateProfile = async (params: any): Promise<User> =>
     await this.patch({
-      resource: Resources.ME,
+      resource: 'users/me',
       params,
     });
 
   getUsers = async ({ page }: any): Promise<GetAllResponse<TenantUser>> =>
     await this.get({
-      resource: Resources.TENANT_USERS,
+      resource: 'tenantUsers',
       populate: [Populations.USER],
       page,
     });
 
   getUser = async (id: string): Promise<TenantUser> =>
     await this.getOne({
-      resource: Resources.TENANT_USERS,
+      resource: 'tenantUsers',
       populate: [Populations.USER],
       id,
     });
 
   createUser = async (params: any): Promise<User[]> =>
     await this.post({
-      resource: Resources.USER_INVITE,
+      resource: 'tenantUsers/invite',
       params,
     });
 
   updateTenantUser = async (params: any, id?: string): Promise<User> => {
     return await this.patch({
-      resource: Resources.USERS,
+      resource: 'users',
       params,
       id,
     });
@@ -382,33 +389,33 @@ class Api {
 
   deleteUser = async (id: string) =>
     await this.delete({
-      resource: Resources.TENANT_USERS,
+      resource: 'tenantUsers',
       id,
     });
 
   tools = async (params: any): Promise<Tool[]> => {
     return this.getAll({
-      resource: Resources.TOOLS,
+      resource: 'tools',
       ...params,
     });
   };
 
   getTool = async (id: string): Promise<Tool> =>
     await this.getOne({
-      resource: Resources.TOOLS,
+      resource: 'tools',
       id,
     });
 
-  newTool = async (params: ToolFormProps): Promise<Tool> => {
+  newTool = async (params: ToolFormRequest): Promise<Tool> => {
     return this.post({
-      resource: Resources.TOOLS,
+      resource: 'tools',
       params,
     });
   };
 
-  updateTool = async (params: ToolFormProps, id: string): Promise<Tool> => {
+  updateTool = async (params: ToolFormRequest, id: string): Promise<Tool> => {
     return this.patch({
-      resource: Resources.TOOLS,
+      resource: 'tools',
       params,
       id,
     });
@@ -416,11 +423,11 @@ class Api {
 
   deleteTool = async (id: string) =>
     await this.delete({
-      resource: Resources.TOOLS,
+      resource: 'tools',
       id,
     });
 
-  getLocations = async ({ search, page, query }: any): Promise<any> =>
+  getLocations = async ({ search, page, query }: any): Promise<Location> =>
     await this.getPublic({
       resource: this.riversLakesSearchUrl,
       query,
@@ -435,7 +442,7 @@ class Api {
 
   getFishTypes = async (): Promise<FishType[]> =>
     await this.getAll({
-      resource: Resources.FISH_TYPES,
+      resource: 'fishTypes',
     });
 
   getResearches = async (): Promise<GetAllResponse<Research>> =>
@@ -488,6 +495,20 @@ class Api {
       };
     });
   };
+
+  getFishingJournal = async ({ page }: { page: number }): Promise<GetAllResponse<Fishing>> => {
+    return await this.get({
+      resource: 'fishings',
+      populate: ['startEvent', 'endEvent', 'skipEvent', 'weightEvents'],
+      page,
+    });
+  };
+
+  getFishingHistory = async ({ id }: { id: number | string }): Promise<FishingHistoryResponse> =>
+    this.get({
+      resource: `fishings/history`,
+      id: id.toString(),
+    });
 }
 
 export default new Api();

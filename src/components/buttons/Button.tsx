@@ -111,6 +111,7 @@ const StyledButton = styled.button<{
     background-color: ${({ variant, theme }) => theme.colors.hover[variant]};
   }
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
   width: 100%;
 `;
 

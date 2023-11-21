@@ -128,17 +128,19 @@ export const Users = () => {
         <Container>
           <UsersContainer>
             {tenantUsers?.map((tenantUsers) => {
-              const user = tenantUsers.user!;
-              return (
-                <ProfileCard
-                  color={theme.colors.powder}
-                  fisher={user}
-                  icon={<StyledIcon name={IconName.profile} />}
-                  onClick={() => {
-                    navigate(slugs.user(tenantUsers?.id!));
-                  }}
-                />
-              );
+              const user = tenantUsers.user;
+              if (user)
+                return (
+                  <ProfileCard
+                    key={`tenant_user_${tenantUsers.id}`}
+                    color={theme.colors.powder}
+                    fisher={user}
+                    icon={<StyledIcon name={IconName.profile} />}
+                    onClick={() => {
+                      if (tenantUsers.id) navigate(slugs.user(tenantUsers.id));
+                    }}
+                  />
+                );
             })}
           </UsersContainer>
         </Container>
@@ -161,7 +163,7 @@ export const Users = () => {
           {({ values, errors, setFieldValue }) => {
             return (
               <FormContainer>
-                <Grid columns={1}>
+                <Grid $columns={1}>
                   <TextField
                     label={inputLabels.firstName}
                     value={values.firstName}
@@ -207,7 +209,6 @@ export const Users = () => {
                     error={errors.role}
                   />
                 </Grid>
-
                 <Button loading={isLoading} disabled={isLoading}>
                   {buttonLabels.addMember}
                 </Button>

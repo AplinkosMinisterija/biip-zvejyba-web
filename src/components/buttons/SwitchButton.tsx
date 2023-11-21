@@ -1,11 +1,21 @@
 import styled from 'styled-components';
-
-const SwitchButton = ({ options, onChange, value, className }: any) => {
+import { FishingToolsType } from '../../utils';
+interface SwitchButtonProps {
+  options: any[];
+  onChange: (value: any) => void;
+  value: any;
+  className?: string;
+}
+const SwitchButton = ({ options, onChange, value, className = '' }: SwitchButtonProps) => {
   return (
     <Container className={className}>
       <Content $numberOfColumns={options.length}>
-        {options.map((option: any) => (
-          <Button onClick={() => onChange(option.value)} $selected={option.value === value}>
+        {options.map((option: any, index: number) => (
+          <Button
+            key={`switch_btn_${index}`}
+            onClick={() => onChange(option.value)}
+            $selected={option.value === value}
+          >
             {option.label}
           </Button>
         ))}
@@ -15,7 +25,6 @@ const SwitchButton = ({ options, onChange, value, className }: any) => {
 };
 
 const Container = styled.div`
-  padding: 2px 0;
   width: 100%;
   padding: 32px 0;
 `;
@@ -26,7 +35,7 @@ const Content = styled.div<{ $numberOfColumns?: number }>`
     Array($numberOfColumns || 2)
       .fill('1fr')
       .join(' ')};
-  background-color: ${({ theme }) => theme.colors.background.primary};
+  background-color: ${({ theme }) => theme.colors.cardBackground.primary};
   padding: 4px;
   border-radius: 99px;
 `;

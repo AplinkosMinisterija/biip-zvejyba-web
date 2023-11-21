@@ -1,13 +1,13 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
-import { VitePWA } from 'vite-plugin-pwa';
+import { VitePWA, VitePWAOptions } from 'vite-plugin-pwa';
 import { manifestForPlugIn } from './manifest';
 
 export default () => {
   const env = loadEnv('all', process.cwd());
 
   return defineConfig({
-    plugins: [react(), VitePWA(manifestForPlugIn)],
+    plugins: [react(), VitePWA(manifestForPlugIn as Partial<VitePWAOptions>)],
     server: {
       open: '/app',
       proxy: {

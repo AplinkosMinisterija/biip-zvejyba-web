@@ -23,9 +23,9 @@ export const Subtitle = styled.div`
   margin-bottom: 32px;
 `;
 
-export const Grid = styled.div<{ columns?: number }>`
+export const Grid = styled.div<{ $columns?: number }>`
   display: grid;
-  grid-template-columns: repeat(${({ columns }) => columns || 2}, 1fr);
+  grid-template-columns: repeat(${({ $columns }) => $columns || 2}, 1fr);
   gap: 16px;
   margin: 16px 0;
   width: 100%;

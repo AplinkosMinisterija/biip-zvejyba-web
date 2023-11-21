@@ -2,26 +2,35 @@ import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { handleAlert } from '../../utils';
+import { Coordinates, handleAlert } from '../../utils';
+import { Location } from '../../utils/types';
 import api from '../../utils/api';
 import { FishingToolsType } from '../../utils/constants';
 import { device } from '../../utils/theme';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
 import { NotFound } from '../other/NotFound';
-import ToolCardSelectable from '../other/ToolCardSelecetable';
+import ToolCardSelectable from '../cards/ToolCardSelecetable';
 
 const FishingOptions = [
   { label: 'Atskiras įrankis', value: FishingToolsType.SINGLE },
   { label: 'Įrankių grupė', value: FishingToolsType.GROUP },
 ];
-const BuildTools = ({ onClose, location, coordinates }: any) => {
+
+interface BuiltToolsProps {
+  onClose: () => void;
+  location: Location;
+  coordinates?: Coordinates;
+}
+const BuildTools = ({ onClose, location, coordinates }: BuiltToolsProps) => {
   const queryClient = useQueryClient();
   const [selectedTools, setSelectedTools] = useState<number[]>([]);
   const [type, setType] = useState<FishingToolsType>(FishingToolsType.SINGLE);
   const [toolType, setToolType] = useState<number | null>(null);
 
-  const { data: availableTools } = useQuery(['availableTools'], () => api.getAvailableTools());
+  const { data: availableTools } = useQuery(['availableTools'], () => api.getAvailableTools(), {
+    retry: false,
+  });
 
   const { mutateAsync: buildToolsMutation, isLoading: buildToolsIsLoading } = useMutation(
     api.buildTools,
@@ -85,7 +94,7 @@ const BuildTools = ({ onClose, location, coordinates }: any) => {
           }}
         />
         {isEmpty(availableTools) ? (
-          <NotFound message={'Nėra laisvų įrankių sandelyje'} />
+          <NotFound message={'Nėra laisvų įrankių sandėlyje'} />
         ) : (
           <>
             {map(availableTools, (tool: any) => (
@@ -97,12 +106,11 @@ const BuildTools = ({ onClose, location, coordinates }: any) => {
             ))}
           </>
         )}
-
         <Footer>
           <StyledButton
             onClick={handleBuildTools}
             loading={buildToolsIsLoading}
-            disabled={buildToolsIsLoading}
+            disabled={buildToolsIsLoading || !selectedTools.length}
           >
             Pastatyti
           </StyledButton>
@@ -114,7 +122,6 @@ const BuildTools = ({ onClose, location, coordinates }: any) => {
 
 const PopupTitle = styled.div`
   text-align: center;
-  margin: 16px 0 0 16px;
   font-size: 2.4rem;
   font-weight: bold;
 `;

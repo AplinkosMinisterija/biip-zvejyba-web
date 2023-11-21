@@ -1,17 +1,28 @@
 import Icon, { IconName } from '../other/Icon';
 import styled from 'styled-components';
 import { device } from '../../utils/theme';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import MobileMenu from '../layouts/MobileMenu';
 
-const BackHeader = ({ title }: any) => {
+const BackHeader = () => {
+  const [showMenu, setShowMenu] = useState(false);
+
+  const navigate = useNavigate();
+
   return (
-    <Container>
-      <BackIcon name={IconName.back} />
-      {title ? <Title>{title}</Title> : null}
-      <Menu>
-        <MenuIcon name={IconName.burger} />
-        Meniu
-      </Menu>
-    </Container>
+    <>
+      <Container>
+        <div onClick={() => navigate(-1)}>
+          <BackIcon name={IconName.back} />
+        </div>
+        <Menu onClick={() => setShowMenu(true)}>
+          <MenuIcon name={IconName.burger} />
+          Meniu
+        </Menu>
+      </Container>
+      <MobileMenu visible={showMenu} onClose={() => setShowMenu(false)} />
+    </>
   );
 };
 

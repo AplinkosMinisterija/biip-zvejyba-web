@@ -50,8 +50,6 @@ export const locationSchema = Yup.lazy((_, { context }) => {
 
   let obj: any = {};
 
-  console.log(obj, 'ob');
-
   if ((!x || !y) && !location) {
     obj.location = Yup.string().required(validationTexts.requireSelect);
   }

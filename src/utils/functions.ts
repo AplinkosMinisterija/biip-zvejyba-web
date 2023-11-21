@@ -5,7 +5,7 @@ import api from './api';
 import { LOCATION_ERRORS, ToolTypeType } from './constants';
 import { routes } from './routes';
 import { validationTexts } from './texts';
-import { BuiltTool, Profile, ProfileId, ResponseProps, UpdateTokenProps } from './types';
+import { Profile, ProfileId, ResponseProps, ToolsGroup, ToolsGroupEvent } from './types';
 const cookies = new Cookies();
 
 export const clearCookies = () => {
@@ -61,7 +61,12 @@ export const handleSelectProfile = (profileId: ProfileId) => {
   window.location.reload();
 };
 
-export const handleUpdateTokens = (data: UpdateTokenProps) => {
+export const handleUpdateTokens = (data: {
+  token?: string;
+  error?: string;
+  message?: string;
+  refreshToken?: string;
+}) => {
   const { token, refreshToken, error } = data;
   if (token) {
     cookies.set('token', `${token}`, {
@@ -166,10 +171,8 @@ function getCentroid(bbox: number[]) {
 
 export const getBars = async () => {
   const bars = await api.getBars();
-
   return bars?.features.map((item: any) => {
     const { x, y } = getCentroid(item?.bbox.map((coordinate: string) => Number(coordinate)));
-
     return {
       x,
       y,
@@ -178,7 +181,7 @@ export const getBars = async () => {
   });
 };
 
-export const getBuiltToolInfo = (toolsGroup: BuiltTool) => {
+export const getBuiltToolInfo = (toolsGroup: ToolsGroup) => {
   return {
     label: toolsGroup?.tools?.[0]?.toolType?.label,
     sealNr: toolsGroup.tools?.map((tool: any) => tool?.sealNr)?.join(', '),

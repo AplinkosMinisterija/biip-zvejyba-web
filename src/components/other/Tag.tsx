@@ -2,11 +2,11 @@ import styled from 'styled-components';
 import { theme } from '../../utils';
 
 const Tag = ({ color = theme.colors.powder, label }: { color: string; label: string }) => {
-  return <Container color={color}>{label}</Container>;
+  return <Container $color={color}>{label}</Container>;
 };
 
-const Container = styled.div<{ color: string }>`
-  background-color: ${({ color }) => color};
+const Container = styled.div<{ $color: string }>`
+  background-color: ${({ $color }) => $color};
   color: white;
   border-radius: 4px;
   height: 25px;

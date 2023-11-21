@@ -1,18 +1,3 @@
-export enum Resources {
-  FISHINGS = 'fishings',
-  USERS = 'users',
-  USER_INVITE = 'tenantUsers/invite',
-  ME = 'users/me',
-  TOOLS = 'tools',
-  TENANT_USERS = 'tenantUsers',
-  FISH_TYPES = 'fishTypes',
-  SEARCH = 'objects/search',
-}
-
-export enum Populations {
-  USER = 'user',
-}
-
 export enum ServerErrors {
   USER_NOT_FOUND = `Email not found.`,
   WRONG_PASSWORD = 'Wrong password.',
@@ -71,3 +56,19 @@ export const intersectionObserverConfig = {
   rootMargin: '0px',
   threshold: 1.0,
 };
+
+export enum EventTypes {
+  START = 'START',
+  END = 'END',
+  SKIP = 'SKIP',
+  BUILD_TOOLS = 'BUILD_TOOLS',
+  REMOVE_TOOLS = 'REMOVE_TOOLS',
+  WEIGHT_ON_SHORE = 'WEIGHT_ON_SHORE',
+  WEIGHT_ON_BOAT = 'WEIGHT_ON_BOAT',
+}
+
+export enum FishingEventType {
+  START = 'START',
+  END = 'END',
+  SKIP = 'SKIP',
+}

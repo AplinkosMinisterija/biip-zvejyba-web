@@ -13,8 +13,6 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
 
   const disabled = !isNew;
 
-  console.log(disabled, 'disabled');
-
   const preventNumInputFromScrolling = (e: any) =>
     e.target.addEventListener(
       'wheel',
@@ -36,7 +34,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
         const { type } = values;
         return (
           <FormContainer>
-            <Grid columns={2}>
+            <Grid $columns={2}>
               <ToolTypeButton
                 label="Tinklas"
                 icon="/net.svg"
@@ -58,7 +56,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                 disabled={disabled}
               />
             </Grid>
-            <Grid columns={1}>
+            <Grid $columns={1}>
               <TextField
                 label="Plombos Nr."
                 name="sealNr"
@@ -81,7 +79,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                 disabled={disabled}
               />
               {type === ToolTypeType.CATCHER && <SectionTitle>Gaudyklės akių dydis</SectionTitle>}
-              <Grid columns={type === ToolTypeType.NET ? 2 : 3}>
+              <Grid $columns={type === ToolTypeType.NET ? 2 : 3}>
                 <TextField
                   label={type === ToolTypeType.NET ? 'Akių dydis, mm' : 'Sparnuose, mm'}
                   name="eyeSize"
@@ -134,7 +132,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                 {buttonLabels.addTool}
               </Button>
             ) : (
-              <Grid columns={2}>
+              <Grid $columns={2}>
                 <Button
                   variant={ButtonColors.TRANSPARENT}
                   onClick={() => navigate(slugs.tools)}

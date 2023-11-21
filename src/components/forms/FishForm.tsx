@@ -16,7 +16,7 @@ export const FishForm = ({ initialValues, handleSubmit, loading }: any) => {
         {({ values, setFieldValue }) => {
           return (
             <FormContainer>
-              <Column columns={1}>
+              <Column>
                 {values?.map((value: any, index: number) => (
                   <FishRow
                     fish={value}
@@ -35,7 +35,7 @@ export const FishForm = ({ initialValues, handleSubmit, loading }: any) => {
   );
 };
 
-export const Column = styled.div<{ columns?: number }>`
+export const Column = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;

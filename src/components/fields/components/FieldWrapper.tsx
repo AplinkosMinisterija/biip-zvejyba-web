@@ -33,7 +33,7 @@ const FieldWrapper = ({
       tabIndex={-1}
       onBlur={handleBlur}
       className={className}
-      padding={padding || '0'}
+      $padding={padding || '0'}
       onClick={onClick}
     >
       <LabelRow>
@@ -52,10 +52,10 @@ const FieldWrapper = ({
   );
 };
 
-const Container = styled.div<{ padding: string }>`
+const Container = styled.div<{ $padding: string }>`
   display: block;
   position: relative;
-  padding: ${({ padding }) => padding};
+  padding: ${({ $padding }) => $padding};
 `;
 
 const LabelRow = styled.div`

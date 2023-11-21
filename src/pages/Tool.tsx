@@ -23,6 +23,7 @@ export const Tool = () => {
 
   const { data: tool, isLoading } = useQuery(['user', id], () => api.getTool(id!), {
     onError: () => {},
+    retry: false,
   });
 
   const { mutateAsync: updateUserMutation, isLoading: updateLoading } = useMutation(

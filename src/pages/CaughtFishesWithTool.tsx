@@ -1,50 +1,53 @@
-import { map } from 'lodash';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
-import FishForm from '../components/forms/FishForm';
-import FormLayout from '../components/layouts/FormLayout';
 import LoaderComponent from '../components/other/LoaderComponent';
-import { getBuiltToolInfo, handleAlert, slugs } from '../utils';
 import api from '../utils/api';
-import { useAppSelector, useFishTypes, useGetCurrentRoute } from '../utils/hooks';
+import {
+  useAppSelector,
+  useFishTypes,
+  useGetCurrentRoute,
+  device,
+  getBuiltToolInfo,
+  handleAlert,
+  slugs,
+  useGeolocationWatcher,
+  ToolsGroup,
+} from '../utils';
+import styled from 'styled-components';
+import Button from '../components/buttons/Button';
+import FishRow from '../components/other/FishRow';
+import { useEffect, useState } from 'react';
+import DefaultLayout from '../components/layouts/DefaultLayout';
 
 export const CaughtFishesWithTool = () => {
+  useGeolocationWatcher();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const currentRoute = useGetCurrentRoute();
   const { fishTypes, isLoading } = useFishTypes();
   const coordinates = useAppSelector((state) => state.fishing.coordinates);
-  const { toolId, fishingId } = useParams();
-  const queryClient = useQueryClient();
-  const queryCache = queryClient.getQueryCache();
-  const location = queryCache.find(['location'])?.state?.data;
-  const navigate = useNavigate();
+  const location = useAppSelector((state) => state.fishing.location);
 
-  const { data: tool, isLoading: toolLoading } = useQuery(
+  const { toolId } = useParams();
+  const [amounts, setAmounts] = useState<{ [key: number]: number }>({});
+
+  const { data: toolsGroup, isLoading: toolsGroupLoading } = useQuery<ToolsGroup | any>(
     ['builtTool', toolId],
     () => api.getBuiltTool(toolId!),
     {
       onError: () => {
-        navigate(slugs.fishingTools(fishingId!));
+        navigate(slugs.fishingTools);
       },
+      retry: false,
     },
   );
-
-  const handleSubmit = (values: typeof initialValues) => {
-    const data = values.reduce((obj: any, curr) => {
-      if (Number(curr.amount)) {
-        obj[curr.id] = curr.amount;
-      }
-
-      return obj;
-    }, {});
-
-    weighToolsMutation({ coordinates, location, data });
-  };
 
   const { mutateAsync: weighToolsMutation, isLoading: weighToolsIsLoading } = useMutation(
     (data: any) => api.weighTools(data, toolId!),
     {
-      onSuccess: () => {
-        navigate(slugs.fishingTools(fishingId!));
+      onSuccess: async () => {
+        queryClient.invalidateQueries(['builtTool', toolId]);
+        navigate(-1);
       },
       onError: () => {
         handleAlert();
@@ -52,31 +55,107 @@ export const CaughtFishesWithTool = () => {
     },
   );
 
-  if (isLoading || toolLoading) return <LoaderComponent />;
+  useEffect(() => {
+    if (toolsGroup?.weightEvent?.data && !Object.keys(amounts).length) {
+      setAmounts(toolsGroup?.weightEvent?.data as { [key: number]: number });
+    }
+  }, [toolsGroup]);
 
-  const { label, sealNr } = getBuiltToolInfo(tool!);
+  if (isLoading || toolsGroupLoading) return <LoaderComponent />;
 
-  const initialValues = map(fishTypes, (item) => ({
-    ...item,
-    amount: tool?.weighingEvent?.data?.[item?.id]! || '',
-  }))!;
+  const { label, sealNr } = getBuiltToolInfo(toolsGroup!);
+
+  const updateAmounts = (value: { [key: number]: number }) => {
+    setAmounts({ ...amounts, ...value });
+  };
+
+  const handleSubmit = () => {
+    weighToolsMutation({ data: amounts, coordinates, location });
+  };
 
   return (
     <>
-      <FormLayout
-        title={currentRoute?.title}
-        infoTitle={label}
-        infoSubTitle={sealNr}
-        back={currentRoute?.back}
-      >
-        <FishForm
-          initialValues={initialValues}
-          handleSubmit={handleSubmit}
-          loading={weighToolsIsLoading}
-        />
-      </FormLayout>
+      <DefaultLayout back={currentRoute?.back}>
+        <Container>
+          <Title>{currentRoute?.title}</Title>
+          <Heading>{label}</Heading>
+          <SealNumbers>{sealNr}</SealNumbers>
+          {fishTypes?.map((fishType: any) => (
+            <FishRow
+              key={`fish_type_${fishType.id}`}
+              fish={{ ...fishType, amount: amounts[fishType.id] || 0 }}
+              onChange={(value) => {
+                updateAmounts({ [fishType.id]: value || undefined });
+              }}
+            />
+          ))}
+        </Container>
+        <Footer>
+          <StyledButton
+            loading={weighToolsIsLoading}
+            disabled={weighToolsIsLoading}
+            onClick={handleSubmit}
+          >
+            Saugoti pakeitimus
+          </StyledButton>
+        </Footer>
+      </DefaultLayout>
     </>
   );
 };
 
 export default CaughtFishesWithTool;
+
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const Footer = styled.div`
+  display: block;
+  position: sticky;
+  bottom: 0;
+  cursor: pointer;
+  padding: 16px 0;
+  text-decoration: none;
+  width: 100%;
+  background-color: white;
+  @media ${device.desktop} {
+    padding: 16px 0 0 0;
+  }
+`;
+
+const StyledButton = styled(Button)`
+  width: 100%;
+  border-radius: 28px;
+  height: 56px;
+  display: block;
+  line-height: 56px;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 0;
+`;
+
+const Title = styled.div`
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: 2rem;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 16px;
+`;
+
+const Heading = styled.div`
+  text-align: center;
+  font-size: 2.4rem;
+  font-weight: bold;
+`;
+
+const SealNumbers = styled.div`
+  color: ${({ theme }) => theme.colors.text.primary};
+  line-height: 26px;
+  margin-top: 4px;
+  font-size: 1.6rem;
+  margin-bottom: 32px;
+`;

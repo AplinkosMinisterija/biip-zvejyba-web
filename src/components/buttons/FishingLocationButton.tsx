@@ -10,7 +10,19 @@ export enum Variant {
   GREY = 'GREY',
 }
 
-const FishingLocationButton = ({ variant = Variant.GREY, title, image, onClick }: any) => {
+interface FishingLocationButtonProps {
+  title: string;
+  image: string;
+  onClick: () => void;
+  variant?: Variant;
+}
+
+const FishingLocationButton = ({
+  variant = Variant.GREY,
+  title,
+  image,
+  onClick,
+}: FishingLocationButtonProps) => {
   return (
     <Container $variant={variant} onClick={onClick}>
       <Image src={image} />

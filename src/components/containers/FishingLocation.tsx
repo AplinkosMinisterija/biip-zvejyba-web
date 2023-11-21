@@ -6,8 +6,8 @@ import styled from 'styled-components';
 import { RootState } from '../../state/store';
 import { buttonLabels, skipOptions } from '../../utils';
 import api from '../../utils/api';
-import { LocationType, SickReasons } from '../../utils/constants';
-import { handleAlert } from '../../utils/functions';
+import { LocationType, SickReasons } from '../../utils';
+import { handleAlert } from '../../utils';
 import Button, { ButtonColors } from '../buttons/Button';
 import FishingLocationButton, { Variant } from '../buttons/FishingLocationButton';
 import PopUpWithImage from '../layouts/PopUpWithImage';
@@ -21,6 +21,7 @@ const FishingLocation = () => {
   const [skipReason, setSkipReason] = useState(SickReasons.BAD_WEATHER);
   const [location, setLocation] = useState<LocationType | null>(null);
   const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
+
   const { isLoading: startLoading, mutateAsync: startFishing } = useMutation(api.startFishing, {
     onError: ({ response }) => {
       handleAlert(response);
@@ -58,8 +59,8 @@ const FishingLocation = () => {
   };
 
   const handleSkipFishing = () => {
-    if (location) {
-      skipFishing({ type: location });
+    if (location && coordinates) {
+      skipFishing({ type: location, coordinates: coordinates });
     }
   };
 
@@ -71,19 +72,19 @@ const FishingLocation = () => {
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
           title="Kuršių mariose"
-          image={'/marios.avif'}
+          image={'/marios.png'}
           onClick={handleSelectLocation(LocationType.ESTUARY)}
         />
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
           title="Vidaus vandenyse"
-          image={'/vidaus_vandens_telkiniai.avif'}
+          image={'/vidaus_vandens_telkiniai.png'}
           onClick={handleSelectLocation(LocationType.INLAND_WATERS)}
         />
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
           title="Polderiuose"
-          image={'/polderiai.avif'}
+          image={'/polderiai.png'}
           onClick={handleSelectLocation(LocationType.POLDERS)}
         />
       </Container>
@@ -94,7 +95,7 @@ const FishingLocation = () => {
         title={'Žvejybos pradžia'}
         description={'Lengvai ir paprastai praneškite apie žvejybos pradžią'}
       >
-        <Grid columns={2}>
+        <Grid $columns={2}>
           <Button loading={startLoading} disabled={disabledButtons} onClick={handleStartFishing}>
             {buttonLabels.startFishing}
           </Button>
@@ -117,7 +118,7 @@ const FishingLocation = () => {
         title={'Neplaukiu žvejoti'}
         description={'Pasirinkite priežastį, dėl ko negalite žvejoti'}
       >
-        <Grid columns={3}>
+        <Grid $columns={3}>
           {map(skipOptions, (item, index) => (
             <SelectButton
               $selected={item.value === skipReason}
@@ -128,7 +129,7 @@ const FishingLocation = () => {
             </SelectButton>
           ))}
         </Grid>
-        <Grid columns={2}>
+        <Grid $columns={2}>
           <Button loading={startLoading} disabled={disabledButtons} onClick={handleSkipFishing}>
             {buttonLabels.save}
           </Button>
@@ -159,7 +160,7 @@ const SelectButton = styled.button<{ $selected: boolean }>`
   padding: 20px;
   width: 100%;
   background-color: ${({ $selected, theme }) =>
-    $selected ? '#f5f6fe' : theme.colors.background.primary};
+    $selected ? '#f5f6fe' : theme.colors.cardBackground.primary};
   color: ${({ theme }) => theme.colors.text.primary};
   border: 1px solid ${({ $selected, theme }) => ($selected ? theme.colors.primary : 'transparent')};
   cursor: pointer;

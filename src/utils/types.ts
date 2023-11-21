@@ -1,7 +1,40 @@
 import { FeatureCollection } from '../components/other/DrawMap';
-import { RoleTypes, ToolTypeType } from './constants';
+import { EventTypes, FishingEventType, LocationType, RoleTypes, ToolTypeType } from './constants';
 
 export type ProfileId = 'personal' | string;
+
+export interface ResponseProps {
+  endpoint: () => Promise<any>;
+  onSuccess: (data: any) => void;
+  onError?: (data: any) => void;
+  onOffline?: () => void;
+}
+
+export interface Location {
+  id: string;
+  name: string;
+  municipality: {
+    id: number;
+    name: string;
+  };
+}
+
+export interface Coordinates {
+  x: number;
+  y: number;
+}
+
+export interface DeleteInfoProps {
+  deleteButtonText?: string;
+  deleteDescriptionFirstPart?: string;
+  deleteDescriptionSecondPart?: string;
+  deleteTitle?: string;
+  deleteName?: string;
+  handleDelete?: (props?: any) => void;
+}
+
+//Data model
+
 export interface Profile {
   id: ProfileId;
   name: string;
@@ -11,6 +44,7 @@ export interface Profile {
   isInvestigator: boolean;
   phone: string;
 }
+
 export interface User {
   id?: string;
   firstName?: string;
@@ -32,120 +66,69 @@ export interface TenantUser {
 export interface Tenant {
   id: number;
 }
-
-export interface UpdateTokenProps {
-  token?: string;
-  error?: string;
-  message?: string;
-  refreshToken?: string;
-}
-
-export interface ResponseProps {
-  endpoint: () => Promise<any>;
-  onSuccess: (data: any) => void;
-  onError?: (data: any) => void;
-  onOffline?: () => void;
-}
-
-export type FileProps = {
-  url: string;
-  name: string;
-  size: number;
-  main?: boolean;
-};
-
 export interface ToolType {
   id: number;
   label: string;
   type: ToolTypeType;
 }
 
-export interface BuiltTool {
-  buildEvent: {
-    id: string;
-    data: any;
-    geom: any;
-    location: Location;
-  };
-  weighingEvent: {
-    id: string;
-    data: { [key: string | number]: string };
-  };
+export interface ToolsGroup {
+  id: number;
   type: string;
+  buildEvent: ToolsGroupEvent;
+  removeEvent: ToolsGroupEvent;
+  weightEvent?: WeightEvent;
   tools: Tool[];
 }
 
-export interface Location {
+export interface ToolsGroupEvent {
   id: string;
-  name: string;
-  municipality: string;
-}
-
-export interface Tool {
-  id: number;
-  sealNr: string;
-  data: {
-    eyeSize: number;
-    eyeSize2: number;
-    eyeSize3: number;
-    netLength: number;
-  };
-  toolType: ToolType;
-  toolGroup: ToolGroup['id'];
-  tenant: Tenant['id'];
-  user: User['id'];
-}
-
-export interface Tool {
-  id: number;
-  sealNr: string;
-  data: {
-    eyeSize: number;
-    eyeSize2: number;
-    eyeSize3: number;
-    netLength: number;
-  };
-  toolType: ToolType;
-  toolGroup: ToolGroup['id'];
-  tenant: Tenant['id'];
-  user: User['id'];
-}
-
-export interface ToolFormProps {
-  toolType?: ToolType;
-  sealNr?: string;
-  data: {
-    eyeSize?: string;
-    eyeSize2?: string;
-    eyeSize3?: string;
-    netLength?: string;
-  };
-}
-
-export interface ToolGroup {
-  id: number;
-  tools: any[];
-  startDate: Date;
-  startFishing: Fishing['id'];
-  endDate: Date;
-  endFishing: Fishing['id'];
   geom: any;
-  locationType: string;
-  locationId: number;
-  locationName: string;
-  tenant: Tenant['id'];
-  user: User['id'];
+  location: Location;
+  user: User;
+  tenant: Tenant;
+}
+
+export interface WeightEvent {
+  id: string;
+  geom: any;
+  location: Location;
+  data: { [key: string | number]: string | number };
+  user: User;
+  tenant: Tenant;
+}
+
+export interface Tool {
+  id: number;
+  sealNr: string;
+  data: {
+    eyeSize: number;
+    eyeSize2: number;
+    eyeSize3: number;
+    netLength: number;
+  };
+  toolType: ToolType;
+  toolGroup?: ToolsGroup;
+  tenant: Tenant;
+  user: User;
 }
 
 export interface Fishing {
   id: number;
-  startDate: Date;
-  endDate: Date;
-  skipDate: Date;
+  type: LocationType;
+  startEvent: FishingEvent;
+  endEvent: FishingEvent;
+  skipEvent: FishingEvent;
+  tenant: Tenant;
+  user: User;
+}
+
+export interface FishingEvent {
+  id: number;
   geom: any;
-  type: FishType['id'];
-  tenant: Tenant['id'];
-  user: User['id'];
+  type: FishingEventType;
+  tenant: Tenant;
+  user: User;
 }
 
 export interface FishType {
@@ -190,11 +173,27 @@ export interface ResearchFish {
   biomassPercentage: string;
 }
 
-export interface DeleteInfoProps {
-  deleteButtonText?: string;
-  deleteDescriptionFirstPart?: string;
-  deleteDescriptionSecondPart?: string;
-  deleteTitle?: string;
-  deleteName?: string;
-  handleDelete?: (props?: any) => void;
+//Requests & responses
+export interface ToolFormRequest {
+  toolType?: ToolType;
+  sealNr?: string;
+  data: {
+    eyeSize?: string;
+    eyeSize2?: string;
+    eyeSize3?: string;
+    netLength?: string;
+  };
+}
+export interface FishingHistoryResponse {
+  id: number;
+  type: LocationType;
+  tenant: Tenant['id'];
+  user: User;
+  history: {
+    id: number;
+    type: EventTypes;
+    date: string;
+    geom: any;
+    data?: any;
+  }[];
 }

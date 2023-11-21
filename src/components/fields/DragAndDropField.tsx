@@ -106,7 +106,7 @@ const DragAndDropUploadField = ({
     e.stopPropagation();
 
     if (onDelete) {
-      onDelete([...files?.slice(0, index), ...files?.slice(index + 1)]);
+      onDelete([...(files?.slice(0, index) || []), ...(files?.slice(index + 1) || [])]);
     }
   };
 
@@ -115,7 +115,7 @@ const DragAndDropUploadField = ({
       <FieldWrapper error={error} showError={showError} label={label}>
         {!disabled && (
           <UploadFileContainer
-            error={!!error}
+            $error={!!error}
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}
             onClick={onButtonClick}
@@ -218,9 +218,8 @@ const Input = styled.input`
   display: none;
 `;
 
-const FileContainer = styled.div<{ opacity?: number }>`
+const FileContainer = styled.div`
   margin-top: 4px;
-  opacity: ${({ opacity }) => opacity || 1};
   position: relative;
   background-color: white;
   border: 1px solid #cdd5df;
@@ -241,10 +240,10 @@ const TextRow = styled.div`
   }
 `;
 
-const UploadFileContainer = styled.div<{ error: boolean }>`
+const UploadFileContainer = styled.div<{ $error: boolean }>`
   cursor: pointer;
   background-color: #eeebe53d;
-  border: 2px dashed ${({ theme, error }) => (error ? theme.colors.error : theme.colors.border)};
+  border: 2px dashed ${({ theme, $error }) => ($error ? theme.colors.error : theme.colors.border)};
   border-radius: 4px;
   display: flex;
   flex-direction: column;

@@ -1,12 +1,6 @@
 import styled from 'styled-components';
 import LoaderComponent from '../../other/LoaderComponent';
 
-export interface SelectOption {
-  id?: string;
-  label?: string;
-  [key: string]: any;
-}
-
 export interface OptionsContainerProps {
   values?: any[];
   disabled?: boolean;

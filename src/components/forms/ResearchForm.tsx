@@ -4,15 +4,8 @@ import { useMutation, useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import * as Yup from 'yup';
-import {
-  getLocationList,
-  handleAlert,
-  isNew,
-  Research,
-  slugs,
-  useFishTypes,
-  validationTexts,
-} from '../../utils';
+import { getLocationList, handleAlert, isNew, Research, slugs, useFishTypes } from '../../utils';
+import { validationTexts } from '../../utils/texts';
 import api from '../../utils/api';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
@@ -26,7 +19,7 @@ import DrawMap from '../other/DrawMap';
 import LoaderComponent from '../other/LoaderComponent';
 import ResearchFishItem from '../other/ResearchFishItem';
 
-export enum FormTypes {
+enum FormTypes {
   UETK = 'UETK',
   NOT_UETK = 'NOT_UETK',
 }
@@ -36,11 +29,11 @@ const ResearchTypeOptions = [
   { label: 'Ne UETK objektas', value: FormTypes.NOT_UETK },
 ];
 
-export interface ResearchProps extends Research {
+interface ResearchProps extends Research {
   formType?: FormTypes;
 }
 
-export const validateSchema = Yup.object().shape({
+const validateSchema = Yup.object().shape({
   startAt: Yup.date().required(validationTexts.requireSelect).nullable(),
   endAt: Yup.date().required(validationTexts.requireSelect).nullable(),
   cadastralId: Yup.string().when('formType', (formType: any, schema) => {
@@ -207,7 +200,7 @@ const ResearchForm = () => {
                 setFieldValue('formType', value);
               }}
             />
-            <Grid columns={1}>
+            <Grid $columns={1}>
               {isUetkFormType && (
                 <AsyncSelectField
                   name={'location'}
@@ -230,7 +223,7 @@ const ResearchForm = () => {
               )}
               {!isUetkFormType && (
                 <>
-                  <Grid columns={2}>
+                  <Grid $columns={2}>
                     <TextField
                       label={'Vandens telkinio pavadinimas'}
                       name="waterBodyDataName"
@@ -248,10 +241,10 @@ const ResearchForm = () => {
                       digitsAfterComma={3}
                     />
                   </Grid>
-                  <Grid columns={1}>
+                  <Grid $columns={1}>
                     <DrawMap
                       label="Vandens telkinio vieta"
-                      value={values?.geom!}
+                      value={values?.geom}
                       error={errors?.geom}
                       onSave={(data) => setFieldValue('geom', data)}
                       height={'300px'}
@@ -260,7 +253,7 @@ const ResearchForm = () => {
                 </>
               )}
             </Grid>
-            <Grid columns={2}>
+            <Grid $columns={2}>
               <DateField
                 name={'startAt'}
                 label={'Mokslinio tyrimo pradžia'}
@@ -280,7 +273,7 @@ const ResearchForm = () => {
             </Grid>
             {!isUetkFormType && (
               <>
-                <Grid columns={1}>
+                <Grid $columns={1}>
                   <Gap>
                     <FormLabel>
                       Ankstesniais metais bendras žuvų gausumas ir biomasė, išteklių būklės indeksas
@@ -291,7 +284,7 @@ const ResearchForm = () => {
                     </FormSubLabel>
                   </Gap>
                 </Grid>
-                <Grid columns={2}>
+                <Grid $columns={2}>
                   <TextField
                     label={'Metai'}
                     name="previousResearchDataYear"
@@ -331,16 +324,16 @@ const ResearchForm = () => {
                 </Grid>
               </>
             )}
-            <Grid columns={1}>
+            <Grid $columns={1}>
               <FormLabel>Atskirų žuvų rūšių gausumas ir biomasė</FormLabel>
             </Grid>
             <FieldArray
               name="fishes"
               render={(arrayHelpers) => (
-                <Grid columns={1}>
+                <Grid $columns={1}>
                   {map(values.fishes, (currentFish, index: number) => {
                     const rowErrors = errors?.fishes?.[index];
-                    const showDelete = values?.fishes?.length! > 1;
+                    const showDelete = values?.fishes?.length > 1;
 
                     const filteredFishTypes = filter(
                       fishTypes,
@@ -381,10 +374,10 @@ const ResearchForm = () => {
                 </Grid>
               )}
             />
-            <Grid columns={1}>
+            <Grid $columns={1}>
               <FormLabel>Žuvų išteklių būklės indeksas</FormLabel>
             </Grid>
-            <Grid columns={2}>
+            <Grid $columns={2}>
               <NumericTextField
                 label={'Plėšrių žuvų santykinis gausumas'}
                 name="predatoryFishesRelativeAbundance"
@@ -402,7 +395,7 @@ const ResearchForm = () => {
                 digitsAfterComma={2}
               />
             </Grid>
-            <Grid columns={1}>
+            <Grid $columns={1}>
               <NumericTextField
                 label={'Vidutinis individo svoris (gausumas/biomasė)'}
                 name="averageWeight"
@@ -429,7 +422,7 @@ const ResearchForm = () => {
                 digitsAfterComma={2}
               />
             </Grid>
-            <Grid columns={1}>
+            <Grid $columns={1}>
               <DragAndDropUploadField
                 error={errors?.files}
                 files={values.files}

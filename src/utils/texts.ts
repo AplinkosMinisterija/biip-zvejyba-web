@@ -1,4 +1,4 @@
-import { LOCATION_ERRORS, RoleTypes, ServerErrors } from './constants';
+import { EventTypes, LOCATION_ERRORS, RoleTypes, ServerErrors } from './constants';
 export const validationTexts = {
   requireMap: 'Privalote pasirinkti vietą žemėlapyje',
   requirePhotos: 'Privalote įkelti nuotrauką',
@@ -29,18 +29,6 @@ export const validationTexts = {
   atLeastOneColumn: 'Turi būti pasirinktas bent vienas stulpelis',
   profileUpdated: 'Profilis atnaujintas',
   fishingFinished: 'Žvejyba pabaigta',
-};
-
-export const LOCATION_ERROR_MESSAGES = {
-  [LOCATION_ERRORS.NO_ERROR]: null,
-  [LOCATION_ERRORS.POINT_NOT_FOUND]: 'Nepavyko nustatyti vietos - nerastos koordinatės',
-  [LOCATION_ERRORS.WATER_BODY_NOT_FOUND]: 'Nepavyko nustatyti vietos - neteisingos koordinatės',
-  [LOCATION_ERRORS.API_ERROR]: 'Nepavyko nustatyti vietos - serverio klaida',
-  [LOCATION_ERRORS.GEOLOCATION_NOT_SUPPORTE]:
-    'Nepavyko nustatyti vietos - telefonas nepalaiko šio funkcionalumo',
-  [LOCATION_ERRORS.PERMISSION_REQUIRED]:
-    'Nepavyko nustatyti vietos - nesuteiktas leidimas nustatyti buvmo vietą',
-  [LOCATION_ERRORS.OTHER]: 'Nepavyko nustatyti vietos',
 };
 
 export const titles = {
@@ -107,4 +95,14 @@ export const roleLabels = {
   [RoleTypes.USER]: 'Naudotojas',
   [RoleTypes.USER_ADMIN]: 'Administratorius',
   [RoleTypes.OWNER]: 'Administratorius',
+};
+
+export const FishingEventLabels = {
+  [EventTypes.START]: 'Žvejybos pradžia',
+  [EventTypes.END]: 'Baigta žvejyba',
+  [EventTypes.SKIP]: 'Praleista žvejyba',
+  [EventTypes.BUILD_TOOLS]: 'Pastatytas įrankis',
+  [EventTypes.REMOVE_TOOLS]: 'Ištrauktas įrankis',
+  [EventTypes.WEIGHT_ON_SHORE]: 'Tikslus svoris krante',
+  [EventTypes.WEIGHT_ON_BOAT]: 'Patikrintas įrankis',
 };

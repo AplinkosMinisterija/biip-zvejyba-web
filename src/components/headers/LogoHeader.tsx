@@ -7,6 +7,7 @@ import Icon, { IconName } from '../other/Icon';
 
 const LogoHeader = () => {
   const navigate = useNavigate();
+
   const [showMenu, setShowMenu] = useState(false);
   return (
     <>
@@ -48,10 +49,6 @@ const Button = styled.div`
 
 const MenuIcon = styled(Icon)`
   margin-right: 4px;
-  font-size: 2rem;
-`;
-
-const StyledIcon = styled(Icon)`
   font-size: 2rem;
 `;
 

@@ -60,7 +60,7 @@ export const useEGatesSign = () => {
 };
 
 export const useFishTypes = () => {
-  const { data = [], isLoading } = useQuery(['fishTypes'], api.getFishTypes);
+  const { data = [], isLoading } = useQuery(['fishTypes'], api.getFishTypes, { retry: false });
 
   return { fishTypes: data, isLoading };
 };
@@ -112,25 +112,30 @@ export const useGeolocationWatcher = () => {
     timeout: 100000,
   };
   const dispatch = useDispatch();
-  useEffect(() => {
-    const successHandler = (position: any) => {
-      dispatch(fishingActions.setError(null));
+  const successHandler = (position: any) => {
+    dispatch(fishingActions.setError(null));
+    dispatch(
+      fishingActions.setCoordinates({
+        x: position.coords.longitude,
+        y: position.coords.latitude,
+      }),
+    );
+  };
+  const errorHandler = () => {
+    dispatch(fishingActions.setError(LOCATION_ERRORS.POINT_NOT_FOUND));
+  };
 
-      dispatch(
-        fishingActions.setCoordinates({
-          x: position.coords.longitude,
-          y: position.coords.latitude,
-        }),
-      );
-    };
-    const errorHandler = () => {
-      dispatch(fishingActions.setError(LOCATION_ERRORS.POINT_NOT_FOUND));
-    };
+  const getCurrentPosition = () => {
     navigator.geolocation.getCurrentPosition(successHandler, errorHandler, options);
+  };
+
+  useEffect(() => {
+    getCurrentPosition();
     const id = navigator.geolocation.watchPosition(successHandler, errorHandler, options);
     return () => navigator.geolocation.clearWatch(id);
   }, []);
-  return {};
+
+  return { getCurrentPosition };
 };
 
 export const useWindowSize = (width: string) => {

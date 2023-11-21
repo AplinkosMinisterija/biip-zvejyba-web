@@ -1,15 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { Coordinates } from '../../utils';
 
 export interface FishingReducerProps {
-  currentFishing: number | null;
-  coordinates: { x: number; y: number } | null;
-  error: string | null;
+  currentFishing?: number;
+  coordinates?: Coordinates;
+  location?: Location;
+  error?: string;
 }
 
 export const initialState: FishingReducerProps = {
-  currentFishing: null,
-  coordinates: null,
-  error: null,
+  currentFishing: undefined,
+  coordinates: undefined,
+  location: undefined,
+  error: undefined,
 };
 
 export const FishingReducer = createSlice({
@@ -26,6 +29,12 @@ export const FishingReducer = createSlice({
       return {
         ...state,
         coordinates: action.payload,
+      };
+    },
+    setLocation: (state, action) => {
+      return {
+        ...state,
+        location: action.payload,
       };
     },
     setError: (state, action) => {

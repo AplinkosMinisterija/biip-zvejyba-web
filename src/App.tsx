@@ -119,6 +119,7 @@ function App() {
 
   useEffect(() => {
     if (!isInvalidProfile) return;
+
     cookies.remove('profileId', { path: '/' });
 
     if (!navigateRef?.current) return;
@@ -129,6 +130,7 @@ function App() {
   if (isLoading) {
     return <LoaderComponent />;
   }
+
   return (
     <>
       <Routes>
