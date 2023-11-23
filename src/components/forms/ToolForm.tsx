@@ -72,7 +72,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                 onFocus={preventNumInputFromScrolling}
                 disabled={disabled}
                 pattern={/[0-9]+/}
-                inputmode="numeric"
+                inputMode="numeric"
               />
               <AsyncSelectField
                 label={type === ToolTypeType.NET ? 'Tinklo tipas' : 'Gaudyklės tipas'}
@@ -94,7 +94,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                   error={errors.eyeSize}
                   onChange={(e) => setFieldValue('eyeSize', Number(e))}
                   type="number"
-                  inputmode="numeric"
+                  inputMode="numeric"
                   onFocus={preventNumInputFromScrolling}
                 />
 
@@ -107,7 +107,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                       error={errors.eyeSize2}
                       onChange={(e) => setFieldValue('eyeSize2', Number(e))}
                       type="number"
-                      inputmode="numeric"
+                      inputMode="numeric"
                       onFocus={preventNumInputFromScrolling}
                     />
                     <TextField
@@ -117,7 +117,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                       error={errors.eyeSize3}
                       onChange={(e) => setFieldValue('eyeSize3', Number(e))}
                       type="number"
-                      inputmode="numeric"
+                      inputMode="numeric"
                       onFocus={preventNumInputFromScrolling}
                     />
                   </>
@@ -131,7 +131,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                     height={56}
                     onChange={(e) => setFieldValue('netLength', Number(e))}
                     type="number"
-                    inputmode="numeric"
+                    inputMode="numeric"
                     onFocus={preventNumInputFromScrolling}
                   />
                 )}

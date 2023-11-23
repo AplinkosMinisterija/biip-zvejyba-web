@@ -15,7 +15,8 @@ import { ThemeProvider } from 'styled-components';
 import App from './App';
 import redux from './state/store';
 import { GlobalStyle, theme } from './utils/theme';
-import { ErrorBoundary } from '@sentry/react';
+import ErrorBoundary from './components/other/ErrorBoundary';
+import { withErrorBoundary } from '@sentry/react';
 
 const queryClient = new QueryClient();
 
@@ -45,20 +46,20 @@ if (env.VITE_SENTRY_DSN) {
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <ErrorBoundary>
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <Provider store={store}>
-          <PersistGate persistor={persistor}>
-            <ThemeProvider theme={theme}>
-              <GlobalStyle />
-              <BrowserRouter>
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <PersistGate persistor={persistor}>
+          <ThemeProvider theme={theme}>
+            <GlobalStyle />
+            <BrowserRouter>
+              <ErrorBoundary>
                 <App />
-              </BrowserRouter>
-            </ThemeProvider>
-          </PersistGate>
-        </Provider>
-      </QueryClientProvider>
-    </React.StrictMode>
-  </ErrorBoundary>,
+              </ErrorBoundary>
+            </BrowserRouter>
+          </ThemeProvider>
+        </PersistGate>
+      </Provider>
+    </QueryClientProvider>
+  </React.StrictMode>,
 );

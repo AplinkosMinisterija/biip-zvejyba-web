@@ -1,8 +1,5 @@
 import { IconName } from '../components/other/Icon';
-import CaughtFishesWithTool from '../pages/CaughtFishesWithTool';
 import CurrentFishing from '../pages/CurrentFishing';
-import CurrentFishingTools from '../pages/CurrentFishingTools';
-import CurrentFishingWeight from '../pages/CurrentFishingWeight';
 import Profiles from '../pages/Profiles';
 import Research from '../pages/Research';
 import Tool from '../pages/Tool';
@@ -65,20 +62,23 @@ export const routes = [
   },
   {
     slug: slugs.fishingTools,
-    component: <CurrentFishingTools />,
+    component: <CurrentFishing />,
     back: true,
+    regExp: new RegExp('^/zvejyba/mano/irankiai$'),
   },
   {
-    slug: slugs.fishingToolConnect(':toolId'),
+    // title: 'Apytikslis svoris, kg',
+    slug: slugs.fishingToolCaughtFishes(Ids.TOOL_ID),
     component: <CurrentFishing />,
-    regExp: new RegExp('^/zvejyba/mano/irankiai[0-9]+/irankiu_jungimas$'),
     back: true,
+    regExp: new RegExp('^/zvejyba/mano/irankiai/[0-9]+/sugautos-zuvys$'),
   },
   {
     title: 'Tikslus svoris, kg',
     slug: slugs.fishingWeight,
-    component: <CurrentFishingWeight />,
+    component: <CurrentFishing />,
     back: true,
+    regExp: new RegExp('^/zvejyba/mono/svoris$'),
   },
   {
     title: 'Žvejybos žurnalas',
@@ -139,12 +139,7 @@ export const routes = [
     slug: slugs.tool(Ids.ID),
     component: <Tool />,
   },
-  {
-    title: 'Apytikslis svoris, kg',
-    slug: slugs.fishingToolCaughtFishes(Ids.TOOL_ID),
-    component: <CaughtFishesWithTool />,
-    back: true,
-  },
+
   {
     title: 'Moksliniai tyrimai',
     subtitle: 'Mokslinių tyrimų duomenys',

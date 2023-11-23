@@ -42,7 +42,7 @@ const FishRow = ({ onChange, fish }: FishRowProp) => {
             value={amount}
             onChange={(amount) => onChange(amount)}
             pattern={/[0-9]+/}
-            inputmode="numeric"
+            inputMode="numeric"
             onFocus={preventNumInputFromScrolling}
           />
 
@@ -65,6 +65,7 @@ const Row = styled.div`
   gap: 16px;
   align-items: center;
   margin: 32px 0;
+  width: 100%;
 `;
 
 const InnerRow = styled.div`

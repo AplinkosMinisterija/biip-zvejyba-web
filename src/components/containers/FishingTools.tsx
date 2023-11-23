@@ -1,34 +1,34 @@
+import { Footer, IconContainer } from '../other/CommonStyles';
+import Icon, { IconName } from '../other/Icon';
+import LoaderComponent from '../other/LoaderComponent';
 import { isEmpty, map } from 'lodash';
-import { useState } from 'react';
+import { NotFound } from '../other/NotFound';
+import ToolsGroupCard from '../cards/ToolsGroupCard';
+import Button, { ButtonColors } from '../buttons/Button';
+import Popup from '../layouts/Popup';
+import BuildTools from './BuildTools';
+import PopUpWithImage from '../layouts/PopUpWithImage';
+import LocationForm from '../forms/LocationForm';
+import ToolActions from './ToolActions';
+import { device, getBars, handleAlert, LocationType, ToolsGroup } from '../../utils';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { useState } from 'react';
+import api from '../../utils/api';
+import { actions } from '../../state/fishing/reducer';
 import styled from 'styled-components';
-import Button, { ButtonColors } from '../components/buttons/Button';
-import BuildTools from '../components/containers/BuildTools';
-import ToolActions from '../components/containers/ToolActions';
-import Popup from '../components/layouts/Popup';
-import PopUpWithImage from '../components/layouts/PopUpWithImage';
-import LoaderComponent from '../components/other/LoaderComponent';
-import { NotFound } from '../components/other/NotFound';
-import ToolsGroupCard from '../components/cards/ToolsGroupCard';
-import { RootState } from '../state/store';
-import { getBars, handleAlert, useGeolocationWatcher, useGetCurrentRoute } from '../utils';
-import api from '../utils/api';
-import { LocationType } from '../utils';
-import { device } from '../utils';
-import LocationForm from '../components/forms/LocationForm';
-import DefaultLayout from '../components/layouts/DefaultLayout';
-import { Footer, IconContainer } from '../components/other/CommonStyles';
-import Icon, { IconName } from '../components/other/Icon';
-import { actions } from '../state/fishing/reducer';
 
-interface ToolsGroup {}
-
-const CurrentFishingTools = () => {
-  useGeolocationWatcher();
+const FishingTools = ({
+  setLocation,
+  location,
+  coordinates,
+}: {
+  setLocation: (location: any) => void;
+  location: any;
+  coordinates: any;
+}) => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
-  const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
   const [showBuildTools, setShowBuildTools] = useState(false);
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
   const [selectedToolsGroup, setSelectedToolsGroup] = useState<ToolsGroup>();
@@ -37,7 +37,6 @@ const CurrentFishingTools = () => {
     retry: false,
   });
   const locationType: LocationType = currentFishing?.type;
-  const currentRoute = useGetCurrentRoute();
   const isEstuary = locationType === LocationType.ESTUARY;
 
   const { mutateAsync: getLocationMutation } = useMutation(
@@ -51,8 +50,9 @@ const CurrentFishingTools = () => {
     },
     {
       onSuccess: (value) => {
-        dispatch(actions.setLocation(value));
-        queryClient.setQueryData('location', value);
+        console.log('set location2', value);
+        setLocation(value);
+        // queryClient.setQueryData('location', value);
       },
       onError: () => {
         handleAlert();
@@ -60,7 +60,7 @@ const CurrentFishingTools = () => {
     },
   );
 
-  const { data: location, isFetching: locationFetching } = useQuery(
+  const { isFetching: locationFetching } = useQuery(
     ['location'],
     () =>
       api.getLocation({
@@ -70,7 +70,9 @@ const CurrentFishingTools = () => {
       }),
     {
       onSuccess: (data) => {
-        dispatch(actions.setLocation(data));
+        console.log('set location1', data);
+        if (data && !location) setLocation(data);
+        // dispatch(actions.setLocation(data));
       },
       retry: false,
     },
@@ -90,7 +92,6 @@ const CurrentFishingTools = () => {
   );
 
   const initialValues = { location: '', x: '', y: '' };
-
   const handleRefreshLocation = () => {
     const data = queryClient.fetchQuery(
       ['location'],
@@ -115,13 +116,12 @@ const CurrentFishingTools = () => {
     }
     setShowLocationPopUp(false);
   };
-
   return (
-    <DefaultLayout onEdit={() => setShowLocationPopUp(true)} back={currentRoute?.back}>
+    <>
       {!locationFetching && (
         <TitleWrapper>
-          <Title>{location.name || 'Nenustatytas vandens telkinys'}</Title>
-          {location.name && (
+          <Title>{location?.name || 'Nenustatytas vandens telkinys'}</Title>
+          {location?.name && (
             <IconContainer onClick={() => setShowLocationPopUp(true)}>
               <EditIcon name={IconName.edit} />
             </IconContainer>
@@ -210,9 +210,11 @@ const CurrentFishingTools = () => {
         toolGroup={selectedToolsGroup}
         onReturn={() => setSelectedToolsGroup(undefined)}
       />
-    </DefaultLayout>
+    </>
   );
 };
+
+export default FishingTools;
 
 const Container = styled.div`
   display: flex;
@@ -266,5 +268,3 @@ const TitleWrapper = styled.div`
 const EditIcon = styled(Icon)`
   font-size: 2.4rem;
 `;
-
-export default CurrentFishingTools;

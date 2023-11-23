@@ -2,38 +2,25 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import SwitchButton from '../components/buttons/SwitchButton';
-import LoaderComponent from '../components/other/LoaderComponent';
-import {
-  device,
-  FishingWeighType,
-  handleAlert,
-  useAppSelector,
-  useFishTypes,
-  useGeolocationWatcher,
-  useGetCurrentRoute,
-} from '../utils';
-import api from '../utils/api';
-import DefaultLayout from '../components/layouts/DefaultLayout';
-import FishRow from '../components/other/FishRow';
-import Button from '../components/buttons/Button';
-import { Footer } from '../components/other/CommonStyles';
+import { FishingWeighType, handleAlert, useFishTypes, useGetCurrentRoute } from '../../utils';
+import api from '../../utils/api';
+import LoaderComponent from '../other/LoaderComponent';
+import SwitchButton from '../buttons/SwitchButton';
+import FishRow from '../other/FishRow';
+import { Footer } from '../other/CommonStyles';
+import Button from '../buttons/Button';
 
 const FishingWeightOptions = [
   { label: 'Sugautos žuvys', value: FishingWeighType.CAUGHT },
   { label: 'Visos žuvys', value: FishingWeighType.All },
 ];
 
-const CurrentFishingWeight = () => {
-  useGeolocationWatcher();
-
+const FishingWeight = ({ coordinates }: { coordinates: any }) => {
   const queryClient = useQueryClient();
   const [type, setType] = useState<FishingWeighType>(FishingWeighType.CAUGHT);
-  const currentRoute = useGetCurrentRoute();
   const { fishTypes, isLoading } = useFishTypes();
   const isCaught = type === FishingWeighType.CAUGHT;
   const navigate = useNavigate();
-  const coordinates = useAppSelector((state) => state.fishing.coordinates);
   const [amounts, setAmounts] = useState<{ [key: number]: number }>({});
 
   const {
@@ -77,7 +64,7 @@ const CurrentFishingWeight = () => {
   };
 
   return (
-    <DefaultLayout title={currentRoute?.title} back={currentRoute?.back}>
+    <>
       {hasFishOnBoat && (
         <SwitchButton options={FishingWeightOptions} value={type} onChange={setType} />
       )}
@@ -99,11 +86,11 @@ const CurrentFishingWeight = () => {
           Saugoti pakeitimus
         </StyledButton>
       </Footer>
-    </DefaultLayout>
+    </>
   );
 };
 
-export default CurrentFishingWeight;
+export default FishingWeight;
 
 const StyledButton = styled(Button)`
   width: 100%;
