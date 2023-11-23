@@ -18,7 +18,7 @@ import { LocationType } from '../utils';
 import { device } from '../utils';
 import LocationForm from '../components/forms/LocationForm';
 import DefaultLayout from '../components/layouts/DefaultLayout';
-import { IconContainer } from '../components/other/CommonStyles';
+import { Footer, IconContainer } from '../components/other/CommonStyles';
 import Icon, { IconName } from '../components/other/Icon';
 import { actions } from '../state/fishing/reducer';
 
@@ -231,20 +231,6 @@ const StyledButton = styled(Button)`
   font-size: 20px;
   font-weight: 600;
   padding: 0;
-`;
-
-const Footer = styled.div`
-  display: block;
-  position: sticky;
-  bottom: 0;
-  cursor: pointer;
-  padding: 16px 0;
-  text-decoration: none;
-  width: 100%;
-  background-color: white;
-  @media ${device.desktop} {
-    padding: 16px 0 0 0;
-  }
 `;
 
 const Title = styled.div`

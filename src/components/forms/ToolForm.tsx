@@ -13,7 +13,7 @@ import Button, { ButtonColors } from '../buttons/Button';
 import ToolTypeButton from '../buttons/ToolTypeButton';
 import AsyncSelectField from '../fields/AsyncSelect';
 import TextField from '../fields/TextField';
-import { Grid } from '../other/CommonStyles';
+import { Footer, Grid } from '../other/CommonStyles';
 
 const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
   const navigate = useNavigate();
@@ -178,20 +178,6 @@ export const ToolTypeContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-`;
-
-const Footer = styled.div`
-  display: block;
-  position: sticky;
-  bottom: 0;
-  cursor: pointer;
-  padding: 16px 0;
-  text-decoration: none;
-  width: 100%;
-  background-color: white;
-  @media ${device.desktop} {
-    padding: 16px 0 0 0;
-  }
 `;
 
 const ToolDetails = styled.div<{ $columns?: number }>`

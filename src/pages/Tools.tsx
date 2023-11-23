@@ -8,7 +8,7 @@ import Button from '../components/buttons/Button';
 import ToolForm from '../components/forms/ToolForm';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import PopUpWithTitles from '../components/layouts/PopUpWithTitle';
-import { ListContainer } from '../components/other/CommonStyles';
+import { Footer, ListContainer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
 import { NotFound } from '../components/other/NotFound';
 import ToolCard from '../components/cards/ToolCard';
@@ -79,8 +79,9 @@ const Tools = () => {
               ))}
             </ListContainer>
           )}
-
-          <Button onClick={() => setShowPopup(true)}>{buttonLabels.newTool}</Button>
+          <Footer>
+            <Button onClick={() => setShowPopup(true)}>{buttonLabels.newTool}</Button>
+          </Footer>
         </Container>
       </DefaultLayout>
       <PopUpWithTitles

@@ -18,6 +18,7 @@ import Button from '../components/buttons/Button';
 import FishRow from '../components/other/FishRow';
 import { useEffect, useState } from 'react';
 import DefaultLayout from '../components/layouts/DefaultLayout';
+import { Footer } from '../components/other/CommonStyles';
 
 export const CaughtFishesWithTool = () => {
   useGeolocationWatcher();
@@ -111,20 +112,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const Footer = styled.div`
-  display: block;
-  position: sticky;
-  bottom: 0;
-  cursor: pointer;
-  padding: 16px 0;
-  text-decoration: none;
-  width: 100%;
-  background-color: white;
-  @media ${device.desktop} {
-    padding: 16px 0 0 0;
-  }
 `;
 
 const StyledButton = styled(Button)`

@@ -17,6 +17,7 @@ import api from '../utils/api';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import FishRow from '../components/other/FishRow';
 import Button from '../components/buttons/Button';
+import { Footer } from '../components/other/CommonStyles';
 
 const FishingWeightOptions = [
   { label: 'Sugautos žuvys', value: FishingWeighType.CAUGHT },
@@ -103,20 +104,6 @@ const CurrentFishingWeight = () => {
 };
 
 export default CurrentFishingWeight;
-
-const Footer = styled.div`
-  display: block;
-  position: sticky;
-  bottom: 0;
-  cursor: pointer;
-  padding: 16px 0;
-  text-decoration: none;
-  width: 100%;
-  background-color: white;
-  @media ${device.desktop} {
-    padding: 16px 0 0 0;
-  }
-`;
 
 const StyledButton = styled(Button)`
   width: 100%;

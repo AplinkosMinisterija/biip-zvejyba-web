@@ -42,7 +42,6 @@ const ProfileCard = ({
 const Container = styled.a`
   background: ${({ theme }) => theme.colors.largeButton.GREY};
   cursor: pointer;
-  box-shadow: 0px 8px 16px #121a5514;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 8px;
   opacity: 1;

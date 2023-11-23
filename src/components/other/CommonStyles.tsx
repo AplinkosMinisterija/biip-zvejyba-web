@@ -80,3 +80,17 @@ export const ListContainer = styled.div`
   gap: 4px;
   width: 100%;
 `;
+
+export const Footer = styled.div`
+  display: block;
+  position: sticky;
+  bottom: 0;
+  cursor: pointer;
+  padding: 16px 0;
+  text-decoration: none;
+  width: 100%;
+  background-color: white;
+  @media ${device.desktop} {
+    padding: 16px 0 0 0;
+  }
+`;
