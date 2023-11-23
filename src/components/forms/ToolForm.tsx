@@ -94,6 +94,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                   error={errors.eyeSize}
                   onChange={(e) => setFieldValue('eyeSize', Number(e))}
                   type="number"
+                  inputmode="numeric"
                   onFocus={preventNumInputFromScrolling}
                 />
 
@@ -106,6 +107,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                       error={errors.eyeSize2}
                       onChange={(e) => setFieldValue('eyeSize2', Number(e))}
                       type="number"
+                      inputmode="numeric"
                       onFocus={preventNumInputFromScrolling}
                     />
                     <TextField
