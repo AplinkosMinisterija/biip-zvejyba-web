@@ -17,9 +17,7 @@ import { Grid } from '../other/CommonStyles';
 
 const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
   const navigate = useNavigate();
-
   const disabled = !isNew;
-
   const preventNumInputFromScrolling = (e: any) =>
     e.target.addEventListener(
       'wheel',
@@ -137,7 +135,6 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                 )}
               </ToolDetails>
             </Grid>
-
             {isNew ? (
               <Footer>
                 <Button loading={isLoading} disabled={isLoading}>
