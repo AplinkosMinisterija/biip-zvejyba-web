@@ -108,6 +108,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                       error={errors.eyeSize3}
                       onChange={(e) => setFieldValue('eyeSize3', Number(e))}
                       type="number"
+                      inputmode="numeric"
                       onFocus={preventNumInputFromScrolling}
                     />
                   </>
@@ -121,6 +122,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                     height={56}
                     onChange={(e) => setFieldValue('netLength', Number(e))}
                     type="number"
+                    inputmode="numeric"
                     onFocus={preventNumInputFromScrolling}
                   />
                 )}

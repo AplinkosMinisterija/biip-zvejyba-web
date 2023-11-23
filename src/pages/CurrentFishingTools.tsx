@@ -41,13 +41,14 @@ const CurrentFishingTools = () => {
   const isEstuary = locationType === LocationType.ESTUARY;
 
   const { mutateAsync: getLocationMutation } = useMutation(
-    (coordinates: any) =>
-      api.getLocation({
+    (coordinates: any) => {
+      return api.getLocation({
         query: {
           type: locationType,
           coordinates,
         },
-      }),
+      });
+    },
     {
       onSuccess: (value) => {
         dispatch(actions.setLocation(value));
@@ -186,7 +187,6 @@ const CurrentFishingTools = () => {
           onClose={() => setShowBuildTools(false)}
         />
       </Popup>
-
       <PopUpWithImage
         visible={showLocationPopUp}
         onClose={() => setShowLocationPopUp(false)}

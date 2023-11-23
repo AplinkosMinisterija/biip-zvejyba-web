@@ -6,6 +6,7 @@ import { Grid } from '../other/CommonStyles';
 import NumericTextField from '../fields/NumericTextField';
 import Button, { ButtonColors } from '../buttons/Button';
 import styled from 'styled-components';
+import TextField from '../fields/TextField';
 
 const LocationForm = ({
   initialValues,
@@ -14,6 +15,14 @@ const LocationForm = ({
   bars,
   onClose,
 }: any) => {
+  const preventNumInputFromScrolling = (e: any) =>
+    e.target.addEventListener(
+      'wheel',
+      function (e: any) {
+        e.preventDefault();
+      },
+      { passive: false },
+    );
   return (
     <Formik
       enableReinitialize={true}
@@ -66,21 +75,43 @@ const LocationForm = ({
             </Or>
 
             <Grid $columns={2}>
-              <NumericTextField
-                label={inputLabels.lng}
+              {/*<NumericTextField*/}
+              {/*  label={inputLabels.lng}*/}
+              {/*  name="x"*/}
+              {/*  value={values.x}*/}
+              {/*  showError={false}*/}
+              {/*  error={errors.x}*/}
+              {/*  onChange={(email) => setFieldValue('x', email)}*/}
+              {/*/>*/}
+              {/*<NumericTextField*/}
+              {/*  label={inputLabels.lat}*/}
+              {/*  name="y"*/}
+              {/*  value={values.y}*/}
+              {/*  showError={false}*/}
+              {/*  error={errors.y}*/}
+              {/*  onChange={(email) => setFieldValue('y', email)}*/}
+              {/*/>email*/}
+              <TextField
+                label="Ilguma"
                 name="x"
-                value={values.x}
-                showError={false}
+                value={values.x || ''}
                 error={errors.x}
-                onChange={(email) => setFieldValue('x', email)}
+                height={56}
+                onChange={(e) => setFieldValue('x', Number(e))}
+                type="number"
+                inputmode="numeric"
+                onFocus={preventNumInputFromScrolling}
               />
-              <NumericTextField
-                label={inputLabels.lat}
+              <TextField
+                label="Platuma"
                 name="y"
-                value={values.y}
-                showError={false}
+                value={values.y || ''}
                 error={errors.y}
-                onChange={(email) => setFieldValue('y', email)}
+                height={56}
+                onChange={(e) => setFieldValue('y', Number(e))}
+                type="number"
+                inputmode="numeric"
+                onFocus={preventNumInputFromScrolling}
               />
             </Grid>
             <Grid>
