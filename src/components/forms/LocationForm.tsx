@@ -100,7 +100,6 @@ const LocationForm = ({
                 onChange={(e) => setFieldValue('x', Number(e))}
                 type="number"
                 pattern={/^\d*\.?\d*$/}
-                inputmode="numeric"
                 onFocus={preventNumInputFromScrolling}
               />
               <TextField
@@ -112,7 +111,6 @@ const LocationForm = ({
                 onChange={(e) => setFieldValue('y', Number(e))}
                 type="number"
                 pattern={/^\d*\.?\d*$/}
-                inputmode="numeric"
                 onFocus={preventNumInputFromScrolling}
               />
             </Grid>
