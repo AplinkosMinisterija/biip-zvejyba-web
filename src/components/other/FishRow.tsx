@@ -19,13 +19,15 @@ const FishRow = ({ onChange, fish }: FishRowProp) => {
   const { label, photo, amount, preliminaryAmount } = fish;
   return (
     <Row>
-      <Image
-        src={
-          photo?.url
-            ? photo?.url
-            : 'https://t0.gstatic.com/licensed-image?q=tbn:ANd9GcSFioPxAhwKJt3zlIkV4Q5Th0gkb5-428cZd0uPEjWoYn9Xkoi_L4C8kWaFu-KtqAvz'
-        }
-      />
+      <ImageContainer>
+        <Image
+          src={
+            photo?.url
+              ? photo?.url
+              : 'https://t0.gstatic.com/licensed-image?q=tbn:ANd9GcSFioPxAhwKJt3zlIkV4Q5Th0gkb5-428cZd0uPEjWoYn9Xkoi_L4C8kWaFu-KtqAvz'
+          }
+        />
+      </ImageContainer>
       <Column>
         <TextColumn>
           <Title>{label.charAt(0).toUpperCase() + label.slice(1)}</Title>
@@ -63,7 +65,6 @@ const Row = styled.div`
   display: grid;
   grid-template-columns: 88px 1fr;
   gap: 16px;
-  align-items: center;
   margin: 32px 0;
   width: 100%;
 `;
@@ -94,7 +95,7 @@ const Title = styled.div`
 
 const Caught = styled.div`
   display: flex;
-  flex-direction:column
+  flex-direction: column;
   gap: 12px;
 `;
 
@@ -108,9 +109,15 @@ const Button = styled.button`
   font-weight: 600;
 `;
 
+const ImageContainer = styled.div`
+  background-color: ${({ theme }) => theme.colors.cardBackground.primary};
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+`;
+
 const Image = styled.img`
-  height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   width: 88px;
   border-radius: 4px;
 `;

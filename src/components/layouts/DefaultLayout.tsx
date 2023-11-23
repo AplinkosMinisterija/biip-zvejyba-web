@@ -53,7 +53,7 @@ const Content = styled.div`
   @media ${device.desktop} {
     max-width: 800px;
     border-radius: 16px;
-    margin: 40px auto;
+    margin: 0 auto;
     padding: 40px;
     overflow-y: auto;
     height: fit-content;
@@ -79,7 +79,7 @@ const InnerContainer = styled.div`
   flex-direction: column;
   align-items: center;
   @media ${device.desktop} {
-    padding: 0 16px;
+    padding: 40px 16px;
     height: fit-content;
     background-color: #f7f7f7;
   }
