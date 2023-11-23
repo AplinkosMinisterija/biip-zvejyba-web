@@ -99,6 +99,7 @@ const LocationForm = ({
                 height={56}
                 onChange={(e) => setFieldValue('x', Number(e))}
                 type="number"
+                pattern={/^\d*\.?\d*$/}
                 inputmode="numeric"
                 onFocus={preventNumInputFromScrolling}
               />
@@ -110,6 +111,7 @@ const LocationForm = ({
                 height={56}
                 onChange={(e) => setFieldValue('y', Number(e))}
                 type="number"
+                pattern={/^\d*\.?\d*$/}
                 inputmode="numeric"
                 onFocus={preventNumInputFromScrolling}
               />
