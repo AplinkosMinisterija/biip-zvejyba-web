@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import NumericTextField from '../fields/NumericTextField';
+import TextField from '../fields/TextField';
 
 interface FishRowProp {
   onChange: (value: any) => void;
@@ -7,6 +8,14 @@ interface FishRowProp {
 }
 
 const FishRow = ({ onChange, fish }: FishRowProp) => {
+  const preventNumInputFromScrolling = (e: any) =>
+    e.target.addEventListener(
+      'wheel',
+      function (e: any) {
+        e.preventDefault();
+      },
+      { passive: false },
+    );
   const { label, photo, amount, preliminaryAmount } = fish;
   return (
     <Row>
@@ -32,6 +41,9 @@ const FishRow = ({ onChange, fish }: FishRowProp) => {
             name="personalCode"
             value={amount}
             onChange={(amount) => onChange(amount)}
+            pattern={/[0-9]+/}
+            inputmode="numeric"
+            onFocus={preventNumInputFromScrolling}
           />
 
           <Button type="button" onClick={() => onChange(amount + 1)}>
@@ -43,7 +55,7 @@ const FishRow = ({ onChange, fish }: FishRowProp) => {
   );
 };
 
-const StyledNumericTextField = styled(NumericTextField)`
+const StyledNumericTextField = styled(TextField)`
   width: 100%;
 `;
 

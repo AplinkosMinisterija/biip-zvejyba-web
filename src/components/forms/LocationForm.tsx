@@ -75,22 +75,6 @@ const LocationForm = ({
             </Or>
 
             <Grid $columns={2}>
-              {/*<NumericTextField*/}
-              {/*  label={inputLabels.lng}*/}
-              {/*  name="x"*/}
-              {/*  value={values.x}*/}
-              {/*  showError={false}*/}
-              {/*  error={errors.x}*/}
-              {/*  onChange={(email) => setFieldValue('x', email)}*/}
-              {/*/>*/}
-              {/*<NumericTextField*/}
-              {/*  label={inputLabels.lat}*/}
-              {/*  name="y"*/}
-              {/*  value={values.y}*/}
-              {/*  showError={false}*/}
-              {/*  error={errors.y}*/}
-              {/*  onChange={(email) => setFieldValue('y', email)}*/}
-              {/*/>email*/}
               <TextField
                 label="Ilguma"
                 name="x"
@@ -100,6 +84,7 @@ const LocationForm = ({
                 onChange={(e) => setFieldValue('x', Number(e))}
                 type="number"
                 pattern={/^\d*\.?\d*$/}
+                // inputmode="numeric"
                 onFocus={preventNumInputFromScrolling}
               />
               <TextField
@@ -111,6 +96,7 @@ const LocationForm = ({
                 onChange={(e) => setFieldValue('y', Number(e))}
                 type="number"
                 pattern={/^\d*\.?\d*$/}
+                // inputmode="numeric"
                 onFocus={preventNumInputFromScrolling}
               />
             </Grid>
