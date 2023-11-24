@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import Button, { ButtonColors } from '../buttons/Button';
 import Icon from '../other/Icon';
 import Popup from './Popup';
 
@@ -18,8 +17,8 @@ const PopUpWithImage = ({
     <Popup visible={visible} onClose={onClose}>
       <PopupWrapper>
         {iconName && <StyledIcon name={iconName} />}
-        <Heading>{title}</Heading>
-        <Description>{description}</Description>
+        {title && <Heading>{title}</Heading>}
+        {description && <Description>{description}</Description>}
         {children}
       </PopupWrapper>
     </Popup>

@@ -187,14 +187,7 @@ const FishingTools = ({
           onClose={() => setShowBuildTools(false)}
         />
       </Popup>
-      <PopUpWithImage
-        visible={showLocationPopUp}
-        onClose={() => setShowLocationPopUp(false)}
-        title={'Esate kitur?'}
-        description={
-          'Prašome pasirinkti iš sąrašo telkinio pavadinimą/baro numerį arba įrašykite koordinates.'
-        }
-      >
+      <PopUpWithImage visible={showLocationPopUp} onClose={() => setShowLocationPopUp(false)}>
         <LocationForm
           initialValues={initialValues}
           handleSetLocationManually={handleSetLocationManually}
