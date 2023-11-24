@@ -50,7 +50,6 @@ const FishingTools = ({
     },
     {
       onSuccess: (value) => {
-        console.log('set location2', value);
         setLocation(value);
       },
       onError: () => {
@@ -69,7 +68,6 @@ const FishingTools = ({
       }),
     {
       onSuccess: (data) => {
-        console.log('set location1', data);
         if (data && !location) setLocation(data);
       },
       retry: false,

@@ -54,7 +54,6 @@ const FishingActions = ({ fishing, coordinates }: FishingActionsProps) => {
   );
 
   const handleFinishFishing = () => {
-    console.log('handleFinishFishing', coordinates);
     if (coordinates) {
       finishFishing({ coordinates });
     }
