@@ -17,7 +17,7 @@ export const slugs = {
   fishingCurrent: `/zvejyba/mano`,
   fishing: (fishingId: string) => `/zvejyba/${fishingId}`,
   fishingTools: `/zvejyba/mano/irankiai`,
-  fishingWeight: `/zvejyba/mono/svoris`,
+  fishingWeight: `/zvejyba/mano/svoris`,
   fishingToolCaughtFishes: (toolId: string) => `/zvejyba/mano/irankiai/${toolId}/sugautos-zuvys`,
   fishingToolConnect: (toolId: string) => `/zvejyba/mano/irankiai/${toolId}/irankiu_jungimas`,
   tools: '/irankiai',
