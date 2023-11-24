@@ -67,23 +67,6 @@ const PreviewMap = ({
     iframeRef?.current?.contentWindow?.postMessage({ geom: value }, '*');
   };
 
-  const handleSaveGeom = useCallback((event: any) => {
-    if (!event?.data?.mapIframeMsg) return;
-
-    const userObjects = JSON.parse(event?.data?.mapIframeMsg?.data);
-
-    if (!userObjects) return;
-
-    if (onSave) {
-      onSave(userObjects);
-    }
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener('message', handleSaveGeom);
-    return () => window.removeEventListener('message', handleSaveGeom);
-  }, []);
-
   return (
     <FieldWrapper showError={showError} error={error} label={label}>
       <Container $showModal={showModal} $error={!!error}>
@@ -164,39 +147,6 @@ const StyledIframe = styled.iframe<{
 }>`
   width: ${({ $width }) => $width};
   height: ${({ $height }) => $height};
-`;
-
-const StyledButton = styled.button<{ $popup: boolean }>`
-  position: absolute;
-  z-index: 10;
-  top: ${({ $popup }) => ($popup ? 30 : 15)}px;
-  right: ${({ $popup }) => ($popup ? 28 : 11)}px;
-  min-width: 28px;
-
-  height: 28px;
-  @media ${device.mobileL} {
-    top: 80px;
-    right: 10px;
-  }
-  button {
-    border-color: #e5e7eb;
-    background-color: white !important;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    box-shadow: 0px 18px 41px #121a5529;
-  }
-`;
-
-const StyledIcon = styled(Icon)`
-  font-size: 3rem;
-  color: #6b7280;
-`;
-
-const StyledIconContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 export default PreviewMap;
