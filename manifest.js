@@ -38,4 +38,12 @@ export const manifestForPlugIn = {
     start_url: '/',
     orientation: 'portrait',
   },
+  workbox: {
+    runtimeCaching: [
+      {
+        urlPattern: /\.(png|jpg|jpeg|svg|gif)$/,
+        handler: 'CacheFirst',
+      },
+    ],
+  },
 };

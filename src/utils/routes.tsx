@@ -67,7 +67,6 @@ export const routes = [
     regExp: new RegExp('^/zvejyba/mano/irankiai$'),
   },
   {
-    // title: 'Apytikslis svoris, kg',
     slug: slugs.fishingToolCaughtFishes(Ids.TOOL_ID),
     component: <CurrentFishing />,
     back: true,
@@ -78,7 +77,7 @@ export const routes = [
     slug: slugs.fishingWeight,
     component: <CurrentFishing />,
     back: true,
-    regExp: new RegExp('^/zvejyba/mono/svoris$'),
+    regExp: new RegExp('^/zvejyba/mano/svoris$'),
   },
   {
     title: 'Žvejybos žurnalas',

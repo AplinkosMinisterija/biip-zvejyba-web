@@ -52,7 +52,6 @@ const FishingTools = ({
       onSuccess: (value) => {
         console.log('set location2', value);
         setLocation(value);
-        // queryClient.setQueryData('location', value);
       },
       onError: () => {
         handleAlert();
@@ -72,7 +71,6 @@ const FishingTools = ({
       onSuccess: (data) => {
         console.log('set location1', data);
         if (data && !location) setLocation(data);
-        // dispatch(actions.setLocation(data));
       },
       retry: false,
     },
