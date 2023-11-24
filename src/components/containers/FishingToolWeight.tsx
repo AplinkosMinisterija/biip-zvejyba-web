@@ -1,33 +1,34 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
-import LoaderComponent from '../components/other/LoaderComponent';
-import api from '../utils/api';
+import { RootState } from '../../state/store';
 import {
-  useAppSelector,
-  useFishTypes,
-  useGetCurrentRoute,
-  device,
   getBuiltToolInfo,
   handleAlert,
   slugs,
-  useGeolocationWatcher,
   ToolsGroup,
-} from '../utils';
+  useAppSelector,
+  useFishTypes,
+  useGetCurrentRoute,
+} from '../../utils';
+import React, { useEffect, useState } from 'react';
+import api from '../../utils/api';
+import LoaderComponent from '../other/LoaderComponent';
+import FishRow from '../other/FishRow';
+import { Footer } from '../other/CommonStyles';
 import styled from 'styled-components';
-import Button from '../components/buttons/Button';
-import FishRow from '../components/other/FishRow';
-import { useEffect, useState } from 'react';
-import DefaultLayout from '../components/layouts/DefaultLayout';
+import Button from '../buttons/Button';
 
-export const CaughtFishesWithTool = () => {
-  useGeolocationWatcher();
+export const CaughtFishesWithTool = ({
+  location,
+  coordinates,
+}: {
+  location: any;
+  coordinates: any;
+}) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const currentRoute = useGetCurrentRoute();
   const { fishTypes, isLoading } = useFishTypes();
-  const coordinates = useAppSelector((state) => state.fishing.coordinates);
-  const location = useAppSelector((state) => state.fishing.location);
-
   const { toolId } = useParams();
   const [amounts, setAmounts] = useState<{ [key: number]: number }>({});
 
@@ -75,31 +76,29 @@ export const CaughtFishesWithTool = () => {
 
   return (
     <>
-      <DefaultLayout back={currentRoute?.back}>
-        <Container>
-          <Title>{currentRoute?.title}</Title>
-          <Heading>{label}</Heading>
-          <SealNumbers>{sealNr}</SealNumbers>
-          {fishTypes?.map((fishType: any) => (
-            <FishRow
-              key={`fish_type_${fishType.id}`}
-              fish={{ ...fishType, amount: amounts[fishType.id] || 0 }}
-              onChange={(value) => {
-                updateAmounts({ [fishType.id]: value || undefined });
-              }}
-            />
-          ))}
-        </Container>
-        <Footer>
-          <StyledButton
-            loading={weighToolsIsLoading}
-            disabled={weighToolsIsLoading}
-            onClick={handleSubmit}
-          >
-            Saugoti pakeitimus
-          </StyledButton>
-        </Footer>
-      </DefaultLayout>
+      <Container>
+        <Title>{currentRoute?.title}</Title>
+        <Heading>{label}</Heading>
+        <SealNumbers>{sealNr}</SealNumbers>
+        {fishTypes?.map((fishType: any) => (
+          <FishRow
+            key={`fish_type_${fishType.id}`}
+            fish={{ ...fishType, amount: amounts[fishType.id] || 0 }}
+            onChange={(value: any) => {
+              updateAmounts({ [fishType.id]: value || undefined });
+            }}
+          />
+        ))}
+      </Container>
+      <Footer>
+        <StyledButton
+          loading={weighToolsIsLoading}
+          disabled={weighToolsIsLoading}
+          onClick={handleSubmit}
+        >
+          Saugoti pakeitimus
+        </StyledButton>
+      </Footer>
     </>
   );
 };
@@ -111,20 +110,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const Footer = styled.div`
-  display: block;
-  position: sticky;
-  bottom: 0;
-  cursor: pointer;
-  padding: 16px 0;
-  text-decoration: none;
-  width: 100%;
-  background-color: white;
-  @media ${device.desktop} {
-    padding: 16px 0 0 0;
-  }
 `;
 
 const StyledButton = styled(Button)`

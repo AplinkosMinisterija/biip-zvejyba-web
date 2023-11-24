@@ -9,7 +9,7 @@ import SelectField from '../components/fields/SelectField';
 import TextField from '../components/fields/TextField';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import PopUpWithTitles from '../components/layouts/PopUpWithTitle';
-import { Grid } from '../components/other/CommonStyles';
+import { Footer, Grid } from '../components/other/CommonStyles';
 import Icon, { IconName } from '../components/other/Icon';
 import LoaderComponent from '../components/other/LoaderComponent';
 import ProfileCard from '../components/other/ProfileCard';
@@ -146,7 +146,9 @@ export const Users = () => {
         </Container>
         {observerRef && <Invisible ref={observerRef} />}
         {isFetching && <LoaderComponent />}
-        <Button onClick={() => setShowPopup(true)}>{buttonLabels.newMember}</Button>
+        <Footer>
+          <Button onClick={() => setShowPopup(true)}>{buttonLabels.newMember}</Button>
+        </Footer>
       </DefaultLayout>
       <PopUpWithTitles
         title={titles.newMember}
@@ -229,7 +231,7 @@ const Invisible = styled.div`
 const StyledIcon = styled(Icon)`
   cursor: pointer;
   font-size: 2.4rem;
-  color: ${({ theme }) => theme.colors.text.primary};
+  color: ${({ theme }) => theme.colors.powder};
 `;
 
 const Container = styled.div`

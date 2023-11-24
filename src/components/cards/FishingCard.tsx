@@ -5,10 +5,10 @@ const formatDuration = (startDate?: string, endDate?: string) => {
   if (!startDate || !endDate) {
     return '';
   }
-  const durationInMinutes = differenceInMinutes(new Date(endDate), new Date(startDate));
-  const durationInHours = differenceInHours(new Date(endDate), new Date(startDate), {
-    roundingMethod: 'floor',
+  const durationInMinutes = differenceInMinutes(new Date(endDate), new Date(startDate), {
+    roundingMethod: 'ceil',
   });
+  const durationInHours = Math.floor(durationInMinutes / 60);
   if (!durationInHours) {
     return durationInMinutes + 'min.';
   }
@@ -50,7 +50,7 @@ const getWeightString = (fishOnBoat: any, fishOnShore: any) => {
   return weightOnBoat ? `~${weightOnBoat}kg` : '';
 };
 
-const FishingCard = ({ startDate, endDate, fishOnBoat, fishOnShore, onClick }: any) => {
+const FishingCard = ({ startDate, endDate, fishOnBoat, fishOnShore, skipped, onClick }: any) => {
   const month: string = startDate ? format(new Date(startDate), 'M') : '';
   const dayOfMonth = startDate ? format(new Date(startDate), 'd') : '';
   const day = `${Months[Number(month)]} ${dayOfMonth}d.`;
@@ -76,8 +76,8 @@ const FishingCard = ({ startDate, endDate, fishOnBoat, fishOnShore, onClick }: a
         <Circle $active={active} />
         <Line $active={active} />
         <Time>
-          <StyledImage src="/ship.svg" />
-          {formatDuration(startDate, endDate)}
+          <StyledImage src={skipped ? '/ship_crossed_out.svg' : '/ship.svg'} />
+          {!skipped ? formatDuration(startDate, endDate) : ''}
         </Time>
         <Line $active={active} />
         <Circle $active={active} />

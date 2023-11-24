@@ -24,12 +24,12 @@ import { RootState } from '../../state/store';
 
 interface FishingActionsProps {
   fishing: Fishing;
+  coordinates: any;
 }
-const FishingActions = ({ fishing }: FishingActionsProps) => {
+const FishingActions = ({ fishing, coordinates }: FishingActionsProps) => {
   const queryClient = useQueryClient();
   const [showFinishFishing, setShowFinishFishing] = useState(false);
   const navigate = useNavigate();
-  const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
 
   const { mutateAsync: finishFishing, isLoading: finishFishingLoading } = useMutation(
     api.finishFishing,

@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from 'react-query';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import { actions as fishingActions } from '../state/fishing/reducer';
 import { actions, initialState } from '../state/user/reducer';
 import api from './api';
 import { LOCATION_ERRORS, RoleTypes } from './constants';
@@ -107,22 +106,21 @@ export const useLogoutMutation = () => {
 };
 
 export const useGeolocationWatcher = () => {
+  const [coordinates, setCoordinates] = useState<any>();
+  const [error, setError] = useState<LOCATION_ERRORS>();
   const options = {
     enableHighAccuracy: true,
     timeout: 100000,
   };
-  const dispatch = useDispatch();
   const successHandler = (position: any) => {
-    dispatch(fishingActions.setError(null));
-    dispatch(
-      fishingActions.setCoordinates({
-        x: position.coords.longitude,
-        y: position.coords.latitude,
-      }),
-    );
+    setError(undefined);
+    setCoordinates({
+      x: position.coords.longitude,
+      y: position.coords.latitude,
+    });
   };
   const errorHandler = () => {
-    dispatch(fishingActions.setError(LOCATION_ERRORS.POINT_NOT_FOUND));
+    setError(LOCATION_ERRORS.POINT_NOT_FOUND);
   };
 
   const getCurrentPosition = () => {
@@ -135,7 +133,7 @@ export const useGeolocationWatcher = () => {
     return () => navigator.geolocation.clearWatch(id);
   }, []);
 
-  return { getCurrentPosition };
+  return { coordinates, error, getCurrentPosition };
 };
 
 export const useWindowSize = (width: string) => {
@@ -154,6 +152,7 @@ export const useWindowSize = (width: string) => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
   return isInRange;
 };
 

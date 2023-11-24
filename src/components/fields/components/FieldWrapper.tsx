@@ -36,15 +36,16 @@ const FieldWrapper = ({
       $padding={padding || '0'}
       onClick={onClick}
     >
-      <LabelRow>
-        {!!label && (
+      {!!label && (
+        <LabelRow>
           <LabelContainer>
             <Label>{label}</Label>
             {!!subLabel && <SubLabel>{subLabel}</SubLabel>}
           </LabelContainer>
-        )}
-        {secondLabel}
-      </LabelRow>
+        </LabelRow>
+      )}
+      {secondLabel}
+
       {children}
       {showError && <ErrorMessage error={error} />}
       {bottomLabel && <BottomLabel>{bottomLabel}</BottomLabel>}

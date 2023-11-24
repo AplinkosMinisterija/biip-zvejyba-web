@@ -108,7 +108,7 @@ export interface Tool {
     netLength: number;
   };
   toolType: ToolType;
-  toolGroup?: ToolsGroup;
+  toolsGroup?: ToolsGroup;
   tenant: Tenant;
   user: User;
 }

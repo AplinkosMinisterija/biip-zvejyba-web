@@ -13,9 +13,9 @@ const BackHeader = () => {
   return (
     <>
       <Container>
-        <div onClick={() => navigate(-1)}>
+        <BackButton onClick={() => navigate(-1)}>
           <BackIcon name={IconName.back} />
-        </div>
+        </BackButton>
         <Menu onClick={() => setShowMenu(true)}>
           <MenuIcon name={IconName.burger} />
           Meniu
@@ -50,7 +50,7 @@ const Menu = styled.div`
 
 const MenuIcon = styled(Icon)`
   margin-right: 4px;
-  font-size: 2rem;
+  font-size: 2.4rem;
 `;
 
 const BackIcon = styled(Icon)`
@@ -60,9 +60,7 @@ const BackIcon = styled(Icon)`
   text-decoration: none;
 `;
 
-const Title = styled.div`
-  flex-grow: 1;
-  text-align: center;
+const BackButton = styled.div`
+  padding: 16px 16px 16px 0;
 `;
-
 export default BackHeader;

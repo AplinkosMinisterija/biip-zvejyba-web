@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { EventTypes, FishingEventLabels, useFishTypes } from '../../utils';
-import DrawMap from '../other/DrawMap';
 import format from 'date-fns/format';
+import React from 'react';
+import PreviewMap from '../other/PreviewMap';
 
 const FishingEventDetails = ({ event }: any) => {
   const { fishTypes } = useFishTypes();
@@ -18,14 +19,14 @@ const FishingEventDetails = ({ event }: any) => {
   );
 
   //TODO: should be converted to wgs
-  const coords = event.geom?.features[0]?.geometry?.coordinates?.join(', ');
+  const coordinates = event.coordinates ? `${event.coordinates.x}, ${event.coordinates.y}` : '-';
 
   return (
     <Container>
       <Title>{FishingEventLabels[event.type as EventTypes]}</Title>
       {tools && <Subtitle>{tools}</Subtitle>}
       <MapContainer>
-        <DrawMap value={event?.geom} height={'150px'} preview={true} />
+        <PreviewMap value={event?.geom} height={'150px'} preview={true} />
       </MapContainer>
       <FishingInfo>
         <FishingInfoCell>
@@ -35,7 +36,7 @@ const FishingEventDetails = ({ event }: any) => {
         <Divider />
         <FishingInfoCell>
           <InfoLabel>Koordinatės</InfoLabel>
-          <div>{coords || '-'}</div>
+          <div>{coordinates}</div>
         </FishingInfoCell>
       </FishingInfo>
       {isweightEvent && (
@@ -96,6 +97,7 @@ const InfoLabel = styled.div`
   font-size: 1.4rem;
   color: ${({ theme }) => theme.colors.text.secondary};
 `;
+
 const FishingInfoCell = styled.div``;
 
 const Divider = styled.div`
@@ -109,6 +111,7 @@ const FistWeightsList = styled.ul`
   margin: 0;
   list-style: none;
 `;
+
 const FishWeightRow = styled.li`
   display: flex;
   justify-content: space-between;

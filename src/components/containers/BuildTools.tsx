@@ -11,6 +11,7 @@ import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
 import { NotFound } from '../other/NotFound';
 import ToolCardSelectable from '../cards/ToolCardSelecetable';
+import { Footer } from '../other/CommonStyles';
 
 const FishingOptions = [
   { label: 'Atskiras įrankis', value: FishingToolsType.SINGLE },
@@ -128,20 +129,6 @@ const PopupTitle = styled.div`
 
 const PopupContainer = styled.div`
   padding-top: 68px;
-`;
-
-const Footer = styled.div`
-  display: block;
-  position: sticky;
-  bottom: 0;
-  cursor: pointer;
-  padding: 16px 0;
-  text-decoration: none;
-  width: 100%;
-  background-color: white;
-  @media ${device.desktop} {
-    padding: 16px 0 0 0;
-  }
 `;
 
 const StyledButton = styled(Button)`
