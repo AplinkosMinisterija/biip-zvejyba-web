@@ -50,6 +50,7 @@ const FishingJournal = () => {
           return (
             <FishingCard
               key={`fishing_${fishing.id}`}
+              skipped={!!fishing?.skipEvent}
               startDate={fishing?.startEvent?.createdAt || fishing?.skipEvent?.createdAt}
               endDate={fishing?.endEvent?.createdAt || fishing?.skipEvent?.createdAt}
               fishOnBoat={fishing.weightEvents?.fishOnBoat}
