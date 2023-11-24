@@ -8,9 +8,7 @@ const formatDuration = (startDate?: string, endDate?: string) => {
   const durationInMinutes = differenceInMinutes(new Date(endDate), new Date(startDate), {
     roundingMethod: 'ceil',
   });
-  const durationInHours = differenceInHours(new Date(endDate), new Date(startDate), {
-    roundingMethod: 'floor',
-  });
+  const durationInHours = Math.floor(durationInMinutes / 60);
   if (!durationInHours) {
     return durationInMinutes + 'min.';
   }
