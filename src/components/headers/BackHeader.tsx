@@ -61,6 +61,6 @@ const BackIcon = styled(Icon)`
 `;
 
 const BackButton = styled.div`
-  padding: 16px;
+  padding: 16px 16px 16px 0;
 `;
 export default BackHeader;
