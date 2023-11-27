@@ -13,9 +13,8 @@ export const slugs = {
   login: `/prisijungimas`,
   profiles: '/profiliai',
   cantLogin: '/negalima_jungtis',
-  fishingLocation: '/zvejyba/vieta',
+  fishingLocation: '/zvejyba',
   fishingCurrent: `/zvejyba/mano`,
-  fishing: (fishingId: string) => `/zvejyba/${fishingId}`,
   fishingTools: `/zvejyba/mano/irankiai`,
   fishingWeight: `/zvejyba/mano/svoris`,
   fishingToolCaughtFishes: (toolId: string) => `/zvejyba/mano/irankiai/${toolId}/sugautos-zuvys`,
@@ -29,6 +28,7 @@ export const slugs = {
   updateResearch: (id: number | string) => `/moksliniai-tyrimai/${id}`,
   newResearch: `/moksliniai-tyrimai/naujas`,
   fishingJournal: '/zvejybos_zurnalas',
+  fishing: (fishingId: string) => `/zvejybos_zurnalas/${fishingId}`,
 };
 
 export type RouteType = (typeof routes)[0];
@@ -51,7 +51,7 @@ export const routes = [
     slug: slugs.fishingLocation,
     iconName: IconName.home,
     component: <CurrentFishing />,
-    regExp: new RegExp('^/zvejyba/vieta$'),
+    regExp: new RegExp('^/zvejyba$'),
   },
   {
     title: 'Mano žvejyba',
@@ -91,7 +91,7 @@ export const routes = [
     title: 'Žvejybos informacija',
     slug: slugs.fishing(':fishingId'),
     component: <Fishing />,
-    regExp: new RegExp('^/zvejyba/[0-9]+$'),
+    regExp: new RegExp('^/zvejybos_zurnalas/[0-9]+$'),
     back: true,
   },
   {
@@ -126,19 +126,10 @@ export const routes = [
     back: true,
   },
   {
-    title: 'Nustatymai',
-    subtitle: 'Pagindiniai nustatymai',
-    slug: slugs.tools,
-    component: <Tools />,
-    regExp: new RegExp('^/irankiai$'),
-    iconName: IconName.settings,
-  },
-  {
     title: 'Įrankio informacija',
     slug: slugs.tool(Ids.ID),
     component: <Tool />,
   },
-
   {
     title: 'Moksliniai tyrimai',
     subtitle: 'Mokslinių tyrimų duomenys',
