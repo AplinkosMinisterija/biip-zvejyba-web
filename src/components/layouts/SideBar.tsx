@@ -21,7 +21,7 @@ const SideBar = () => {
           <Item
             key={`sidebar_btn_${route.slug}_${index}`}
             onClick={() => navigate(route.slug)}
-            $isActive={!!matchPath({ path: route.slug, end: true }, currentLocation.pathname)}
+            $isActive={!!matchPath({ path: route.slug, end: false }, currentLocation.pathname)}
           >
             <StyledIcon name={route.iconName!} />
             <Label>{route.title}</Label>

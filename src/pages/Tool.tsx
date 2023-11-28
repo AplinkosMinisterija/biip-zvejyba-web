@@ -65,7 +65,7 @@ export const Tool = () => {
   const { data } = tool;
 
   const initialValues = {
-    type: tool?.toolType.type || ToolTypeType.NET,
+    type: tool?.toolType?.type || ToolTypeType.NET,
     toolType: tool?.toolType || null,
     sealNr: tool?.sealNr || null,
     eyeSize: data?.eyeSize,
