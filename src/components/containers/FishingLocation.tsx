@@ -60,7 +60,7 @@ const FishingLocation = () => {
 
   const handleSkipFishing = () => {
     if (location && coordinates) {
-      skipFishing({ type: location, coordinates: coordinates });
+      skipFishing({ type: location, coordinates: coordinates, note: skipReason });
     }
   };
 
