@@ -64,6 +64,7 @@ const FishingTools = ({
       api.getLocation({
         query: {
           coordinates,
+          type: locationType,
         },
       }),
     {
@@ -95,6 +96,7 @@ const FishingTools = ({
         api.getLocation({
           query: {
             coordinates,
+            type: locationType,
           },
         }),
       {

@@ -1,26 +1,25 @@
 import { map } from 'lodash';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { RootState } from '../../state/store';
-import { buttonLabels, skipOptions } from '../../utils';
+import { buttonLabels, handleAlert, LocationType, SickReasons, skipOptions } from '../../utils';
 import api from '../../utils/api';
-import { LocationType, SickReasons } from '../../utils';
-import { handleAlert } from '../../utils';
 import Button, { ButtonColors } from '../buttons/Button';
 import FishingLocationButton, { Variant } from '../buttons/FishingLocationButton';
 import PopUpWithImage from '../layouts/PopUpWithImage';
 import { Grid } from '../other/CommonStyles';
 import { IconName } from '../other/Icon';
+import SelectWaterBody from '../forms/SelectWaterBody';
 
-const FishingLocation = () => {
+const FishingLocation = ({ setLocation, location, coordinates }: any) => {
   const queryClient = useQueryClient();
   const [showStartFishing, setShowStartFishing] = useState(false);
   const [showSkipFishing, setShowSkipFishing] = useState(false);
   const [skipReason, setSkipReason] = useState(SickReasons.BAD_WEATHER);
-  const [location, setLocation] = useState<LocationType | null>(null);
-  const coordinates = useSelector((state: RootState) => state.fishing.coordinates);
+  const [showLocationPopUp, setShowLocationPopUp] = useState(false);
+  const [locationType, setLocationType] = useState<LocationType | null>(null);
 
   const { isLoading: startLoading, mutateAsync: startFishing } = useMutation(api.startFishing, {
     onError: ({ response }) => {
@@ -43,14 +42,19 @@ const FishingLocation = () => {
   });
 
   const handleSelectLocation = (type: LocationType) => () => {
-    setLocation(type);
-    setShowStartFishing(true);
+    setLocationType(type);
+    if (type === LocationType.INLAND_WATERS) {
+      setShowLocationPopUp(true);
+    } else {
+      setShowStartFishing(true);
+    }
   };
 
   const handleStartFishing = () => {
-    if (coordinates && location) {
+    console.log('handleStartFishing', coordinates, locationType);
+    if (coordinates && locationType) {
       startFishing({
-        type: location,
+        type: locationType,
         coordinates,
       });
     } else {
@@ -59,8 +63,8 @@ const FishingLocation = () => {
   };
 
   const handleSkipFishing = () => {
-    if (location && coordinates) {
-      skipFishing({ type: location, coordinates: coordinates, note: skipReason });
+    if (locationType && coordinates) {
+      skipFishing({ type: locationType, coordinates: coordinates, note: skipReason });
     }
   };
 
@@ -142,6 +146,13 @@ const FishingLocation = () => {
             {buttonLabels.cancel}
           </Button>
         </Grid>
+      </PopUpWithImage>
+      <PopUpWithImage visible={showLocationPopUp} onClose={() => setShowLocationPopUp(false)}>
+        <SelectWaterBody
+          setLocation={setLocation}
+          location={location}
+          onStartFishing={handleStartFishing}
+        />
       </PopUpWithImage>
     </>
   );
