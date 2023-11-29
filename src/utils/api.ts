@@ -1,20 +1,19 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { isEmpty } from 'lodash';
 import Cookies from 'universal-cookie';
-import { EventTypes, LocationType } from './constants';
+import { LocationType } from './constants';
 import {
-  ToolsGroup,
+  Coordinates,
+  Fishing,
+  FishingHistoryResponse,
   FishType,
+  Location,
   Research,
   TenantUser,
   Tool,
   ToolFormRequest,
+  ToolsGroup,
   User,
-  Location,
-  Coordinates,
-  Tenant,
-  FishingHistoryResponse,
-  Fishing,
 } from './types';
 
 enum Populations {
@@ -190,7 +189,7 @@ class Api {
   };
 
   delete = async ({ resource, id }: Delete) => {
-    return this.errorWrapper(() => this.fishingAxios.delete(`/api/${resource}/${id}`));
+    return this.errorWrapper(() => this.fishingAxios.delete(`/${resource}/${id}`));
   };
   post = async ({ resource, id, params }: Create) => {
     return this.errorWrapper(() =>
@@ -385,7 +384,7 @@ class Api {
 
   updateTenantUser = async (params: any, id?: string): Promise<User> => {
     return await this.patch({
-      resource: 'users',
+      resource: 'tenantUsers/update',
       params,
       id,
     });
