@@ -53,7 +53,7 @@ const Profile = () => {
       <Title>{titles.profile}</Title>
       <InfoContainer>
         <InfoTitle>{`${user.firstName} ${user.lastName}`}</InfoTitle>
-        <InfoSubTitle>{`${user.email}`}</InfoSubTitle>
+        <InfoSubTitle>{user.email}</InfoSubTitle>
       </InfoContainer>
 
       <Formik
