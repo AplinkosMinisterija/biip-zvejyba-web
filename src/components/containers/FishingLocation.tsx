@@ -13,17 +13,10 @@ import { Grid } from '../other/CommonStyles';
 import { IconName } from '../other/Icon';
 import SelectWaterBody from '../forms/SelectWaterBody';
 
-const FishingLocation = ({ setLocation, location, coordinates }: any) => {
-  const queryClient = useQueryClient();
-  const [showStartFishing, setShowStartFishing] = useState(false);
-  const [showSkipFishing, setShowSkipFishing] = useState(false);
-  const [skipReason, setSkipReason] = useState(SickReasons.BAD_WEATHER);
-  const [showLocationPopUp, setShowLocationPopUp] = useState(false);
-  const [locationType, setLocationType] = useState<LocationType | null>(null);
-
+const useLocationMutation = (onSuccess: (value: any) => void) => {
   const { mutateAsync: getLocation, isLoading: locationLoading } = useMutation(
     async ({ coordinates, type }: { coordinates: any; type: LocationType }) => {
-      if (coordinates && locationType) {
+      if (coordinates && type) {
         return await api.getLocation({
           query: JSON.stringify({
             type,
@@ -33,12 +26,24 @@ const FishingLocation = ({ setLocation, location, coordinates }: any) => {
       }
     },
     {
-      onSuccess: (value) => {
-        setLocation(value);
-      },
+      onSuccess: onSuccess,
     },
   );
+  return { getLocation, locationLoading };
+};
 
+const useSkipMutation = () => {
+  const { isLoading: skipLoading, mutateAsync: skipFishing } = useMutation(api.skipFishing, {
+    onError: ({ response }) => {
+      handleAlert(response);
+    },
+    retry: false,
+  });
+  return { skipLoading, skipFishing };
+};
+
+const useStartMutation = () => {
+  const queryClient = useQueryClient();
   const { isLoading: startLoading, mutateAsync: startFishing } = useMutation(api.startFishing, {
     onError: ({ response }) => {
       handleAlert(response);
@@ -48,13 +53,19 @@ const FishingLocation = ({ setLocation, location, coordinates }: any) => {
     },
     retry: false,
   });
+  return { startFishing, startLoading };
+};
 
-  const { isLoading: skipLoading, mutateAsync: skipFishing } = useMutation(api.skipFishing, {
-    onError: ({ response }) => {
-      handleAlert(response);
-    },
-    retry: false,
-  });
+const FishingLocation = ({ setLocation, location, coordinates }: any) => {
+  const [showStartFishing, setShowStartFishing] = useState(false);
+  const [showSkipFishing, setShowSkipFishing] = useState(false);
+  const [skipReason, setSkipReason] = useState(SickReasons.BAD_WEATHER);
+  const [showLocationPopUp, setShowLocationPopUp] = useState(false);
+  const [locationType, setLocationType] = useState<LocationType | null>(null);
+
+  const { startFishing, startLoading } = useStartMutation();
+  const { skipFishing, skipLoading } = useSkipMutation();
+  const { getLocation, locationLoading } = useLocationMutation((value) => setLocation(value));
 
   const handleSelectLocation = (type: LocationType) => () => {
     setLocationType(type);

@@ -10,21 +10,6 @@ import LoaderComponent from '../other/LoaderComponent';
 
 const SelectWaterBody = ({ location, setLocation, onStartFishing, loading }: any) => {
   const [value, setValue] = useState();
-  const { mutateAsync: getLocationMutation } = useMutation(
-    (coordinates: any) => {
-      return api.getLocation({
-        query: {
-          type: LocationType.INLAND_WATERS,
-          coordinates,
-        },
-      });
-    },
-    {
-      onSuccess: (value) => {
-        setLocation(value);
-      },
-    },
-  );
 
   const handleChangeValue = (value: any) => {
     setValue(value);
