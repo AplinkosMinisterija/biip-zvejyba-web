@@ -37,9 +37,6 @@ const FishingLocation = ({ setLocation, location, coordinates }: any) => {
       onSuccess: (value) => {
         setLocation(value);
       },
-      onError: () => {
-        handleAlert();
-      },
     },
   );
 

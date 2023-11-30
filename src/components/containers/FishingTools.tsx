@@ -54,9 +54,6 @@ const FishingTools = ({
           setLocation(value);
         }
       },
-      onError: () => {
-        handleAlert();
-      },
     },
   );
 

@@ -23,9 +23,6 @@ const SelectWaterBody = ({ location, setLocation, onStartFishing, loading }: any
       onSuccess: (value) => {
         setLocation(value);
       },
-      onError: () => {
-        handleAlert();
-      },
     },
   );
 
