@@ -248,7 +248,11 @@ class Api {
     });
   };
 
-  startFishing = async (params: { type: LocationType; coordinates: { x: number; y: number } }) => {
+  startFishing = async (params: {
+    type: LocationType;
+    coordinates: { x: number; y: number };
+    uetkCadastralId?: string;
+  }) => {
     return this.post({
       resource: 'fishings/start',
       params,

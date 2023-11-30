@@ -1,15 +1,14 @@
-import { Form } from 'formik';
-import { device, getLocationList, handleAlert, LocationType, theme } from '../../utils';
+import { buttonLabels, getLocationList, handleAlert, LocationType, theme } from '../../utils';
 import AsyncSelectField from '../fields/AsyncSelect';
-import { Footer, IconContainer } from '../other/CommonStyles';
+import { Footer, Grid } from '../other/CommonStyles';
 import Button from '../buttons/Button';
 import styled from 'styled-components';
-import Icon, { IconName } from '../other/Icon';
 import { useMutation } from 'react-query';
 import api from '../../utils/api';
 import { useState } from 'react';
+import LoaderComponent from '../other/LoaderComponent';
 
-const SelectWaterBody = ({ location, setLocation, onStartFishing }: any) => {
+const SelectWaterBody = ({ location, setLocation, onStartFishing, loading }: any) => {
   const [value, setValue] = useState();
   const { mutateAsync: getLocationMutation } = useMutation(
     (coordinates: any) => {
@@ -44,14 +43,15 @@ const SelectWaterBody = ({ location, setLocation, onStartFishing }: any) => {
   return (
     <>
       <Container>
-        <Heading>Kur žvejosite?</Heading>
         <TitleWrapper>
-          {location?.name && (
+          {loading ? (
+            <LoaderComponent />
+          ) : location?.name ? (
             <>
               <LocationName>{`${location?.name} (${location?.municipality.name})`}</LocationName>
               <LocationId>{location?.id}</LocationId>
             </>
-          )}
+          ) : null}
         </TitleWrapper>
         <StyledSelectField
           name={'location'}
@@ -66,11 +66,14 @@ const SelectWaterBody = ({ location, setLocation, onStartFishing }: any) => {
             return name;
           }}
           loadOptions={(input: string, page: number | string) => getLocationList(input, page, {})}
+          inputValue={location?.name || ''}
         />
+        <Grid $columns={1}>
+          <Button loading={loading} disabled={loading} onClick={onStartFishing}>
+            {buttonLabels.startFishing}
+          </Button>
+        </Grid>
       </Container>
-      <Footer>
-        <Button onClick={onStartFishing}>Pradėti žvejybą</Button>
-      </Footer>
     </>
   );
 };
@@ -78,18 +81,7 @@ const SelectWaterBody = ({ location, setLocation, onStartFishing }: any) => {
 export default SelectWaterBody;
 
 const Container = styled.div`
-  padding-top: 68px;
-  border: 1px solid red;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
   width: 100%;
-`;
-
-const Heading = styled.div`
-  font-size: 2.4rem;
-  font-weight: bold;
-  text-align: center;
 `;
 
 const LocationName = styled.div`
@@ -98,6 +90,7 @@ const LocationName = styled.div`
   font-weight: 900;
   text-align: center;
 `;
+
 const LocationId = styled.div`
   color: ${({ theme }) => theme.colors.text.secondary};
   text-align: center;

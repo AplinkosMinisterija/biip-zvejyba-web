@@ -21,6 +21,28 @@ const FishingLocation = ({ setLocation, location, coordinates }: any) => {
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
   const [locationType, setLocationType] = useState<LocationType | null>(null);
 
+  const { mutateAsync: getLocation, isLoading: locationLoading } = useMutation(
+    async ({ coordinates, type }: { coordinates: any; type: LocationType }) => {
+      console.log('getLocation', coordinates, type);
+      if (coordinates && locationType) {
+        return await api.getLocation({
+          query: JSON.stringify({
+            type,
+            coordinates,
+          }),
+        });
+      }
+    },
+    {
+      onSuccess: (value) => {
+        setLocation(value);
+      },
+      onError: () => {
+        handleAlert();
+      },
+    },
+  );
+
   const { isLoading: startLoading, mutateAsync: startFishing } = useMutation(api.startFishing, {
     onError: ({ response }) => {
       handleAlert(response);
@@ -35,15 +57,14 @@ const FishingLocation = ({ setLocation, location, coordinates }: any) => {
     onError: ({ response }) => {
       handleAlert(response);
     },
-    onSuccess: () => {
-      //TODO: display success message
-    },
     retry: false,
   });
 
   const handleSelectLocation = (type: LocationType) => () => {
     setLocationType(type);
     if (type === LocationType.INLAND_WATERS) {
+      console.log('handleSelectLocation', type, locationType);
+      getLocation({ coordinates, type });
       setShowLocationPopUp(true);
     } else {
       setShowStartFishing(true);
@@ -51,11 +72,11 @@ const FishingLocation = ({ setLocation, location, coordinates }: any) => {
   };
 
   const handleStartFishing = () => {
-    console.log('handleStartFishing', coordinates, locationType);
     if (coordinates && locationType) {
       startFishing({
         type: locationType,
         coordinates,
+        uetkCadastralId: location?.id,
       });
     } else {
       handleAlert('Nepavyko nustatyti lokacijos');
@@ -147,11 +168,17 @@ const FishingLocation = ({ setLocation, location, coordinates }: any) => {
           </Button>
         </Grid>
       </PopUpWithImage>
-      <PopUpWithImage visible={showLocationPopUp} onClose={() => setShowLocationPopUp(false)}>
+      <PopUpWithImage
+        title={'Kur žvejosite?'}
+        iconName={IconName.startFishing}
+        visible={showLocationPopUp}
+        onClose={() => setShowLocationPopUp(false)}
+      >
         <SelectWaterBody
           setLocation={setLocation}
           location={location}
           onStartFishing={handleStartFishing}
+          loading={locationLoading}
         />
       </PopUpWithImage>
     </>

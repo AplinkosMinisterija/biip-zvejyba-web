@@ -50,7 +50,9 @@ const FishingTools = ({
     },
     {
       onSuccess: (value) => {
-        setLocation(value);
+        if (value) {
+          setLocation(value);
+        }
       },
       onError: () => {
         handleAlert();
@@ -68,8 +70,8 @@ const FishingTools = ({
         },
       }),
     {
-      onSuccess: (data) => {
-        if (data && !location) setLocation(data);
+      onSuccess: (value) => {
+        if (value && !location) setLocation(value);
       },
       retry: false,
     },
@@ -164,7 +166,7 @@ const FishingTools = ({
                   loading={locationFetching}
                   disabled={locationFetching}
                   variant={ButtonColors.SECONDARY}
-                  onClick={handleRefreshLocation}
+                  onClick={() => getLocationMutation(coordinates)}
                 >
                   {'Atnaujinti lokaciją'}
                 </Button>
