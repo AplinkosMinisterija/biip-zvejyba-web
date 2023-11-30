@@ -1,13 +1,14 @@
 import { IconName } from '../components/other/Icon';
 import CurrentFishing from '../pages/CurrentFishing';
+import Fishing from '../pages/Fishing';
+import FishingJournal from '../pages/FishingJournal';
+import Profile from '../pages/Profile';
 import Profiles from '../pages/Profiles';
 import Research from '../pages/Research';
 import Tool from '../pages/Tool';
 import Tools from '../pages/Tools';
 import UserForm from '../pages/User';
 import Users from '../pages/Users';
-import FishingJournal from '../pages/FishingJournal';
-import Fishing from '../pages/Fishing';
 
 export const slugs = {
   login: `/prisijungimas`,
@@ -153,5 +154,11 @@ export const routes = [
     slug: slugs.updateResearch(Ids.ID),
     component: <Research />,
     isInvestigator: true,
+  },
+  {
+    title: 'Profilis',
+    slug: slugs.profile,
+    component: <Profile />,
+    iconName: IconName.profile,
   },
 ];

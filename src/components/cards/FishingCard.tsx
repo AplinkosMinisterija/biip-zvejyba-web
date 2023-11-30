@@ -1,5 +1,5 @@
+import { differenceInMinutes, format } from 'date-fns';
 import styled from 'styled-components';
-import { format, differenceInHours, differenceInMinutes } from 'date-fns';
 import Icon, { IconName } from '../other/Icon';
 const formatDuration = (startDate?: string, endDate?: string) => {
   if (!startDate || !endDate) {
@@ -18,7 +18,7 @@ const formatDuration = (startDate?: string, endDate?: string) => {
 
 const Months = [
   'Sausio',
-  'Vasarion',
+  'Vasario',
   'Kovo',
   'Balandžio',
   'Gegužės',
@@ -53,7 +53,8 @@ const getWeightString = (fishOnBoat: any, fishOnShore: any) => {
 const FishingCard = ({ startDate, endDate, fishOnBoat, fishOnShore, skipped, onClick }: any) => {
   const month: string = startDate ? format(new Date(startDate), 'M') : '';
   const dayOfMonth = startDate ? format(new Date(startDate), 'd') : '';
-  const day = `${Months[Number(month)]} ${dayOfMonth}d.`;
+
+  const day = `${Months[Number(month) - 1]} ${dayOfMonth}d.`;
 
   const startHours = startDate ? format(new Date(startDate), 'HH:mm') : '';
   const endHours = endDate ? format(new Date(endDate), 'HH:mm') : 'Žvejojama';

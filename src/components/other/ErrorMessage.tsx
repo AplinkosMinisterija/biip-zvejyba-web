@@ -9,12 +9,8 @@ export const ErrorMessage = ({ error }: { error?: string }) => {
 const Container = styled.label`
   display: block;
   width: 100%;
-  max-width: 200px;
   color: ${({ theme }) => theme.colors.error};
   font-size: 1.4rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   height: 2.4rem;
   margin-bottom: 8px;
 `;

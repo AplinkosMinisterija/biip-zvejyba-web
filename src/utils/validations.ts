@@ -13,7 +13,7 @@ export const profileSchema = Yup.object().shape({
   phone: Yup.string()
     .required(validationTexts.requireText)
     .trim()
-    .matches(/(86|\+3706)\d{7}/, validationTexts.badPhoneFormat),
+    .matches(/(86|\+3706)\d{7}$/, validationTexts.badPhoneFormat),
 });
 
 export const tenantUserSchema = profileSchema.shape({

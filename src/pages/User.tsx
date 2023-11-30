@@ -1,4 +1,5 @@
 import { Form, Formik } from 'formik';
+import { useEffect } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -24,7 +25,7 @@ import {
 } from '../utils';
 import api from '../utils/api';
 import { RoleTypes } from '../utils/constants';
-import { useGetCurrentRoute } from '../utils/hooks';
+import { useAppSelector, useGetCurrentRoute } from '../utils/hooks';
 
 export interface UserProps {
   email?: string;
@@ -33,17 +34,24 @@ export interface UserProps {
 
 export const UserForm = () => {
   const currentRoute = useGetCurrentRoute();
-  const { id } = useParams();
+  const { id = '' } = useParams();
   const navigate = useNavigate();
+  const currentUser = useAppSelector((state) => state?.user?.userData);
 
-  const { data: tenantUser, isLoading } = useQuery(['user', id], () => api.getUser(id!), {
-    onError: () => {},
-  });
+  const { data: tenantUser, isLoading } = useQuery(['user', id], () => api.getUser(id));
 
   const user = tenantUser?.user;
 
+  useEffect(() => {
+    if (!user) return;
+
+    if (user?.id === currentUser.id) {
+      navigate(slugs.profile);
+    }
+  }, [user]);
+
   const { mutateAsync: updateUserMutation } = useMutation(
-    (values: UserProps) => api.updateTenantUser({ ...values, tenantUserId: id }, user?.id),
+    (values: UserProps) => api.updateTenantUser(values, id),
     {
       onError: () => {
         handleAlert();
@@ -57,7 +65,7 @@ export const UserForm = () => {
 
   const fullName = `${user?.firstName} ${user?.lastName}`;
 
-  const { mutateAsync: deleteUserMutation } = useMutation(() => api.deleteUser(id!), {
+  const { mutateAsync: deleteUserMutation } = useMutation(() => api.deleteUser(id), {
     onError: () => {
       handleAlert();
     },
