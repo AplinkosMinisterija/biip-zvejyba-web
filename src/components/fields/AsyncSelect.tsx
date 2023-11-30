@@ -70,7 +70,6 @@ const AsyncSelectField = ({
     optionsKey,
   });
 
-  console.log('iiiiii', input, inputValue);
   return (
     <FieldWrapper
       onClick={handleToggleSelect}

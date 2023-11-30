@@ -281,7 +281,6 @@ class Api {
     });
   };
   getLocation = async (params: any) => {
-    console.log('request location', params);
     return this.get({
       resource: 'locations',
       ...params,

@@ -23,7 +23,6 @@ const FishingLocation = ({ setLocation, location, coordinates }: any) => {
 
   const { mutateAsync: getLocation, isLoading: locationLoading } = useMutation(
     async ({ coordinates, type }: { coordinates: any; type: LocationType }) => {
-      console.log('getLocation', coordinates, type);
       if (coordinates && locationType) {
         return await api.getLocation({
           query: JSON.stringify({
@@ -60,7 +59,6 @@ const FishingLocation = ({ setLocation, location, coordinates }: any) => {
   const handleSelectLocation = (type: LocationType) => () => {
     setLocationType(type);
     if (type === LocationType.INLAND_WATERS) {
-      console.log('handleSelectLocation', type, locationType);
       getLocation({ coordinates, type });
       setShowLocationPopUp(true);
     } else {
