@@ -36,10 +36,10 @@ const OptionsContainer = ({
 
     return (
       <>
-        {values.map((option) => {
+        {values.map((option, index) => {
           return (
             <Option
-              key={JSON.stringify(option)}
+              key={JSON.stringify(option) + index}
               onClick={() => {
                 handleClick(option);
               }}
