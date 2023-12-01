@@ -32,11 +32,12 @@ const useLocationMutation = (onSuccess: (value: any) => void) => {
   return { getLocation, locationLoading };
 };
 
-const useSkipMutation = () => {
+const useSkipMutation = (onSuccess: () => void) => {
   const { isLoading: skipLoading, mutateAsync: skipFishing } = useMutation(api.skipFishing, {
     onError: ({ response }) => {
       handleAlert(response);
     },
+    onSuccess,
     retry: false,
   });
   return { skipLoading, skipFishing };
@@ -64,7 +65,7 @@ const FishingLocation = ({ setLocation, location, coordinates }: any) => {
   const [locationType, setLocationType] = useState<LocationType | null>(null);
 
   const { startFishing, startLoading } = useStartMutation();
-  const { skipFishing, skipLoading } = useSkipMutation();
+  const { skipFishing, skipLoading } = useSkipMutation(() => setShowSkipFishing(false));
   const { getLocation, locationLoading } = useLocationMutation((value) => setLocation(value));
 
   const handleSelectLocation = (type: LocationType) => () => {
