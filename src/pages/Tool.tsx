@@ -18,11 +18,14 @@ import { useGetCurrentRoute } from '../utils/hooks';
 
 export const Tool = () => {
   const currentRoute = useGetCurrentRoute();
-  const { id } = useParams();
+  const { id = '' } = useParams();
   const navigate = useNavigate();
 
-  const { data: tool, isLoading } = useQuery(['user', id], () => api.getTool(id!), {
-    onError: () => {},
+  const { data: tool, isLoading } = useQuery(['tool', id], () => api.getTool(id), {
+    onError: () => {
+      navigate(slugs.tools);
+    },
+    enabled: !!id,
     retry: false,
   });
 

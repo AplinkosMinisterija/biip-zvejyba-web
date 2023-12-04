@@ -511,7 +511,7 @@ class Api {
     });
   };
 
-  getFishingHistory = async ({ id }: { id: number | string }): Promise<FishingHistoryResponse> =>
+  getFishingHistory = async ({ id }: { id: string }): Promise<FishingHistoryResponse> =>
     this.get({
       resource: `fishings/history`,
       id: id.toString(),

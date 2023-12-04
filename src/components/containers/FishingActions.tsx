@@ -47,7 +47,6 @@ const FishingActions = ({ fishing, coordinates, isDisabled }: FishingActionsProp
       retry: false,
     },
   );
-
   const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
     ['fishingWeights'],
     api.getFishingWeights,
