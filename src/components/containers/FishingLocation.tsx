@@ -84,6 +84,7 @@ const FishingLocation = ({ coordinates, isDisabled }: any) => {
 
   const handleSelectLocation = (type: LocationType) => () => {
     setLocationType(type);
+    dispatch(actions.setLocation(undefined));
     if (type === LocationType.INLAND_WATERS) {
       getLocation({ coordinates, type });
       setShowLocationPopUp(true);

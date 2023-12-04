@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { actions } from '../../state/fishing/reducer';
-import { buttonLabels, getLocationList, useAppSelector } from '../../utils';
+import { buttonLabels, getLocationList, useAppSelector, validationTexts } from '../../utils';
 import Button from '../buttons/Button';
 import AsyncSelectField from '../fields/AsyncSelect';
 import { Grid } from '../other/CommonStyles';
@@ -9,11 +10,23 @@ import LoaderComponent from '../other/LoaderComponent';
 
 const SelectWaterBody = ({ onStartFishing, loading }: any) => {
   const location = useAppSelector((state) => state.fishing.location);
+  const [error, setError] = useState('');
+
   const dispatch = useDispatch();
 
   const handleChangeValue = (value: any) => {
+    setError('');
     dispatch(actions.setLocation(value));
   };
+
+  const handleSubmit = () => {
+    if (!location) return setError(validationTexts.requireSelect);
+
+    onStartFishing();
+  };
+
+  const getInputValue = (location: any) =>
+    !!location ? `${location?.name}, ${location?.cadastralId}` : '';
 
   return (
     <>
@@ -32,19 +45,15 @@ const SelectWaterBody = ({ onStartFishing, loading }: any) => {
           name={'location'}
           value={location}
           label={'Pasirinkite vandens telkinį'}
+          error={error}
           onChange={handleChangeValue}
           getOptionValue={(option) => option?.cadastralId}
-          getInputLabel={(option) => `${option?.name}, ${option?.cadastralId}`}
-          showError={false}
-          getOptionLabel={(option) => {
-            const { name } = option;
-            return name;
-          }}
+          getOptionLabel={getInputValue}
           loadOptions={(input: string, page: number | string) => getLocationList(input, page, {})}
-          inputValue={`${location?.name}, ${location?.cadastralId}`}
+          inputValue={getInputValue(location)}
         />
         <Grid $columns={1}>
-          <Button loading={loading} disabled={loading} onClick={onStartFishing}>
+          <Button loading={loading} disabled={loading} onClick={handleSubmit}>
             {buttonLabels.startFishing}
           </Button>
         </Grid>

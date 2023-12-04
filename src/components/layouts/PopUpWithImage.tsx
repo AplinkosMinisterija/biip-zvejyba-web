@@ -37,6 +37,7 @@ const PopupWrapper = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 100%;
+  flex: 1;
   gap: 16px;
 `;
 

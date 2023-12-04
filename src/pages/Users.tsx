@@ -233,6 +233,10 @@ const StyledIcon = styled(Icon)`
   font-size: 2.4rem;
   color: white;
 
+  svg {
+    stroke: ${({ theme }) => theme.colors.primary};
+  }
+
   path {
     color: white;
   }

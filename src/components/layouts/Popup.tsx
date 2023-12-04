@@ -25,7 +25,7 @@ const Container = styled.div<{ width?: string; $backgroundImg?: boolean }>`
   background-color: white;
   position: relative;
   width: 100%;
-  height: 100%;
+  margin: auto;
   ${({ $backgroundImg }) =>
     $backgroundImg
       ? ` background-image: url('/empty-bg.svg');
@@ -33,10 +33,10 @@ const Container = styled.div<{ width?: string; $backgroundImg?: boolean }>`
                 background-position: 50%;
                 background-size: cover;`
       : ''}
-  padding: 0 16px;
-  overflow-y: auto;
+
   @media ${device.desktop} {
     max-width: 700px;
+    height: auto;
     padding: 40px;
     flex-basis: auto;
     border-radius: 16px;

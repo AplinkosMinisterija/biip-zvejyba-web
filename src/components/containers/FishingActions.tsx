@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { actions } from '../../state/fishing/reducer';
 import {
   buttonLabels,
   Fishing,
@@ -32,7 +30,6 @@ const FishingActions = ({ fishing, coordinates, isDisabled }: FishingActionsProp
   const queryClient = useQueryClient();
   const [showFinishFishing, setShowFinishFishing] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const { mutateAsync: finishFishing, isLoading: finishFishingLoading } = useMutation(
     api.finishFishing,
@@ -58,7 +55,6 @@ const FishingActions = ({ fishing, coordinates, isDisabled }: FishingActionsProp
   const handleFinishFishing = () => {
     if (coordinates) {
       finishFishing({ coordinates });
-      dispatch(actions.setLocation(undefined));
     } else {
       handleErrorToast(validationTexts.mustAllowToSetCoordinates);
     }
