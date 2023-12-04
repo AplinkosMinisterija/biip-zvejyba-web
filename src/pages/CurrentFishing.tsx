@@ -45,7 +45,9 @@ export const CurrentFishing = () => {
 
   return (
     <DefaultLayout>
-      {currentRoute?.slug === slugs.fishingLocation && <FishingLocation />}
+      {currentRoute?.slug === slugs.fishingLocation && (
+        <FishingLocation setLocation={setLocation} location={location} coordinates={coordinates} />
+      )}
       {currentRoute?.slug === slugs.fishingCurrent && (
         <FishingActions fishing={currentFishing} coordinates={coordinates} />
       )}

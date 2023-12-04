@@ -32,6 +32,7 @@ export interface AsyncSelectFieldProps {
   hasOptionKey?: boolean;
   primaryKey?: string;
   haveIncludeOptions?: boolean;
+  inputValue?: string;
 }
 
 const AsyncSelectField = ({
@@ -49,6 +50,7 @@ const AsyncSelectField = ({
   loadOptions,
   dependsOnValue,
   placeholder = 'Pasirinkite',
+  inputValue,
 }: AsyncSelectFieldProps) => {
   const {
     loading,
@@ -67,6 +69,7 @@ const AsyncSelectField = ({
     dependsOnValue,
     optionsKey,
   });
+
   return (
     <FieldWrapper
       onClick={handleToggleSelect}
@@ -78,7 +81,7 @@ const AsyncSelectField = ({
       showError={showError}
     >
       <TextFieldInput
-        value={input}
+        value={input || inputValue}
         name={name}
         error={error}
         rightIcon={<StyledIcon name={'dropdownArrow'} />}
