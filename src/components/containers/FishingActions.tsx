@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { actions } from '../../state/fishing/reducer';
 import {
   buttonLabels,
-  handleAlert,
+  Fishing,
+  handleErrorToastFromServer,
   handleSuccessToast,
   LocationType,
-  validationTexts,
   slugs,
-  Fishing,
+  validationTexts,
 } from '../../utils';
 import api from '../../utils/api';
 import Button, { ButtonColors } from '../buttons/Button';
@@ -19,23 +21,23 @@ import PopUpWithImage from '../layouts/PopUpWithImage';
 import { Grid } from '../other/CommonStyles';
 import { IconName } from '../other/Icon';
 import LoaderComponent from '../other/LoaderComponent';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../state/store';
 
 interface FishingActionsProps {
   fishing: Fishing;
   coordinates: any;
+  isDisabled: boolean;
 }
-const FishingActions = ({ fishing, coordinates }: FishingActionsProps) => {
+const FishingActions = ({ fishing, coordinates, isDisabled }: FishingActionsProps) => {
   const queryClient = useQueryClient();
   const [showFinishFishing, setShowFinishFishing] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { mutateAsync: finishFishing, isLoading: finishFishingLoading } = useMutation(
     api.finishFishing,
     {
       onError: ({ response }) => {
-        handleAlert(response);
+        handleErrorToastFromServer(response);
       },
       onSuccess: () => {
         handleSuccessToast(validationTexts.fishingFinished);
@@ -56,6 +58,7 @@ const FishingActions = ({ fishing, coordinates }: FishingActionsProps) => {
   const handleFinishFishing = () => {
     if (coordinates) {
       finishFishing({ coordinates });
+      dispatch(actions.setLocation(undefined));
     }
   };
 
@@ -71,6 +74,7 @@ const FishingActions = ({ fishing, coordinates }: FishingActionsProps) => {
     <>
       <Container>
         <LargeButton
+          isDisabled={isDisabled}
           variant={Variant.FLORAL_WHITE}
           title="Tikrinkite arba</br>statykite įrankius"
           subtitle="Esate žvejybos vietoje"
@@ -81,6 +85,7 @@ const FishingActions = ({ fishing, coordinates }: FishingActionsProps) => {
         />
         {canWeigh && (
           <LargeButton
+            isDisabled={isDisabled}
             variant={Variant.GHOST_WHITE}
             title="Žuvies svoris</br>krante"
             subtitle="Pasverkite bendrą svorį"
@@ -91,6 +96,7 @@ const FishingActions = ({ fishing, coordinates }: FishingActionsProps) => {
           />
         )}
         <LargeButton
+          isDisabled={isDisabled}
           variant={Variant.AZURE}
           title="Žvejybos baigimo</br>nustatymas"
           subtitle="Užbaikite žvejybą"

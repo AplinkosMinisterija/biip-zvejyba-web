@@ -15,7 +15,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import ProfileCard from '../components/other/ProfileCard';
 import {
   buttonLabels,
-  handleAlert,
+  handleErrorToastFromServer,
   inputLabels,
   roleLabels,
   roleOptions,
@@ -99,7 +99,7 @@ export const Users = () => {
     (values: UserProps) => api.createUser(values),
     {
       onError: () => {
-        handleAlert();
+        handleErrorToastFromServer();
       },
       onSuccess: async () => {
         await queryClient.invalidateQueries(['tenantUsers']);

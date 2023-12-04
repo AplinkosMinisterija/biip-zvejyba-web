@@ -16,7 +16,7 @@ import {
 import { RootState } from '../state/store';
 import { buttonLabels, inputLabels, profileSchema, titles, User, validationTexts } from '../utils';
 import api from '../utils/api';
-import { handleAlert, handleSuccessToast } from '../utils/functions';
+import { handleErrorToastFromServer, handleSuccessToast } from '../utils/functions';
 
 export interface UserProps {
   email?: string;
@@ -33,7 +33,7 @@ const Profile = () => {
     (values: UserProps) => api.updateProfile(values),
     {
       onError: () => {
-        handleAlert();
+        handleErrorToastFromServer();
       },
       onSuccess: async () => {
         await queryClient.invalidateQueries([token]);

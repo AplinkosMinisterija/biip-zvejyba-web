@@ -13,6 +13,7 @@ export interface ResponseProps {
 export interface Location {
   id: string;
   name: string;
+  type: LocationType;
   municipality: {
     id: number;
     name: string;

@@ -15,6 +15,7 @@ interface FishingLocationButtonProps {
   image: string;
   onClick: () => void;
   variant?: Variant;
+  isDisabled?: boolean;
 }
 
 const FishingLocationButton = ({
@@ -22,13 +23,16 @@ const FishingLocationButton = ({
   title,
   image,
   onClick,
+  isDisabled = false,
 }: FishingLocationButtonProps) => {
   return (
-    <Container $variant={variant} onClick={onClick}>
+    <Container $isDisabled={isDisabled} $variant={variant} onClick={() => !isDisabled && onClick()}>
       <Image src={image} />
       <Column>
         <Title>{title}</Title>
-        <StyledButton variant={ButtonColors.TERTIARY}>Pasirinkti</StyledButton>
+        <StyledButton disabled={isDisabled} variant={ButtonColors.TERTIARY}>
+          Pasirinkti
+        </StyledButton>
       </Column>
     </Container>
   );
@@ -36,12 +40,13 @@ const FishingLocationButton = ({
 
 FishingLocationButton.variant = Variant;
 
-const Container = styled.div<{ $variant: Variant }>`
+const Container = styled.div<{ $variant: Variant; $isDisabled: boolean }>`
   width: 100%;
   background-color: ${({ theme }) => theme.colors.largeButton[Variant.GREY]};
   border-radius: 16px;
   padding: 16px;
-  cursor: pointer;
+  cursor: ${({ $isDisabled }) => ($isDisabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ $isDisabled }) => ($isDisabled ? 0.6 : 1)};
   display: grid;
   grid-template-columns: 30% 1fr;
   align-items: center;

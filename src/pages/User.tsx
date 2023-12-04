@@ -16,7 +16,7 @@ import {
   deleteDescriptionSecondPart,
   DeleteInfoProps,
   deleteTitles,
-  handleAlert,
+  handleErrorToastFromServer,
   inputLabels,
   profileSchema,
   roleLabels,
@@ -54,7 +54,7 @@ export const UserForm = () => {
     (values: UserProps) => api.updateTenantUser(values, id),
     {
       onError: () => {
-        handleAlert();
+        handleErrorToastFromServer();
       },
       onSuccess: async () => {
         navigate(slugs.users);
@@ -67,7 +67,7 @@ export const UserForm = () => {
 
   const { mutateAsync: deleteUserMutation } = useMutation(() => api.deleteUser(id), {
     onError: () => {
-      handleAlert();
+      handleErrorToastFromServer();
     },
     onSuccess: async () => {
       navigate(slugs.users);

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { device } from '../utils/theme';
 import { LoginLayout } from '../components/layouts/Login';
+import { device } from '../utils/theme';
 
 export const CantLogin = () => {
   return (
@@ -23,7 +23,8 @@ export const CantLogin = () => {
 
 const Description = styled.div`
   text-align: center;
-  font: normal normal medium 1.6rem/26px Manrope;
+  font-size: 1.6rem;
+  line-height: 26px;
   letter-spacing: 0px;
   color: #7a7e9f;
   width: 70%;
@@ -34,7 +35,8 @@ const Description = styled.div`
 
 const Or = styled.div`
   text-align: center;
-  font: normal normal medium 1.6rem/26px Manrope;
+  font-size: 1.6rem;
+  line-height: 26px;
   letter-spacing: 0px;
   margin: 16px 0;
   color: ${({ theme }) => theme.colors.primary};
@@ -43,7 +45,9 @@ const Or = styled.div`
 
 const H1 = styled.h1`
   text-align: center;
-  font: normal normal bold 32px/44px Manrope;
+  font-size: 3.2rem;
+  line-height: 44px;
+  font-weight: bold;
   letter-spacing: 0px;
   color: #121a55;
   opacity: 1;

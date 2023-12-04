@@ -1,11 +1,11 @@
 import { Form, Formik } from 'formik';
-import { getLocationList, inputLabels, locationSchema } from '../../utils';
-import SelectField from '../fields/SelectField';
-import AsyncSelectField from '../fields/AsyncSelect';
-import { Grid } from '../other/CommonStyles';
-import Button, { ButtonColors } from '../buttons/Button';
 import styled from 'styled-components';
+import { getLocationList, inputLabels, locationSchema } from '../../utils';
+import Button, { ButtonColors } from '../buttons/Button';
+import AsyncSelectField from '../fields/AsyncSelect';
+import SelectField from '../fields/SelectField';
 import TextField from '../fields/TextField';
+import { Grid } from '../other/CommonStyles';
 
 const LocationForm = ({
   initialValues,
@@ -148,7 +148,9 @@ const Or = styled.div`
 `;
 
 const SeparatorLabelContainer = styled.div`
-  font: normal normal 600 16px/40px Manrope;
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 40px;
   color: #0b1f518f;
   position: absolute;
   width: 100%;
@@ -157,7 +159,9 @@ const SeparatorLabelContainer = styled.div`
 `;
 
 const SeparatorLabel = styled.span`
-  font: normal normal 600 16px/40px Manrope;
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 40px;
   letter-spacing: 1.02px;
   color: #0b1f518f;
   background-color: white;

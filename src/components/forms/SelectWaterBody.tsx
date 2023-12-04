@@ -1,25 +1,18 @@
-import { buttonLabels, getLocationList, handleAlert, LocationType, theme } from '../../utils';
-import AsyncSelectField from '../fields/AsyncSelect';
-import { Footer, Grid } from '../other/CommonStyles';
-import Button from '../buttons/Button';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { useMutation } from 'react-query';
-import api from '../../utils/api';
-import { useState } from 'react';
+import { actions } from '../../state/fishing/reducer';
+import { buttonLabels, getLocationList, useAppSelector } from '../../utils';
+import Button from '../buttons/Button';
+import AsyncSelectField from '../fields/AsyncSelect';
+import { Grid } from '../other/CommonStyles';
 import LoaderComponent from '../other/LoaderComponent';
 
-const SelectWaterBody = ({ location, setLocation, onStartFishing, loading }: any) => {
-  const [value, setValue] = useState();
+const SelectWaterBody = ({ onStartFishing, loading }: any) => {
+  const location = useAppSelector((state) => state.fishing.location);
+  const dispatch = useDispatch();
 
   const handleChangeValue = (value: any) => {
-    setValue(value);
-    setLocation({
-      id: value.cadastralId,
-      name: value.name,
-      municipality: {
-        name: value.municipality,
-      },
-    });
+    dispatch(actions.setLocation(value));
   };
 
   return (
@@ -37,7 +30,7 @@ const SelectWaterBody = ({ location, setLocation, onStartFishing, loading }: any
         </TitleWrapper>
         <StyledSelectField
           name={'location'}
-          value={value}
+          value={location}
           label={'Pasirinkite vandens telkinį'}
           onChange={handleChangeValue}
           getOptionValue={(option) => option?.cadastralId}

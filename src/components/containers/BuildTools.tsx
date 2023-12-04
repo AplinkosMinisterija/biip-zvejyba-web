@@ -2,16 +2,15 @@ import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { Coordinates, handleAlert } from '../../utils';
-import { Location } from '../../utils/types';
+import { Coordinates, handleErrorToastFromServer } from '../../utils';
 import api from '../../utils/api';
 import { FishingToolsType } from '../../utils/constants';
-import { device } from '../../utils/theme';
+import { Location } from '../../utils/types';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
-import { NotFound } from '../other/NotFound';
 import ToolCardSelectable from '../cards/ToolCardSelecetable';
 import { Footer } from '../other/CommonStyles';
+import { NotFound } from '../other/NotFound';
 
 const FishingOptions = [
   { label: 'Atskiras įrankis', value: FishingToolsType.SINGLE },
@@ -43,7 +42,7 @@ const BuildTools = ({ onClose, location, coordinates }: BuiltToolsProps) => {
         onClose();
       },
       onError: ({ response }: any) => {
-        handleAlert(response);
+        handleErrorToastFromServer(response);
       },
     },
   );

@@ -16,6 +16,7 @@ interface LargeButtonProps {
   buttonLabel: string;
   onClick: () => void;
   variant?: Variant;
+  isDisabled: boolean;
 }
 
 const LargeButton = ({
@@ -23,20 +24,23 @@ const LargeButton = ({
   title,
   subtitle,
   buttonLabel,
+  isDisabled,
   onClick,
 }: LargeButtonProps) => {
   return (
-    <Container $variant={variant} onClick={onClick}>
+    <Container $isDisabled={isDisabled} $variant={variant} onClick={() => !isDisabled && onClick()}>
       <Title dangerouslySetInnerHTML={{ __html: title }} />
       <Row>
         <Subtitle>{subtitle}</Subtitle>
-        <StyledButton variant={ButtonColors.TERTIARY}>{buttonLabel}</StyledButton>
+        <StyledButton disabled={isDisabled} variant={ButtonColors.TERTIARY}>
+          {buttonLabel}
+        </StyledButton>
       </Row>
     </Container>
   );
 };
 
-const Container = styled.div<{ $variant: Variant }>`
+const Container = styled.div<{ $variant: Variant; $isDisabled: boolean }>`
   padding: 20px;
   grid-template-columns: 1fr;
   gap: 0;
@@ -44,6 +48,8 @@ const Container = styled.div<{ $variant: Variant }>`
   background-repeat: no-repeat;
   background-position: 50%;
   background-size: cover;
+  cursor: ${({ $isDisabled }) => ($isDisabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ $isDisabled }) => ($isDisabled ? 0.6 : 1)};
   border-radius: 16px;
   background-color: ${({ theme, $variant }) => theme.colors.largeButton[$variant]};
 `;

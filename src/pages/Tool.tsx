@@ -9,7 +9,7 @@ import {
   deleteDescriptionSecondPart,
   DeleteInfoProps,
   deleteTitles,
-  handleAlert,
+  handleErrorToastFromServer,
   slugs,
   ToolTypeType,
 } from '../utils';
@@ -31,7 +31,7 @@ export const Tool = () => {
       api.updateTool({ sealNr, toolType: toolType?.id, data: rest }, id!),
     {
       onError: () => {
-        handleAlert();
+        handleErrorToastFromServer();
       },
       onSuccess: async () => {
         navigate(slugs.tools);
@@ -42,7 +42,7 @@ export const Tool = () => {
 
   const { mutateAsync: deleteToolMutation } = useMutation(() => api.deleteTool(id!), {
     onError: () => {
-      handleAlert();
+      handleErrorToastFromServer();
     },
     onSuccess: async () => {
       navigate(slugs.tools);

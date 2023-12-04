@@ -1,7 +1,7 @@
 import { map } from 'lodash';
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
-import { device, handleAlert } from '../../utils';
+import { device, handleErrorToastFromServer } from '../../utils';
 import Icon, { IconName } from '../other/Icon';
 import LoaderComponent from '../other/LoaderComponent';
 import FieldWrapper from './components/FieldWrapper';
@@ -67,9 +67,9 @@ const DragAndDropUploadField = ({
 
   const handleSetFiles = async (currentFiles: File[]) => {
     const isValidFileTypes = validateFileTypes(currentFiles, availableMimeTypes);
-    if (!isValidFileTypes) return handleAlert();
+    if (!isValidFileTypes) return handleErrorToastFromServer();
     const isValidFileSizes = validateFileSizes(currentFiles);
-    if (!isValidFileSizes) return handleAlert();
+    if (!isValidFileSizes) return handleErrorToastFromServer();
 
     if (onUpload) {
       setUploadLoading(true);
