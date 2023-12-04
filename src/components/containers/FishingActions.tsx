@@ -7,6 +7,7 @@ import { actions } from '../../state/fishing/reducer';
 import {
   buttonLabels,
   Fishing,
+  handleErrorToast,
   handleErrorToastFromServer,
   handleSuccessToast,
   LocationType,
@@ -59,6 +60,8 @@ const FishingActions = ({ fishing, coordinates, isDisabled }: FishingActionsProp
     if (coordinates) {
       finishFishing({ coordinates });
       dispatch(actions.setLocation(undefined));
+    } else {
+      handleErrorToast(validationTexts.mustAllowToSetCoordinates);
     }
   };
 

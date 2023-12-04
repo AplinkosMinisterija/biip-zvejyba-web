@@ -15,8 +15,6 @@ const SelectWaterBody = ({ onStartFishing, loading }: any) => {
     dispatch(actions.setLocation(value));
   };
 
-  console.log(location, 'location');
-
   return (
     <>
       <Container>

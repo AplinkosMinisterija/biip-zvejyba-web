@@ -107,6 +107,8 @@ const FishingLocation = ({ coordinates, isDisabled }: any) => {
   const handleSkipFishing = () => {
     if (locationType && coordinates) {
       skipFishing({ type: locationType, coordinates: coordinates, note: skipReason });
+    } else {
+      handleErrorToast(validationTexts.mustAllowToSetCoordinates);
     }
   };
 
