@@ -15,6 +15,8 @@ const SelectWaterBody = ({ onStartFishing, loading }: any) => {
     dispatch(actions.setLocation(value));
   };
 
+  console.log(location, 'location');
+
   return (
     <>
       <Container>
@@ -23,7 +25,7 @@ const SelectWaterBody = ({ onStartFishing, loading }: any) => {
             <LoaderComponent />
           ) : location?.name ? (
             <>
-              <LocationName>{`${location?.name} (${location?.municipality.name})`}</LocationName>
+              <LocationName>{`${location?.name}, ${location?.cadastralId} (${location?.municipality})`}</LocationName>
               <LocationId>{location?.id}</LocationId>
             </>
           ) : null}
@@ -34,14 +36,14 @@ const SelectWaterBody = ({ onStartFishing, loading }: any) => {
           label={'Pasirinkite vandens telkinį'}
           onChange={handleChangeValue}
           getOptionValue={(option) => option?.cadastralId}
-          getInputLabel={(option) => option?.name}
+          getInputLabel={(option) => `${option?.name}, ${option?.cadastralId}`}
           showError={false}
           getOptionLabel={(option) => {
             const { name } = option;
             return name;
           }}
           loadOptions={(input: string, page: number | string) => getLocationList(input, page, {})}
-          inputValue={location?.name || ''}
+          inputValue={`${location?.name}, ${location?.cadastralId}`}
         />
         <Grid $columns={1}>
           <Button loading={loading} disabled={loading} onClick={onStartFishing}>

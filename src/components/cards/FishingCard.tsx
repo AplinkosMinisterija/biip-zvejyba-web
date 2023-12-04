@@ -103,6 +103,12 @@ const Container = styled.div<{ $active: boolean }>`
   color: grey;
   display: grid;
   text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  &:hover {
+    background-color: #f5f6fe;
+    border: 1px solid ${({ theme }) => theme.colors.primary};
+  }
 `;
 
 const Row = styled.div`

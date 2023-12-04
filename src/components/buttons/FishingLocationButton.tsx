@@ -55,6 +55,7 @@ const Container = styled.div<{ $variant: Variant; $isDisabled: boolean }>`
   background-repeat: no-repeat;
   background-position: 50%;
   background-size: cover;
+  border: 1px solid transparent;
   &:hover {
     background-color: #f5f6fe;
     border: 1px solid ${({ theme }) => theme.colors.primary};
