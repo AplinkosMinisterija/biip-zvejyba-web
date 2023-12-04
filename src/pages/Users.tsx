@@ -231,7 +231,14 @@ const Invisible = styled.div`
 const StyledIcon = styled(Icon)`
   cursor: pointer;
   font-size: 2.4rem;
-  color: ${({ theme }) => theme.colors.powder};
+  color: white;
+
+  path {
+    color: white;
+  }
+  circle {
+    color: white;
+  }
 `;
 
 const Container = styled.div`
