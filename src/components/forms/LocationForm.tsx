@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { getLocationList, inputLabels, locationSchema } from '../../utils';
 import Button, { ButtonColors } from '../buttons/Button';
 import AsyncSelectField from '../fields/AsyncSelect';
+import NumericTextField from '../fields/NumericTextField';
 import SelectField from '../fields/SelectField';
-import TextField from '../fields/TextField';
 import { Grid } from '../other/CommonStyles';
 
 const LocationForm = ({
@@ -14,14 +14,6 @@ const LocationForm = ({
   bars,
   onClose,
 }: any) => {
-  const preventNumInputFromScrolling = (e: any) =>
-    e.target.addEventListener(
-      'wheel',
-      function (e: any) {
-        e.preventDefault();
-      },
-      { passive: false },
-    );
   return (
     <Container>
       <Heading>Esate kitur?</Heading>
@@ -79,27 +71,21 @@ const LocationForm = ({
               </Or>
 
               <Grid $columns={2}>
-                <TextField
+                <NumericTextField
                   label="Ilguma"
                   name="x"
                   value={values.x || ''}
                   error={errors.x}
-                  height={56}
                   onChange={(e) => setFieldValue('x', Number(e))}
-                  type="number"
-                  pattern={/^\d*\.?\d*$/}
-                  onFocus={preventNumInputFromScrolling}
+                  digitsAfterComma={12}
                 />
-                <TextField
+                <NumericTextField
                   label="Platuma"
                   name="y"
                   value={values.y || ''}
                   error={errors.y}
-                  height={56}
                   onChange={(e) => setFieldValue('y', Number(e))}
-                  type="number"
-                  pattern={/^\d*\.?\d*$/}
-                  onFocus={preventNumInputFromScrolling}
+                  digitsAfterComma={12}
                 />
               </Grid>
               <Grid>

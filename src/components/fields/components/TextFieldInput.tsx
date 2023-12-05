@@ -13,6 +13,7 @@ export interface TextFieldProps {
   placeholder?: string;
   type?: string;
   selectedValue?: boolean;
+  onFocus?: any;
 }
 
 const TextFieldInput = ({
@@ -29,6 +30,7 @@ const TextFieldInput = ({
   height = 56,
   selectedValue = false,
   onInputClick,
+  onFocus = () => {},
   ...rest
 }: TextFieldProps) => {
   return (
@@ -45,6 +47,7 @@ const TextFieldInput = ({
         onChange={(e) => onChange && onChange(e?.target?.value || '')}
         placeholder={placeholder}
         disabled={disabled}
+        onFocus={onFocus}
         {...rest}
       />
       {rightIcon}

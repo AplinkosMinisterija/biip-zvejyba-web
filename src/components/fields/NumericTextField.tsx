@@ -23,7 +23,6 @@ export interface NumericTextFieldProps {
   digitsAfterComma?: number;
   secondLabel?: JSX.Element;
   subLabel?: string;
-  type?: string;
 }
 
 const NumericTextField = ({
@@ -37,7 +36,6 @@ const NumericTextField = ({
   padding,
   onChange,
   placeholder,
-  type,
   disabled,
   height,
   showError,
@@ -53,11 +51,21 @@ const NumericTextField = ({
       }
     }
   };
+  const preventNumInputFromScrolling = (e: any) =>
+    e.target.addEventListener(
+      'wheel',
+      function (e: any) {
+        e.preventDefault();
+      },
+      { passive: false },
+    );
 
   const handleChange = (input: string) => {
     const regex = !digitsAfterComma
       ? new RegExp(/^\d*$/)
       : new RegExp(`^(?:\\d+)?(?:[.,]\\d{0,${digitsAfterComma}})?$`);
+
+    console.log(regex.test(input), 'input', input);
 
     if (regex.test(input)) onChange(input.replaceAll(',', '.'));
   };
@@ -75,7 +83,7 @@ const NumericTextField = ({
       <TextFieldInput
         value={value}
         name={name}
-        type={type}
+        type={'number'}
         error={error}
         leftIcon={leftIcon}
         rightIcon={rightIcon}
@@ -84,6 +92,7 @@ const NumericTextField = ({
         height={height}
         onInputClick={onInputClick}
         placeholder={placeholder}
+        onFocus={preventNumInputFromScrolling}
       />
     </FieldWrapper>
   );
