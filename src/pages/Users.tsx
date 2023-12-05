@@ -263,6 +263,7 @@ const FormContainer = styled(Form)`
   width: 100%;
   display: flex;
   flex-direction: column;
+  padding: 16px;
   gap: 40px;
 `;
 

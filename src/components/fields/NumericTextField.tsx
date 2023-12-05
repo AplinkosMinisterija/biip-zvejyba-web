@@ -84,6 +84,7 @@ const NumericTextField = ({
         value={value}
         name={name}
         type={'number'}
+        inputMode="numeric"
         error={error}
         leftIcon={leftIcon}
         rightIcon={rightIcon}

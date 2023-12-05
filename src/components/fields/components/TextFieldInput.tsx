@@ -12,6 +12,7 @@ export interface TextFieldProps {
   onInputClick?: () => void;
   placeholder?: string;
   type?: string;
+  inputMode?: any;
   selectedValue?: boolean;
   onFocus?: any;
 }
@@ -30,6 +31,7 @@ const TextFieldInput = ({
   height = 56,
   selectedValue = false,
   onInputClick,
+  inputMode = 'text',
   onFocus = () => {},
   ...rest
 }: TextFieldProps) => {
@@ -48,6 +50,7 @@ const TextFieldInput = ({
         placeholder={placeholder}
         disabled={disabled}
         onFocus={onFocus}
+        inputMode={inputMode}
         {...rest}
       />
       {rightIcon}
