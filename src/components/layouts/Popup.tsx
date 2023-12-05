@@ -25,6 +25,7 @@ const Container = styled.div<{ width?: string; $backgroundImg?: boolean }>`
   background-color: white;
   position: relative;
   width: 100%;
+  min-height: 100%;
   margin: auto;
   ${({ $backgroundImg }) =>
     $backgroundImg
@@ -37,6 +38,7 @@ const Container = styled.div<{ width?: string; $backgroundImg?: boolean }>`
   @media ${device.desktop} {
     max-width: 700px;
     height: auto;
+    min-height: auto;
     padding: 40px;
     flex-basis: auto;
     border-radius: 16px;

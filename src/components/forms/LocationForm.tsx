@@ -14,6 +14,9 @@ const LocationForm = ({
   bars,
   onClose,
 }: any) => {
+  const getInputValue = (location: any) =>
+    !!location ? `${location?.name}, ${location?.cadastralId}` : '';
+
   return (
     <Container>
       <Heading>Esate kitur?</Heading>
@@ -47,16 +50,13 @@ const LocationForm = ({
                   value={values.location}
                   error={errors.location}
                   onChange={(value) => {
-                    const { lat, lng, name } = value;
-                    setFieldValue('location', { x: lng, y: lat, name });
+                    const { lat, lng, name, cadastralId } = value;
+                    setFieldValue('location', { x: lng, y: lat, name, cadastralId });
                   }}
                   getOptionValue={(option) => option?.cadastralId}
-                  getInputLabel={(option) => option?.name}
                   showError={false}
-                  getOptionLabel={(option) => {
-                    const { name } = option;
-                    return name;
-                  }}
+                  getOptionLabel={getInputValue}
+                  inputValue={getInputValue(values.location)}
                   loadOptions={(input: string, page: number | string) =>
                     getLocationList(input, page, {})
                   }
@@ -105,7 +105,7 @@ const LocationForm = ({
 export default LocationForm;
 
 const Container = styled.div`
-  padding-top: 68px;
+  padding: 68px 16px 16px 16px;
 `;
 
 const Heading = styled.div`
