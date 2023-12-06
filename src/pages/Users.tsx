@@ -246,7 +246,6 @@ const StyledIcon = styled(Icon)`
     svg {
       color: white;
     }
-
     path {
       color: white;
     }
