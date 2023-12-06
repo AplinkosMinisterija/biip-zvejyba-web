@@ -76,15 +76,16 @@ const LocationForm = ({
                   name="x"
                   value={values.x || ''}
                   error={errors.x}
-                  onChange={(e) => setFieldValue('x', Number(e))}
+                  onChange={(e) => setFieldValue('x', e)}
                   digitsAfterComma={12}
                 />
+
                 <NumericTextField
                   label="Platuma"
                   name="y"
                   value={values.y || ''}
                   error={errors.y}
-                  onChange={(e) => setFieldValue('y', Number(e))}
+                  onChange={(e) => setFieldValue('y', e)}
                   digitsAfterComma={12}
                 />
               </Grid>

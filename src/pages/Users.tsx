@@ -231,16 +231,22 @@ const Invisible = styled.div`
 const StyledIcon = styled(Icon)`
   cursor: pointer;
   font-size: 2.4rem;
-  color: white;
-
   svg {
-    stroke: ${({ theme }) => theme.colors.primary};
+    color: white;
   }
-
+  rect {
+    color: white;
+  }
   path {
     color: white;
   }
   circle {
+    color: white;
+  }
+  polyline {
+    color: white;
+  }
+  line {
     color: white;
   }
 `;

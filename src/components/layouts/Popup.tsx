@@ -26,7 +26,6 @@ const Container = styled.div<{ width?: string; $backgroundImg?: boolean }>`
   position: relative;
   width: 100%;
   min-height: 100%;
-  height: 100%;
   margin: auto;
   padding: 16px;
   ${({ $backgroundImg }) =>

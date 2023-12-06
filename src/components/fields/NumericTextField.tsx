@@ -65,8 +65,6 @@ const NumericTextField = ({
       ? new RegExp(/^\d*$/)
       : new RegExp(`^(?:\\d+)?(?:[.,]\\d{0,${digitsAfterComma}})?$`);
 
-    console.log(regex.test(input), 'input', input);
-
     if (regex.test(input)) onChange(input.replaceAll(',', '.'));
   };
 
@@ -83,7 +81,6 @@ const NumericTextField = ({
       <TextFieldInput
         value={value}
         name={name}
-        type={'number'}
         inputMode="decimal"
         error={error}
         leftIcon={leftIcon}

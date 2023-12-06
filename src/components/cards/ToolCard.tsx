@@ -28,6 +28,7 @@ const ToolCard = ({ tool, onClick }: ToolCardProps) => {
 };
 
 const Container = styled.div`
+  cursor: pointer;
   grid-template-columns: 48px 1fr;
   width: 100%;
   align-items: center;
