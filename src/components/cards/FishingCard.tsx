@@ -39,14 +39,14 @@ const getWeightString = (fishOnBoat: any, fishOnShore: any) => {
     const weightOnShore =
       Object.values(fishOnShore.data)
         .flat()
-        .reduce((acc: any, current: any) => acc + current, 0) || '';
+        .reduce((acc: any, current: any) => acc + Number(current), 0) || '';
     return weightOnShore ? `${weightOnShore}kg` : '';
   }
   const weightOnBoat =
     Object.values(fishOnBoat || {})
       ?.map((e: any) => Object.values(e.data))
       .flat()
-      .reduce((acc: any, current: any) => acc + current, 0) || '';
+      .reduce((acc: any, current: any) => acc + Number(current), 0) || '';
   return weightOnBoat ? `~${weightOnBoat}kg` : '';
 };
 

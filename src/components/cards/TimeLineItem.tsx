@@ -42,7 +42,7 @@ const TimelineItem = ({ event, isLast }: any) => {
     ? Object.values(event.data?.fish || event.data || {})
     : [];
 
-  const sum = weights.reduce((partialSum: number = 0, val: number) => partialSum + val, 0);
+  const sum = weights.reduce((partialSum: number = 0, val: number) => partialSum + Number(val), 0);
 
   const weightLabel =
     type === EventTypes.WEIGHT_ON_BOAT
