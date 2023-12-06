@@ -234,20 +234,25 @@ const StyledIcon = styled(Icon)`
   svg {
     color: white;
   }
-  rect {
-    color: white;
-  }
+
   path {
     color: white;
   }
   circle {
     color: white;
   }
-  polyline {
-    color: white;
-  }
-  line {
-    color: white;
+
+  &:hover {
+    svg {
+      color: white;
+    }
+
+    path {
+      color: white;
+    }
+    circle {
+      color: white;
+    }
   }
 `;
 
