@@ -1,9 +1,9 @@
-import Icon, { IconName } from '../other/Icon';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { device } from '../../utils/theme';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 import MobileMenu from '../layouts/MobileMenu';
+import Icon, { IconName } from '../other/Icon';
 
 const BackHeader = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -56,6 +56,7 @@ const MenuIcon = styled(Icon)`
 const BackIcon = styled(Icon)`
   align-items: center;
   display: flex;
+  font-size: 2.4rem;
   gap: 4px;
   text-decoration: none;
 `;
