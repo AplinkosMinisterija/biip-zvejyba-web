@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Cookies from 'universal-cookie';
 import Button from '../components/buttons/Button';
 import TextField from '../components/fields/TextField';
+import LogoHeader from '../components/headers/LogoHeader';
 import DefaultLayoutWrapper from '../components/layouts/DefaultLayoutWrapper';
 import {
   Grid,
@@ -50,6 +51,7 @@ const Profile = () => {
 
   return (
     <DefaultLayoutWrapper>
+      <LogoHeader />
       <Title>{titles.profile}</Title>
       <InfoContainer>
         <InfoTitle>{`${user.firstName} ${user.lastName}`}</InfoTitle>

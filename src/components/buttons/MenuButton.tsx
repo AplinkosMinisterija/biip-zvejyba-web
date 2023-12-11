@@ -17,6 +17,7 @@ const MenuButton = ({ label, icon, onClick, isActive = false }: MenuButtonProps)
   );
 };
 const Container = styled.div<{ $isActive: boolean }>`
+  cursor: pointer;
   grid-template-columns: 48px 1fr 32px;
   align-items: center;
   font-size: 2rem;
