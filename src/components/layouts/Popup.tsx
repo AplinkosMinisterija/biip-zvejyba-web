@@ -40,6 +40,7 @@ const Container = styled.div<{ width?: string; $backgroundImg?: boolean }>`
   @media ${device.desktop} {
     max-width: 700px;
     height: auto;
+    overflow: initial;
     min-height: auto;
     padding: 40px;
     flex-basis: auto;

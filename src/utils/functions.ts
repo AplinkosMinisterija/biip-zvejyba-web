@@ -157,8 +157,25 @@ export const getToolTypeList = async (input: string, page: number, toolType: Too
   });
 };
 
-export const getLocationList = async (input: string, page: number | string, query: any) => {
-  return await api.getLocations({ search: input, page, query });
+export const getLocationList = async (input: string, page: number | string) => {
+  return await api.getLocations({
+    search: input,
+    page,
+    query: {
+      category: {
+        $in: [
+          'RIVER',
+          'CANAL',
+          'INTERMEDIATE_WATER_BODY',
+          'TERRITORIAL_WATER_BODY',
+          'NATURAL_LAKE',
+          'PONDED_LAKE',
+          'POND',
+          'ISOLATED_WATER_BODY',
+        ],
+      },
+    },
+  });
 };
 
 function getCentroid(bbox: number[]) {

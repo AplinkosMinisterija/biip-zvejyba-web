@@ -224,7 +224,7 @@ const ResearchForm = () => {
                   showError={false}
                   getOptionLabel={getWaterBodyLabel}
                   loadOptions={(input: string, page: number | string) =>
-                    getLocationList(input, page, {})
+                    getLocationList(input, page)
                   }
                 />
               )}

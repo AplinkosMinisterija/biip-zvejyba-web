@@ -36,8 +36,8 @@ const SelectWaterBody = ({ onStartFishing, loading }: any) => {
             <LoaderComponent />
           ) : location?.name ? (
             <>
-              <LocationName>{`${location?.name}, ${location?.cadastralId} (${location?.municipality})`}</LocationName>
-              <LocationId>{location?.id}</LocationId>
+              <LocationName>{`${location?.name} (${location?.municipality})`}</LocationName>
+              <LocationId>{location?.cadastralId}</LocationId>
             </>
           ) : null}
         </TitleWrapper>
@@ -49,7 +49,7 @@ const SelectWaterBody = ({ onStartFishing, loading }: any) => {
           onChange={handleChangeValue}
           getOptionValue={(option) => option?.cadastralId}
           getOptionLabel={getInputValue}
-          loadOptions={(input: string, page: number | string) => getLocationList(input, page, {})}
+          loadOptions={(input: string, page: number | string) => getLocationList(input, page)}
           inputValue={getInputValue(location)}
         />
         <Grid $columns={1}>

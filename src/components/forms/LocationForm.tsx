@@ -58,7 +58,7 @@ const LocationForm = ({
                   getOptionLabel={getInputValue}
                   inputValue={getInputValue(values.location)}
                   loadOptions={(input: string, page: number | string) =>
-                    getLocationList(input, page, {})
+                    getLocationList(input, page)
                   }
                 />
               )}

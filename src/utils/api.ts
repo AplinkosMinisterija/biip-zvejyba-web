@@ -115,37 +115,12 @@ class Api {
     return data;
   };
 
-  getCommonConfigs = ({
-    page,
-    populate,
-    sort,
-    filter,
-    pageSize,
-    search,
-    municipalityId,
-    query,
-    searchFields,
-    scope,
-    geom,
-    fields,
-    responseType,
-  }: GetAll) => {
+  getCommonConfigs = ({ page, pageSize, ...rest }: GetAll) => {
     return {
       params: {
         pageSize: pageSize || 10,
         page: page || 1,
-        ...(!!populate && { populate }),
-        ...(!!searchFields && { searchFields }),
-        ...(!!search && { search }),
-        ...(!!municipalityId && { municipalityId }),
-        ...(!!geom && { geom }),
-        ...(!!filter && { filter }),
-        ...(!!sort && { sort }),
-        ...(!!geom && { geom }),
-        ...(!!query && { query }),
-        ...(!!scope && { scope }),
-        ...(!!fields && { fields }),
-        ...(!!responseType && { responseType }),
+        ...rest,
       },
     };
   };
