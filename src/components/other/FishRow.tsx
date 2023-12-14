@@ -42,12 +42,11 @@ const FishRow = ({ onChange, fish }: FishRowProp) => {
             placeholder="0"
             name="personalCode"
             value={amount}
-            onChange={(amount) => onChange(amount)}
+            onChange={(amount) => onChange(Number(amount))}
             pattern={/[0-9]+/}
             inputMode="numeric"
             onFocus={preventNumInputFromScrolling}
           />
-
           <Button type="button" onClick={() => onChange(amount + 1)}>
             +
           </Button>
