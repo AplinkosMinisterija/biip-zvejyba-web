@@ -72,13 +72,13 @@ const FishingTools = ({ coordinates, isDisabled }: { coordinates: any; isDisable
       onSuccess: (value) => {
         if (value) dispatch(actions.setLocation(value));
       },
-      enabled: !isDisabled || coordinates || !location,
+      enabled: !isDisabled && coordinates && !location,
       retry: false,
     },
   );
 
   const { data: bars } = useQuery(['bars'], async () => getBars(), {
-    enabled: isEstuary,
+    enabled: !isDisabled && isEstuary,
     retry: false,
   });
 
@@ -87,7 +87,7 @@ const FishingTools = ({ coordinates, isDisabled }: { coordinates: any; isDisable
     () => api.getBuiltTools({ locationId: location?.id }),
     {
       retry: false,
-      enabled: !!location?.id,
+      enabled: !isDisabled && !!location?.id,
     },
   );
 
