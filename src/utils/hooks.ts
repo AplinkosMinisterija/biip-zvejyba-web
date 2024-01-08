@@ -3,7 +3,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { actions, initialState } from '../state/user/reducer';
 import api from './api';
 import { LOCATION_ERRORS, RoleTypes } from './constants';
-import { clearCookies, handleAlert, handleSetProfile } from './functions';
+import { clearCookies, handleErrorToastFromServer, handleSetProfile } from './functions';
 
 import { useEffect, useState } from 'react';
 import { matchPath, useLocation } from 'react-router';
@@ -30,7 +30,7 @@ export const useCheckAuthMutation = () => {
         return;
       }
 
-      return handleAlert();
+      return handleErrorToastFromServer();
     },
     onSuccess: (data: User) => {
       if (data) {
@@ -48,7 +48,7 @@ export const useCheckAuthMutation = () => {
 export const useEGatesSign = () => {
   const { mutateAsync, isLoading } = useMutation(api.eGatesSign, {
     onError: () => {
-      handleAlert();
+      handleErrorToastFromServer();
     },
     onSuccess: ({ url }) => {
       window.location.replace(url);
@@ -95,7 +95,7 @@ export const useLogoutMutation = () => {
   const dispatch = useDispatch();
   const { mutateAsync } = useMutation(() => api.logout(), {
     onError: () => {
-      handleAlert();
+      handleErrorToastFromServer();
     },
     onSuccess: () => {
       clearCookies();
@@ -119,8 +119,8 @@ export const useGeolocationWatcher = () => {
       y: position.coords.latitude,
     });
   };
-  const errorHandler = () => {
-    setError(LOCATION_ERRORS.POINT_NOT_FOUND);
+  const errorHandler = ({ code }: any) => {
+    setError(code);
   };
 
   const getCurrentPosition = () => {

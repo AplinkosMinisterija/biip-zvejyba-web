@@ -15,7 +15,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import ProfileCard from '../components/other/ProfileCard';
 import {
   buttonLabels,
-  handleAlert,
+  handleErrorToastFromServer,
   inputLabels,
   roleLabels,
   roleOptions,
@@ -99,7 +99,7 @@ export const Users = () => {
     (values: UserProps) => api.createUser(values),
     {
       onError: () => {
-        handleAlert();
+        handleErrorToastFromServer();
       },
       onSuccess: async () => {
         await queryClient.invalidateQueries(['tenantUsers']);
@@ -231,7 +231,28 @@ const Invisible = styled.div`
 const StyledIcon = styled(Icon)`
   cursor: pointer;
   font-size: 2.4rem;
-  color: ${({ theme }) => theme.colors.powder};
+  svg {
+    color: white;
+  }
+
+  path {
+    color: white;
+  }
+  circle {
+    color: white;
+  }
+
+  &:hover {
+    svg {
+      color: white;
+    }
+    path {
+      color: white;
+    }
+    circle {
+      color: white;
+    }
+  }
 `;
 
 const Container = styled.div`
@@ -252,6 +273,7 @@ const FormContainer = styled(Form)`
   width: 100%;
   display: flex;
   flex-direction: column;
+  padding: 16px;
   gap: 40px;
 `;
 

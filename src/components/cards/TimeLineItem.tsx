@@ -1,10 +1,10 @@
+import format from 'date-fns/format';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { EventTypes, FishingEventLabels, theme } from '../../utils';
-import format from 'date-fns/format';
-import Icon, { IconName } from '../other/Icon';
-import Popup from '../layouts/Popup';
-import { useState } from 'react';
 import FishingEventDetails from '../containers/FishingEventDetails';
+import Popup from '../layouts/Popup';
+import Icon, { IconName } from '../other/Icon';
 
 const IconColors = {
   [EventTypes.START]: theme.colors.yellow,
@@ -42,7 +42,7 @@ const TimelineItem = ({ event, isLast }: any) => {
     ? Object.values(event.data?.fish || event.data || {})
     : [];
 
-  const sum = weights.reduce((partialSum: number = 0, val: number) => partialSum + val, 0);
+  const sum = weights.reduce((partialSum: number = 0, val: number) => partialSum + Number(val), 0);
 
   const weightLabel =
     type === EventTypes.WEIGHT_ON_BOAT
@@ -178,6 +178,7 @@ const MoreButton = styled.div`
   display: flex;
   align-items: center;
   padding-top: 16px;
+  cursor: pointer;
 `;
 
 const IconNext = styled(Icon)`

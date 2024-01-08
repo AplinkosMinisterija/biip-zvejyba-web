@@ -1,34 +1,34 @@
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
-import { RootState } from '../../state/store';
+import styled from 'styled-components';
 import {
   getBuiltToolInfo,
-  handleAlert,
+  handleErrorToastFromServer,
   slugs,
   ToolsGroup,
   useAppSelector,
   useFishTypes,
   useGetCurrentRoute,
 } from '../../utils';
-import React, { useEffect, useState } from 'react';
 import api from '../../utils/api';
-import LoaderComponent from '../other/LoaderComponent';
-import FishRow from '../other/FishRow';
-import { Footer } from '../other/CommonStyles';
-import styled from 'styled-components';
 import Button from '../buttons/Button';
+import { Footer } from '../other/CommonStyles';
+import FishRow from '../other/FishRow';
+import LoaderComponent from '../other/LoaderComponent';
 
 export const CaughtFishesWithTool = ({
-  location,
   coordinates,
+  isDisabled,
 }: {
-  location: any;
   coordinates: any;
+  isDisabled: boolean;
 }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const currentRoute = useGetCurrentRoute();
   const { fishTypes, isLoading } = useFishTypes();
+  const location = useAppSelector((state) => state.fishing.location);
   const { toolId } = useParams();
   const [amounts, setAmounts] = useState<{ [key: number]: number }>({});
 
@@ -51,7 +51,7 @@ export const CaughtFishesWithTool = ({
         navigate(-1);
       },
       onError: () => {
-        handleAlert();
+        handleErrorToastFromServer();
       },
     },
   );
@@ -93,7 +93,7 @@ export const CaughtFishesWithTool = ({
       <Footer>
         <StyledButton
           loading={weighToolsIsLoading}
-          disabled={weighToolsIsLoading}
+          disabled={weighToolsIsLoading || isDisabled}
           onClick={handleSubmit}
         >
           Saugoti pakeitimus

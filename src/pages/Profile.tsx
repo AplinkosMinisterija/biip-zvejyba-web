@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Cookies from 'universal-cookie';
 import Button from '../components/buttons/Button';
 import TextField from '../components/fields/TextField';
+import LogoHeader from '../components/headers/LogoHeader';
 import DefaultLayoutWrapper from '../components/layouts/DefaultLayoutWrapper';
 import {
   Grid,
@@ -16,7 +17,7 @@ import {
 import { RootState } from '../state/store';
 import { buttonLabels, inputLabels, profileSchema, titles, User, validationTexts } from '../utils';
 import api from '../utils/api';
-import { handleAlert, handleSuccessToast } from '../utils/functions';
+import { handleErrorToastFromServer, handleSuccessToast } from '../utils/functions';
 
 export interface UserProps {
   email?: string;
@@ -33,7 +34,7 @@ const Profile = () => {
     (values: UserProps) => api.updateProfile(values),
     {
       onError: () => {
-        handleAlert();
+        handleErrorToastFromServer();
       },
       onSuccess: async () => {
         await queryClient.invalidateQueries([token]);
@@ -50,6 +51,7 @@ const Profile = () => {
 
   return (
     <DefaultLayoutWrapper>
+      <LogoHeader />
       <Title>{titles.profile}</Title>
       <InfoContainer>
         <InfoTitle>{`${user.firstName} ${user.lastName}`}</InfoTitle>

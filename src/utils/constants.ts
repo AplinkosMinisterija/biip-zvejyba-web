@@ -29,6 +29,7 @@ export enum LOCATION_ERRORS {
   GEOLOCATION_NOT_SUPPORTE = 4,
   PERMISSION_REQUIRED = 5,
   OTHER = 6,
+  POSITION_UNAVAILABLE = 2,
 }
 
 export enum LocationType {

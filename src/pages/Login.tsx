@@ -12,7 +12,7 @@ import api from '../utils/api';
 import {
   getErrorMessage,
   getReactQueryErrorMessage,
-  handleAlert,
+  handleErrorToastFromServer,
   handleUpdateTokens,
 } from '../utils/functions';
 import { useCheckAuthMutation, useEGatesSign, useWindowSize } from '../utils/hooks';
@@ -34,7 +34,7 @@ export const Login = () => {
         return setErrors({ password: text });
       }
 
-      handleAlert();
+      handleErrorToastFromServer();
     },
     onSuccess: (data) => {
       handleUpdateTokens(data);

@@ -28,7 +28,7 @@ const FormLayout = ({
         <>
           <GridItem $justify={'start'}>
             <IconContainer onClick={() => navigate(-1)}>
-              <Icon name={IconName.back} />
+              <BackIcon name={IconName.back} />
             </IconContainer>
           </GridItem>
           <GridItem $justify={'center'}>
@@ -69,6 +69,14 @@ export const TitleGridRow = styled.div<{ $widthEdit: boolean }>`
 
 const EditIcon = styled(Icon)`
   font-size: 1.7em;
+`;
+
+const BackIcon = styled(Icon)`
+  align-items: center;
+  display: flex;
+  font-size: 2.4rem;
+  gap: 4px;
+  text-decoration: none;
 `;
 
 const FormTitleGrid = styled.div`

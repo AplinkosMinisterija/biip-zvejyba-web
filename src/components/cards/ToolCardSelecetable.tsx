@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import Icon, { IconName } from '../other/Icon';
 import { Tool } from '../../utils';
+import Icon, { IconName } from '../other/Icon';
 interface ToolCardSelectable {
   tool: Tool;
   onSelect: (toolId: number) => void;
@@ -25,13 +25,13 @@ const Container = styled.div`
   width: 100%;
   align-items: center;
   background-color: ${({ theme }) => theme.colors.largeButton.GREY};
-  border: 1px solid var(--transparent-color);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
   display: grid;
   text-decoration: none;
   gap: 12px;
+  border: 1px solid transparent;
   &:hover {
     background-color: #f5f6fe;
     border: 1px solid ${({ theme }) => theme.colors.primary};

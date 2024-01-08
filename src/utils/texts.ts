@@ -1,4 +1,4 @@
-import { EventTypes, LOCATION_ERRORS, RoleTypes, ServerErrors } from './constants';
+import { EventTypes, RoleTypes, ServerErrors } from './constants';
 export const validationTexts = {
   requireMap: 'Privalote pasirinkti vietą žemėlapyje',
   requirePhotos: 'Privalote įkelti nuotrauką',
@@ -29,6 +29,8 @@ export const validationTexts = {
   atLeastOneColumn: 'Turi būti pasirinktas bent vienas stulpelis',
   profileUpdated: 'Profilis atnaujintas',
   fishingFinished: 'Žvejyba pabaigta',
+  failedToSetLocation: 'Nepavyko nustatyti lokacijos',
+  mustAllowToSetCoordinates: 'Privalote leisti nustatyti kordinates',
 };
 
 export const titles = {

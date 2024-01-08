@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Coordinates } from '../../utils';
+import { Coordinates, Location } from '../../utils';
 
 export interface FishingReducerProps {
   currentFishing?: number;

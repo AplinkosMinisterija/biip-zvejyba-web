@@ -100,6 +100,7 @@ const Option = styled.div<{ $isActive: boolean }>`
   @media ${device.desktop} {
     border-radius: 2px;
   }
+  border: 1px solid transparent;
   &:hover {
     background-color: #f5f6fe;
     border: 1px solid ${({ theme }) => theme.colors.primary};

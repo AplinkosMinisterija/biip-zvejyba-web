@@ -168,6 +168,7 @@ const FormContainer = styled(Form)`
   width: 100%;
   display: flex;
   flex-direction: column;
+  padding: 16px;
 `;
 
 const SectionTitle = styled.div`
@@ -185,6 +186,7 @@ export const ToolTypeContainer = styled.div`
 const ToolDetails = styled.div<{ $columns?: number }>`
   display: grid;
   grid-template-columns: repeat(${({ $columns }) => $columns || 2}, 1fr);
+
   gap: 16px;
   width: 100%;
   @media ${device.mobileL} {

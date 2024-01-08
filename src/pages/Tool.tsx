@@ -9,7 +9,7 @@ import {
   deleteDescriptionSecondPart,
   DeleteInfoProps,
   deleteTitles,
-  handleAlert,
+  handleErrorToastFromServer,
   slugs,
   ToolTypeType,
 } from '../utils';
@@ -18,11 +18,14 @@ import { useGetCurrentRoute } from '../utils/hooks';
 
 export const Tool = () => {
   const currentRoute = useGetCurrentRoute();
-  const { id } = useParams();
+  const { id = '' } = useParams();
   const navigate = useNavigate();
 
-  const { data: tool, isLoading } = useQuery(['user', id], () => api.getTool(id!), {
-    onError: () => {},
+  const { data: tool, isLoading } = useQuery(['tool', id], () => api.getTool(id), {
+    onError: () => {
+      navigate(slugs.tools);
+    },
+    enabled: !!id,
     retry: false,
   });
 
@@ -31,7 +34,7 @@ export const Tool = () => {
       api.updateTool({ sealNr, toolType: toolType?.id, data: rest }, id!),
     {
       onError: () => {
-        handleAlert();
+        handleErrorToastFromServer();
       },
       onSuccess: async () => {
         navigate(slugs.tools);
@@ -42,7 +45,7 @@ export const Tool = () => {
 
   const { mutateAsync: deleteToolMutation } = useMutation(() => api.deleteTool(id!), {
     onError: () => {
-      handleAlert();
+      handleErrorToastFromServer();
     },
     onSuccess: async () => {
       navigate(slugs.tools);
@@ -80,7 +83,7 @@ export const Tool = () => {
       infoTitle={tool?.toolType?.label}
       infoSubTitle={tool?.sealNr}
       back={currentRoute?.back}
-      deleteInfo={deleteInfo}
+      deleteInfo={!tool.toolsGroup && deleteInfo}
     >
       <Container>
         <ToolForm
