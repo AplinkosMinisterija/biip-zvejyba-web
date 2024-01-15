@@ -21,6 +21,9 @@ import {
   validationTexts,
 } from '../utils';
 import api from '../utils/api';
+
+const infoToEnableTheLocationUrl = 'https://zuvys.biip.lt/dokumentacija/zvejyba/lokacija/';
+
 export const CurrentFishing = () => {
   const { coordinates, error } = useGeolocationWatcher();
   const navigate = useNavigate();
@@ -71,7 +74,13 @@ export const CurrentFishing = () => {
         }
       >
         <Grid>
-          <Button onClick={() => {}}>{'Skaityti instrukciją'}</Button>
+          <Button
+            onClick={() => {
+              window.location.href = infoToEnableTheLocationUrl;
+            }}
+          >
+            {'Skaityti instrukciją'}
+          </Button>
           <Button
             variant={ButtonColors.SECONDARY}
             onClick={() => setShowLocationDeniedPopUp(false)}
