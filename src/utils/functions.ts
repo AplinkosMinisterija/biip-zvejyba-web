@@ -5,7 +5,7 @@ import api from './api';
 import { LOCATION_ERRORS, ToolTypeType } from './constants';
 import { routes } from './routes';
 import { validationTexts } from './texts';
-import { Profile, ProfileId, ResponseProps, ToolsGroup, ToolsGroupEvent } from './types';
+import { Profile, ProfileId, ResponseProps, ToolsGroup, Location } from './types';
 const cookies = new Cookies();
 
 export const clearCookies = () => {
@@ -153,8 +153,12 @@ export const getToolTypeList = async (input: string, page: number, toolType: Too
   });
 };
 
-export const getLocationList = async (input: string, page: number | string, query: any) => {
-  return await api.getLocations({ search: input, page, query });
+export const getLocationList = async (
+  input: string,
+  page: number | string,
+  query: any = {},
+): Promise<Location> => {
+  return api.getLocations({ search: input, page, query });
 };
 
 function getCentroid(bbox: number[]) {

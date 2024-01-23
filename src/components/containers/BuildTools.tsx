@@ -6,7 +6,6 @@ import { Coordinates, handleAlert } from '../../utils';
 import { Location } from '../../utils/types';
 import api from '../../utils/api';
 import { FishingToolsType } from '../../utils/constants';
-import { device } from '../../utils/theme';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
 import { NotFound } from '../other/NotFound';

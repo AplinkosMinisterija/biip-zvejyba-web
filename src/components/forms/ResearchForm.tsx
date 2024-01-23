@@ -18,6 +18,7 @@ import { Grid } from '../other/CommonStyles';
 import DrawMap from '../other/DrawMap';
 import LoaderComponent from '../other/LoaderComponent';
 import ResearchFishItem from '../other/ResearchFishItem';
+import { Location } from '../../utils/types';
 
 enum FormTypes {
   UETK = 'UETK',
@@ -169,14 +170,15 @@ const ResearchForm = () => {
 
   if (researchLoading) return <LoaderComponent />;
 
-  const getWaterBodyLabel = (option: any) => {
+  const getWaterBodyLabel = (option: Location) => {
     const { name, municipality, area, cadastralId } = option;
     if (!name) return '';
 
     const areaValue = area ? `${(area / 10000).toFixed(3)} ha` : '';
 
-    return `${name || ''} ${cadastralId || ''} ${municipality || ''}  ${areaValue}`;
+    return `${name} ${cadastralId} ${municipality}  ${areaValue}`;
   };
+
   return (
     <Formik
       enableReinitialize={true}
@@ -217,7 +219,7 @@ const ResearchForm = () => {
                   showError={false}
                   getOptionLabel={getWaterBodyLabel}
                   loadOptions={(input: string, page: number | string) =>
-                    getLocationList(input, page, {})
+                    getLocationList(input, page)
                   }
                 />
               )}

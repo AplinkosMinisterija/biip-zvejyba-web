@@ -12,11 +12,10 @@ export interface ResponseProps {
 
 export interface Location {
   id: string;
+  cadastralId: string;
   name: string;
-  municipality: {
-    id: number;
-    name: string;
-  };
+  area: number;
+  municipality: string;
 }
 
 export interface Coordinates {
