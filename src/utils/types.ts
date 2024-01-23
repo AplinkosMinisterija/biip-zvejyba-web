@@ -199,3 +199,7 @@ export interface FishingHistoryResponse {
     data?: any;
   }[];
 }
+
+export interface GenericObject {
+  [key: string]: any;
+}

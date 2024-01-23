@@ -112,19 +112,19 @@ export const useGeolocationWatcher = () => {
     enableHighAccuracy: true,
     timeout: 100000,
   };
-  const successHandler = (position: any) => {
+  const successHandler = (position: GeolocationPosition) => {
     setError(undefined);
     setCoordinates({
       x: position.coords.longitude,
       y: position.coords.latitude,
     });
   };
-  const errorHandler = ({ code }: any) => {
+  const errorHandler = ({ code }: GeolocationPositionError) => {
     setError(code);
   };
 
   const getCurrentPosition = () => {
-    navigator.geolocation.getCurrentPosition(successHandler, errorHandler, options);
+    navigator.geolocation.getCurrentPosition(successHandler, () => {}, options);
   };
 
   useEffect(() => {

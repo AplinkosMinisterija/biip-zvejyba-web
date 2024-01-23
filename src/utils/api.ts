@@ -216,10 +216,10 @@ class Api {
       resource: 'fishings/current',
     });
   };
-  getFishing = async (id: number | string) => {
+  getFishing = async (id: string) => {
     return this.get({
       resource: 'fishings',
-      id: id.toString(),
+      id,
     });
   };
 
@@ -490,7 +490,7 @@ class Api {
   getFishingHistory = async ({ id }: { id: string }): Promise<FishingHistoryResponse> =>
     this.get({
       resource: `fishings/history`,
-      id: id.toString(),
+      id,
     });
 }
 
