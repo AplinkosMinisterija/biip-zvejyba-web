@@ -160,22 +160,10 @@ export const UserForm = () => {
   );
 };
 
-const StyledIcon = styled(Icon)`
-  cursor: pointer;
-  font-size: 2.4rem;
-`;
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 40px;
-  width: 100%;
-`;
-
-const UsersContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
   width: 100%;
 `;
 

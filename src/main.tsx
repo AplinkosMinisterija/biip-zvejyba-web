@@ -16,7 +16,6 @@ import App from './App';
 import redux from './state/store';
 import { GlobalStyle, theme } from './utils/theme';
 import ErrorBoundary from './components/other/ErrorBoundary';
-import { withErrorBoundary } from '@sentry/react';
 
 const queryClient = new QueryClient();
 
