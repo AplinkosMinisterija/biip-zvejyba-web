@@ -88,14 +88,6 @@ const DeleteButtonContainer = styled.div`
   }
 `;
 
-const DeleteButton = styled(Button)`
-  button {
-    border-color: ${({ theme }) => theme.colors.danger};
-    color: ${({ theme }) => theme.colors.danger};
-  }
-  min-width: fit-content;
-`;
-
 const StyledIcon = styled(Icon)`
   cursor: pointer;
   font-size: 1.8rem;
