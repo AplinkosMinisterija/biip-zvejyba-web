@@ -1,9 +1,7 @@
 import { map } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { RootState } from '../../state/store';
 import { buttonLabels, handleAlert, LocationType, SickReasons, skipOptions } from '../../utils';
 import api from '../../utils/api';
 import Button, { ButtonColors } from '../buttons/Button';
