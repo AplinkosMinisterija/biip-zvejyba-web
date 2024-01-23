@@ -12,7 +12,6 @@ const PopUpWithImage = ({
   rejectLoading,
   iconName,
 }: any) => {
-  const disabled = submitLoading || rejectLoading;
   return (
     <Popup visible={visible} onClose={onClose}>
       <PopupWrapper>
