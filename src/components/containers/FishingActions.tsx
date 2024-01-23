@@ -19,8 +19,6 @@ import PopUpWithImage from '../layouts/PopUpWithImage';
 import { Grid } from '../other/CommonStyles';
 import { IconName } from '../other/Icon';
 import LoaderComponent from '../other/LoaderComponent';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../state/store';
 
 interface FishingActionsProps {
   fishing: Fishing;

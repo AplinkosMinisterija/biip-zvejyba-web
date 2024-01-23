@@ -15,7 +15,6 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 import api from '../../utils/api';
-import { actions } from '../../state/fishing/reducer';
 import styled from 'styled-components';
 
 const FishingTools = ({
@@ -27,8 +26,6 @@ const FishingTools = ({
   location: any;
   coordinates: any;
 }) => {
-  const queryClient = useQueryClient();
-  const dispatch = useDispatch();
   const [showBuildTools, setShowBuildTools] = useState(false);
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
   const [selectedToolsGroup, setSelectedToolsGroup] = useState<ToolsGroup>();
@@ -88,22 +85,6 @@ const FishingTools = ({
   );
 
   const initialValues = { location: '', x: '', y: '' };
-  const handleRefreshLocation = () => {
-    const data = queryClient.fetchQuery(
-      ['location'],
-      () =>
-        api.getLocation({
-          query: {
-            coordinates,
-            type: locationType,
-          },
-        }),
-      {
-        retry: false,
-      },
-    );
-    dispatch(actions.setLocation(data));
-  };
   const handleSetLocationManually = (values: any) => {
     const { location, x, y } = values;
     if (location) {

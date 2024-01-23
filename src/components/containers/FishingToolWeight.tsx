@@ -1,12 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
-import { RootState } from '../../state/store';
 import {
   getBuiltToolInfo,
   handleAlert,
   slugs,
   ToolsGroup,
-  useAppSelector,
   useFishTypes,
   useGetCurrentRoute,
 } from '../../utils';
