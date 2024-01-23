@@ -176,7 +176,7 @@ const ResearchForm = () => {
 
     const areaValue = area ? `${(area / 10000).toFixed(3)} ha` : '';
 
-    return `${name} ${cadastralId} ${municipality}  ${areaValue}`;
+    return `${name || ''} ${cadastralId || ''} ${municipality || ''}  ${areaValue}`;
   };
 
   return (
