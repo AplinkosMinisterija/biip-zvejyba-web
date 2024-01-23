@@ -133,10 +133,6 @@ const StyledCloseButton = styled(Icon)`
   }
 `;
 
-const StyledButton = styled(Button)`
-  width: 100%;
-`;
-
 const IconContainer = styled.div`
   cursor: pointer;
   position: absolute;
