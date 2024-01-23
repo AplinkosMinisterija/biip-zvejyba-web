@@ -6,7 +6,7 @@ import FishingLocation from '../components/containers/FishingLocation';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import LoaderComponent from '../components/other/LoaderComponent';
 import api from '../utils/api';
-import { getCurrentRoute, useGeolocationWatcher, slugs, Ids } from '../utils';
+import { getCurrentRoute, useGeolocationWatcher, slugs } from '../utils';
 import FishingTools from '../components/containers/FishingTools';
 import FishingToolWeight from '../components/containers/FishingToolWeight';
 import FishingWeight from '../components/containers/FishingWeight';

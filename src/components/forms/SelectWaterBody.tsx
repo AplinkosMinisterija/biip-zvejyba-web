@@ -1,10 +1,8 @@
-import { buttonLabels, getLocationList, handleAlert, LocationType, theme } from '../../utils';
+import { buttonLabels, getLocationList } from '../../utils';
 import AsyncSelectField from '../fields/AsyncSelect';
-import { Footer, Grid } from '../other/CommonStyles';
+import { Grid } from '../other/CommonStyles';
 import Button from '../buttons/Button';
 import styled from 'styled-components';
-import { useMutation } from 'react-query';
-import api from '../../utils/api';
 import { useState } from 'react';
 import LoaderComponent from '../other/LoaderComponent';
 
