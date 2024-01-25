@@ -21,7 +21,7 @@ const FishingWeight = ({ coordinates, isDisabled }: { coordinates: any; isDisabl
   const { fishTypes, isLoading } = useFishTypes();
   const isCaught = type === FishingWeighType.CAUGHT;
   const navigate = useNavigate();
-  const [amounts, setAmounts] = useState<{ [key: number]: number }>({});
+  const [amounts, setAmounts] = useState<{ [key: string]: number }>({});
 
   const {
     data: fishingWeights = { preliminary: {}, total: {} },
@@ -54,7 +54,19 @@ const FishingWeight = ({ coordinates, isDisabled }: { coordinates: any; isDisabl
   );
 
   const handleSubmit = () => {
-    fishingWeightMutation({ data: amounts, coordinates });
+    const mappedWeights = Object.keys(amounts).reduce(
+      (obj: { [key: string]: number | undefined }, curr: string) => {
+        obj[curr] = Number(amounts[curr]) || undefined;
+
+        return obj;
+      },
+      {},
+    );
+
+    fishingWeightMutation({
+      data: mappedWeights,
+      coordinates,
+    });
   };
 
   if (isLoading || fishingWeightsLoading) return <LoaderComponent />;

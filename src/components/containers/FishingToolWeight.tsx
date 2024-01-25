@@ -30,7 +30,7 @@ export const CaughtFishesWithTool = ({
   const { fishTypes, isLoading } = useFishTypes();
   const location = useAppSelector((state) => state.fishing.location);
   const { toolId } = useParams();
-  const [amounts, setAmounts] = useState<{ [key: number]: number }>({});
+  const [amounts, setAmounts] = useState<{ [key: string]: number }>({});
 
   const { data: toolsGroup, isLoading: toolsGroupLoading } = useQuery<ToolsGroup | any>(
     ['builtTool', toolId],
@@ -71,7 +71,20 @@ export const CaughtFishesWithTool = ({
   };
 
   const handleSubmit = () => {
-    weighToolsMutation({ data: amounts, coordinates, location });
+    const mappedWeights = Object.keys(amounts).reduce(
+      (obj: { [key: string]: number | undefined }, curr: string) => {
+        obj[curr] = Number(amounts[curr]) || undefined;
+
+        return obj;
+      },
+      {},
+    );
+
+    weighToolsMutation({
+      data: mappedWeights,
+      coordinates,
+      location,
+    });
   };
 
   return (
