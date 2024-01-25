@@ -1,7 +1,6 @@
+import format from 'date-fns/format';
 import styled from 'styled-components';
 import { EventTypes, FishingEventLabels, useFishTypes } from '../../utils';
-import format from 'date-fns/format';
-import React from 'react';
 import PreviewMap from '../other/PreviewMap';
 
 const FishingEventDetails = ({ event }: any) => {
@@ -58,8 +57,13 @@ const FishingEventDetails = ({ event }: any) => {
 export default FishingEventDetails;
 
 const Container = styled.div`
-  padding-top: 68px;
   text-align: center;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 `;
 
 const Title = styled.div`

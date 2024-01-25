@@ -115,37 +115,12 @@ class Api {
     return data;
   };
 
-  getCommonConfigs = ({
-    page,
-    populate,
-    sort,
-    filter,
-    pageSize,
-    search,
-    municipalityId,
-    query,
-    searchFields,
-    scope,
-    geom,
-    fields,
-    responseType,
-  }: GetAll) => {
+  getCommonConfigs = ({ page, pageSize, ...rest }: GetAll) => {
     return {
       params: {
         pageSize: pageSize || 10,
         page: page || 1,
-        ...(!!populate && { populate }),
-        ...(!!searchFields && { searchFields }),
-        ...(!!search && { search }),
-        ...(!!municipalityId && { municipalityId }),
-        ...(!!geom && { geom }),
-        ...(!!filter && { filter }),
-        ...(!!sort && { sort }),
-        ...(!!geom && { geom }),
-        ...(!!query && { query }),
-        ...(!!scope && { scope }),
-        ...(!!fields && { fields }),
-        ...(!!responseType && { responseType }),
+        ...rest,
       },
     };
   };
@@ -241,10 +216,10 @@ class Api {
       resource: 'fishings/current',
     });
   };
-  getFishing = async (id: number | string) => {
+  getFishing = async (id: string) => {
     return this.get({
       resource: 'fishings',
-      id: id.toString(),
+      id,
     });
   };
 
@@ -354,7 +329,7 @@ class Api {
     });
   };
 
-  getBuiltTools = async ({ locationId }: { locationId: number }): Promise<any> => {
+  getBuiltTools = async ({ locationId }: { locationId?: string }): Promise<any> => {
     return this.get({
       resource: `toolsGroups/location/${locationId}`,
     });
@@ -410,6 +385,7 @@ class Api {
   getTool = async (id: string): Promise<Tool> =>
     await this.getOne({
       resource: 'tools',
+      populate: ['toolsGroup'],
       id,
     });
 
@@ -511,10 +487,10 @@ class Api {
     });
   };
 
-  getFishingHistory = async ({ id }: { id: number | string }): Promise<FishingHistoryResponse> =>
+  getFishingHistory = async ({ id }: { id: string }): Promise<FishingHistoryResponse> =>
     this.get({
       resource: `fishings/history`,
-      id: id.toString(),
+      id,
     });
 }
 

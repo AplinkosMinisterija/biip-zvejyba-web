@@ -5,7 +5,7 @@ import api from './api';
 import { LOCATION_ERRORS, ToolTypeType } from './constants';
 import { routes } from './routes';
 import { validationTexts } from './texts';
-import { Profile, ProfileId, ResponseProps, ToolsGroup, ToolsGroupEvent } from './types';
+import { Profile, ProfileId, ResponseProps, ToolsGroup } from './types';
 const cookies = new Cookies();
 
 export const clearCookies = () => {
@@ -18,8 +18,12 @@ export const clearCookies = () => {
 export const getErrorMessage = (responseError: string) =>
   validationTexts[responseError as keyof typeof validationTexts] || validationTexts.error;
 
-export const handleAlert = (responseError: string = 'error') => {
-  toast.error(getErrorMessage(getReactQueryErrorMessage(responseError)), {
+export const handleErrorToastFromServer = (responseError: string = 'error') => {
+  handleErrorToast(getErrorMessage(getReactQueryErrorMessage(responseError)));
+};
+
+export const handleErrorToast = (message: string) => {
+  toast.error(message, {
     position: 'top-center',
     autoClose: 5000,
     hideProgressBar: true,
@@ -100,7 +104,7 @@ export const handleResponse = async ({
     }
 
     if (!response || response?.error) {
-      return handleAlert(response.error.type!);
+      return handleErrorToastFromServer(response.error.type!);
     }
 
     return onSuccess(response);
@@ -153,8 +157,25 @@ export const getToolTypeList = async (input: string, page: number, toolType: Too
   });
 };
 
-export const getLocationList = async (input: string, page: number | string, query: any) => {
-  return await api.getLocations({ search: input, page, query });
+export const getLocationList = async (input: string, page: number | string) => {
+  return await api.getLocations({
+    search: input,
+    page,
+    query: {
+      category: {
+        $in: [
+          'RIVER',
+          'CANAL',
+          'INTERMEDIATE_WATER_BODY',
+          'TERRITORIAL_WATER_BODY',
+          'NATURAL_LAKE',
+          'PONDED_LAKE',
+          'POND',
+          'ISOLATED_WATER_BODY',
+        ],
+      },
+    },
+  });
 };
 
 function getCentroid(bbox: number[]) {
@@ -171,14 +192,25 @@ function getCentroid(bbox: number[]) {
 
 export const getBars = async () => {
   const bars = await api.getBars();
-  return bars?.features.map((item: any) => {
-    const { x, y } = getCentroid(item?.bbox.map((coordinate: string) => Number(coordinate)));
-    return {
-      x,
-      y,
-      name: item?.properties?.name,
-    };
-  });
+  return bars?.features
+    .sort((a: any, b: any) => {
+      const numA = parseInt(a.properties.name.match(/\d+/)[0], 10);
+      const numB = parseInt(b.properties.name.match(/\d+/)[0], 10);
+
+      if (numA !== numB) {
+        return numA - numB;
+      } else {
+        return a.properties.name.localeCompare(b.properties.name);
+      }
+    })
+    .map((item: any) => {
+      const { x, y } = getCentroid(item?.bbox.map((coordinate: string) => Number(coordinate)));
+      return {
+        x,
+        y,
+        name: item?.properties?.name,
+      };
+    });
 };
 
 export const getBuiltToolInfo = (toolsGroup: ToolsGroup) => {

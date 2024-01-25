@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ToolsGroup, getBuiltToolInfo, theme } from '../../utils';
+import { getBuiltToolInfo, theme, ToolsGroup } from '../../utils';
 import Icon, { IconName } from '../other/Icon';
 import Tag from '../other/Tag';
 
@@ -8,20 +8,22 @@ interface ToolsGroupCardProps {
   onSelect: (toolsGroup?: ToolsGroup) => void;
   isEstuary?: boolean;
   selected?: boolean;
+  isDisabled?: boolean;
 }
 const ToolsGroupCard = ({
   toolsGroup,
   onSelect,
   selected = false,
   isEstuary = false,
+  isDisabled = false,
 }: ToolsGroupCardProps) => {
   const isCheckedTool = !!toolsGroup?.weightEvent;
 
   const { label, sealNr, locationName } = getBuiltToolInfo(toolsGroup);
 
   return (
-    <Container $isCheckedTool={isCheckedTool}>
-      <InnerContainer onClick={() => onSelect(toolsGroup)}>
+    <Container $isDisabled={isDisabled} $isCheckedTool={isCheckedTool}>
+      <InnerContainer onClick={() => !isDisabled && onSelect(toolsGroup)}>
         <IconContainer $selected={isCheckedTool}>
           {isEstuary ? (
             <Estuary>{locationName.replace(/[^\d]/g, '')}</Estuary>
@@ -40,7 +42,7 @@ const ToolsGroupCard = ({
   );
 };
 
-const Container = styled.div<{ $isCheckedTool: boolean }>`
+const Container = styled.div<{ $isCheckedTool: boolean; $isDisabled: boolean }>`
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -50,7 +52,8 @@ const Container = styled.div<{ $isCheckedTool: boolean }>`
     ${({ theme, $isCheckedTool }) => ($isCheckedTool ? theme.colors.success : 'transparent')};
   border-radius: 12px;
   padding: 16px;
-  cursor: pointer;
+  cursor: ${({ $isDisabled }) => ($isDisabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ $isDisabled }) => ($isDisabled ? 0.6 : 1)};
   &:hover {
     background-color: #f5f6fe;
     border: 1px solid ${({ theme }) => theme.colors.primary};

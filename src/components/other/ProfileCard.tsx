@@ -50,7 +50,6 @@ const Container = styled.a`
   vertical-align: middle;
   padding: 12px 0;
   margin: 8px 0;
-  border: 1px solid ${({ theme }) => theme.colors.border};
 
   @media ${device.mobileL} {
     max-width: 100%;
