@@ -26,7 +26,7 @@ const SelectWaterBody = ({ onStartFishing, loading }: any) => {
   };
 
   const getInputValue = (location: any) =>
-    !!location ? `${location?.name}, ${location?.cadastralId}` : '';
+    location ? `${location?.name}, ${location?.cadastralId}` : '';
 
   return (
     <>

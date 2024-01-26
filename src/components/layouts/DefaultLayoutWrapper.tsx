@@ -6,7 +6,6 @@ import SideBar from './SideBar';
 
 const DefaultLayoutWrapper = ({ children }: any) => {
   const isMobile = useWindowSize(device.mobileL);
-  const currentRoute = useGetCurrentRoute();
 
   return (
     <Container>

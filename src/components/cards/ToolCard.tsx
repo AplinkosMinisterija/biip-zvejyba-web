@@ -15,9 +15,9 @@ const ToolCard = ({ tool, onClick }: ToolCardProps) => {
   return (
     <Container onClick={onClick}>
       <IconContainer>
-        {!isInWater && <StyledIcon name={IconName.home} />}
+        {!isInWater && <Icon name={IconName.home} />}
         {isEstuary && <BarNumber>{location?.name.replace(/[^\d]/g, '')}</BarNumber>}
-        {isInWater && !isEstuary && <StyledIcon name={IconName.tools} />}
+        {isInWater && !isEstuary && <Icon name={IconName.tools} />}
       </IconContainer>
       <div>
         <ToolName>{tool.toolType.label}</ToolName>
@@ -53,10 +53,6 @@ const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-
-const StyledIcon = styled(Icon)`
-  //filter: invert(15%) sepia(56%) saturate(5078%) hue-rotate(226deg) brightness(92%) contrast(97%);
 `;
 
 const BarNumber = styled.div``;

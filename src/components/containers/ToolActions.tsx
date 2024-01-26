@@ -1,10 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router';
-import { useParams } from 'react-router-dom';
 import { LocationType, slugs } from '../../utils';
 import api from '../../utils/api';
 import MenuButton from '../buttons/MenuButton';
-import PopUpWithTitles from '../layouts/PopUpWithTitle';
 import { IconName } from '../other/Icon';
 import Popup from '../layouts/Popup';
 import styled from 'styled-components';
@@ -12,15 +10,10 @@ import styled from 'styled-components';
 const ToolActions = ({ toolGroup, onReturn, visible, coordinates, location }: any) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { fishingId } = useParams();
 
-  const { data: currentFishing, isLoading: currentFishingLoading } = useQuery(
-    ['currentFishing'],
-    () => api.getCurrentFishing(),
-    {
-      retry: false,
-    },
-  );
+  const { data: currentFishing } = useQuery(['currentFishing'], () => api.getCurrentFishing(), {
+    retry: false,
+  });
   const { mutateAsync: returnToolsMutation } = useMutation(
     () =>
       api.removeTool(
@@ -31,12 +24,12 @@ const ToolActions = ({ toolGroup, onReturn, visible, coordinates, location }: an
         toolGroup?.id,
       ),
     {
-      onSuccess: (data) => {
+      onSuccess: () => {
         queryClient.invalidateQueries('availableTools');
         queryClient.invalidateQueries('builtTools');
         onReturn();
       },
-      onError: ({ response }: any) => {
+      onError: () => {
         //TODO: display error
       },
     },

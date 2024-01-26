@@ -48,7 +48,7 @@ export const toolSchema = Yup.object().shape({
 export const locationSchema = Yup.lazy((_, { context }) => {
   const { x, y, location } = context as any;
 
-  let obj: any = {};
+  const obj: any = {};
 
   if ((!x || !y) && !location) {
     obj.location = Yup.string().required(validationTexts.requireSelect);

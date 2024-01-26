@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import NumericTextField from '../fields/NumericTextField';
 import TextField from '../fields/TextField';
 
 interface FishRowProp {

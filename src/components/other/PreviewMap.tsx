@@ -1,37 +1,37 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import styled from 'styled-components';
 import { device } from '../../utils';
 import FieldWrapper from '../fields/components/FieldWrapper';
-import Icon, { IconName } from './Icon';
 
-export const mapsHost = import.meta.env.VITE_MAPS_HOST || 'https://dev.maps.biip.lt';
+const mapsHost = import.meta.env.VITE_MAPS_HOST || 'https://dev.maps.biip.lt';
 
-export type FeatureCollection = {
+type FeatureCollection = {
   type: 'FeatureCollection';
   features: Feature[];
 };
 
-export type GenericObject = {
+type GenericObject = {
   [key: string]: any;
 };
 
-export type Feature = {
+type Feature = {
   type: 'Feature';
   geometry: Geometry;
   properties?: GenericObject;
 };
-export type Geometry = {
+
+type Geometry = {
   type: string;
   coordinates: CoordinatesTypes;
 };
-export type CoordinatesPoint = number[];
-export type CoordinatesMultiPoint = CoordinatesPoint[];
-export type CoordinatesLineString = CoordinatesPoint[];
-export type CoordinatesMultiLineString = CoordinatesLineString[];
-export type CoordinatesPolygon = CoordinatesLineString[];
-export type CoordinatesMultiPolygon = CoordinatesPolygon[];
+type CoordinatesPoint = number[];
+type CoordinatesMultiPoint = CoordinatesPoint[];
+type CoordinatesLineString = CoordinatesPoint[];
+type CoordinatesMultiLineString = CoordinatesLineString[];
+type CoordinatesPolygon = CoordinatesLineString[];
+type CoordinatesMultiPolygon = CoordinatesPolygon[];
 
-export type CoordinatesTypes =
+type CoordinatesTypes =
   | CoordinatesPoint
   | CoordinatesLineString
   | CoordinatesPolygon
@@ -39,7 +39,7 @@ export type CoordinatesTypes =
   | CoordinatesMultiLineString
   | CoordinatesMultiPolygon;
 
-export interface MapProps {
+interface MapProps {
   height?: string;
   onSave?: (data: any) => void;
   error?: string;
@@ -49,15 +49,7 @@ export interface MapProps {
   preview?: boolean;
 }
 
-const PreviewMap = ({
-  height = '230px',
-  onSave,
-  error,
-  value,
-  showError = true,
-  label,
-}: MapProps) => {
-  const [showModal, setShowModal] = useState(false);
+const PreviewMap = ({ height = '230px', error, value, showError = true, label }: MapProps) => {
   const iframeRef = useRef<any>(null);
 
   const src = `${mapsHost}/edit?preview=true`;
@@ -69,14 +61,14 @@ const PreviewMap = ({
 
   return (
     <FieldWrapper showError={showError} error={error} label={label}>
-      <Container $showModal={showModal} $error={!!error}>
-        <InnerContainer $showModal={showModal}>
+      <Container $showModal={false} $error={!!error}>
+        <InnerContainer $showModal={false}>
           <StyledIframe
             allow="geolocation *"
             ref={iframeRef}
             src={src}
             $width={'100%'}
-            $height={showModal ? '100%' : height}
+            $height={height}
             style={{ border: 0 }}
             allowFullScreen={true}
             onLoad={handleLoadMap}

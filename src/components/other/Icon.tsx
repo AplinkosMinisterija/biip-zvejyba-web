@@ -79,7 +79,7 @@ export enum IconName {
   fullscreen = 'fullscreen',
   exitFullScreen = 'exitFullScreen',
 }
-export interface IconProps {
+interface IconProps {
   name: IconName | string;
   className?: string;
 }

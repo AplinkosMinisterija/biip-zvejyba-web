@@ -8,11 +8,8 @@ export const getFilteredOptions = (
     return label?.includes(input.toLowerCase());
   });
 
-export const filterSelectedOptions = (suggestions: any[], values: any[], getOptionValue: any) =>
-  suggestions.filter(
-    (opt) => !values?.some((value) => getOptionValue(value) === getOptionValue(opt)),
-  );
-
 export const handleRemove = (index: number, onChange: any, values: any[]) => {
-  onChange([...values?.slice(0, index), ...values?.slice(index + 1)]);
+  if (values?.length) {
+    onChange([...values.slice(0, index), ...values.slice(index + 1)]);
+  }
 };

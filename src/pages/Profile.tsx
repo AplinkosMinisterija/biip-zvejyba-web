@@ -104,21 +104,3 @@ const FormContainer = styled(Form)`
   flex-direction: column;
   gap: 40px;
 `;
-
-const UserInfo = styled.div`
-  margin-top: 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Name = styled.div`
-  font-size: 2.4rem;
-  font-weight: 600;
-`;
-
-const Email = styled.div`
-  color: ${({ theme }) => theme.colors.text.grey};
-  font-size: 1.6rem;
-  margin-bottom: 32px;
-`;
