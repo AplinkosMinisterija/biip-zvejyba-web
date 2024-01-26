@@ -2,26 +2,26 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { FishingWeighType, handleAlert, useFishTypes, useGetCurrentRoute } from '../../utils';
+import { FishingWeighType, handleErrorToastFromServer, useFishTypes } from '../../utils';
 import api from '../../utils/api';
-import LoaderComponent from '../other/LoaderComponent';
-import SwitchButton from '../buttons/SwitchButton';
-import FishRow from '../other/FishRow';
-import { Footer } from '../other/CommonStyles';
 import Button from '../buttons/Button';
+import SwitchButton from '../buttons/SwitchButton';
+import { Footer } from '../other/CommonStyles';
+import FishRow from '../other/FishRow';
+import LoaderComponent from '../other/LoaderComponent';
 
 const FishingWeightOptions = [
   { label: 'Sugautos žuvys', value: FishingWeighType.CAUGHT },
   { label: 'Visos žuvys', value: FishingWeighType.All },
 ];
 
-const FishingWeight = ({ coordinates }: { coordinates: any }) => {
+const FishingWeight = ({ coordinates, isDisabled }: { coordinates: any; isDisabled: boolean }) => {
   const queryClient = useQueryClient();
   const [type, setType] = useState<FishingWeighType>(FishingWeighType.CAUGHT);
   const { fishTypes, isLoading } = useFishTypes();
   const isCaught = type === FishingWeighType.CAUGHT;
   const navigate = useNavigate();
-  const [amounts, setAmounts] = useState<{ [key: number]: number }>({});
+  const [amounts, setAmounts] = useState<{ [key: string]: number }>({});
 
   const {
     data: fishingWeights = { preliminary: {}, total: {} },
@@ -48,13 +48,25 @@ const FishingWeight = ({ coordinates }: { coordinates: any }) => {
         navigate(-1);
       },
       onError: () => {
-        handleAlert();
+        handleErrorToastFromServer();
       },
     },
   );
 
   const handleSubmit = () => {
-    fishingWeightMutation({ data: amounts, coordinates });
+    const mappedWeights = Object.keys(amounts).reduce(
+      (obj: { [key: string]: number | undefined }, curr: string) => {
+        obj[curr] = Number(amounts[curr]) || undefined;
+
+        return obj;
+      },
+      {},
+    );
+
+    fishingWeightMutation({
+      data: mappedWeights,
+      coordinates,
+    });
   };
 
   if (isLoading || fishingWeightsLoading) return <LoaderComponent />;
@@ -80,7 +92,7 @@ const FishingWeight = ({ coordinates }: { coordinates: any }) => {
       <Footer>
         <StyledButton
           loading={fishingWeightLoading}
-          disabled={fishingWeightLoading}
+          disabled={fishingWeightLoading || isDisabled}
           onClick={handleSubmit}
         >
           Saugoti pakeitimus

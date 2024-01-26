@@ -1,25 +1,42 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import Button, { ButtonColors } from '../components/buttons/Button';
 import FishingActions from '../components/containers/FishingActions';
 import FishingLocation from '../components/containers/FishingLocation';
-import DefaultLayout from '../components/layouts/DefaultLayout';
-import LoaderComponent from '../components/other/LoaderComponent';
-import api from '../utils/api';
-import { getCurrentRoute, useGeolocationWatcher, slugs } from '../utils';
 import FishingTools from '../components/containers/FishingTools';
 import FishingToolWeight from '../components/containers/FishingToolWeight';
 import FishingWeight from '../components/containers/FishingWeight';
+import DefaultLayout from '../components/layouts/DefaultLayout';
+import PopUpWithImage from '../components/layouts/PopUpWithImage';
+import { Grid } from '../components/other/CommonStyles';
+import { IconName } from '../components/other/Icon';
+import LoaderComponent from '../components/other/LoaderComponent';
+import {
+  getCurrentRoute,
+  handleErrorToast,
+  LOCATION_ERRORS,
+  slugs,
+  useGeolocationWatcher,
+  validationTexts,
+} from '../utils';
+import api from '../utils/api';
+
+const infoToEnableTheLocationUrl = 'https://zuvys.biip.lt/dokumentacija/zvejyba/lokacija/';
+
 export const CurrentFishing = () => {
-  const { coordinates } = useGeolocationWatcher();
+  const { coordinates, error } = useGeolocationWatcher();
   const navigate = useNavigate();
   const currentRoute = getCurrentRoute(window.location.pathname);
-  const [location, setLocation] = useState();
+  const [showLocationDeniedPopUp, setShowLocationDeniedPopUp] = useState(false);
 
   useEffect(() => {
-    if (currentRoute?.slug === slugs.fishingLocation || currentRoute?.slug === slugs.fishingCurrent)
-      setLocation(undefined);
-  }, [currentRoute?.slug]);
+    if (error === LOCATION_ERRORS.POSITION_UNAVAILABLE) {
+      handleErrorToast(validationTexts.failedToSetLocation);
+    }
+
+    setShowLocationDeniedPopUp(error === LOCATION_ERRORS.POINT_NOT_FOUND);
+  }, [error]);
 
   const { data: currentFishing, isLoading: currentFishingLoading } = useQuery(
     ['currentFishing'],
@@ -43,21 +60,55 @@ export const CurrentFishing = () => {
     return <LoaderComponent />;
   }
 
+  const isDisabled = !coordinates;
+
   return (
     <DefaultLayout>
+      <PopUpWithImage
+        onClose={() => setShowLocationDeniedPopUp(false)}
+        iconName={IconName.location}
+        visible={showLocationDeniedPopUp}
+        title={'Geografinės vietos leidimas'}
+        description={
+          'Norint naudotis elektroniniu žvejybos žurnalu, prašome suteikti leidimą naudotis jūsų geografinę vietą.'
+        }
+      >
+        <Grid>
+          <Button
+            onClick={() => {
+              window.location.href = infoToEnableTheLocationUrl;
+            }}
+          >
+            {'Skaityti instrukciją'}
+          </Button>
+          <Button
+            variant={ButtonColors.SECONDARY}
+            onClick={() => setShowLocationDeniedPopUp(false)}
+          >
+            {'Žinau kaip suteikti leidimą'}
+          </Button>
+        </Grid>
+      </PopUpWithImage>
+
       {currentRoute?.slug === slugs.fishingLocation && (
-        <FishingLocation setLocation={setLocation} location={location} coordinates={coordinates} />
+        <FishingLocation isDisabled={isDisabled} coordinates={coordinates} />
       )}
       {currentRoute?.slug === slugs.fishingCurrent && (
-        <FishingActions fishing={currentFishing} coordinates={coordinates} />
+        <FishingActions
+          isDisabled={isDisabled}
+          fishing={currentFishing}
+          coordinates={coordinates}
+        />
       )}
       {currentRoute?.slug === slugs.fishingTools && (
-        <FishingTools setLocation={setLocation} location={location} coordinates={coordinates} />
+        <FishingTools isDisabled={isDisabled} coordinates={coordinates} />
       )}
       {currentRoute?.slug === slugs.fishingToolCaughtFishes(':toolId') && (
-        <FishingToolWeight location={location} coordinates={coordinates} />
+        <FishingToolWeight isDisabled={isDisabled} coordinates={coordinates} />
       )}
-      {currentRoute?.slug === slugs.fishingWeight && <FishingWeight coordinates={coordinates} />}
+      {currentRoute?.slug === slugs.fishingWeight && (
+        <FishingWeight isDisabled={isDisabled} coordinates={coordinates} />
+      )}
     </DefaultLayout>
   );
 };

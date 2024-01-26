@@ -1,34 +1,37 @@
+import { isEmpty, map } from 'lodash';
+import { useState } from 'react';
+import { useMutation, useQuery } from 'react-query';
+import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
+import { actions } from '../../state/fishing/reducer';
+import {
+  device,
+  getBars,
+  handleErrorToast,
+  LocationType,
+  ToolsGroup,
+  useAppSelector,
+  validationTexts,
+} from '../../utils';
+import api from '../../utils/api';
+import Button, { ButtonColors } from '../buttons/Button';
+import ToolsGroupCard from '../cards/ToolsGroupCard';
+import LocationForm from '../forms/LocationForm';
+import Popup from '../layouts/Popup';
+import PopUpWithImage from '../layouts/PopUpWithImage';
 import { Footer, IconContainer } from '../other/CommonStyles';
 import Icon, { IconName } from '../other/Icon';
 import LoaderComponent from '../other/LoaderComponent';
-import { isEmpty, map } from 'lodash';
 import { NotFound } from '../other/NotFound';
-import ToolsGroupCard from '../cards/ToolsGroupCard';
-import Button, { ButtonColors } from '../buttons/Button';
-import Popup from '../layouts/Popup';
 import BuildTools from './BuildTools';
-import PopUpWithImage from '../layouts/PopUpWithImage';
-import LocationForm from '../forms/LocationForm';
 import ToolActions from './ToolActions';
-import { device, getBars, handleAlert, LocationType, ToolsGroup } from '../../utils';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useDispatch } from 'react-redux';
-import { useState } from 'react';
-import api from '../../utils/api';
-import styled from 'styled-components';
 
-const FishingTools = ({
-  setLocation,
-  location,
-  coordinates,
-}: {
-  setLocation: (location: any) => void;
-  location: any;
-  coordinates: any;
-}) => {
+const FishingTools = ({ coordinates, isDisabled }: { coordinates: any; isDisabled: boolean }) => {
+  const dispatch = useDispatch();
   const [showBuildTools, setShowBuildTools] = useState(false);
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
   const [selectedToolsGroup, setSelectedToolsGroup] = useState<ToolsGroup>();
+  const location = useAppSelector((state) => state.fishing.location);
 
   const { data: currentFishing } = useQuery(['currentFishing'], () => api.getCurrentFishing(), {
     retry: false,
@@ -36,20 +39,22 @@ const FishingTools = ({
   const locationType: LocationType = currentFishing?.type;
   const isEstuary = locationType === LocationType.ESTUARY;
 
-  const { mutateAsync: getLocationMutation } = useMutation(
-    (coordinates: any) => {
-      return api.getLocation({
+  const { mutateAsync: getLocationMutation, isLoading: locationMutationLoading } = useMutation(
+    (coordinates: any) =>
+      api.getLocation({
         query: {
           type: locationType,
           coordinates,
         },
-      });
-    },
+      }),
     {
       onSuccess: (value) => {
         if (value) {
-          setLocation(value);
+          dispatch(actions.setLocation(value));
+          return;
         }
+
+        handleErrorToast(validationTexts.failedToSetLocation);
       },
     },
   );
@@ -59,32 +64,35 @@ const FishingTools = ({
     () =>
       api.getLocation({
         query: {
-          coordinates,
           type: locationType,
+          coordinates,
         },
       }),
     {
       onSuccess: (value) => {
-        if (value && !location) setLocation(value);
+        if (value) dispatch(actions.setLocation(value));
       },
+      enabled: !isDisabled && coordinates && !location,
       retry: false,
     },
   );
 
   const { data: bars } = useQuery(['bars'], async () => getBars(), {
-    enabled: isEstuary,
+    enabled: !isDisabled && isEstuary,
     retry: false,
   });
 
   const { data: builtTools } = useQuery(
     ['builtTools', location?.id],
-    () => (location?.id ? api.getBuiltTools({ locationId: location?.id }) : {}),
+    () => api.getBuiltTools({ locationId: location?.id }),
     {
       retry: false,
+      enabled: !isDisabled && !!location?.id,
     },
   );
 
   const initialValues = { location: '', x: '', y: '' };
+
   const handleSetLocationManually = (values: any) => {
     const { location, x, y } = values;
     if (location) {
@@ -94,12 +102,15 @@ const FishingTools = ({
     }
     setShowLocationPopUp(false);
   };
+
+  const showEditIcon = location?.name && location.type !== LocationType.POLDERS;
+
   return (
     <>
       {!locationFetching && (
         <TitleWrapper>
           <Title>{location?.name || 'Nenustatytas vandens telkinys'}</Title>
-          {location?.name && (
+          {showEditIcon && (
             <IconContainer onClick={() => setShowLocationPopUp(true)}>
               <EditIcon name={IconName.edit} />
             </IconContainer>
@@ -133,7 +144,7 @@ const FishingTools = ({
                   žvejybos vietą ir atnaujinkite inofrmaciją.
                 </Message>
                 <Button
-                  disabled={locationFetching}
+                  disabled={locationMutationLoading || isDisabled}
                   onClick={() => {
                     setShowLocationPopUp(true);
                   }}
@@ -141,8 +152,8 @@ const FishingTools = ({
                   {'Nustatyti rankiniu būdu'}
                 </Button>
                 <Button
-                  loading={locationFetching}
-                  disabled={locationFetching}
+                  loading={locationMutationLoading}
+                  disabled={locationMutationLoading || isDisabled}
                   variant={ButtonColors.SECONDARY}
                   onClick={() => getLocationMutation(coordinates)}
                 >
@@ -154,17 +165,22 @@ const FishingTools = ({
         )}
       </Container>
       {location?.name && (
-        <Footer>
-          <StyledButton onClick={() => setShowBuildTools(true)}>Pastatyti įrankį</StyledButton>
-        </Footer>
+        <>
+          <Footer>
+            <StyledButton disabled={isDisabled} onClick={() => setShowBuildTools(true)}>
+              Pastatyti įrankį
+            </StyledButton>
+          </Footer>
+          <Popup visible={showBuildTools} onClose={() => setShowBuildTools(false)}>
+            <BuildTools
+              coordinates={coordinates || undefined}
+              location={location}
+              onClose={() => setShowBuildTools(false)}
+            />
+          </Popup>
+        </>
       )}
-      <Popup visible={showBuildTools} onClose={() => setShowBuildTools(false)}>
-        <BuildTools
-          coordinates={coordinates || undefined}
-          location={location}
-          onClose={() => setShowBuildTools(false)}
-        />
-      </Popup>
+
       <PopUpWithImage visible={showLocationPopUp} onClose={() => setShowLocationPopUp(false)}>
         <LocationForm
           initialValues={initialValues}

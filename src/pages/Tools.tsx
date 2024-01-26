@@ -4,17 +4,17 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../components/buttons/Button';
+import ToolCard from '../components/cards/ToolCard';
 import ToolForm from '../components/forms/ToolForm';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import PopUpWithTitles from '../components/layouts/PopUpWithTitle';
 import { Footer, ListContainer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
 import { NotFound } from '../components/other/NotFound';
-import ToolCard from '../components/cards/ToolCard';
 import { slugs, useGetCurrentRoute } from '../utils';
 import api from '../utils/api';
 import { ToolTypeType } from '../utils/constants';
-import { handleAlert } from '../utils/functions';
+import { handleErrorToastFromServer } from '../utils/functions';
 import { buttonLabels, titles } from '../utils/texts';
 
 const Tools = () => {
@@ -28,7 +28,7 @@ const Tools = () => {
     () => api.tools({ populate: ['toolType', 'toolsGroup'] }),
     {
       onError: ({ response }) => {
-        handleAlert(response);
+        handleErrorToastFromServer(response);
       },
     },
   );
@@ -39,7 +39,7 @@ const Tools = () => {
       setShowPopup(false);
     },
     onError: ({ response }) => {
-      handleAlert(response);
+      handleErrorToastFromServer(response);
     },
   });
 

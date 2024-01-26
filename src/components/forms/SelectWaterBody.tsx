@@ -1,24 +1,32 @@
-import { buttonLabels, getLocationList } from '../../utils';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
+import { actions } from '../../state/fishing/reducer';
+import { buttonLabels, getLocationList, useAppSelector, validationTexts } from '../../utils';
+import Button from '../buttons/Button';
 import AsyncSelectField from '../fields/AsyncSelect';
 import { Grid } from '../other/CommonStyles';
-import Button from '../buttons/Button';
-import styled from 'styled-components';
-import { useState } from 'react';
 import LoaderComponent from '../other/LoaderComponent';
 
-const SelectWaterBody = ({ location, setLocation, onStartFishing, loading }: any) => {
-  const [value, setValue] = useState();
+const SelectWaterBody = ({ onStartFishing, loading }: any) => {
+  const location = useAppSelector((state) => state.fishing.location);
+  const [error, setError] = useState('');
+
+  const dispatch = useDispatch();
 
   const handleChangeValue = (value: any) => {
-    setValue(value);
-    setLocation({
-      id: value.cadastralId,
-      name: value.name,
-      municipality: {
-        name: value.municipality,
-      },
-    });
+    setError('');
+    dispatch(actions.setLocation(value));
   };
+
+  const handleSubmit = () => {
+    if (!location) return setError(validationTexts.requireSelect);
+
+    onStartFishing();
+  };
+
+  const getInputValue = (location: any) =>
+    location ? `${location?.name}, ${location?.cadastralId}` : '';
 
   return (
     <>
@@ -28,28 +36,24 @@ const SelectWaterBody = ({ location, setLocation, onStartFishing, loading }: any
             <LoaderComponent />
           ) : location?.name ? (
             <>
-              <LocationName>{`${location?.name} (${location?.municipality.name})`}</LocationName>
-              <LocationId>{location?.id}</LocationId>
+              <LocationName>{`${location?.name} (${location?.municipality})`}</LocationName>
+              <LocationId>{location?.cadastralId}</LocationId>
             </>
           ) : null}
         </TitleWrapper>
         <StyledSelectField
           name={'location'}
-          value={value}
+          value={location}
           label={'Pasirinkite vandens telkinį'}
+          error={error}
           onChange={handleChangeValue}
           getOptionValue={(option) => option?.cadastralId}
-          getInputLabel={(option) => option?.name}
-          showError={false}
-          getOptionLabel={(option) => {
-            const { name } = option;
-            return name;
-          }}
-          loadOptions={(input: string, page: number | string) => getLocationList(input, page, {})}
-          inputValue={location?.name || ''}
+          getOptionLabel={getInputValue}
+          loadOptions={(input: string, page: number | string) => getLocationList(input, page)}
+          inputValue={getInputValue(location)}
         />
         <Grid $columns={1}>
-          <Button loading={loading} disabled={loading} onClick={onStartFishing}>
+          <Button loading={loading} disabled={loading} onClick={handleSubmit}>
             {buttonLabels.startFishing}
           </Button>
         </Grid>

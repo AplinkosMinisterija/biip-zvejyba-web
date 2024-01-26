@@ -16,7 +16,7 @@ import {
   deleteDescriptionSecondPart,
   DeleteInfoProps,
   deleteTitles,
-  handleAlert,
+  handleErrorToastFromServer,
   inputLabels,
   profileSchema,
   roleLabels,
@@ -38,7 +38,12 @@ export const UserForm = () => {
   const navigate = useNavigate();
   const currentUser = useAppSelector((state) => state?.user?.userData);
 
-  const { data: tenantUser, isLoading } = useQuery(['user', id], () => api.getUser(id));
+  const { data: tenantUser, isLoading } = useQuery(['user', id], () => api.getUser(id), {
+    onError: () => {
+      navigate(slugs.users);
+    },
+    retry: false,
+  });
 
   const user = tenantUser?.user;
 
@@ -53,8 +58,8 @@ export const UserForm = () => {
   const { mutateAsync: updateUserMutation } = useMutation(
     (values: UserProps) => api.updateTenantUser(values, id),
     {
-      onError: () => {
-        handleAlert();
+      onError: ({ response }) => {
+        handleErrorToastFromServer(response);
       },
       onSuccess: async () => {
         navigate(slugs.users);
@@ -67,7 +72,7 @@ export const UserForm = () => {
 
   const { mutateAsync: deleteUserMutation } = useMutation(() => api.deleteUser(id), {
     onError: () => {
-      handleAlert();
+      handleErrorToastFromServer();
     },
     onSuccess: async () => {
       navigate(slugs.users);

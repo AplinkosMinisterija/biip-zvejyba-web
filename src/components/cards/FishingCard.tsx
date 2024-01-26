@@ -1,5 +1,6 @@
 import { differenceInMinutes, format } from 'date-fns';
 import styled from 'styled-components';
+import { GenericObject } from '../../utils';
 import Icon, { IconName } from '../other/Icon';
 const formatDuration = (startDate?: string, endDate?: string) => {
   if (!startDate || !endDate) {
@@ -31,7 +32,10 @@ const Months = [
   'Gruodžio',
 ];
 
-const getWeightString = (fishOnBoat: any, fishOnShore: any) => {
+const getWeightString = (
+  fishOnBoat: { data: GenericObject }[],
+  fishOnShore: { data: GenericObject },
+) => {
   if (!fishOnShore && !fishOnBoat) {
     return '';
   }
@@ -39,14 +43,14 @@ const getWeightString = (fishOnBoat: any, fishOnShore: any) => {
     const weightOnShore =
       Object.values(fishOnShore.data)
         .flat()
-        .reduce((acc: any, current: any) => acc + current, 0) || '';
+        .reduce((acc: number, current: number) => acc + Number(current), 0) || '';
     return weightOnShore ? `${weightOnShore}kg` : '';
   }
   const weightOnBoat =
     Object.values(fishOnBoat || {})
-      ?.map((e: any) => Object.values(e.data))
+      ?.map((e) => Object.values(e?.data))
       .flat()
-      .reduce((acc: any, current: any) => acc + current, 0) || '';
+      .reduce((acc: number, current: number) => acc + Number(current), 0) || '';
   return weightOnBoat ? `~${weightOnBoat}kg` : '';
 };
 
@@ -103,6 +107,12 @@ const Container = styled.div<{ $active: boolean }>`
   color: grey;
   display: grid;
   text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  &:hover {
+    background-color: #f5f6fe;
+    border: 1px solid ${({ theme }) => theme.colors.primary};
+  }
 `;
 
 const Row = styled.div`

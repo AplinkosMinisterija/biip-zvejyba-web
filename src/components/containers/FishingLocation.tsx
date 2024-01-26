@@ -1,15 +1,26 @@
 import { map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { buttonLabels, handleAlert, LocationType, SickReasons, skipOptions } from '../../utils';
+import { actions } from '../../state/fishing/reducer';
+import {
+  buttonLabels,
+  handleErrorToast,
+  handleErrorToastFromServer,
+  LocationType,
+  SickReasons,
+  skipOptions,
+  useAppSelector,
+  validationTexts,
+} from '../../utils';
 import api from '../../utils/api';
 import Button, { ButtonColors } from '../buttons/Button';
 import FishingLocationButton, { Variant } from '../buttons/FishingLocationButton';
+import SelectWaterBody from '../forms/SelectWaterBody';
 import PopUpWithImage from '../layouts/PopUpWithImage';
 import { Grid } from '../other/CommonStyles';
 import { IconName } from '../other/Icon';
-import SelectWaterBody from '../forms/SelectWaterBody';
 
 const useLocationMutation = (onSuccess: (value: any) => void) => {
   const { mutateAsync: getLocation, isLoading: locationLoading } = useMutation(
@@ -33,7 +44,7 @@ const useLocationMutation = (onSuccess: (value: any) => void) => {
 const useSkipMutation = (onSuccess: () => void) => {
   const { isLoading: skipLoading, mutateAsync: skipFishing } = useMutation(api.skipFishing, {
     onError: ({ response }) => {
-      handleAlert(response);
+      handleErrorToastFromServer(response);
     },
     onSuccess,
     retry: false,
@@ -45,7 +56,7 @@ const useStartMutation = () => {
   const queryClient = useQueryClient();
   const { isLoading: startLoading, mutateAsync: startFishing } = useMutation(api.startFishing, {
     onError: ({ response }) => {
-      handleAlert(response);
+      handleErrorToastFromServer(response);
     },
     onSuccess: () => {
       queryClient.invalidateQueries('currentFishing');
@@ -55,19 +66,25 @@ const useStartMutation = () => {
   return { startFishing, startLoading };
 };
 
-const FishingLocation = ({ setLocation, location, coordinates }: any) => {
+const FishingLocation = ({ coordinates, isDisabled }: any) => {
+  const dispatch = useDispatch();
   const [showStartFishing, setShowStartFishing] = useState(false);
   const [showSkipFishing, setShowSkipFishing] = useState(false);
   const [skipReason, setSkipReason] = useState(SickReasons.BAD_WEATHER);
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
   const [locationType, setLocationType] = useState<LocationType | null>(null);
 
+  const location = useAppSelector((state) => state.fishing.location);
+
   const { startFishing, startLoading } = useStartMutation();
   const { skipFishing, skipLoading } = useSkipMutation(() => setShowSkipFishing(false));
-  const { getLocation, locationLoading } = useLocationMutation((value) => setLocation(value));
+  const { getLocation, locationLoading } = useLocationMutation((value) =>
+    dispatch(actions.setLocation(value)),
+  );
 
   const handleSelectLocation = (type: LocationType) => () => {
     setLocationType(type);
+    dispatch(actions.setLocation(undefined));
     if (type === LocationType.INLAND_WATERS) {
       getLocation({ coordinates, type });
       setShowLocationPopUp(true);
@@ -84,13 +101,15 @@ const FishingLocation = ({ setLocation, location, coordinates }: any) => {
         uetkCadastralId: location?.id,
       });
     } else {
-      handleAlert('Nepavyko nustatyti lokacijos');
+      handleErrorToast(validationTexts.mustAllowToSetCoordinates);
     }
   };
 
   const handleSkipFishing = () => {
     if (locationType && coordinates) {
       skipFishing({ type: locationType, coordinates: coordinates, note: skipReason });
+    } else {
+      handleErrorToast(validationTexts.mustAllowToSetCoordinates);
     }
   };
 
@@ -101,18 +120,21 @@ const FishingLocation = ({ setLocation, location, coordinates }: any) => {
       <Container>
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
+          isDisabled={isDisabled}
           title="Kuršių mariose"
           image={'/marios.png'}
           onClick={handleSelectLocation(LocationType.ESTUARY)}
         />
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
+          isDisabled={isDisabled}
           title="Vidaus vandenyse"
           image={'/vidaus_vandens_telkiniai.png'}
           onClick={handleSelectLocation(LocationType.INLAND_WATERS)}
         />
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
+          isDisabled={isDisabled}
           title="Polderiuose"
           image={'/polderiai.png'}
           onClick={handleSelectLocation(LocationType.POLDERS)}
@@ -179,12 +201,7 @@ const FishingLocation = ({ setLocation, location, coordinates }: any) => {
         visible={showLocationPopUp}
         onClose={() => setShowLocationPopUp(false)}
       >
-        <SelectWaterBody
-          setLocation={setLocation}
-          location={location}
-          onStartFishing={handleStartFishing}
-          loading={locationLoading}
-        />
+        <SelectWaterBody onStartFishing={handleStartFishing} loading={locationLoading} />
       </PopUpWithImage>
     </>
   );

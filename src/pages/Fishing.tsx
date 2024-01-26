@@ -1,18 +1,23 @@
-import DefaultLayout from '../components/layouts/DefaultLayout';
-import { useQuery } from 'react-query';
-import api from '../utils/api';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
 import format from 'date-fns/format';
+import { useQuery } from 'react-query';
+import { useNavigate, useParams } from 'react-router-dom';
+import styled from 'styled-components';
 import TimeLineItem from '../components/cards/TimeLineItem';
+import DefaultLayout from '../components/layouts/DefaultLayout';
 import LoaderComponent from '../components/other/LoaderComponent';
-import { FishingHistoryResponse } from '../utils';
+import { FishingHistoryResponse, slugs } from '../utils';
+import api from '../utils/api';
 export const CurrentFishing = () => {
-  const { fishingId } = useParams();
+  const { fishingId = '' } = useParams();
+  const navigate = useNavigate();
   const { data, isLoading: currentFishingLoading }: any = useQuery<FishingHistoryResponse | any>(
     ['fishingHistory'],
-    () => (fishingId ? api.getFishingHistory({ id: fishingId }) : null),
+    () => api.getFishingHistory({ id: fishingId }),
     {
+      onError: () => {
+        navigate(slugs.fishingJournal);
+      },
+      enabled: !!fishingId,
       retry: false,
     },
   );

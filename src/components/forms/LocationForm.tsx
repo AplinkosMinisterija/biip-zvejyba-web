@@ -1,11 +1,11 @@
 import { Form, Formik } from 'formik';
-import { getLocationList, inputLabels, locationSchema } from '../../utils';
-import SelectField from '../fields/SelectField';
-import AsyncSelectField from '../fields/AsyncSelect';
-import { Grid } from '../other/CommonStyles';
-import Button, { ButtonColors } from '../buttons/Button';
 import styled from 'styled-components';
-import TextField from '../fields/TextField';
+import { getLocationList, inputLabels, locationSchema } from '../../utils';
+import Button, { ButtonColors } from '../buttons/Button';
+import AsyncSelectField from '../fields/AsyncSelect';
+import NumericTextField from '../fields/NumericTextField';
+import SelectField from '../fields/SelectField';
+import { Grid } from '../other/CommonStyles';
 
 const LocationForm = ({
   initialValues,
@@ -14,14 +14,9 @@ const LocationForm = ({
   bars,
   onClose,
 }: any) => {
-  const preventNumInputFromScrolling = (e: any) =>
-    e.target.addEventListener(
-      'wheel',
-      function (e: any) {
-        e.preventDefault();
-      },
-      { passive: false },
-    );
+  const getInputValue = (location: any) =>
+    !!location ? `${location?.name}, ${location?.cadastralId}` : '';
+
   return (
     <Container>
       <Heading>Esate kitur?</Heading>
@@ -55,18 +50,15 @@ const LocationForm = ({
                   value={values.location}
                   error={errors.location}
                   onChange={(value) => {
-                    const { lat, lng, name } = value;
-                    setFieldValue('location', { x: lng, y: lat, name });
+                    const { lat, lng, name, cadastralId } = value;
+                    setFieldValue('location', { x: lng, y: lat, name, cadastralId });
                   }}
                   getOptionValue={(option) => option?.cadastralId}
-                  getInputLabel={(option) => option?.name}
                   showError={false}
-                  getOptionLabel={(option) => {
-                    const { name } = option;
-                    return name;
-                  }}
+                  getOptionLabel={getInputValue}
+                  inputValue={getInputValue(values.location)}
                   loadOptions={(input: string, page: number | string) =>
-                    getLocationList(input, page, {})
+                    getLocationList(input, page)
                   }
                 />
               )}
@@ -79,27 +71,22 @@ const LocationForm = ({
               </Or>
 
               <Grid $columns={2}>
-                <TextField
+                <NumericTextField
                   label="Ilguma"
                   name="x"
                   value={values.x || ''}
                   error={errors.x}
-                  height={56}
-                  onChange={(e) => setFieldValue('x', Number(e))}
-                  type="number"
-                  pattern={/^\d*\.?\d*$/}
-                  onFocus={preventNumInputFromScrolling}
+                  onChange={(e) => setFieldValue('x', e)}
+                  digitsAfterComma={12}
                 />
-                <TextField
+
+                <NumericTextField
                   label="Platuma"
                   name="y"
                   value={values.y || ''}
                   error={errors.y}
-                  height={56}
-                  onChange={(e) => setFieldValue('y', Number(e))}
-                  type="number"
-                  pattern={/^\d*\.?\d*$/}
-                  onFocus={preventNumInputFromScrolling}
+                  onChange={(e) => setFieldValue('y', e)}
+                  digitsAfterComma={12}
                 />
               </Grid>
               <Grid>
@@ -119,7 +106,7 @@ const LocationForm = ({
 export default LocationForm;
 
 const Container = styled.div`
-  padding-top: 68px;
+  padding: 68px 16px 16px 16px;
 `;
 
 const Heading = styled.div`
@@ -148,7 +135,9 @@ const Or = styled.div`
 `;
 
 const SeparatorLabelContainer = styled.div`
-  font: normal normal 600 16px/40px Manrope;
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 40px;
   color: #0b1f518f;
   position: absolute;
   width: 100%;
@@ -157,7 +146,9 @@ const SeparatorLabelContainer = styled.div`
 `;
 
 const SeparatorLabel = styled.span`
-  font: normal normal 600 16px/40px Manrope;
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 40px;
   letter-spacing: 1.02px;
   color: #0b1f518f;
   background-color: white;

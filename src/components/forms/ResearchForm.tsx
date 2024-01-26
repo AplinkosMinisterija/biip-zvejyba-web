@@ -4,9 +4,16 @@ import { useMutation, useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import * as Yup from 'yup';
-import { getLocationList, handleAlert, isNew, Research, slugs, useFishTypes } from '../../utils';
-import { validationTexts } from '../../utils/texts';
+import {
+  getLocationList,
+  handleErrorToastFromServer,
+  isNew,
+  Research,
+  slugs,
+  useFishTypes,
+} from '../../utils';
 import api from '../../utils/api';
+import { validationTexts } from '../../utils/texts';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
 import AsyncSelectField from '../fields/AsyncSelect';
@@ -93,7 +100,7 @@ const ResearchForm = () => {
 
   const updateResearch = useMutation((values: any) => api.updateResearch(values, id!), {
     onError: ({ response }: any) => {
-      handleAlert(response);
+      handleErrorToastFromServer(response);
     },
     onSuccess: () => {
       navigate(slugs.researches);
@@ -102,7 +109,7 @@ const ResearchForm = () => {
 
   const createResearch = useMutation(api.createResearch, {
     onError: ({ response }: any) => {
-      handleAlert(response);
+      handleErrorToastFromServer(response);
     },
     onSuccess: () => {
       navigate(slugs.researches);

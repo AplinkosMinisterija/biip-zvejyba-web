@@ -35,7 +35,9 @@ const PopupWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin: auto;
   min-height: 100%;
+  flex: 1;
   gap: 16px;
 `;
 

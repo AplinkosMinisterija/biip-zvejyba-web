@@ -12,8 +12,9 @@ export interface ResponseProps {
 
 export interface Location {
   id: string;
-  cadastralId: string;
   name: string;
+  type: LocationType;
+  cadastralId?: string;
   area: number;
   municipality: string;
 }
@@ -195,4 +196,8 @@ export interface FishingHistoryResponse {
     geom: any;
     data?: any;
   }[];
+}
+
+export interface GenericObject {
+  [key: string]: any;
 }
