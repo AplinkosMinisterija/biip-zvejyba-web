@@ -14,6 +14,7 @@ import {
 } from '../../utils';
 import api from '../../utils/api';
 import { validationTexts } from '../../utils/texts';
+import { Location } from '../../utils/types';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
 import AsyncSelectField from '../fields/AsyncSelect';
@@ -25,7 +26,6 @@ import { Grid } from '../other/CommonStyles';
 import DrawMap from '../other/DrawMap';
 import LoaderComponent from '../other/LoaderComponent';
 import ResearchFishItem from '../other/ResearchFishItem';
-import { Location } from '../../utils/types';
 
 enum FormTypes {
   UETK = 'UETK',
@@ -56,10 +56,6 @@ const validateSchema = Yup.object().shape({
     }
     return schema.nullable();
   }),
-  files: Yup.array()
-    .required(validationTexts.requireSelect)
-    .min(1, validationTexts.requireSelect)
-    .nullable(),
   fishes: Yup.array().of(
     Yup.object().shape({
       fishType: Yup.object().required(validationTexts.requireText),
