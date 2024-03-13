@@ -428,10 +428,11 @@ class Api {
       resource: 'fishTypes',
     });
 
-  getResearches = async (): Promise<GetAllResponse<Research>> =>
+  getResearches = async ({ page }: { page: number }): Promise<GetAllResponse<Research>> =>
     await this.get({
       resource: `researches`,
       populate: ['user'],
+      page,
     });
 
   createResearch = async (params: any): Promise<Research> =>

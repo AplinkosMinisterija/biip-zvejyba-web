@@ -1,8 +1,8 @@
-import { useMutation, useQuery } from 'react-query';
+import { useInfiniteQuery, useMutation, useQuery } from 'react-query';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { actions, initialState } from '../state/user/reducer';
 import api from './api';
-import { LOCATION_ERRORS, RoleTypes } from './constants';
+import { intersectionObserverConfig, LOCATION_ERRORS, RoleTypes } from './constants';
 import { clearCookies, handleErrorToastFromServer, handleSetProfile } from './functions';
 
 import { useEffect, useState } from 'react';
@@ -162,4 +162,52 @@ export const useGetCurrentRoute = () => {
   return routes?.find(
     (route: any) => !!matchPath({ path: route.slug, end: true }, currentLocation.pathname),
   );
+};
+
+export const useInfinityLoad = (
+  queryKey: string,
+  fn: (params: { page: number }) => any,
+  observerRef: any,
+  filters = {},
+) => {
+  const queryFn = async (page: number) => {
+    const data = await fn({
+      ...filters,
+      page,
+    });
+    return {
+      ...data,
+      data: data.rows,
+    };
+  };
+
+  const result = useInfiniteQuery({
+    queryKey: [queryKey],
+    queryFn: ({ pageParam }: any) => queryFn(pageParam),
+    getNextPageParam: (lastPage: any) => {
+      return lastPage?.page < lastPage?.totalPages ? lastPage.page + 1 : undefined;
+    },
+  });
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = result;
+  useEffect(() => {
+    const currentObserver = observerRef.current;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }, intersectionObserverConfig);
+
+    if (currentObserver) {
+      observer.observe(currentObserver);
+    }
+
+    return () => {
+      if (currentObserver) {
+        observer.unobserve(currentObserver);
+      }
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage, data, observerRef]);
+
+  return result;
 };
