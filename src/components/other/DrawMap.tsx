@@ -4,7 +4,7 @@ import { device } from '../../utils';
 import FieldWrapper from '../fields/components/FieldWrapper';
 import Icon, { IconName } from './Icon';
 
-const mapsHost = import.meta.env.VITE_MAPS_HOST || 'https://dev.maps.biip.lt';
+const mapsHost = import.meta.env.VITE_MAPS_HOST || 'https://dev-maps.biip.lt';
 
 export type FeatureCollection = {
   type: 'FeatureCollection';

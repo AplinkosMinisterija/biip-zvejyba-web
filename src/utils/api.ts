@@ -82,7 +82,7 @@ class Api {
   private readonly fishingProxy: string = '/api';
   private readonly riversLakesSearchUrl: string = 'https://uetk.biip.lt/api/objects/search';
   private readonly barSearchUrl: string =
-    'https://dev.gis.biip.lt/api/zuvinimas_barai/collections/fishing_sections/items.json?limit=1000';
+    'https://dev-gis.biip.lt/api/zuvinimas_barai/collections/fishing_sections/items.json?limit=1000';
 
   constructor() {
     this.fishingAxios = Axios.create();
