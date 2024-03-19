@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { device } from '../../utils';
 import FieldWrapper from '../fields/components/FieldWrapper';
 
-const mapsHost = import.meta.env.VITE_MAPS_HOST || 'https://dev-maps.biip.lt';
+const mapsHost = import.meta.env.VITE_MAPS_HOST || 'https://maps.biip.lt';
 
 type FeatureCollection = {
   type: 'FeatureCollection';
