@@ -20,6 +20,5 @@ jobs:
         NODE_ENV=production
         VITE_SENTRY_ENV=staging
         VITE_SENTRY_DSN=https://0fadf707c6574ab792a4dd2f8d729ea2@sentry.biip.lt/42
-        VITE_PROXY_URL=https://staging-internalapi.biip.lt/zvejyba/api
         VITE_UETK_URL=https://staging-uetk.biip.lt/api
         VITE_GIS_URL=https://staging-gis.biip.lt/api

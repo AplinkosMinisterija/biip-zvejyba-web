@@ -17,12 +17,11 @@ ARG VITE_ENVIRONMENT=${ENVIRONMENT}
 ARG VITE_VERSION=${VERSION}
 
 # Set env variables
-ARG NODE_ENV=production
+ARG NODE_ENV=
 ARG VITE_APP_SENTRY_DSN=
-ARG VITE_APP_SENTRY_ENV=production
-ARG VITE_PROXY_URL=https://internalapi.biip.lt/zvejyba/api
-ARG VITE_UETK_URL=https://uetk.biip.lt/api
-ARG VITE_GIS_URL=https://gis.biip.lt/api
+ARG VITE_APP_SENTRY_ENV=
+ARG VITE_UETK_URL=
+ARG VITE_GIS_URL=
 
 
 # Build and cleanup
