@@ -28,17 +28,24 @@ export const tenantUserSchema = profileSchema.shape({
 });
 
 export const toolSchema = Yup.object().shape({
+  type: Yup.string().required(validationTexts.requireText),
   sealNr: Yup.string().required(validationTexts.requireText),
   toolType: Yup.object().required(validationTexts.requireText),
   eyeSize: Yup.number().required(validationTexts.requireText),
-  eyeSize2: Yup.number().when(['toolType'], (toolType: any, schema) => {
-    if (toolType === ToolTypeType.CATCHER) {
+  eyeSize2: Yup.number().when(['type'], (type: any, schema) => {
+    if (type[0] === ToolTypeType.CATCHER) {
       return schema.required(validationTexts.requireText);
     }
     return schema.nullable();
   }),
-  netLength: Yup.number().when(['toolType'], (toolType: any, schema) => {
-    if (toolType === ToolTypeType.NET) {
+  eyeSize3: Yup.number().when(['type'], (type: any, schema) => {
+    if (type[0] === ToolTypeType.CATCHER) {
+      return schema.required(validationTexts.requireText);
+    }
+    return schema.nullable();
+  }),
+  netLength: Yup.number().when(['type'], (type: any, schema) => {
+    if (type[0] === ToolTypeType.NET) {
       return schema.required(validationTexts.requireText);
     }
     return schema.nullable();
