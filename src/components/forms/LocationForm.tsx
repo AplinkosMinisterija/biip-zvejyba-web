@@ -39,7 +39,7 @@ const LocationForm = ({
                   getOptionLabel={(option) => option?.name}
                   value={values.location}
                   error={errors.location}
-                  label={inputLabels.location}
+                  label={'Baro nr.'}
                   name={'location'}
                   onChange={(value) => setFieldValue('location', value)}
                 />
