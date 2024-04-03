@@ -15,13 +15,13 @@ const LocationForm = ({
   onClose,
 }: any) => {
   const getInputValue = (location: any) =>
-    !!location ? `${location?.name}, ${location?.cadastralId}` : '';
+    location ? `${location?.name}, ${location?.cadastralId}` : '';
 
   return (
     <Container>
       <Heading>Esate kitur?</Heading>
       <Description>
-        Prašome pasirinkti iš sąrašo telkinio pavadinimą/baro numerį arba įrašykite koordinates.
+        Prašome pasirinkti iš sąrašo baro numerį arba įrašykite koordinates.
       </Description>
       <Formik
         enableReinitialize={true}
@@ -39,7 +39,7 @@ const LocationForm = ({
                   getOptionLabel={(option) => option?.name}
                   value={values.location}
                   error={errors.location}
-                  label={inputLabels.location}
+                  label={'Baro nr.'}
                   name={'location'}
                   onChange={(value) => setFieldValue('location', value)}
                 />
@@ -72,21 +72,22 @@ const LocationForm = ({
 
               <Grid $columns={2}>
                 <NumericTextField
-                  label="Ilguma"
-                  name="x"
-                  value={values.x || ''}
-                  error={errors.x}
-                  onChange={(e) => setFieldValue('x', e)}
-                  digitsAfterComma={12}
-                />
-
-                <NumericTextField
-                  label="Platuma"
+                  label="Platuma (WGS)"
                   name="y"
                   value={values.y || ''}
                   error={errors.y}
                   onChange={(e) => setFieldValue('y', e)}
                   digitsAfterComma={12}
+                  placeholder={'55.329931'}
+                />
+                <NumericTextField
+                  label="Ilguma (WGS)"
+                  name="x"
+                  value={values.x || ''}
+                  error={errors.x}
+                  onChange={(e) => setFieldValue('x', e)}
+                  digitsAfterComma={12}
+                  placeholder={'23.905544'}
                 />
               </Grid>
               <Grid>

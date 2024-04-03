@@ -141,7 +141,7 @@ const FishingTools = ({ coordinates, isDisabled }: { coordinates: any; isDisable
               <div>
                 <Message>
                   Nepavyko nustatyti jūsų buvimo vietos. Nustatykite rankiniu būdu arba nuplaukite į
-                  žvejybos vietą ir atnaujinkite inofrmaciją.
+                  žvejybos vietą ir atnaujinkite informaciją.
                 </Message>
                 <Button
                   disabled={locationMutationLoading || isDisabled}
