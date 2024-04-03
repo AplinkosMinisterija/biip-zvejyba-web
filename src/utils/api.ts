@@ -386,7 +386,7 @@ class Api {
   getTool = async (id: string): Promise<Tool> =>
     await this.getOne({
       resource: 'tools',
-      populate: ['toolsGroup'],
+      populate: ['toolsGroup', 'toolType'],
       id,
     });
 
