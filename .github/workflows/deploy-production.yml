@@ -22,3 +22,4 @@ jobs:
         VITE_SENTRY_DSN=https://0fadf707c6574ab792a4dd2f8d729ea2@sentry.biip.lt/42
         VITE_UETK_URL=https://uetk.biip.lt/api
         VITE_GIS_URL=https://gis.biip.lt/api
+        VITE_MAPS_HOST=https://maps.biip.lt
