@@ -70,7 +70,7 @@ const Tools = () => {
       <DefaultLayout title={currentRoute?.title} subtitle={currentRoute?.subtitle}>
         <Container>
           {isEmpty(tools) ? (
-            <NotFound message={'Nėra sukurtų įrankių sandelyje'} />
+            <NotFound message={'Nėra sukurtų įrankių sandėlyje'} />
           ) : (
             <ListContainer>
               {map(tools, (tool: any) => (
