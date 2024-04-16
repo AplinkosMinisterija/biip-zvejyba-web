@@ -384,6 +384,22 @@ const ResearchForm = () => {
             </Grid>
             <Grid $columns={2}>
               <NumericTextField
+                label={'Bendras žuvų gausumas'}
+                name="totalFishesAbundance"
+                value={values.totalFishesAbundance}
+                error={errors.totalFishesAbundance}
+                onChange={(value) => setFieldValue('totalFishesAbundance', value)}
+                digitsAfterComma={2}
+              />
+              <NumericTextField
+                label={'Bendra biomasė'}
+                name="totalBiomass"
+                value={values.totalBiomass}
+                error={errors.totalBiomass}
+                onChange={(value) => setFieldValue('totalBiomass', value)}
+                digitsAfterComma={2}
+              />
+              <NumericTextField
                 label={'Plėšrių žuvų santykinis gausumas'}
                 name="predatoryFishesRelativeAbundance"
                 value={values.predatoryFishesRelativeAbundance}
