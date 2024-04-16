@@ -129,6 +129,8 @@ const ResearchForm = () => {
         endAt: undefined,
         predatoryFishesRelativeAbundance: '',
         predatoryFishesRelativeBiomass: '',
+        totalBiomass: '',
+        totalFishesAbundance: '',
         averageWeight: '',
         valuableFishesRelativeBiomass: '',
         conditionIndex: '',

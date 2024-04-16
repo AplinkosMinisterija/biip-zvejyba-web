@@ -160,8 +160,8 @@ export interface Research {
     totalBiomass: string;
   };
   fishes?: ResearchFish[];
-  totalFishesAbundance?: number;
-  totalBiomass?: number;
+  totalFishesAbundance?: string;
+  totalBiomass?: string;
   tenant?: Tenant;
   user?: User;
   previous?: Research;
