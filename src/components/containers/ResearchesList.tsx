@@ -2,7 +2,7 @@ import { isEmpty } from 'lodash';
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { slugs, useInfinityLoad } from '../../utils';
+import { device, slugs, useInfinityLoad } from '../../utils';
 import api from '../../utils/api';
 import Button from '../buttons/Button';
 import { Grid } from '../other/CommonStyles';
@@ -34,7 +34,7 @@ const Researches = () => {
             <React.Fragment key={pageIndex}>
               {page.data.map((research: any) => (
                 <ResearchCard
-                  key={research?.id!}
+                  key={research.id!}
                   research={research}
                   onClick={() => navigate(slugs.updateResearch(research.id!))}
                 />
@@ -49,14 +49,24 @@ const Researches = () => {
   };
 
   return (
-    <Grid $columns={1}>
+    <Container>
       <>
         {renderContent()}
-        <Button onClick={() => navigate(slugs.newResearch)}>{'Naujas mokslinis tyrimas'}</Button>
+        <Footer>
+          <Button onClick={() => navigate(slugs.newResearch)}>{'Naujas mokslinis tyrimas'}</Button>
+        </Footer>
       </>
-    </Grid>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  width: 100%;
+`;
 
 const Invisible = styled.div`
   width: 10px;
@@ -66,10 +76,18 @@ const Invisible = styled.div`
 const InnerContainer = styled.div`
   overflow-y: auto;
   width: 100%;
-  height: 700px;
+  height: 100%;
   display: flex;
   gap: 12px;
   flex-direction: column;
+  overflow: scroll;
+`;
+
+const Footer = styled.div`
+  padding: 16px 0;
+  @media ${device.desktop} {
+    padding: 16px 0 0 0;
+  }
 `;
 
 export default Researches;

@@ -5,6 +5,7 @@ export const Title = styled.div`
   color: ${({ theme }) => theme.colors.text.primary};
   font-size: 3.2rem;
   font-weight: 800;
+  text-align: center;
 `;
 
 export const FormTitle = styled.div`
