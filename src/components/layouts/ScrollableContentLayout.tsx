@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { device } from '../../utils';
 import { Subtitle, Title } from '../other/CommonStyles';
 
-const ScrollableContentLayout = ({ currentRoute, onScroll, children }: any) => {
+const ScrollableContentLayout = ({ currentRoute, children }: any) => {
   return (
-    <ScrollableContainer onScroll={onScroll}>
+    <ScrollableContainer>
       <InnerContainer>
         {currentRoute?.back ? <BackHeader /> : <LogoHeader />}
         <Content>
@@ -23,11 +23,9 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 100%;
-  align-self: center;
-  align-items: center;
   padding: 0 16px 0 16px;
   background-color: white;
+  align-items: center;
   @media ${device.desktop} {
     max-width: 800px;
     border-radius: 16px;

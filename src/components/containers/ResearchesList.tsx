@@ -53,7 +53,9 @@ const Researches = () => {
       <>
         {renderContent()}
         <Footer>
-          <Button onClick={() => navigate(slugs.newResearch)}>{'Naujas mokslinis tyrimas'}</Button>
+          <StyledButton onClick={() => navigate(slugs.newResearch)}>
+            {'Naujas mokslinis tyrimas'}
+          </StyledButton>
         </Footer>
       </>
     </Container>
@@ -74,19 +76,34 @@ const Invisible = styled.div`
 `;
 
 const InnerContainer = styled.div`
-  overflow-y: auto;
   width: 100%;
   height: 100%;
   display: flex;
   gap: 12px;
   flex-direction: column;
   overflow: scroll;
+  padding-bottom: 60px;
+  @media ${device.desktop} {
+    padding-bottom: 0;
+  }
+`;
+
+const StyledButton = styled(Button)`
+  width: 720px;
 `;
 
 const Footer = styled.div`
-  padding: 16px 0;
+  display: flex;
+  padding: 16px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: center;
   @media ${device.desktop} {
-    padding: 16px 0 0 0;
+    width: calc(100% - 320px);
+    bottom: 16px;
   }
 `;
 

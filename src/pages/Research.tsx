@@ -21,7 +21,6 @@ export const Research = () => {
       title={currentRoute?.title}
       subtitle={currentRoute?.subtitle}
       back={currentRoute?.back}
-      scrollable={currentRoute?.slug !== slugs.researches}
     >
       {renderContainer()}
     </DefaultLayout>
