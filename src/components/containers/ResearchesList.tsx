@@ -33,7 +33,7 @@ const Researches = () => {
             <React.Fragment key={pageIndex}>
               {page.data.map((research: any) => (
                 <ResearchCard
-                  key={research.id!}
+                  key={research.id}
                   research={research}
                   onClick={() => navigate(slugs.updateResearch(research.id!))}
                 />
