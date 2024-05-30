@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { device, slugs, useInfinityLoad } from '../../utils';
 import api from '../../utils/api';
 import Button from '../buttons/Button';
-import { Grid } from '../other/CommonStyles';
 import LoaderComponent from '../other/LoaderComponent';
 import { NotFound } from '../other/NotFound';
 import ResearchCard from '../other/ResearchCard';
