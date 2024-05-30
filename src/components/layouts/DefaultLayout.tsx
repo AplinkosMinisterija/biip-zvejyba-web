@@ -7,19 +7,15 @@ import LogoHeader from '../headers/LogoHeader';
 import ScrollableContentLayout from './ScrollableContentLayout';
 import ContentLayout from './ContentLayout';
 
-const DefaultLayout = ({ children, onScroll = () => {}, scrollable = true }: any) => {
+const DefaultLayout = ({ children, onScroll = () => {} }: any) => {
   const isMobile = useWindowSize(device.mobileL);
   const currentRoute = useGetCurrentRoute();
   return (
     <Container>
       {!isMobile && <SideBar />}
-      {scrollable ? (
-        <ScrollableContentLayout currentRoute={currentRoute} onScroll={onScroll}>
-          {children}
-        </ScrollableContentLayout>
-      ) : (
-        <ContentLayout currentRoute={currentRoute}>{children}</ContentLayout>
-      )}
+      <ScrollableContentLayout currentRoute={currentRoute} onScroll={onScroll}>
+        {children}
+      </ScrollableContentLayout>
     </Container>
   );
 };
