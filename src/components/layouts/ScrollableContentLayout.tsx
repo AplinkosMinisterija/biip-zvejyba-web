@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { device } from '../../utils';
 import { Subtitle, Title } from '../other/CommonStyles';
 
-const ScrollableContentLayout = ({ currentRoute, children }: any) => {
+const ScrollableContentLayout = ({ currentRoute, children, onScroll }: any) => {
   return (
-    <ScrollableContainer>
+    <ScrollableContainer onScroll={onScroll}>
       <InnerContainer>
         {currentRoute?.back ? <BackHeader /> : <LogoHeader />}
         <Content>
