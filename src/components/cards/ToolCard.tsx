@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Tool } from '../../utils/types';
 import Icon, { IconName } from '../other/Icon';
+import { ToolTypeType } from '../../utils';
 
 interface ToolCardProps {
   tool: Tool;
@@ -11,6 +12,9 @@ const ToolCard = ({ tool, onClick }: ToolCardProps) => {
   const location = isInWater ? tool.toolsGroup?.buildEvent.location : undefined;
 
   const isEstuary = location?.name?.includes('baras');
+  const toolInfo =
+    tool.toolType.type == ToolTypeType.NET && tool.data.eyeSize ? `, ${tool.data.eyeSize} mm` : '';
+  const toolLabel = tool.toolType.label + toolInfo;
 
   return (
     <Container onClick={onClick}>
@@ -20,7 +24,7 @@ const ToolCard = ({ tool, onClick }: ToolCardProps) => {
         {isInWater && !isEstuary && <Icon name={IconName.tools} />}
       </IconContainer>
       <div>
-        <ToolName>{tool.toolType.label}</ToolName>
+        <ToolName>{toolLabel}</ToolName>
         <div>{tool.sealNr}</div>
       </div>
     </Container>
