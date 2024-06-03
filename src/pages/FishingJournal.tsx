@@ -11,7 +11,7 @@ const FishingJournal = () => {
   const navigate = useNavigate();
   const observerRef = useRef<any>(null);
 
-  const { data, isFetching, isLoading } = useInfinityLoad(
+  const { data, isFetching } = useInfinityLoad(
     'fishingJournal',
     api.getFishingJournal,
     observerRef,
