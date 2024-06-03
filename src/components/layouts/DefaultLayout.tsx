@@ -4,15 +4,13 @@ import Div100vh from 'react-div-100vh';
 import SideBar from './SideBar';
 import ScrollableContentLayout from './ScrollableContentLayout';
 
-const DefaultLayout = ({ children, onScroll = () => {} }: any) => {
+const DefaultLayout = ({ children }: any) => {
   const isMobile = useWindowSize(device.mobileL);
   const currentRoute = useGetCurrentRoute();
   return (
     <Container>
       {!isMobile && <SideBar />}
-      <ScrollableContentLayout currentRoute={currentRoute} onScroll={onScroll}>
-        {children}
-      </ScrollableContentLayout>
+      <ScrollableContentLayout currentRoute={currentRoute}>{children}</ScrollableContentLayout>
     </Container>
   );
 };

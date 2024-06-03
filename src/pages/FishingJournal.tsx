@@ -1,50 +1,29 @@
 import DefaultLayout from '../components/layouts/DefaultLayout';
-import { slugs } from '../utils';
-import { useInfiniteQuery } from 'react-query';
+import { slugs, useInfinityLoad } from '../utils';
 import api from '../utils/api';
 import LoaderComponent from '../components/other/LoaderComponent';
 import FishingCard from '../components/cards/FishingCard';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
 
 const FishingJournal = () => {
   const navigate = useNavigate();
+  const observerRef = useRef<any>(null);
 
-  const fetchFishings = async (page: number) => {
-    const fishings = await api.getFishingJournal({ page });
-    return {
-      data: fishings.rows,
-      page: fishings.page < fishings.totalPages ? fishings.page + 1 : undefined,
-    };
-  };
-
-  const { data, hasNextPage, fetchNextPage, isLoading } = useInfiniteQuery(
+  const { data, isFetching, isLoading } = useInfinityLoad(
     'fishingJournal',
-    ({ pageParam }) => fetchFishings(pageParam),
-    {
-      getNextPageParam: (lastPage) => lastPage.page,
-      cacheTime: 60000,
-      retry: false,
-    },
+    api.getFishingJournal,
+    observerRef,
   );
 
-  const handleScroll = async (e: any) => {
-    const element = e.currentTarget;
-    const isTheBottom =
-      Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) <= 1;
-
-    if (isTheBottom && hasNextPage && !isLoading) {
-      fetchNextPage();
-    }
-  };
-
-  const fishings = data?.pages
+  const fishings: any = data?.pages
     .flat()
-    .map((item) => item?.data)
+    .map((item) => item?.rows)
     .flat();
 
   return (
-    <DefaultLayout onScroll={handleScroll}>
+    <DefaultLayout>
       <Container>
         {fishings?.map((fishing: any) => {
           return (
@@ -61,7 +40,8 @@ const FishingJournal = () => {
             />
           );
         })}
-        {isLoading && <LoaderComponent />}
+        {observerRef && <Invisible ref={observerRef} />}
+        {isFetching && <LoaderComponent />}
       </Container>
     </DefaultLayout>
   );
@@ -74,4 +54,9 @@ const Container = styled.div`
   max-height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+`;
+
+const Invisible = styled.div`
+  width: 10px;
+  height: 16px;
 `;

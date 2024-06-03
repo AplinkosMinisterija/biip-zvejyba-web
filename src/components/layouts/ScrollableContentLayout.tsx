@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { device } from '../../utils';
 import { Subtitle, Title } from '../other/CommonStyles';
 
-const ScrollableContentLayout = ({ currentRoute, children, onScroll }: any) => {
+const ScrollableContentLayout = ({ currentRoute, children }: any) => {
   return (
-    <ScrollableContainer onScroll={onScroll}>
+    <ScrollableContainer>
       <InnerContainer>
         {currentRoute?.back ? <BackHeader /> : <LogoHeader />}
         <Content>
@@ -18,6 +18,13 @@ const ScrollableContentLayout = ({ currentRoute, children, onScroll }: any) => {
     </ScrollableContainer>
   );
 };
+
+const ScrollableContainer = styled.div`
+  width: 100%;
+  min-height: 100%;
+  overflow-y: scroll;
+  background-color: white;
+`;
 
 const Content = styled.div`
   display: flex;
@@ -34,13 +41,6 @@ const Content = styled.div`
     overflow-y: auto;
     height: fit-content;
   }
-`;
-
-const ScrollableContainer = styled.div`
-  width: 100%;
-  min-height: 100%;
-  overflow-y: scroll;
-  background-color: white;
 `;
 
 const InnerContainer = styled.div`
