@@ -26,7 +26,7 @@ export const useCheckUserInfo = () => {
   const dispatch = useAppDispatch();
   const token = cookies.get('token');
 
-  const { isLoading } = useQuery(['lol'], () => api.userInfo(), {
+  const { isLoading } = useQuery([token], () => api.userInfo(), {
     onError: ({ response }: any) => {
       if (response.status === 401) {
         clearCookies();
