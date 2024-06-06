@@ -9,7 +9,7 @@ import { UserReducer } from './user/reducer';
 const persistConfig = {
   key: 'animalsConfig',
   storage,
-  whitelist: ['filters', 'user', 'fishing'],
+  whitelist: ['filters', 'fishing'],
 };
 
 const reducers = combineReducers({
