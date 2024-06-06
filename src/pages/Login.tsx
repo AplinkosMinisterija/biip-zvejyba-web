@@ -15,7 +15,7 @@ import {
   handleErrorToastFromServer,
   handleUpdateTokens,
 } from '../utils/functions';
-import { useCheckAuthMutation, useEGatesSign, useWindowSize } from '../utils/hooks';
+import { useCheckUserInfo, useEGatesSign, useWindowSize } from '../utils/hooks';
 import { buttonLabels } from '../utils/texts';
 import { device, theme } from '../utils/theme';
 import { loginSchema } from '../utils/validations';
@@ -44,9 +44,9 @@ export const Login = () => {
 
   const { mutateAsync: eGatesMutation, isLoading: eGatesSignLoading } = useEGatesSign();
 
-  const { isLoading: checkAuthLoading } = useCheckAuthMutation();
+  const { isLoading: userInfoLoading } = useCheckUserInfo();
 
-  const loading = [loginMutation.isLoading, checkAuthLoading].some((loading) => loading);
+  const loading = [loginMutation.isLoading, userInfoLoading].some((loading) => loading);
 
   const { values, errors, setFieldValue, handleSubmit, setErrors } = useFormik({
     initialValues: {

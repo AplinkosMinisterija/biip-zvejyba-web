@@ -8,6 +8,13 @@ import { validationTexts } from './texts';
 import { Profile, ProfileId, ResponseProps, ToolsGroup } from './types';
 const cookies = new Cookies();
 
+interface UpdateTokenProps {
+  token?: string;
+  error?: string;
+  message?: string;
+  refreshToken?: string;
+}
+
 export const clearCookies = () => {
   cookies.remove('token', { path: '/' });
   cookies.remove('refreshToken', { path: '/' });
@@ -65,28 +72,21 @@ export const handleSelectProfile = (profileId: ProfileId) => {
   window.location.reload();
 };
 
-export const handleUpdateTokens = (data: {
-  token?: string;
-  error?: string;
-  message?: string;
-  refreshToken?: string;
-}) => {
-  const { token, refreshToken, error } = data;
+export const handleUpdateTokens = (data: UpdateTokenProps) => {
+  const { token, refreshToken } = data;
+
   if (token) {
     cookies.set('token', `${token}`, {
       path: '/',
       expires: new Date(new Date().getTime() + 60 * 60 * 24 * 1000),
     });
-
-    if (refreshToken) {
-      cookies.set('refreshToken', `${refreshToken}`, {
-        path: '/',
-        expires: new Date(new Date().getTime() + 60 * 60 * 24 * 1000 * 30),
-      });
-    }
   }
-  if (error) {
-    return { error };
+
+  if (refreshToken) {
+    cookies.set('refreshToken', `${refreshToken}`, {
+      path: '/',
+      expires: new Date(new Date().getTime() + 60 * 60 * 24 * 1000 * 30),
+    });
   }
 };
 
