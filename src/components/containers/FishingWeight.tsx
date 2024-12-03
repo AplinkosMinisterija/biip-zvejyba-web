@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { FishingWeighType, handleErrorToastFromServer, useFishTypes } from '../../utils';
+import {
+  FishingWeighType,
+  handleErrorToastFromServer,
+  ReactQueryError,
+  useFishTypes,
+} from '../../utils';
 import api from '../../utils/api';
 import Button from '../buttons/Button';
 import SwitchButton from '../buttons/SwitchButton';
@@ -28,6 +33,15 @@ const FishingWeight = ({ coordinates, isDisabled }: { coordinates: any; isDisabl
     isLoading: fishingWeightsLoading,
   } = useQuery(['fishingWeights'], api.getFishingWeights, { retry: false });
 
+  useEffect(() => {
+    const hasFishingWeights = fishingWeights?.total && !!Object.keys(fishingWeights.total).length;
+    const hasNoAmounts = !Object.keys(amounts).length;
+
+    if (hasFishingWeights && hasNoAmounts) {
+      setAmounts(fishingWeights.total as { [key: number]: number });
+    }
+  }, [fishingWeights, amounts]);
+
   const hasFishOnBoat = !!Object.values(fishingWeights.preliminary || {}).length;
 
   const initialValues = fishTypes
@@ -36,8 +50,7 @@ const FishingWeight = ({ coordinates, isDisabled }: { coordinates: any; isDisabl
     )
     .map((fishType) => ({
       ...fishType,
-      preliminaryAmount: fishingWeights.preliminary[fishType.id],
-      amount: fishingWeights.preliminary[fishType.id] || '',
+      preliminaryAmount: fishingWeights?.preliminary?.[fishType.id],
     }));
 
   const { mutateAsync: fishingWeightMutation, isLoading: fishingWeightLoading } = useMutation(
@@ -47,8 +60,8 @@ const FishingWeight = ({ coordinates, isDisabled }: { coordinates: any; isDisabl
         queryClient.invalidateQueries(['fishingWeights']);
         navigate(-1);
       },
-      onError: () => {
-        handleErrorToastFromServer();
+      onError: ({ response }: { response: ReactQueryError }) => {
+        handleErrorToastFromServer(response);
       },
     },
   );

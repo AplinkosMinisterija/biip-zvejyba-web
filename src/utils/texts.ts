@@ -21,6 +21,7 @@ export const validationTexts = {
     'Įrankis su šiuo plombos numeriu jau egzistuoja',
   [ServerErrors.FISH_MUST_BE_WEIGHTED]:
     'Sužvejotos žuvys turi būti pasvertos krante, prieš užbaigiant žvejybą',
+  [ServerErrors.FISH_ALREADY_WEIGHTED]: 'Žuvis krante jau buvo pasverta',
   badFileTypes: 'Blogi failų tipai',
   fileSizesExceeded: 'Viršyti failų dydžiai',
   personalCode: 'Neteisingas asmens kodo formatas',
