@@ -30,7 +30,7 @@ const FishRow = ({ onChange, fish }: FishRowProp) => {
       <Column>
         <TextColumn>
           <Title>{label.charAt(0).toUpperCase() + label.slice(1)}</Title>
-          {preliminaryAmount && <Caught>{`Sagauta ${preliminaryAmount} kg`}</Caught>}
+          {preliminaryAmount && <Caught>{`Sugauta ${preliminaryAmount} kg`}</Caught>}
         </TextColumn>
         <InnerRow>
           <Button type="button" onClick={() => amount > 0 && onChange(amount - 1)}>

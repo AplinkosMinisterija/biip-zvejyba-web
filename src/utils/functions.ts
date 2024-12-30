@@ -5,7 +5,7 @@ import api from './api';
 import { LOCATION_ERRORS, ToolTypeType } from './constants';
 import { routes } from './routes';
 import { validationTexts } from './texts';
-import { Profile, ProfileId, ResponseProps, ToolsGroup } from './types';
+import { Profile, ProfileId, ReactQueryError, ResponseProps, ToolsGroup } from './types';
 const cookies = new Cookies();
 
 interface UpdateTokenProps {
@@ -22,10 +22,10 @@ export const clearCookies = () => {
   cookies.remove('profileId', { path: '/' });
 };
 
-export const getErrorMessage = (responseError: string) =>
-  validationTexts[responseError as keyof typeof validationTexts] || validationTexts.error;
+export const getErrorMessage = (errorMessage: string) =>
+  validationTexts[errorMessage as keyof typeof validationTexts] || validationTexts.error;
 
-export const handleErrorToastFromServer = (responseError: string = 'error') => {
+export const handleErrorToastFromServer = (responseError?: ReactQueryError) => {
   handleErrorToast(getErrorMessage(getReactQueryErrorMessage(responseError)));
 };
 
@@ -222,7 +222,8 @@ export const getBuiltToolInfo = (toolsGroup: ToolsGroup) => {
   };
 };
 
-export const getReactQueryErrorMessage = (response: any) => response?.data?.message;
+export const getReactQueryErrorMessage = (response?: ReactQueryError) =>
+  response?.data?.message || 'error';
 
 export const formatDate = (date?: Date | string) =>
   date ? format(new Date(date), 'yyyy-MM-dd') : '-';
