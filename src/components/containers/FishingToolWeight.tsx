@@ -28,7 +28,7 @@ export const CaughtFishesWithTool = ({
   const queryClient = useQueryClient();
   const currentRoute = useGetCurrentRoute();
   const { fishTypes, isLoading } = useFishTypes();
-  const location = useAppSelector((state) => state.fishing.location);
+  // const location = useAppSelector((state) => state.fishing.location);
   const { toolId } = useParams();
   const [amounts, setAmounts] = useState<{ [key: string]: number }>({});
 

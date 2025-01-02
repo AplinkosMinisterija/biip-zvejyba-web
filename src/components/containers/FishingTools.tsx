@@ -1,18 +1,8 @@
 import { isEmpty, map } from 'lodash';
-import { useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useContext, useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { actions } from '../../state/fishing/reducer';
-import {
-  device,
-  getBars,
-  handleErrorToast,
-  LocationType,
-  ToolsGroup,
-  useAppSelector,
-  validationTexts,
-} from '../../utils';
+import { device, getBars, LocationType, ToolsGroup } from '../../utils';
 import api from '../../utils/api';
 import Button, { ButtonColors } from '../buttons/Button';
 import ToolsGroupCard from '../cards/ToolsGroupCard';
@@ -25,57 +15,37 @@ import LoaderComponent from '../other/LoaderComponent';
 import { NotFound } from '../other/NotFound';
 import BuildTools from './BuildTools';
 import ToolActions from './ToolActions';
+import { LocationContext, LocationContextType } from '../other/LocationContext';
 
-const FishingTools = ({ coordinates, isDisabled }: { coordinates: any; isDisabled: boolean }) => {
-  const dispatch = useDispatch();
+const FishingTools = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
   const [selectedToolsGroup, setSelectedToolsGroup] = useState<ToolsGroup>();
-  const location = useAppSelector((state) => state.fishing.location);
+  const [location, setLocation] = useState<any>();
+  const { coordinates, getLocation, getLocationManually, locationLoading } =
+    useContext<LocationContextType>(LocationContext);
+
+  const isDisabled = !coordinates;
 
   const { data: currentFishing } = useQuery(['currentFishing'], () => api.getCurrentFishing(), {
     retry: false,
   });
+
   const locationType: LocationType = currentFishing?.type;
   const isEstuary = locationType === LocationType.ESTUARY;
 
-  const { mutateAsync: getLocationMutation, isLoading: locationMutationLoading } = useMutation(
-    (coordinates: any) =>
-      api.getLocation({
-        query: {
-          type: locationType,
-          coordinates,
-        },
-      }),
-    {
-      onSuccess: (value) => {
-        if (value) {
-          dispatch(actions.setLocation(value));
-          return;
-        }
+  useEffect(() => {
+    if (locationType && coordinates) {
+      getLocation(locationType).then((location) => setLocation(location));
+    }
+    const interval = setInterval(() => {
+      if (locationType && coordinates) {
+        getLocation(locationType).then((location) => setLocation(location));
+      }
+    }, 60000);
 
-        handleErrorToast(validationTexts.failedToSetLocation);
-      },
-    },
-  );
-
-  const { isFetching: locationFetching } = useQuery(
-    ['location'],
-    () =>
-      api.getLocation({
-        query: {
-          type: locationType,
-          coordinates,
-        },
-      }),
-    {
-      onSuccess: (value) => {
-        if (value) dispatch(actions.setLocation(value));
-      },
-      enabled: !isDisabled && coordinates && !location,
-      retry: false,
-    },
-  );
+    return () => clearInterval(interval);
+  }, []);
 
   const { data: bars } = useQuery(['bars'], async () => getBars(), {
     enabled: !isDisabled && isEstuary,
@@ -96,9 +66,18 @@ const FishingTools = ({ coordinates, isDisabled }: { coordinates: any; isDisable
   const handleSetLocationManually = (values: any) => {
     const { location, x, y } = values;
     if (location) {
-      getLocationMutation({ x: location.x, y: location.y });
+      const coordinates = { x: location.x, y: location.y };
+      getLocationManually({
+        coordinates,
+        type: locationType,
+      }).then((l) => {
+        setLocation(l);
+      });
     } else {
-      getLocationMutation({ x, y });
+      const coordinates = { x, y };
+      getLocationManually({ coordinates, type: locationType }).then((l) => {
+        setLocation(l);
+      });
     }
     setShowLocationPopUp(false);
   };
@@ -107,7 +86,7 @@ const FishingTools = ({ coordinates, isDisabled }: { coordinates: any; isDisable
 
   return (
     <>
-      {!locationFetching && (
+      {!locationLoading && (
         <TitleWrapper>
           <Title>{location?.name || 'Nenustatytas vandens telkinys'}</Title>
           {showEditIcon && (
@@ -118,7 +97,7 @@ const FishingTools = ({ coordinates, isDisabled }: { coordinates: any; isDisable
         </TitleWrapper>
       )}
       <Container>
-        {locationFetching ? (
+        {locationLoading ? (
           <LoaderComponent />
         ) : (
           <>
@@ -144,7 +123,7 @@ const FishingTools = ({ coordinates, isDisabled }: { coordinates: any; isDisable
                   žvejybos vietą ir atnaujinkite informaciją.
                 </Message>
                 <Button
-                  disabled={locationMutationLoading || isDisabled}
+                  disabled={isDisabled}
                   onClick={() => {
                     setShowLocationPopUp(true);
                   }}
@@ -152,10 +131,10 @@ const FishingTools = ({ coordinates, isDisabled }: { coordinates: any; isDisable
                   {'Nustatyti rankiniu būdu'}
                 </Button>
                 <Button
-                  loading={locationMutationLoading}
-                  disabled={locationMutationLoading || isDisabled}
+                  loading={locationLoading}
+                  disabled={isDisabled}
                   variant={ButtonColors.SECONDARY}
-                  onClick={() => getLocationMutation(coordinates)}
+                  onClick={() => getLocation(locationType)}
                 >
                   {'Atnaujinti lokaciją'}
                 </Button>

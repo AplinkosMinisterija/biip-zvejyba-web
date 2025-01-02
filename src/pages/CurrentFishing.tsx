@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import Button, { ButtonColors } from '../components/buttons/Button';
@@ -17,15 +17,15 @@ import {
   handleErrorToast,
   LOCATION_ERRORS,
   slugs,
-  useGeolocationWatcher,
   validationTexts,
 } from '../utils';
 import api from '../utils/api';
+import { LocationContext, LocationContextType } from '../components/other/LocationContext';
 
 const infoToEnableTheLocationUrl = 'https://zuvys.biip.lt/dokumentacija/zvejyba/lokacija/';
 
 export const CurrentFishing = () => {
-  const { coordinates, error } = useGeolocationWatcher();
+  const { coordinates, error } = useContext<LocationContextType>(LocationContext);
   const navigate = useNavigate();
   const currentRoute = getCurrentRoute(window.location.pathname);
   const [showLocationDeniedPopUp, setShowLocationDeniedPopUp] = useState(false);
@@ -100,9 +100,7 @@ export const CurrentFishing = () => {
           coordinates={coordinates}
         />
       )}
-      {currentRoute?.slug === slugs.fishingTools && (
-        <FishingTools isDisabled={isDisabled} coordinates={coordinates} />
-      )}
+      {currentRoute?.slug === slugs.fishingTools && <FishingTools />}
       {currentRoute?.slug === slugs.fishingToolCaughtFishes(':toolId') && (
         <FishingToolWeight isDisabled={isDisabled} coordinates={coordinates} />
       )}

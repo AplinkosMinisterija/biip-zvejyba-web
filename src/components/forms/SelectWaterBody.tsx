@@ -1,22 +1,26 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { actions } from '../../state/fishing/reducer';
-import { buttonLabels, getLocationList, useAppSelector, validationTexts } from '../../utils';
+import { buttonLabels, getLocationList, LocationType, validationTexts } from '../../utils';
 import Button from '../buttons/Button';
 import AsyncSelectField from '../fields/AsyncSelect';
 import { Grid } from '../other/CommonStyles';
 import LoaderComponent from '../other/LoaderComponent';
+import { LocationContext, LocationContextType } from '../other/LocationContext';
 
 const SelectWaterBody = ({ onStartFishing, loading }: any) => {
-  const location = useAppSelector((state) => state.fishing.location);
+  const { getLocation } = useContext<LocationContextType>(LocationContext);
+  const [location, setLocation] = useState<any>();
   const [error, setError] = useState('');
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    if (getLocation) {
+      getLocation(LocationType.INLAND_WATERS).then((l) => setLocation(l));
+    }
+  }, []);
 
   const handleChangeValue = (value: any) => {
     setError('');
-    dispatch(actions.setLocation(value));
+    setLocation(value);
   };
 
   const handleSubmit = () => {
@@ -62,8 +66,6 @@ const SelectWaterBody = ({ onStartFishing, loading }: any) => {
   );
 };
 
-export default SelectWaterBody;
-
 const Container = styled.div`
   width: 100%;
 `;
@@ -91,3 +93,5 @@ const TitleWrapper = styled.div`
 const StyledSelectField = styled(AsyncSelectField)`
   margin-bottom: 16px;
 `;
+
+export default SelectWaterBody;

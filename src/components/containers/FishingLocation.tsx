@@ -1,9 +1,7 @@
 import { map } from 'lodash';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { actions } from '../../state/fishing/reducer';
 import {
   buttonLabels,
   handleErrorToast,
@@ -11,7 +9,6 @@ import {
   LocationType,
   SickReasons,
   skipOptions,
-  useAppSelector,
   validationTexts,
 } from '../../utils';
 import api from '../../utils/api';
@@ -21,39 +18,26 @@ import SelectWaterBody from '../forms/SelectWaterBody';
 import PopUpWithImage from '../layouts/PopUpWithImage';
 import { Grid } from '../other/CommonStyles';
 import { IconName } from '../other/Icon';
+import { LocationContext, LocationContextType } from '../other/LocationContext';
 
-const useLocationMutation = (onSuccess: (value: any) => void) => {
-  const { mutateAsync: getLocation, isLoading: locationLoading } = useMutation(
-    async ({ coordinates, type }: { coordinates: any; type: LocationType }) => {
-      if (coordinates && type) {
-        return await api.getLocation({
-          query: JSON.stringify({
-            type,
-            coordinates,
-          }),
-        });
-      }
-    },
-    {
-      onSuccess: onSuccess,
-    },
-  );
-  return { getLocation, locationLoading };
-};
+const FishingLocation = ({ isDisabled }: any) => {
+  const queryClient = useQueryClient();
+  const [showStartFishing, setShowStartFishing] = useState(false);
+  const [showSkipFishing, setShowSkipFishing] = useState(false);
+  const [skipReason, setSkipReason] = useState(SickReasons.BAD_WEATHER);
+  const [showLocationPopUp, setShowLocationPopUp] = useState(false);
+  const [locationType, setLocationType] = useState<LocationType | null>(null);
+  const { coordinates, location, getLocation, locationLoading } =
+    useContext<LocationContextType>(LocationContext);
 
-const useSkipMutation = (onSuccess: () => void) => {
   const { isLoading: skipLoading, mutateAsync: skipFishing } = useMutation(api.skipFishing, {
     onError: ({ response }) => {
       handleErrorToastFromServer(response);
     },
-    onSuccess,
+    onSuccess: () => setShowSkipFishing(false),
     retry: false,
   });
-  return { skipLoading, skipFishing };
-};
 
-const useStartMutation = () => {
-  const queryClient = useQueryClient();
   const { isLoading: startLoading, mutateAsync: startFishing } = useMutation(api.startFishing, {
     onError: ({ response }) => {
       handleErrorToastFromServer(response);
@@ -63,30 +47,11 @@ const useStartMutation = () => {
     },
     retry: false,
   });
-  return { startFishing, startLoading };
-};
-
-const FishingLocation = ({ coordinates, isDisabled }: any) => {
-  const dispatch = useDispatch();
-  const [showStartFishing, setShowStartFishing] = useState(false);
-  const [showSkipFishing, setShowSkipFishing] = useState(false);
-  const [skipReason, setSkipReason] = useState(SickReasons.BAD_WEATHER);
-  const [showLocationPopUp, setShowLocationPopUp] = useState(false);
-  const [locationType, setLocationType] = useState<LocationType | null>(null);
-
-  const location = useAppSelector((state) => state.fishing.location);
-
-  const { startFishing, startLoading } = useStartMutation();
-  const { skipFishing, skipLoading } = useSkipMutation(() => setShowSkipFishing(false));
-  const { getLocation, locationLoading } = useLocationMutation((value) =>
-    dispatch(actions.setLocation(value)),
-  );
 
   const handleSelectLocation = (type: LocationType) => () => {
     setLocationType(type);
-    dispatch(actions.setLocation(undefined));
     if (type === LocationType.INLAND_WATERS) {
-      getLocation({ coordinates, type });
+      getLocation(type);
       setShowLocationPopUp(true);
     } else {
       setShowStartFishing(true);

@@ -120,6 +120,7 @@ export const useGeolocationWatcher = () => {
     });
   };
   const errorHandler = ({ code }: GeolocationPositionError) => {
+    console.log('error!!!!', code);
     setError(code);
   };
 
