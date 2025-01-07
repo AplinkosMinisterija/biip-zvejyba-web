@@ -5,7 +5,7 @@ import Button from '../buttons/Button';
 import AsyncSelectField from '../fields/AsyncSelect';
 import { Grid } from '../other/CommonStyles';
 import LoaderComponent from '../other/LoaderComponent';
-import { LocationContext, LocationContextType } from '../other/LocationContext';
+import { LocationContext, LocationContextType } from '../providers/LocationContext';
 
 const SelectWaterBody = ({ onStartFishing, loading }: any) => {
   const { getLocation } = useContext<LocationContextType>(LocationContext);

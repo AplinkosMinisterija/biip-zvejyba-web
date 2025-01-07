@@ -16,7 +16,8 @@ import App from './App';
 import redux from './state/store';
 import { GlobalStyle, theme } from './utils/theme';
 import ErrorBoundary from './components/other/ErrorBoundary';
-import { LocationProvider } from './components/other/LocationContext';
+import { LocationContext } from './components/providers/LocationContext';
+import { PopupProvider } from './components/providers/PopupProvider';
 
 const queryClient = new QueryClient();
 
@@ -54,9 +55,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <GlobalStyle />
             <BrowserRouter>
               <ErrorBoundary>
-                <LocationProvider>
-                  <App />
-                </LocationProvider>
+                <PopupProvider>
+                  <LocationContext>
+                    <App />
+                  </LocationContext>
+                </PopupProvider>
               </ErrorBoundary>
             </BrowserRouter>
           </ThemeProvider>

@@ -73,3 +73,7 @@ export enum FishingEventType {
   END = 'END',
   SKIP = 'SKIP',
 }
+
+export enum PopupContentType {
+  LOCATION_PERMISSION = 'location_permission',
+}

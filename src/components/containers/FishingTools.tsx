@@ -15,7 +15,7 @@ import LoaderComponent from '../other/LoaderComponent';
 import { NotFound } from '../other/NotFound';
 import BuildTools from './BuildTools';
 import ToolActions from './ToolActions';
-import { LocationContext, LocationContextType } from '../other/LocationContext';
+import { LocationContext, LocationContextType } from '../providers/LocationContext';
 
 const FishingTools = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);

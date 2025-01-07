@@ -1,35 +1,39 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useState } from 'react';
 import { LocationType, useGeolocationWatcher } from '../../utils';
 import { useMutation } from 'react-query';
 import api from '../../utils/api';
 
 export type LocationContextType = {
   coordinates: any;
-  error?: any;
   location?: any;
-  getLocation: (type: LocationType) => Promise<any>;
-  getLocationManually: (data: any) => Promise<any>;
+  setLocationType: (type: LocationType) => void;
+  setLocation: (location: Location) => void;
+  getLocation: (type: LocationType) => Promise<any>; //Todo: must be removed
+  getLocationManually: (data: any) => Promise<any>; //Todo: must be removed
   locationLoading: boolean;
+  error?: any;
 };
 
 const defaultValue: LocationContextType = {
   coordinates: undefined,
-  error: undefined,
   location: undefined,
-  getLocation: () => Promise.resolve(),
-  getLocationManually: () => Promise.resolve(),
+  setLocationType: (type: LocationType) => {},
+  setLocation: (location: Location) => {},
+  getLocation: () => Promise.resolve(), //Todo: must be removed
+  getLocationManually: () => Promise.resolve(), //Todo: must be removed
   locationLoading: false,
+  error: undefined,
 };
 
 export const LocationContext: any = createContext<LocationContextType>(defaultValue);
 
 export const LocationProvider = ({ children }: any) => {
-  const [location, setLocation] = useState();
-  const { coordinates, error } = useGeolocationWatcher();
+  const [locationType, setLocationType] = useState<LocationType | undefined>(); //Todo: must be persisted
+  const [location, setLocation] = useState(); //Todo: must be persisted
+  const { coordinates, error } = useGeolocationWatcher(); //Todo: must be persisted
 
   const { mutateAsync, isLoading: locationLoading } = useMutation(
     async ({ coordinates, type }: { coordinates: any; type: LocationType }) => {
-      console.log('getting location');
       if (coordinates && type) {
         return await api.getLocation({
           query: JSON.stringify({
