@@ -76,4 +76,8 @@ export enum FishingEventType {
 
 export enum PopupContentType {
   LOCATION_PERMISSION = 'location_permission',
+  START_FISHING = 'start_fishing',
+  START_FISHING_INLAND_WATERS = 'start_fishing_inland_water',
+  SKIP_FISHING = 'skip_fishing',
+  END_FISHING = 'end_fishing',
 }

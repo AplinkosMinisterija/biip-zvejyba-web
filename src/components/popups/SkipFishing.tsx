@@ -11,14 +11,14 @@ import {
 } from '../../utils';
 import Button, { ButtonColors } from '../buttons/Button';
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useMutation } from 'react-query';
 import api from '../../utils/api';
 
 export const SkipFishing = ({ content, onClose }: any) => {
-  const [skipReason, setSkipReason] = useState(SickReasons.BAD_WEATHER);
+  const { locationType } = content;
 
-  const { coordinates, locationType } = content;
+  const [skipReason, setSkipReason] = useState(SickReasons.BAD_WEATHER);
 
   const { isLoading: skipLoading, mutateAsync: skipFishing } = useMutation(api.skipFishing, {
     onError: ({ response }: any) => {
@@ -29,12 +29,14 @@ export const SkipFishing = ({ content, onClose }: any) => {
   });
 
   const handleSkipFishing = () => {
+    const coordinates = window.coordinates;
     if (locationType && coordinates) {
-      skipFishing({ type: locationType, coordinates: coordinates, note: skipReason });
+      skipFishing({ type: locationType, coordinates, note: skipReason });
     } else {
       handleErrorToast(validationTexts.mustAllowToSetCoordinates);
     }
   };
+
   return (
     <PopUpWithImage
       visible={true}

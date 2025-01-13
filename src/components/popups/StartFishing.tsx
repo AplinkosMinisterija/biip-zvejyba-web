@@ -6,13 +6,20 @@ import {
   buttonLabels,
   handleErrorToast,
   handleErrorToastFromServer,
+  PopupContentType,
   validationTexts,
 } from '../../utils';
 import { useMutation, useQueryClient } from 'react-query';
 import api from '../../utils/api';
+import { useContext } from 'react';
+import { LocationContextType, LocationContext } from '../providers/LocationProvider';
+import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
 export const StartFishing = ({ content, onClose }: any) => {
   const queryClient = useQueryClient();
+  const { type } = content;
+  const { location } = useContext<LocationContextType>(LocationContext);
+  const { showPopup } = useContext<PopupContextProps>(PopupContext);
 
   const { isLoading: startLoading, mutateAsync: startFishing } = useMutation(api.startFishing, {
     onError: ({ response }) => {
@@ -20,15 +27,16 @@ export const StartFishing = ({ content, onClose }: any) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries('currentFishing');
+      onClose();
     },
     retry: false,
   });
 
-  const { coordinates, locationType, location, getLocation, locationLoading } = content;
   const handleStartFishing = () => {
-    if (coordinates && locationType) {
+    const coordinates = window.coordinates;
+    if (coordinates && type) {
       startFishing({
-        type: locationType,
+        type: type,
         coordinates,
         uetkCadastralId: location?.id,
       });
@@ -36,6 +44,7 @@ export const StartFishing = ({ content, onClose }: any) => {
       handleErrorToast(validationTexts.mustAllowToSetCoordinates);
     }
   };
+
   return (
     <PopUpWithImage
       iconName={IconName.startFishing}
@@ -53,8 +62,7 @@ export const StartFishing = ({ content, onClose }: any) => {
           disabled={startLoading}
           variant={ButtonColors.SECONDARY}
           onClick={() => {
-            // setShowSkipFishing(true);
-            //TODO: show skip fishing popup
+            showPopup({ type: PopupContentType.SKIP_FISHING, content: { locationType: type } });
           }}
         >
           {buttonLabels.cantFishing}

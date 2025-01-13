@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import { getBuiltToolInfo, theme, ToolsGroup } from '../../utils';
 import Icon, { IconName } from '../other/Icon';
 import Tag from '../other/Tag';
+import ToolActionsPopup from '../containers/ToolActionsPopup';
+import { useState } from 'react';
 
 interface ToolsGroupCardProps {
   toolsGroup: ToolsGroup;
@@ -18,27 +20,45 @@ const ToolsGroupCard = ({
   isDisabled = false,
 }: ToolsGroupCardProps) => {
   const isCheckedTool = !!toolsGroup?.weightEvent;
+  const [visible, setVisible] = useState(false);
 
   const { label, sealNr, locationName } = getBuiltToolInfo(toolsGroup);
 
   return (
-    <Container $isDisabled={isDisabled} $isCheckedTool={isCheckedTool}>
-      <InnerContainer onClick={() => !isDisabled && onSelect(toolsGroup)}>
-        <IconContainer $selected={isCheckedTool}>
-          {isEstuary ? (
-            <Estuary>{locationName.replace(/[^\d]/g, '')}</Estuary>
-          ) : (
-            <StyledIcon name={IconName.tools} $selected={selected!} />
-          )}
-        </IconContainer>
-        <div>
-          <ToolName>{label}</ToolName>
-          {!isEstuary ? <SealNr>{`Telkinys: ${locationName} `}</SealNr> : ''}
-          <SealNr>{sealNr}</SealNr>
-        </div>
-      </InnerContainer>
-      {isCheckedTool && <Tag color={theme.colors.success} label={'Patikrintas'} />}
-    </Container>
+    <>
+      <Container $isDisabled={isDisabled} $isCheckedTool={isCheckedTool}>
+        <InnerContainer
+          onClick={() => {
+            if (!isDisabled) {
+              onSelect(toolsGroup);
+              setVisible(!visible);
+            }
+          }}
+        >
+          <IconContainer $selected={isCheckedTool}>
+            {isEstuary ? (
+              <Estuary>{locationName.replace(/[^\d]/g, '')}</Estuary>
+            ) : (
+              <StyledIcon name={IconName.tools} $selected={selected!} />
+            )}
+          </IconContainer>
+          <div>
+            <ToolName>{label}</ToolName>
+            {!isEstuary ? <SealNr>{`Telkinys: ${locationName} `}</SealNr> : ''}
+            <SealNr>{sealNr}</SealNr>
+          </div>
+        </InnerContainer>
+        {isCheckedTool && <Tag color={theme.colors.success} label={'Patikrintas'} />}
+      </Container>
+      <ToolActionsPopup
+        location={location}
+        visible={visible}
+        toolGroup={toolsGroup}
+        onReturn={() => {
+          setVisible(false);
+        }}
+      />
+    </>
   );
 };
 

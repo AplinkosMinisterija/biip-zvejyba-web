@@ -2,19 +2,18 @@ import { useInfiniteQuery, useMutation, useQuery } from 'react-query';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { actions, initialState } from '../state/user/reducer';
 import api from './api';
-import { intersectionObserverConfig, LOCATION_ERRORS, RoleTypes } from './constants';
+import { intersectionObserverConfig, LOCATION_ERRORS, LocationType, RoleTypes } from './constants';
 import { clearCookies, handleErrorToastFromServer, handleSetProfile } from './functions';
 
 import { useEffect, useState } from 'react';
 import { matchPath, useLocation } from 'react-router';
 import Cookies from 'universal-cookie';
-import { AppDispatch, RootState } from '../state/store';
+import { RootState } from '../state/store';
 import { routes } from './routes';
 import { User } from './types';
 
 const cookies = new Cookies();
 
-export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export const useCheckAuthMutation = () => {
@@ -26,10 +25,8 @@ export const useCheckAuthMutation = () => {
       if (response.status === 401) {
         clearCookies();
         dispatch(actions.setUser(initialState));
-
         return;
       }
-
       return handleErrorToastFromServer();
     },
     onSuccess: (data: User) => {
@@ -60,7 +57,6 @@ export const useEGatesSign = () => {
 
 export const useFishTypes = () => {
   const { data = [], isLoading } = useQuery(['fishTypes'], api.getFishTypes, { retry: false });
-
   return { fishTypes: data, isLoading };
 };
 
@@ -82,7 +78,6 @@ export const useFilteredRoutes = () => {
     if (route.isInvestigator) {
       return !!profile?.isInvestigator;
     }
-
     return true;
   });
 };
@@ -105,37 +100,37 @@ export const useLogoutMutation = () => {
   return { mutateAsync };
 };
 
-export const useGeolocationWatcher = () => {
-  const [coordinates, setCoordinates] = useState<any>();
-  const [error, setError] = useState<LOCATION_ERRORS>();
-  const options = {
-    enableHighAccuracy: true,
-    timeout: 100000,
-  };
-  const successHandler = (position: GeolocationPosition) => {
-    setError(undefined);
-    setCoordinates({
-      x: position.coords.longitude,
-      y: position.coords.latitude,
-    });
-  };
-  const errorHandler = ({ code }: GeolocationPositionError) => {
-    console.log('error!!!!', code);
-    setError(code);
-  };
-
-  const getCurrentPosition = () => {
-    navigator.geolocation.getCurrentPosition(successHandler, () => {}, options);
-  };
-
-  useEffect(() => {
-    getCurrentPosition();
-    const id = navigator.geolocation.watchPosition(successHandler, errorHandler, options);
-    return () => navigator.geolocation.clearWatch(id);
-  }, []);
-
-  return { coordinates, error, getCurrentPosition };
-};
+// export const useGeolocationWatcher = () => {
+//   const [coordinates, setCoordinates] = useState<any>();
+//   const [error, setError] = useState<LOCATION_ERRORS>();
+//   const options = {
+//     enableHighAccuracy: true,
+//     timeout: 100000,
+//   };
+//   const successHandler = (position: GeolocationPosition) => {
+//     setError(undefined);
+//     setCoordinates({
+//       x: position.coords.longitude,
+//       y: position.coords.latitude,
+//     });
+//   };
+//   const errorHandler = ({ code }: GeolocationPositionError) => {
+//     console.log('error!!!!', code, LOCATION_ERRORS[code]);
+//     setError(code);
+//   };
+//
+//   const getCurrentPosition = () => {
+//     navigator.geolocation.getCurrentPosition(successHandler, () => {}, options);
+//   };
+//
+//   useEffect(() => {
+//     getCurrentPosition();
+//     const id = navigator.geolocation.watchPosition(successHandler, errorHandler, options);
+//     return () => navigator.geolocation.clearWatch(id);
+//   }, []);
+//
+//   return { coordinates, error, getCurrentPosition };
+// };
 
 export const useWindowSize = (width: string) => {
   const [isInRange, setIsInRange] = useState(false);
@@ -211,4 +206,26 @@ export const useInfinityLoad = (
   }, [hasNextPage, isFetchingNextPage, fetchNextPage, data, observerRef]);
 
   return result;
+};
+
+export const useCurrentFishing = () => {
+  return useQuery(['currentFishing'], () => api.getCurrentFishing(), {
+    retry: false,
+  });
+};
+
+export const useCurrentLocation = (locationType: LocationType) => {
+  return useQuery({
+    queryKey: ['currentLocation'],
+    queryFn: () => {
+      console.log('getLocation', locationType, window.coordinates);
+      return api.getLocation({
+        query: JSON.stringify({
+          type: locationType,
+          coordinates: window.coordinates,
+        }),
+      });
+    },
+    enabled: !!locationType,
+  });
 };

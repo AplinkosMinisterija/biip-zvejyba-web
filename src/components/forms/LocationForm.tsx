@@ -1,19 +1,18 @@
 import { Form, Formik } from 'formik';
 import styled from 'styled-components';
-import { getLocationList, inputLabels, locationSchema } from '../../utils';
+import { getBars, getLocationList, inputLabels, locationSchema } from '../../utils';
 import Button, { ButtonColors } from '../buttons/Button';
 import AsyncSelectField from '../fields/AsyncSelect';
 import NumericTextField from '../fields/NumericTextField';
 import SelectField from '../fields/SelectField';
 import { Grid } from '../other/CommonStyles';
+import { useQuery } from 'react-query';
 
-const LocationForm = ({
-  initialValues,
-  handleSetLocationManually,
-  isEstuary,
-  bars,
-  onClose,
-}: any) => {
+const LocationForm = ({ initialValues, handleSetLocationManually, isEstuary, onClose }: any) => {
+  const { data: bars } = useQuery(['bars'], async () => getBars(), {
+    enabled: isEstuary,
+    retry: false,
+  });
   const getInputValue = (location: any) =>
     location ? `${location?.name}, ${location?.cadastralId}` : '';
 

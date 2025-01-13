@@ -1,9 +1,13 @@
 import React, { createContext, useCallback, useState } from 'react';
 import { PopupContentType } from '../../utils/constants';
 import LocationPermission from '../popups/LocationPermission';
+import { StartFishing } from '../popups/StartFishing';
+import { SkipFishing } from '../popups/SkipFishing';
+import StartFishingInlandWater from '../popups/StartFishingInlandWater';
+import EndFishing from '../popups/EndFishing';
 
 export interface PopupContextProps {
-  showPopup: (props: { type: PopupContentType; content: any }) => void;
+  showPopup: (props: { type: PopupContentType; content?: any }) => void;
   hidePopup: () => void;
 }
 
@@ -15,9 +19,9 @@ export const defaultPopupContextProps = {
 export const PopupContext = createContext<PopupContextProps>(defaultPopupContextProps);
 
 export const PopupProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [visiblePopup, setVisiblePopup] = useState<{ type: PopupContentType; content: any }>();
+  const [visiblePopup, setVisiblePopup] = useState<{ type: PopupContentType; content?: any }>();
 
-  const showPopup = useCallback((props: { type: PopupContentType; content: any }) => {
+  const showPopup = useCallback((props: { type: PopupContentType; content?: any }) => {
     setVisiblePopup(props);
   }, []);
 
@@ -27,13 +31,39 @@ export const PopupProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Be aware that these popups are rendered outside of react router scope, so router features (like useParams, navigate etc.) are not available inside popups.
   return (
     <PopupContext.Provider value={{ showPopup, hidePopup }}>
-      {
-        // location permission popup
-        visiblePopup?.type === PopupContentType.LOCATION_PERMISSION && (
-          <LocationPermission content={visiblePopup.content} onClose={hidePopup} />
-        )
-      }
-      {children}
+      <>
+        {
+          // location permission popup
+          visiblePopup?.type === PopupContentType.LOCATION_PERMISSION && (
+            <LocationPermission content={visiblePopup.content} onClose={hidePopup} />
+          )
+        }
+        {
+          // start fishing
+          visiblePopup?.type === PopupContentType.START_FISHING && (
+            <StartFishing content={visiblePopup.content} onClose={hidePopup} />
+          )
+        }
+        {
+          // start fishing in inland water reservoir
+          visiblePopup?.type === PopupContentType.START_FISHING_INLAND_WATERS && (
+            <StartFishingInlandWater content={visiblePopup.content} onClose={hidePopup} />
+          )
+        }
+        {
+          // start fishing in inland water reservoir
+          visiblePopup?.type === PopupContentType.SKIP_FISHING && (
+            <SkipFishing content={visiblePopup.content} onClose={hidePopup} />
+          )
+        }
+        {
+          // start fishing in inland water reservoir
+          visiblePopup?.type === PopupContentType.END_FISHING && (
+            <EndFishing content={visiblePopup.content} onClose={hidePopup} />
+          )
+        }
+        {children}
+      </>
     </PopupContext.Provider>
   );
 };

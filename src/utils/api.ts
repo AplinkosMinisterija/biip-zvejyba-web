@@ -234,11 +234,7 @@ class Api {
       params,
     });
   };
-  skipFishing = async (params: {
-    type: LocationType;
-    coordinates: { x: number; y: number };
-    note: string;
-  }) => {
+  skipFishing = async (params: { type: LocationType; coordinates: any; note: string }) => {
     return this.post({
       resource: 'fishings/skip',
       params,

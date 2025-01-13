@@ -26,6 +26,7 @@ import {
 } from './utils/hooks';
 import { slugs } from './utils/routes';
 import { ProfileId } from './utils/types';
+import DefaultLayout from './components/layouts/DefaultLayout';
 const cookies = new Cookies();
 interface RouteProps {
   loggedIn: boolean;
@@ -162,7 +163,11 @@ function App() {
 
 const PublicRoute = ({ loggedIn, profileId }: RouteProps) => {
   if (loggedIn) {
-    return <Navigate to={profileId ? slugs.fishingLocation : slugs.profiles} replace />;
+    return (
+      <DefaultLayout>
+        <Navigate to={profileId ? slugs.fishingLocation : slugs.profiles} replace />
+      </DefaultLayout>
+    );
   }
 
   return <Outlet />;

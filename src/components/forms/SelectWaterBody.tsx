@@ -1,21 +1,19 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { buttonLabels, getLocationList, LocationType, validationTexts } from '../../utils';
 import Button from '../buttons/Button';
 import AsyncSelectField from '../fields/AsyncSelect';
 import { Grid } from '../other/CommonStyles';
 import LoaderComponent from '../other/LoaderComponent';
-import { LocationContext, LocationContextType } from '../providers/LocationContext';
 
 const SelectWaterBody = ({ onStartFishing, loading }: any) => {
-  const { getLocation } = useContext<LocationContextType>(LocationContext);
   const [location, setLocation] = useState<any>();
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (getLocation) {
-      getLocation(LocationType.INLAND_WATERS).then((l) => setLocation(l));
-    }
+    // if (getLocation) {
+    //   // getLocation(LocationType.INLAND_WATERS).then((l) => setLocation(l));
+    // }
   }, []);
 
   const handleChangeValue = (value: any) => {

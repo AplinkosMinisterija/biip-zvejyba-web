@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { LocationType } from '../../utils';
+import { LocationType, PopupContentType } from '../../utils';
 
 import FishingLocationButton, { Variant } from '../buttons/FishingLocationButton';
 import { useContext } from 'react';
@@ -7,13 +7,6 @@ import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
 const FishingLocation = ({ isDisabled }: any) => {
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
-  const handleSelectLocation = (type: LocationType) => () => {
-    if (type === LocationType.INLAND_WATERS) {
-      showPopup({});
-    } else {
-      showPopup({});
-    }
-  };
 
   return (
     <>
@@ -22,22 +15,34 @@ const FishingLocation = ({ isDisabled }: any) => {
           variant={Variant.GHOST_WHITE}
           isDisabled={isDisabled}
           title="Kuršių mariose"
-          image={'/marios.png'}
-          onClick={handleSelectLocation(LocationType.ESTUARY)}
+          image={'/marios.jpg'}
+          onClick={() => {
+            showPopup({
+              type: PopupContentType.START_FISHING,
+              content: { type: LocationType.ESTUARY },
+            });
+          }}
         />
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
           isDisabled={isDisabled}
           title="Vidaus vandenyse"
-          image={'/vidaus_vandens_telkiniai.png'}
-          onClick={handleSelectLocation(LocationType.INLAND_WATERS)}
+          image={'/vidaus_vandens_telkiniai.jpg'}
+          onClick={() => {
+            showPopup({ type: PopupContentType.START_FISHING_INLAND_WATERS });
+          }}
         />
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
           isDisabled={isDisabled}
           title="Polderiuose"
-          image={'/polderiai.png'}
-          onClick={handleSelectLocation(LocationType.POLDERS)}
+          image={'/polderiai.jpg'}
+          onClick={() => {
+            showPopup({
+              type: PopupContentType.START_FISHING,
+              content: { type: LocationType.POLDERS },
+            });
+          }}
         />
       </Container>
     </>

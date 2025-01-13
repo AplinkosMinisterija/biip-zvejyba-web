@@ -20,9 +20,8 @@ const FishingOptions = [
 interface BuiltToolsProps {
   onClose: () => void;
   location: Location;
-  coordinates?: Coordinates;
 }
-const BuildTools = ({ onClose, location, coordinates }: BuiltToolsProps) => {
+const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   const queryClient = useQueryClient();
   const [selectedTools, setSelectedTools] = useState<number[]>([]);
   const [type, setType] = useState<FishingToolsType>(FishingToolsType.SINGLE);
@@ -67,11 +66,11 @@ const BuildTools = ({ onClose, location, coordinates }: BuiltToolsProps) => {
   };
 
   const handleBuildTools = () => {
-    if (coordinates) {
+    if (window.coordinates) {
       buildToolsMutation({
         tools: selectedTools,
         location,
-        coordinates,
+        coordinates: window.coordinates,
       });
     } else {
       //TODO: display error

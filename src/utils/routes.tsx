@@ -9,6 +9,9 @@ import Tool from '../pages/Tool';
 import Tools from '../pages/Tools';
 import UserForm from '../pages/User';
 import Users from '../pages/Users';
+import FishingTools from '../pages/FishingTools';
+import FishingToolWeight from '../pages/FishingToolWeight';
+import FishingWeight from '../pages/FishingWeight';
 
 export const slugs = {
   login: `/prisijungimas`,
@@ -16,10 +19,10 @@ export const slugs = {
   cantLogin: '/negalima_jungtis',
   fishingLocation: '/zvejyba',
   fishingCurrent: `/zvejyba/mano`,
-  fishingTools: `/zvejyba/mano/irankiai`,
-  fishingWeight: `/zvejyba/mano/svoris`,
-  fishingToolCaughtFishes: (toolId: string) => `/zvejyba/mano/irankiai/${toolId}/sugautos-zuvys`,
-  fishingToolConnect: (toolId: string) => `/zvejyba/mano/irankiai/${toolId}/irankiu_jungimas`,
+  fishingTools: `/zvejyba/irankiai`,
+  fishingWeight: `/zvejyba/svoris`,
+  fishingToolCaughtFishes: (toolId: string) => `/zvejyba/irankiai/${toolId}/sugautos-zuvys`,
+  fishingToolConnect: (toolId: string) => `/zvejyba/irankiai/${toolId}/irankiu_jungimas`,
   tools: '/irankiai',
   tool: (id: string) => `/irankiai/${id}`,
   users: '/nariai',
@@ -55,30 +58,23 @@ export const routes = [
     regExp: new RegExp('^/zvejyba$'),
   },
   {
-    title: 'Mano žvejyba',
-    subtitle: 'Pasirinkite žvejybos veiksmą',
-    slug: slugs.fishingCurrent,
-    component: <CurrentFishing />,
-    regExp: new RegExp('^/zvejyba/mano$'),
-  },
-  {
     slug: slugs.fishingTools,
-    component: <CurrentFishing />,
+    component: <FishingTools />,
     back: true,
-    regExp: new RegExp('^/zvejyba/mano/irankiai$'),
+    regExp: new RegExp('^/zvejyba/irankiai$'),
   },
   {
     slug: slugs.fishingToolCaughtFishes(Ids.TOOL_ID),
-    component: <CurrentFishing />,
+    component: <FishingToolWeight />,
     back: true,
-    regExp: new RegExp('^/zvejyba/mano/irankiai/[0-9]+/sugautos-zuvys$'),
+    regExp: new RegExp('^/zvejyba/irankiai/[0-9]+/sugautos-zuvys$'),
   },
   {
     title: 'Tikslus svoris, kg',
     slug: slugs.fishingWeight,
-    component: <CurrentFishing />,
+    component: <FishingWeight />,
     back: true,
-    regExp: new RegExp('^/zvejyba/mano/svoris$'),
+    regExp: new RegExp('^/zvejyba/svoris$'),
   },
   {
     title: 'Žvejybos žurnalas',
