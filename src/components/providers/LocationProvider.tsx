@@ -61,7 +61,6 @@ export const LocationProvider = ({ children }: any) => {
       value={{
         location,
         getLocation,
-        getLocationManually,
         locationLoading,
         setLocation,
       }}

@@ -81,3 +81,9 @@ export enum PopupContentType {
   SKIP_FISHING = 'skip_fishing',
   END_FISHING = 'end_fishing',
 }
+
+export enum FishingTypeRoute {
+  ESTUARY = 'marios',
+  POLDERS = 'polderiai',
+  INLAND_WATERS = 'vidaus_vandenys',
+}

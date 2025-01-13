@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Fishing, LocationType, PopupContentType, slugs } from '../../utils';
+import { Fishing, FishingTypeRoute, LocationType, PopupContentType, slugs } from '../../utils';
 import api from '../../utils/api';
 import { Variant } from '../buttons/FishingLocationButton';
 import LargeButton from '../buttons/LargeButton';
@@ -32,6 +32,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
       retry: false,
     },
   );
+
   const loading = fishingWeightsLoading;
 
   const canWeigh =
@@ -50,7 +51,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           subtitle="Esate žvejybos vietoje"
           buttonLabel="Atidaryti"
           onClick={() => {
-            navigate(slugs.fishingTools);
+            navigate(slugs.fishingTools(FishingTypeRoute[fishing.type]));
           }}
         />
         {canWeigh && (

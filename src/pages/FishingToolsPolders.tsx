@@ -1,21 +1,17 @@
 import { isEmpty, map } from 'lodash';
 import { useEffect, useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { device, LocationType, ToolsGroup, useCurrentFishing } from '../utils';
 import api from '../utils/api';
 import Button, { ButtonColors } from '../components/buttons/Button';
 import ToolsGroupCard from '../components/cards/ToolsGroupCard';
-import LocationForm from '../components/forms/LocationForm';
 import Popup from '../components/layouts/Popup';
-import PopUpWithImage from '../components/layouts/PopUpWithImage';
-import { Footer, IconContainer } from '../components/other/CommonStyles';
-import Icon, { IconName } from '../components/other/Icon';
+import { Footer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
 import { NotFound } from '../components/other/NotFound';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import BuildTools from '../components/containers/BuildTools';
-import ToolActionsPopup from '../components/containers/ToolActionsPopup';
 import LocationInfo from '../components/other/LocationInfo';
 
 const FishingTools = () => {
@@ -30,11 +26,6 @@ const FishingTools = () => {
   } = useQuery({
     queryKey: ['location'],
     queryFn: () => {
-      console.log(
-        'location fetch',
-        currentFishing?.type !== LocationType.INLAND_WATERS,
-        currentFishing?.type,
-      );
       return api.getLocation({
         query: JSON.stringify({
           type: locationType,
@@ -42,13 +33,13 @@ const FishingTools = () => {
         }),
       });
     },
-    retry: false,
-    enabled: !!currentFishing && currentFishing?.type !== LocationType.INLAND_WATERS,
+    enabled: !!currentFishing,
   });
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (locationType === LocationType.ESTUARY && window.coordinates) {
+        console.log('refetching', locationType);
         refetch();
       }
     }, 60000); // 60000ms = 1 minute
@@ -74,15 +65,11 @@ const FishingTools = () => {
   const initialValues = { location: '', x: '', y: '' };
 
   const showEditIcon = location?.name && location.type !== LocationType.POLDERS;
-  const showBuildToolsButton =
-    locationType === LocationType.INLAND_WATERS
-      ? !!currentFishing?.location?.name
-      : !!location?.name;
 
   return (
     <DefaultLayout>
       <LocationInfo
-        location={locationType === LocationType.INLAND_WATERS ? currentFishing?.location : location}
+        location={location}
         locationLoading={locationLoading}
         showEditIcon={showEditIcon}
         isEstuary={isEstuary}
@@ -101,10 +88,12 @@ const FishingTools = () => {
           ))
         )}
       </Container>
-      {showBuildToolsButton && (
+      {location?.name && (
         <>
           <Footer>
-            <StyledButton onClick={() => setShowBuildTools(true)}>Pastatyti įrankį</StyledButton>
+            <StyledButton disabled={!location} onClick={() => setShowBuildTools(true)}>
+              Pastatyti įrankį
+            </StyledButton>
           </Footer>
           <Popup visible={showBuildTools} onClose={() => setShowBuildTools(false)}>
             <BuildTools location={location} onClose={() => setShowBuildTools(false)} />

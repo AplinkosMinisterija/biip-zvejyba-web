@@ -57,10 +57,14 @@ const StartFishingInlandWater = ({ onClose }: any) => {
     >
       <Container>
         <TitleWrapper>
-          <>
-            <LocationName>{`${selectedLocation?.name} (${selectedLocation?.municipality})`}</LocationName>
-            <LocationId>{selectedLocation?.cadastralId}</LocationId>
-          </>
+          {selectedLocation ? (
+            <>
+              <LocationName>{`${selectedLocation?.name} (${selectedLocation?.municipality})`}</LocationName>
+              <LocationId>{selectedLocation?.cadastralId}</LocationId>
+            </>
+          ) : (
+            <></>
+          )}
         </TitleWrapper>
         <StyledSelectField
           name={'location'}

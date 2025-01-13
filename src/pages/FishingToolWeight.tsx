@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import {
+  FishingTypeRoute,
   getBuiltToolInfo,
   handleErrorToastFromServer,
   slugs,
@@ -31,7 +32,7 @@ export const CaughtFishesWithTool = () => {
     () => api.getBuiltTool(toolId!),
     {
       onError: () => {
-        navigate(slugs.fishingTools);
+        navigate(-1);
       },
       retry: false,
     },

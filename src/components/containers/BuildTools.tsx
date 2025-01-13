@@ -2,7 +2,7 @@ import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { Coordinates, handleErrorToastFromServer } from '../../utils';
+import { handleErrorToastFromServer } from '../../utils';
 import api from '../../utils/api';
 import { FishingToolsType } from '../../utils/constants';
 import { Location } from '../../utils/types';
@@ -21,6 +21,7 @@ interface BuiltToolsProps {
   onClose: () => void;
   location: Location;
 }
+
 const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   const queryClient = useQueryClient();
   const [selectedTools, setSelectedTools] = useState<number[]>([]);

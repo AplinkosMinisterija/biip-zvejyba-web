@@ -12,6 +12,9 @@ import Users from '../pages/Users';
 import FishingTools from '../pages/FishingTools';
 import FishingToolWeight from '../pages/FishingToolWeight';
 import FishingWeight from '../pages/FishingWeight';
+import FishingToolsInlandWatters from '../pages/FishingToolsInlandWatters';
+import FishingToolsPolders from '../pages/FishingToolsPolders';
+import { FishingTypeRoute } from './constants';
 
 export const slugs = {
   login: `/prisijungimas`,
@@ -19,7 +22,7 @@ export const slugs = {
   cantLogin: '/negalima_jungtis',
   fishingLocation: '/zvejyba',
   fishingCurrent: `/zvejyba/mano`,
-  fishingTools: `/zvejyba/irankiai`,
+  fishingTools: (type: string) => `/zvejyba/${type}/irankiai`,
   fishingWeight: `/zvejyba/svoris`,
   fishingToolCaughtFishes: (toolId: string) => `/zvejyba/irankiai/${toolId}/sugautos-zuvys`,
   fishingToolConnect: (toolId: string) => `/zvejyba/irankiai/${toolId}/irankiu_jungimas`,
@@ -58,10 +61,22 @@ export const routes = [
     regExp: new RegExp('^/zvejyba$'),
   },
   {
-    slug: slugs.fishingTools,
+    slug: slugs.fishingTools(FishingTypeRoute.ESTUARY),
     component: <FishingTools />,
     back: true,
-    regExp: new RegExp('^/zvejyba/irankiai$'),
+    regExp: new RegExp(`^/zvejyba/${FishingTypeRoute.ESTUARY}/irankiai$`),
+  },
+  {
+    slug: slugs.fishingTools(FishingTypeRoute.INLAND_WATERS),
+    component: <FishingToolsInlandWatters />,
+    back: true,
+    regExp: new RegExp(`^/zvejyba/${FishingTypeRoute.INLAND_WATERS}/irankiai$`),
+  },
+  {
+    slug: slugs.fishingTools(FishingTypeRoute.POLDERS),
+    component: <FishingToolsPolders />,
+    back: true,
+    regExp: new RegExp(`^/zvejyba/${FishingTypeRoute.POLDERS}/irankiai$`),
   },
   {
     slug: slugs.fishingToolCaughtFishes(Ids.TOOL_ID),

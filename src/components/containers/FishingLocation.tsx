@@ -7,7 +7,6 @@ import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
 const FishingLocation = ({ isDisabled }: any) => {
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
-
   return (
     <>
       <Container>
