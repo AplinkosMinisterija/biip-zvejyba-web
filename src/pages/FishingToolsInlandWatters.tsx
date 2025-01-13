@@ -1,10 +1,10 @@
 import { isEmpty, map } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { device, LocationType, ToolsGroup, useCurrentFishing } from '../utils';
+import { LocationType, ToolsGroup, useCurrentFishing } from '../utils';
 import api from '../utils/api';
-import Button, { ButtonColors } from '../components/buttons/Button';
+import Button from '../components/buttons/Button';
 import ToolsGroupCard from '../components/cards/ToolsGroupCard';
 import Popup from '../components/layouts/Popup';
 import { Footer } from '../components/other/CommonStyles';
