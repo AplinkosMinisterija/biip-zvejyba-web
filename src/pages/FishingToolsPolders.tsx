@@ -84,6 +84,7 @@ const FishingTools = () => {
               key={toolsGroup.id}
               toolsGroup={toolsGroup}
               onSelect={(toolsGroup) => setSelectedToolsGroup(toolsGroup)}
+              location={location}
             />
           ))
         )}

@@ -18,6 +18,8 @@ import { Footer } from '../components/other/CommonStyles';
 import FishRow from '../components/other/FishRow';
 import LoaderComponent from '../components/other/LoaderComponent';
 import DefaultLayout from '../components/layouts/DefaultLayout';
+import { Form, Formik } from 'formik';
+import { useLocation } from 'react-router';
 
 export const CaughtFishesWithTool = () => {
   const navigate = useNavigate();
@@ -26,6 +28,8 @@ export const CaughtFishesWithTool = () => {
   const { fishTypes, isLoading } = useFishTypes();
   const { toolId } = useParams();
   const [amounts, setAmounts] = useState<{ [key: string]: number }>({});
+  const navLocation = useLocation();
+  const location = navLocation.state?.location;
 
   const { data: toolsGroup, isLoading: toolsGroupLoading } = useQuery<ToolsGroup | any>(
     ['builtTool', toolId],
@@ -61,28 +65,29 @@ export const CaughtFishesWithTool = () => {
 
   const { label, sealNr } = getBuiltToolInfo(toolsGroup!);
 
-  const updateAmounts = (value: { [key: number]: number }) => {
-    setAmounts({ ...amounts, ...value });
-  };
-
-  const handleSubmit = () => {
+  const handleSubmit = (data: any) => {
     if (!window.coordinates) return;
 
-    const mappedWeights = Object.keys(amounts).reduce(
-      (obj: { [key: string]: number | undefined }, curr: string) => {
-        obj[curr] = Number(amounts[curr]) || undefined;
+    const filteredData = data.filter((fishType: any) => fishType.amount);
 
-        return obj;
-      },
-      {},
-    );
+    const mappedWeights = filteredData.reduce((obj: any, curr: any) => {
+      obj[curr.id] = curr.amount;
+
+      return obj;
+    }, {});
 
     weighToolsMutation({
       data: mappedWeights,
       coordinates: window.coordinates,
-      location,
+      location: JSON.parse(location),
     });
   };
+
+  const initialValues = fishTypes.map((fishType) => ({
+    ...fishType,
+    preliminaryAmount: '',
+    amount: '',
+  }));
 
   return (
     <DefaultLayout>
@@ -90,25 +95,28 @@ export const CaughtFishesWithTool = () => {
         <Title>{currentRoute?.title}</Title>
         <Heading>{label}</Heading>
         <SealNumbers>{sealNr}</SealNumbers>
-        {fishTypes?.map((fishType: any) => (
-          <FishRow
-            key={`fish_type_${fishType.id}`}
-            fish={{ ...fishType, amount: amounts[fishType.id] || 0 }}
-            onChange={(value: any) => {
-              updateAmounts({ [fishType.id]: value || undefined });
-            }}
-          />
-        ))}
+        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+          {({ values, setFieldValue }) => {
+            return (
+              <StyledForm>
+                {values?.map((value: any, index: number) => (
+                  <FishRow
+                    key={`fish_type_${value.id}`}
+                    fish={value}
+                    onChange={(value) => setFieldValue(`${index}.amount`, Number(value))}
+                    index={index}
+                  />
+                ))}
+                <Footer>
+                  <StyledButton loading={weighToolsIsLoading} disabled={weighToolsIsLoading}>
+                    Saugoti pakeitimus
+                  </StyledButton>
+                </Footer>
+              </StyledForm>
+            );
+          }}
+        </Formik>
       </Container>
-      <Footer>
-        <StyledButton
-          loading={weighToolsIsLoading}
-          disabled={weighToolsIsLoading}
-          onClick={handleSubmit}
-        >
-          Saugoti pakeitimus
-        </StyledButton>
-      </Footer>
     </DefaultLayout>
   );
 };
@@ -153,4 +161,9 @@ const SealNumbers = styled.div`
   margin-top: 4px;
   font-size: 1.6rem;
   margin-bottom: 32px;
+`;
+
+const StyledForm = styled(Form)`
+  width: 100%;
+  height: fit-content;
 `;

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { getBuiltToolInfo, theme, ToolsGroup } from '../../utils';
+import { getBuiltToolInfo, LocationType, theme, ToolsGroup } from '../../utils';
 import Icon, { IconName } from '../other/Icon';
 import Tag from '../other/Tag';
 import ToolActionsPopup from '../containers/ToolActionsPopup';
@@ -7,17 +7,19 @@ import { useState } from 'react';
 
 interface ToolsGroupCardProps {
   toolsGroup: ToolsGroup;
-  onSelect: (toolsGroup?: ToolsGroup) => void;
+  onSelect?: (toolsGroup?: ToolsGroup) => void;
   isEstuary?: boolean;
   selected?: boolean;
   isDisabled?: boolean;
+  location?: any;
 }
 const ToolsGroupCard = ({
   toolsGroup,
-  onSelect,
+  onSelect = () => {},
   selected = false,
   isEstuary = false,
   isDisabled = false,
+  location,
 }: ToolsGroupCardProps) => {
   const isCheckedTool = !!toolsGroup?.weightEvent;
   const [visible, setVisible] = useState(false);

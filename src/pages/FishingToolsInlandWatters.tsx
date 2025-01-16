@@ -13,12 +13,11 @@ import { NotFound } from '../components/other/NotFound';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import BuildTools from '../components/containers/BuildTools';
 import LocationInfo from '../components/other/LocationInfo';
+import { useLocation } from 'react-router';
 
 const FishingTools = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
-  const locationType = currentFishing?.type;
-  const [selectedToolsGroup, setSelectedToolsGroup] = useState<ToolsGroup>();
   const location = currentFishing?.location;
   const isEstuary = currentFishing?.type === LocationType.ESTUARY;
 
@@ -34,8 +33,6 @@ const FishingTools = () => {
   if (currentFishingLoading) {
     return <LoaderComponent />;
   }
-
-  const initialValues = { location: '', x: '', y: '' };
 
   const showEditIcon = location?.name && location.type !== LocationType.POLDERS;
 
@@ -56,7 +53,7 @@ const FishingTools = () => {
               isEstuary={isEstuary}
               key={toolsGroup.id}
               toolsGroup={toolsGroup}
-              onSelect={(toolsGroup) => setSelectedToolsGroup(toolsGroup)}
+              location={location}
             />
           ))
         )}

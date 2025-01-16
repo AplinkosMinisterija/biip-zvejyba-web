@@ -2,7 +2,13 @@ import { useContext, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { FishingWeighType, handleErrorToastFromServer, useFishTypes } from '../utils';
+import {
+  FishingWeighType,
+  handleErrorToastFromServer,
+  handleSuccessToast,
+  slugs,
+  useFishTypes,
+} from '../utils';
 import api from '../utils/api';
 import Button from '../components/buttons/Button';
 import SwitchButton from '../components/buttons/SwitchButton';
@@ -10,6 +16,7 @@ import { Footer } from '../components/other/CommonStyles';
 import FishRow from '../components/other/FishRow';
 import LoaderComponent from '../components/other/LoaderComponent';
 import DefaultLayout from '../components/layouts/DefaultLayout';
+import { Form, Formik } from 'formik';
 
 const FishingWeightOptions = [
   { label: 'Sugautos žuvys', value: FishingWeighType.CAUGHT },
@@ -31,22 +38,22 @@ const FishingWeight = () => {
 
   const hasFishOnBoat = !!Object.values(fishingWeights.preliminary || {}).length;
 
-  const initialValues = fishTypes
-    .filter((fishType) =>
-      isCaught && hasFishOnBoat ? !!fishingWeights.preliminary[fishType.id] : true,
-    )
-    .map((fishType) => ({
+  const initialValues = Object.keys(fishingWeights?.preliminary || [])?.map((key: string) => {
+    const fishType = fishTypes.find((fishType) => fishType.id === Number(key));
+    return {
       ...fishType,
-      preliminaryAmount: fishingWeights.preliminary[fishType.id],
-      amount: fishingWeights.preliminary[fishType.id] || '',
-    }));
+      preliminaryAmount: fishingWeights.preliminary[key],
+      amount: fishingWeights.preliminary[key] || '',
+    };
+  });
 
   const { mutateAsync: fishingWeightMutation, isLoading: fishingWeightLoading } = useMutation(
     (data: any) => api.createFishingFishWeights(data),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['fishingWeights']);
-        navigate(-1);
+        handleSuccessToast('Žuvis sėkmingai pasverta krante.');
+        navigate(slugs.fishingCurrent);
       },
       onError: () => {
         handleErrorToastFromServer();
@@ -54,16 +61,12 @@ const FishingWeight = () => {
     },
   );
 
-  const handleSubmit = () => {
+  const handleSubmit = (values: any) => {
     if (!window.coordinates) return;
-    const mappedWeights = Object.keys(amounts).reduce(
-      (obj: { [key: string]: number | undefined }, curr: string) => {
-        obj[curr] = Number(amounts[curr]) || undefined;
-
-        return obj;
-      },
-      {},
-    );
+    const mappedWeights = values.reduce((obj: any, curr: any) => {
+      obj[curr.id] = Number(curr.amount) || undefined;
+      return obj;
+    }, {});
 
     fishingWeightMutation({
       data: mappedWeights,
@@ -73,33 +76,33 @@ const FishingWeight = () => {
 
   if (isLoading || fishingWeightsLoading) return <LoaderComponent />;
 
-  const updateAmounts = (value: { [key: number]: number }) => {
-    setAmounts({ ...amounts, ...value });
-  };
-
   return (
     <DefaultLayout>
       {hasFishOnBoat && (
         <SwitchButton options={FishingWeightOptions} value={type} onChange={setType} />
       )}
-      {initialValues?.map((fishType: any) => (
-        <FishRow
-          key={`fish_type_${fishType.id}`}
-          fish={{ ...fishType, amount: amounts[fishType.id] || 0 }}
-          onChange={(value) => {
-            updateAmounts({ [fishType.id]: value || undefined });
-          }}
-        />
-      ))}
-      <Footer>
-        <StyledButton
-          loading={fishingWeightLoading}
-          disabled={fishingWeightLoading}
-          onClick={handleSubmit}
-        >
-          Saugoti pakeitimus
-        </StyledButton>
-      </Footer>
+      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        {({ values, setFieldValue }) => {
+          return (
+            <StyledForm>
+              {values?.map((item: any, index: number) => (
+                <FishRow
+                  key={`fish_type_${item.id}`}
+                  fish={item}
+                  onChange={(value) => {
+                    setFieldValue(`${index}.amount`, value);
+                  }}
+                />
+              ))}
+              <Footer>
+                <StyledButton loading={fishingWeightLoading} disabled={fishingWeightLoading}>
+                  Saugoti pakeitimus
+                </StyledButton>
+              </Footer>
+            </StyledForm>
+          );
+        }}
+      </Formik>
     </DefaultLayout>
   );
 };
@@ -115,4 +118,9 @@ const StyledButton = styled(Button)`
   font-size: 20px;
   font-weight: 600;
   padding: 0;
+`;
+
+const StyledForm = styled(Form)`
+  width: 100%;
+  height: fit-content;
 `;

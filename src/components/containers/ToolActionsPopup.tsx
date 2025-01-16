@@ -47,7 +47,11 @@ const ToolActionsPopup = ({ toolGroup, onReturn, visible, location }: any) => {
             label="Sverti žuvį laive "
             icon={IconName.scales}
             onClick={() => {
-              navigate(slugs.fishingToolCaughtFishes(toolGroup?.id));
+              navigate(slugs.fishingToolCaughtFishes(toolGroup?.id), {
+                state: {
+                  location: JSON.stringify(location),
+                },
+              });
             }}
           />
         )}

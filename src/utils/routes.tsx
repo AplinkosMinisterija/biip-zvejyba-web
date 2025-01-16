@@ -9,7 +9,7 @@ import Tool from '../pages/Tool';
 import Tools from '../pages/Tools';
 import UserForm from '../pages/User';
 import Users from '../pages/Users';
-import FishingTools from '../pages/FishingTools';
+import FishingToolsEstuary from '../pages/FishingToolsEstuary';
 import FishingToolWeight from '../pages/FishingToolWeight';
 import FishingWeight from '../pages/FishingWeight';
 import FishingToolsInlandWatters from '../pages/FishingToolsInlandWatters';
@@ -62,7 +62,7 @@ export const routes = [
   },
   {
     slug: slugs.fishingTools(FishingTypeRoute.ESTUARY),
-    component: <FishingTools />,
+    component: <FishingToolsEstuary />,
     back: true,
     regExp: new RegExp(`^/zvejyba/${FishingTypeRoute.ESTUARY}/irankiai$`),
   },
