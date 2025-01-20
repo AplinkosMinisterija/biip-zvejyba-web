@@ -47,24 +47,24 @@ if (env.VITE_SENTRY_DSN) {
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
-        <PersistGate persistor={persistor}>
-          <ThemeProvider theme={theme}>
-            <GlobalStyle />
-            <BrowserRouter>
-              <ErrorBoundary>
-                <LocationProvider>
-                  <PopupProvider>
-                    <App />
-                  </PopupProvider>
-                </LocationProvider>
-              </ErrorBoundary>
-            </BrowserRouter>
-          </ThemeProvider>
-        </PersistGate>
-      </Provider>
-    </QueryClientProvider>
-  </React.StrictMode>,
+  // <React.StrictMode>
+  <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />
+          <BrowserRouter>
+            <ErrorBoundary>
+              <LocationProvider>
+                <PopupProvider>
+                  <App />
+                </PopupProvider>
+              </LocationProvider>
+            </ErrorBoundary>
+          </BrowserRouter>
+        </ThemeProvider>
+      </PersistGate>
+    </Provider>
+  </QueryClientProvider>,
+  // </React.StrictMode>,
 );

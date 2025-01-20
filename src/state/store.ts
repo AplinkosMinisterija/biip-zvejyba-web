@@ -2,20 +2,16 @@ import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import { FiltersReducer } from './filters/reducer';
-import { FishingReducer } from './fishing/reducer';
 import { UserReducer } from './user/reducer';
 
 const persistConfig = {
   key: 'animalsConfig',
   storage,
-  whitelist: ['filters', 'user', 'fishing'],
+  whitelist: ['user'],
 };
 
 const reducers = combineReducers({
   user: UserReducer.reducer,
-  filters: FiltersReducer.reducer,
-  fishing: FishingReducer.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducers);

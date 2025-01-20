@@ -420,6 +420,12 @@ class Api {
       resource: this.barSearchUrl,
     });
 
+  getFishinSections = async () => {
+    return this.get({
+      resource: 'locations/fishing_sections',
+    });
+  };
+
   getFishTypes = async (): Promise<FishType[]> =>
     await this.getAll({
       resource: 'fishTypes',

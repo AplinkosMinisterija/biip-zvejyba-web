@@ -3,12 +3,9 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import {
-  FishingTypeRoute,
   getBuiltToolInfo,
   handleErrorToastFromServer,
-  slugs,
   ToolsGroup,
-  useAppSelector,
   useFishTypes,
   useGetCurrentRoute,
 } from '../utils';
@@ -25,9 +22,8 @@ export const CaughtFishesWithTool = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const currentRoute = useGetCurrentRoute();
-  const { fishTypes, isLoading } = useFishTypes();
+  const { fishTypes, fishTypesLoading } = useFishTypes();
   const { toolId } = useParams();
-  const [amounts, setAmounts] = useState<{ [key: string]: number }>({});
   const navLocation = useLocation();
   const location = navLocation.state?.location;
 
@@ -55,13 +51,7 @@ export const CaughtFishesWithTool = () => {
     },
   );
 
-  useEffect(() => {
-    if (toolsGroup?.weightEvent?.data && !Object.keys(amounts).length) {
-      setAmounts(toolsGroup?.weightEvent?.data as { [key: number]: number });
-    }
-  }, [toolsGroup]);
-
-  if (isLoading || toolsGroupLoading) return <LoaderComponent />;
+  if (fishTypesLoading || toolsGroupLoading) return <LoaderComponent />;
 
   const { label, sealNr } = getBuiltToolInfo(toolsGroup!);
 

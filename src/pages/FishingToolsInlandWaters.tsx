@@ -2,7 +2,7 @@ import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { LocationType, ToolsGroup, useCurrentFishing } from '../utils';
+import { LocationType, useCurrentFishing } from '../utils';
 import api from '../utils/api';
 import Button from '../components/buttons/Button';
 import ToolsGroupCard from '../components/cards/ToolsGroupCard';
@@ -13,7 +13,6 @@ import { NotFound } from '../components/other/NotFound';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import BuildTools from '../components/containers/BuildTools';
 import LocationInfo from '../components/other/LocationInfo';
-import { useLocation } from 'react-router';
 
 const FishingTools = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);
@@ -34,16 +33,9 @@ const FishingTools = () => {
     return <LoaderComponent />;
   }
 
-  const showEditIcon = location?.name && location.type !== LocationType.POLDERS;
-
   return (
     <DefaultLayout>
-      <LocationInfo
-        location={location}
-        locationLoading={false}
-        showEditIcon={showEditIcon}
-        isEstuary={isEstuary}
-      />
+      <LocationInfo location={location} locationLoading={false} isEstuary={isEstuary} />
       <Container>
         {isEmpty(builtTools) ? (
           <NotFound message={'Nėra pastatytų įrankių'} />
@@ -74,8 +66,6 @@ const FishingTools = () => {
   );
 };
 
-export default FishingTools;
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -94,3 +84,5 @@ const StyledButton = styled(Button)`
   font-weight: 600;
   padding: 0;
 `;
+
+export default FishingTools;

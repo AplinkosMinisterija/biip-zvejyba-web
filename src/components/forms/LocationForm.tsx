@@ -1,20 +1,35 @@
 import { Form, Formik } from 'formik';
 import styled from 'styled-components';
-import { getBars, getLocationList, inputLabels, locationSchema } from '../../utils';
+import {
+  getBars,
+  getLocationList,
+  inputLabels,
+  locationSchema,
+  useLogoutMutation,
+} from '../../utils';
 import Button, { ButtonColors } from '../buttons/Button';
 import AsyncSelectField from '../fields/AsyncSelect';
 import NumericTextField from '../fields/NumericTextField';
 import SelectField from '../fields/SelectField';
 import { Grid } from '../other/CommonStyles';
 import { useQuery } from 'react-query';
+import api from '../../utils/api';
 
-const LocationForm = ({ initialValues, handleSetLocationManually, isEstuary, onClose }: any) => {
-  const { data: bars } = useQuery(['bars'], async () => getBars(), {
+const LocationForm = ({ handleSetLocationManually, isEstuary, onClose }: any) => {
+  const { data: bars } = useQuery(['bars'], async () => api.getFishinSections(), {
     enabled: isEstuary,
     retry: false,
   });
-  const getInputValue = (location: any) =>
-    location ? `${location?.name}, ${location?.cadastralId}` : '';
+
+  const initialValues = { location: '', x: '', y: '' };
+
+  const handleSubmit = (values: any) => {
+    if (values.location) {
+      handleSetLocationManually(values.location);
+    } else if (values.x && values.y) {
+    }
+    onClose();
+  };
 
   return (
     <Container>
@@ -25,50 +40,30 @@ const LocationForm = ({ initialValues, handleSetLocationManually, isEstuary, onC
       <Formik
         enableReinitialize={true}
         initialValues={initialValues}
-        onSubmit={handleSetLocationManually}
+        onSubmit={handleSubmit}
         validateOnChange={false}
         validationSchema={locationSchema}
       >
         {({ values, errors, setFieldValue }: any) => {
           return (
             <FormContainer>
-              {isEstuary ? (
-                <SelectField
-                  options={bars}
-                  getOptionLabel={(option) => option?.name}
-                  value={values.location}
-                  error={errors.location}
-                  label={'Baro nr.'}
-                  name={'location'}
-                  onChange={(value) => setFieldValue('location', value)}
-                />
-              ) : (
-                <AsyncSelectField
-                  name={'location'}
-                  label={inputLabels.location}
-                  value={values.location}
-                  error={errors.location}
-                  onChange={(value) => {
-                    const { lat, lng, name, cadastralId } = value;
-                    setFieldValue('location', { x: lng, y: lat, name, cadastralId });
-                  }}
-                  getOptionValue={(option) => option?.cadastralId}
-                  showError={false}
-                  getOptionLabel={getInputValue}
-                  inputValue={getInputValue(values.location)}
-                  loadOptions={(input: string, page: number | string) =>
-                    getLocationList(input, page)
-                  }
-                />
-              )}
-
+              <SelectField
+                options={bars}
+                getOptionLabel={(option) => option?.name}
+                value={values.location}
+                error={errors.location}
+                label={'Baro nr.'}
+                name={'location'}
+                onChange={(value) => {
+                  setFieldValue('location', value);
+                }}
+              />
               <Or>
                 <Separator />
                 <SeparatorLabelContainer>
                   <SeparatorLabel>arba</SeparatorLabel>
                 </SeparatorLabelContainer>
               </Or>
-
               <Grid $columns={2}>
                 <NumericTextField
                   label="Platuma (WGS)"

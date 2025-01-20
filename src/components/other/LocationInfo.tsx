@@ -1,22 +1,20 @@
 import { IconContainer } from './CommonStyles';
 import Icon, { IconName } from './Icon';
 import styled from 'styled-components';
-import LoaderComponent from './LoaderComponent';
 import Button, { ButtonColors } from '../buttons/Button';
 import { device } from '../../utils';
 import { useState } from 'react';
 import PopUpWithImage from '../layouts/PopUpWithImage';
 import LocationForm from '../forms/LocationForm';
 
-const LocationInfo = ({ location, locationLoading, showEditIcon, isEstuary }: any) => {
+const LocationInfo = ({ location, locationLoading, setLocationManually, isEstuary }: any) => {
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
-  const initialValues = { location: '', x: '', y: '' };
 
   return (
     <>
       <TitleWrapper>
         <Title>{location?.name || 'Nenustatytas vandens telkinys'}</Title>
-        {showEditIcon && (
+        {setLocationManually && (
           <IconContainer onClick={() => setShowLocationPopUp(true)}>
             <EditIcon name={IconName.edit} />
           </IconContainer>
@@ -48,8 +46,9 @@ const LocationInfo = ({ location, locationLoading, showEditIcon, isEstuary }: an
       )}
       <PopUpWithImage visible={showLocationPopUp} onClose={() => setShowLocationPopUp(false)}>
         <LocationForm
-          initialValues={initialValues}
-          handleSetLocationManually={() => {}}
+          handleSetLocationManually={(l: any) => {
+            setLocationManually(l);
+          }}
           isEstuary={isEstuary}
           onClose={() => setShowLocationPopUp(false)}
         />

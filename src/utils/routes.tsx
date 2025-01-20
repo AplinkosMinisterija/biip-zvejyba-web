@@ -12,7 +12,7 @@ import Users from '../pages/Users';
 import FishingToolsEstuary from '../pages/FishingToolsEstuary';
 import FishingToolWeight from '../pages/FishingToolWeight';
 import FishingWeight from '../pages/FishingWeight';
-import FishingToolsInlandWatters from '../pages/FishingToolsInlandWatters';
+import FishingToolsInlandWatters from '../pages/FishingToolsInlandWaters';
 import FishingToolsPolders from '../pages/FishingToolsPolders';
 import { FishingTypeRoute } from './constants';
 

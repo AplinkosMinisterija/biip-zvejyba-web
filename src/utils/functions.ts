@@ -2,8 +2,7 @@ import format from 'date-fns/format';
 import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
 import api from './api';
-import { LOCATION_ERRORS, ToolTypeType } from './constants';
-import { routes } from './routes';
+import { ToolTypeType } from './constants';
 import { validationTexts } from './texts';
 import { Profile, ProfileId, ResponseProps, ToolsGroup } from './types';
 const cookies = new Cookies();
@@ -118,38 +117,6 @@ export const getOnLineStatus = () =>
     ? navigator.onLine
     : true;
 
-export const getCurrentLocation = ({
-  onSuccess,
-  onError,
-}: {
-  onSuccess: (position: { lat: number; lng: number }) => void;
-  onError: (e: LOCATION_ERRORS, data?: any) => void;
-}) => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(() => {});
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        if (position?.coords) {
-          onSuccess({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        }
-      },
-      (e) => {
-        onError(LOCATION_ERRORS.POINT_NOT_FOUND, e);
-      },
-      { enableHighAccuracy: true },
-    );
-  } else {
-    onError(LOCATION_ERRORS.GEOLOCATION_NOT_SUPPORTE);
-  }
-};
-
-export const getCurrentRoute = (pathname: any) => {
-  return routes?.find((route: any) => route.regExp.test(pathname));
-};
-
 export const getToolTypeList = async (input: string, page: number, toolType: ToolTypeType) => {
   return await api.toolTypes({
     filter: { label: input, type: toolType },
@@ -227,26 +194,4 @@ export const getReactQueryErrorMessage = (response: any) => response?.data?.mess
 export const formatDate = (date?: Date | string) =>
   date ? format(new Date(date), 'yyyy-MM-dd') : '-';
 
-export const isEmpty = (arr: any[]) => !!arr.length;
-
 export const isNew = (id?: string) => !id || id === 'naujas';
-
-export const calculateDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number,
-): number => {
-  const R = 6371000; // Earth's radius in meters
-  const toRadians = (deg: number) => (deg * Math.PI) / 180;
-
-  const dLat = toRadians(lat2 - lat1); // Difference in latitude in radians
-  const dLon = toRadians(lon2 - lon1); // Difference in longitude in radians
-
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // Distance in meters
-};

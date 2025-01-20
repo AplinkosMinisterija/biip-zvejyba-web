@@ -39,7 +39,6 @@ const FishingTools = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (locationType === LocationType.ESTUARY && window.coordinates) {
-        console.log('refetching', locationType);
         refetch();
       }
     }, 60000); // 60000ms = 1 minute

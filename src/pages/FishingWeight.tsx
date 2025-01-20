@@ -1,22 +1,20 @@
-import { useContext, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import { useState } from 'react';
 import {
   FishingWeighType,
-  handleErrorToastFromServer,
-  handleSuccessToast,
-  slugs,
+  LocationType,
+  useCurrentFishing,
+  useFishingWeightMutation,
   useFishTypes,
+  useFishWeights,
 } from '../utils';
-import api from '../utils/api';
-import Button from '../components/buttons/Button';
 import SwitchButton from '../components/buttons/SwitchButton';
-import { Footer } from '../components/other/CommonStyles';
-import FishRow from '../components/other/FishRow';
-import LoaderComponent from '../components/other/LoaderComponent';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import { Form, Formik } from 'formik';
+import FishRow from '../components/other/FishRow';
+import { Footer } from '../components/other/CommonStyles';
+import styled from 'styled-components';
+import Button from '../components/buttons/Button';
+import LoaderComponent from '../components/other/LoaderComponent';
 
 const FishingWeightOptions = [
   { label: 'Sugautos žuvys', value: FishingWeighType.CAUGHT },
@@ -24,47 +22,41 @@ const FishingWeightOptions = [
 ];
 
 const FishingWeight = () => {
-  const queryClient = useQueryClient();
   const [type, setType] = useState<FishingWeighType>(FishingWeighType.CAUGHT);
-  const { fishTypes, isLoading } = useFishTypes();
-  const isCaught = type === FishingWeighType.CAUGHT;
-  const navigate = useNavigate();
-  const [amounts, setAmounts] = useState<{ [key: string]: number }>({});
+  const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
+  const showSwitch = currentFishing?.type !== LocationType.INLAND_WATERS;
+  const { fishTypes, fishTypesLoading } = useFishTypes();
+  const { fishingWeights, fishingWeightsLoading } = useFishWeights();
+  const { fishingWeightLoading, fishingWeightMutation } = useFishingWeightMutation();
 
-  const {
-    data: fishingWeights = { preliminary: {}, total: {} },
-    isLoading: fishingWeightsLoading,
-  } = useQuery(['fishingWeights'], api.getFishingWeights, { retry: false });
+  if (currentFishingLoading || fishTypesLoading || fishingWeightsLoading) {
+    return <LoaderComponent />;
+  }
 
-  const hasFishOnBoat = !!Object.values(fishingWeights.preliminary || {}).length;
-
-  const initialValues = Object.keys(fishingWeights?.preliminary || [])?.map((key: string) => {
-    const fishType = fishTypes.find((fishType) => fishType.id === Number(key));
-    return {
-      ...fishType,
-      preliminaryAmount: fishingWeights.preliminary[key],
-      amount: fishingWeights.preliminary[key] || '',
-    };
-  });
-
-  const { mutateAsync: fishingWeightMutation, isLoading: fishingWeightLoading } = useMutation(
-    (data: any) => api.createFishingFishWeights(data),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['fishingWeights']);
-        handleSuccessToast('Žuvis sėkmingai pasverta krante.');
-        navigate(slugs.fishingCurrent);
-      },
-      onError: () => {
-        handleErrorToastFromServer();
-      },
-    },
-  );
+  const caughtFishData = fishingWeights?.total || fishingWeights?.preliminary || {};
+  const initialValues =
+    type === FishingWeighType.CAUGHT
+      ? Object.keys(caughtFishData)?.map((key: string) => {
+          const fishType = fishTypes.find((fishType) => fishType.id === Number(key));
+          return {
+            ...fishType,
+            preliminaryAmount: caughtFishData[key] || '',
+            amount: caughtFishData[key] || '',
+          };
+        })
+      : fishTypes.map((fishType) => {
+          const amount = fishingWeights?.preliminary?.[fishType.id];
+          return {
+            ...fishType,
+            preliminaryAmount: amount || '',
+            amount: amount || '',
+          };
+        });
 
   const handleSubmit = (values: any) => {
     if (!window.coordinates) return;
     const mappedWeights = values.reduce((obj: any, curr: any) => {
-      obj[curr.id] = Number(curr.amount) || undefined;
+      if (curr.amount) obj[curr.id] = Number(curr.amount) || undefined;
       return obj;
     }, {});
 
@@ -74,14 +66,12 @@ const FishingWeight = () => {
     });
   };
 
-  if (isLoading || fishingWeightsLoading) return <LoaderComponent />;
-
   return (
     <DefaultLayout>
-      {hasFishOnBoat && (
+      {showSwitch && (
         <SwitchButton options={FishingWeightOptions} value={type} onChange={setType} />
       )}
-      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+      <Formik initialValues={initialValues} enableReinitialize={true} onSubmit={handleSubmit}>
         {({ values, setFieldValue }) => {
           return (
             <StyledForm>
@@ -107,7 +97,10 @@ const FishingWeight = () => {
   );
 };
 
-export default FishingWeight;
+const StyledForm = styled(Form)`
+  width: 100%;
+  height: fit-content;
+`;
 
 const StyledButton = styled(Button)`
   width: 100%;
@@ -120,7 +113,4 @@ const StyledButton = styled(Button)`
   padding: 0;
 `;
 
-const StyledForm = styled(Form)`
-  width: 100%;
-  height: fit-content;
-`;
+export default FishingWeight;
