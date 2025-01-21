@@ -5,7 +5,7 @@ import Button, { ButtonColors } from '../buttons/Button';
 import NumericTextField from '../fields/NumericTextField';
 import SelectField from '../fields/SelectField';
 import { Grid } from '../other/CommonStyles';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import api from '../../utils/api';
 
 const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any) => {
@@ -36,6 +36,8 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
         })
         .then((data) => {
           handleSetLocationManually({ ...data, x: values.x, y: values.y });
+          alert(data?.id);
+          queryClient.refetchQueries(['builtTools', data?.id]);
           onClose();
         })
         .catch((error) => {

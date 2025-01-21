@@ -28,7 +28,7 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     },
     {
       onSuccess: async () => {
-        queryClient.invalidateQueries(['builtTool', location.id]);
+        queryClient.invalidateQueries(['builtTools', location.id]);
         onClose();
       },
       onError: () => {

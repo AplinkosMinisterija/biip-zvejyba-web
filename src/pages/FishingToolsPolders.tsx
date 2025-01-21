@@ -34,7 +34,7 @@ const FishingTools = () => {
   const isEstuary = currentFishing?.type === LocationType.ESTUARY;
 
   const { data: builtTools, isLoading: builtToolsLoading } = useQuery(
-    ['builtTool', location?.id],
+    ['builtTools', location?.id],
     () => api.getBuiltTools({ locationId: location?.id }),
     {
       retry: false,

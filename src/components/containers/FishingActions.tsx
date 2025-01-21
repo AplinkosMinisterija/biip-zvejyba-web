@@ -54,7 +54,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           onClick={() => {
             navigate(slugs.fishingTools(FishingTypeRoute[fishing.type]));
           }}
-          isDisabled={weightOnBoatExist}
+          isDisabled={weightOnShoreExist}
         />
         <LargeButton
           variant={Variant.GHOST_WHITE}
@@ -72,6 +72,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           subtitle="Užbaikite žvejybą"
           buttonLabel="Baigti"
           onClick={() => showPopup({ type: PopupContentType.END_FISHING })}
+          isDisabled={weightOnBoatExist && !weightOnShoreExist}
         />
       </Container>
     </>
