@@ -54,8 +54,6 @@ export const LocationProvider = ({ children }: any) => {
     });
   };
 
-  const getLocationManually = mutateAsync;
-
   return (
     <LocationContext.Provider
       value={{

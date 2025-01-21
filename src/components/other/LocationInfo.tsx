@@ -7,7 +7,13 @@ import { useState } from 'react';
 import PopUpWithImage from '../layouts/PopUpWithImage';
 import LocationForm from '../forms/LocationForm';
 
-const LocationInfo = ({ location, locationLoading, setLocationManually, isEstuary }: any) => {
+const LocationInfo = ({
+  location,
+  locationLoading,
+  setLocationManually,
+  locationType,
+  renewLocation,
+}: any) => {
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
 
   return (
@@ -27,7 +33,6 @@ const LocationInfo = ({ location, locationLoading, setLocationManually, isEstuar
             žvejybos vietą ir atnaujinkite informaciją.
           </Message>
           <Button
-            disabled={!location}
             onClick={() => {
               setShowLocationPopUp(true);
             }}
@@ -36,9 +41,8 @@ const LocationInfo = ({ location, locationLoading, setLocationManually, isEstuar
           </Button>
           <Button
             loading={locationLoading}
-            disabled={!location}
             variant={ButtonColors.SECONDARY}
-            onClick={() => {}}
+            onClick={renewLocation}
           >
             {'Atnaujinti lokaciją'}
           </Button>
@@ -49,7 +53,7 @@ const LocationInfo = ({ location, locationLoading, setLocationManually, isEstuar
           handleSetLocationManually={(l: any) => {
             setLocationManually(l);
           }}
-          isEstuary={isEstuary}
+          locationType={locationType}
           onClose={() => setShowLocationPopUp(false)}
         />
       </PopUpWithImage>

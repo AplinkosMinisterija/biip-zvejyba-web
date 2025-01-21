@@ -5,6 +5,9 @@ import { StartFishing } from '../popups/StartFishing';
 import { SkipFishing } from '../popups/SkipFishing';
 import StartFishingInlandWater from '../popups/StartFishingInlandWater';
 import EndFishing from '../popups/EndFishing';
+import CaughtFishWeight from '../popups/CaughtFishWeiht';
+import ToolGroupAction from '../popups/ToolGroupAction';
+import Confirm from '../popups/Confirm';
 
 export interface PopupContextProps {
   showPopup: (props: { type: PopupContentType; content?: any }) => void;
@@ -32,6 +35,12 @@ export const PopupProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <PopupContext.Provider value={{ showPopup, hidePopup }}>
       <>
+        {
+          // location permission popup
+          visiblePopup?.type === PopupContentType.CONFIRM && (
+            <Confirm content={visiblePopup.content} onClose={hidePopup} />
+          )
+        }
         {
           // location permission popup
           visiblePopup?.type === PopupContentType.LOCATION_PERMISSION && (
@@ -62,6 +71,12 @@ export const PopupProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             <EndFishing content={visiblePopup.content} onClose={hidePopup} />
           )
         }
+        {visiblePopup?.type === PopupContentType.CAUGHT_FISH_WEIGHT && (
+          <CaughtFishWeight content={visiblePopup.content} onClose={hidePopup} />
+        )}
+        {visiblePopup?.type === PopupContentType.TOOL_GROUP_ACTION && (
+          <ToolGroupAction content={visiblePopup.content} onClose={hidePopup} />
+        )}
         {children}
       </>
     </PopupContext.Provider>

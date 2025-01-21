@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   FishingWeighType,
   LocationType,
+  PopupContentType,
   useCurrentFishing,
   useFishingWeightMutation,
   useFishTypes,
@@ -15,6 +16,8 @@ import { Footer } from '../components/other/CommonStyles';
 import styled from 'styled-components';
 import Button from '../components/buttons/Button';
 import LoaderComponent from '../components/other/LoaderComponent';
+import { PopupContext, PopupContextProps } from '../components/providers/PopupProvider';
+import { IconName } from '../components/other/Icon';
 
 const FishingWeightOptions = [
   { label: 'Sugautos žuvys', value: FishingWeighType.CAUGHT },
@@ -22,6 +25,7 @@ const FishingWeightOptions = [
 ];
 
 const FishingWeight = () => {
+  const { showPopup } = useContext<PopupContextProps>(PopupContext);
   const [type, setType] = useState<FishingWeighType>(FishingWeighType.CAUGHT);
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
   const showSwitch = currentFishing?.type !== LocationType.INLAND_WATERS;
@@ -53,7 +57,7 @@ const FishingWeight = () => {
           };
         });
 
-  const handleSubmit = (values: any) => {
+  const handleSave = (values: any) => {
     if (!window.coordinates) return;
     const mappedWeights = values.reduce((obj: any, curr: any) => {
       if (curr.amount) obj[curr.id] = Number(curr.amount) || undefined;
@@ -65,7 +69,18 @@ const FishingWeight = () => {
       coordinates: window.coordinates,
     });
   };
-
+  const handleSubmit = (values: any) => {
+    showPopup({
+      type: PopupContentType.CONFIRM,
+      content: {
+        title: 'Ar tikrai norite patvirtinti žuvies svorį?',
+        subtitle: 'Atkreipkime dėmesį, kad patvirtinus svorį, jo pakeisti nebebus galima.',
+        onConfirm: () => handleSave(values),
+        icon: IconName.fish,
+        showCancel: true,
+      },
+    });
+  };
   return (
     <DefaultLayout>
       {showSwitch && (

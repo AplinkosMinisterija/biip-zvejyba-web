@@ -16,7 +16,7 @@ interface LargeButtonProps {
   buttonLabel: string;
   onClick: () => void;
   variant?: Variant;
-  isDisabled: boolean;
+  isDisabled?: boolean;
 }
 
 const LargeButton = ({
@@ -28,7 +28,11 @@ const LargeButton = ({
   onClick,
 }: LargeButtonProps) => {
   return (
-    <Container $isDisabled={isDisabled} $variant={variant} onClick={() => !isDisabled && onClick()}>
+    <Container
+      $isDisabled={!!isDisabled}
+      $variant={variant}
+      onClick={() => !isDisabled && onClick()}
+    >
       <Title dangerouslySetInnerHTML={{ __html: title }} />
       <Row>
         <Subtitle>{subtitle}</Subtitle>

@@ -18,7 +18,8 @@ export const getErrorMessage = (responseError: string) =>
   validationTexts[responseError as keyof typeof validationTexts] || validationTexts.error;
 
 export const handleErrorToastFromServer = (responseError: string = 'error') => {
-  handleErrorToast(getErrorMessage(getReactQueryErrorMessage(responseError)));
+  const errorMessage = getErrorMessage(getReactQueryErrorMessage(responseError));
+  handleErrorToast(errorMessage);
 };
 
 export const handleErrorToast = (message: string) => {

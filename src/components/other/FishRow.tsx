@@ -50,7 +50,7 @@ const FishRow = React.memo(({ onChange, fish, index }: FishRowProp) => {
             inputMode="numeric"
             onFocus={preventNumInputFromScrolling}
           />
-          <Button type="button" onClick={() => onChange(amount + 1)}>
+          <Button type="button" onClick={() => onChange((amount || 0) + 1)}>
             +
           </Button>
         </InnerRow>

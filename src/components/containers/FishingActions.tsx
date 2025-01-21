@@ -22,8 +22,6 @@ interface FishingActionsProps {
 const FishingActions = ({ fishing }: FishingActionsProps) => {
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
   const navigate = useNavigate();
-  const coordinates = window.coordinates;
-  const isDisabled = !coordinates;
 
   const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
     ['fishingWeights'],
@@ -35,9 +33,9 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
 
   const loading = fishingWeightsLoading;
 
-  const canWeigh =
-    fishing?.type === LocationType.INLAND_WATERS ||
-    !!Object.keys(fishingWeights?.preliminary || {})?.length;
+  const weightOnBoatExist =
+    !!fishingWeights?.preliminary && !!Object.keys(fishingWeights.preliminary).length;
+  const weightOnShoreExist = !!fishingWeights?.total && !!Object.keys(fishingWeights.total).length;
 
   return loading ? (
     <LoaderComponent />
@@ -45,29 +43,30 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
     <>
       <Container>
         <LargeButton
-          isDisabled={isDisabled}
           variant={Variant.FLORAL_WHITE}
-          title="Tikrinkite arba</br>statykite įrankius"
+          title={
+            fishing?.type === LocationType.INLAND_WATERS
+              ? 'Statykite arba</br>ištraukite įrankius'
+              : 'Tikrinkite arba</br>statykite įrankius'
+          }
           subtitle="Esate žvejybos vietoje"
           buttonLabel="Atidaryti"
           onClick={() => {
             navigate(slugs.fishingTools(FishingTypeRoute[fishing.type]));
           }}
+          isDisabled={weightOnBoatExist}
         />
-        {canWeigh && (
-          <LargeButton
-            isDisabled={isDisabled}
-            variant={Variant.GHOST_WHITE}
-            title="Žuvies svoris</br>krante"
-            subtitle="Pasverkite bendrą svorį"
-            buttonLabel="Sverti"
-            onClick={() => {
-              navigate(slugs.fishingWeight);
-            }}
-          />
-        )}
         <LargeButton
-          isDisabled={isDisabled}
+          variant={Variant.GHOST_WHITE}
+          title="Žuvies svoris</br>krante"
+          subtitle="Pasverkite bendrą svorį"
+          buttonLabel="Sverti"
+          onClick={() => {
+            navigate(slugs.fishingWeight);
+          }}
+          isDisabled={!weightOnBoatExist || weightOnShoreExist}
+        />
+        <LargeButton
           variant={Variant.AZURE}
           title="Žvejybos baigimo</br>nustatymas"
           subtitle="Užbaikite žvejybą"

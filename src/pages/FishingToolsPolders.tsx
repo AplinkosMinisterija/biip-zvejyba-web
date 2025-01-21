@@ -1,10 +1,10 @@
 import { isEmpty, map } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { device, LocationType, ToolsGroup, useCurrentFishing } from '../utils';
+import { device, LocationType, useCurrentFishing } from '../utils';
 import api from '../utils/api';
-import Button, { ButtonColors } from '../components/buttons/Button';
+import Button from '../components/buttons/Button';
 import ToolsGroupCard from '../components/cards/ToolsGroupCard';
 import Popup from '../components/layouts/Popup';
 import { Footer } from '../components/other/CommonStyles';
@@ -18,12 +18,7 @@ const FishingTools = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
   const locationType = currentFishing?.type;
-  const [selectedToolsGroup, setSelectedToolsGroup] = useState<ToolsGroup>();
-  const {
-    data: location,
-    isLoading: locationLoading,
-    refetch,
-  } = useQuery({
+  const { data: location, isLoading: locationLoading } = useQuery({
     queryKey: ['location'],
     queryFn: () => {
       return api.getLocation({
@@ -36,20 +31,10 @@ const FishingTools = () => {
     enabled: !!currentFishing,
   });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (locationType === LocationType.ESTUARY && window.coordinates) {
-        refetch();
-      }
-    }, 60000); // 60000ms = 1 minute
-
-    return () => clearInterval(interval);
-  }, []);
-
   const isEstuary = currentFishing?.type === LocationType.ESTUARY;
 
   const { data: builtTools, isLoading: builtToolsLoading } = useQuery(
-    ['builtTools', location?.id],
+    ['builtTool', location?.id],
     () => api.getBuiltTools({ locationId: location?.id }),
     {
       retry: false,
@@ -61,17 +46,12 @@ const FishingTools = () => {
     return <LoaderComponent />;
   }
 
-  const initialValues = { location: '', x: '', y: '' };
-
-  const showEditIcon = location?.name && location.type !== LocationType.POLDERS;
-
   return (
     <DefaultLayout>
       <LocationInfo
         location={location}
         locationLoading={locationLoading}
-        showEditIcon={showEditIcon}
-        isEstuary={isEstuary}
+        locationType={LocationType.POLDERS}
       />
       <Container>
         {isEmpty(builtTools) ? (
@@ -82,7 +62,6 @@ const FishingTools = () => {
               isEstuary={isEstuary}
               key={toolsGroup.id}
               toolsGroup={toolsGroup}
-              onSelect={(toolsGroup) => setSelectedToolsGroup(toolsGroup)}
               location={location}
             />
           ))

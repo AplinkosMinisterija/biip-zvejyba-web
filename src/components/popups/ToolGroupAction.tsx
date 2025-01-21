@@ -1,19 +1,24 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router';
-import { LocationType, slugs } from '../../utils';
+import { LocationType, PopupContentType } from '../../utils';
 import api from '../../utils/api';
 import MenuButton from '../buttons/MenuButton';
 import { IconName } from '../other/Icon';
 import Popup from '../layouts/Popup';
 import styled from 'styled-components';
+import { useContext } from 'react';
+import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
-const ToolActionsPopup = ({ toolGroup, onReturn, visible, location }: any) => {
+const ToolGroupAction = ({ onClose, content }: any) => {
+  const { toolsGroup, onReturn, location } = content;
+
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const { showPopup } = useContext<PopupContextProps>(PopupContext);
 
   const { data: currentFishing } = useQuery(['currentFishing'], () => api.getCurrentFishing(), {
     retry: false,
   });
+
   const { mutateAsync: returnToolsMutation } = useMutation(
     () =>
       api.removeTool(
@@ -21,7 +26,7 @@ const ToolActionsPopup = ({ toolGroup, onReturn, visible, location }: any) => {
           location,
           coordinates: window.coordinates as any,
         },
-        toolGroup?.id,
+        toolsGroup?.id,
       ),
     {
       onSuccess: () => {
@@ -36,10 +41,10 @@ const ToolActionsPopup = ({ toolGroup, onReturn, visible, location }: any) => {
   );
   return (
     <Popup
-      visible={visible}
-      onClose={onReturn}
-      title={toolGroup?.tools[0]?.toolType?.label}
-      subTitle={toolGroup?.tools?.map((tool: any) => tool.sealNr).join(', ')}
+      visible={true}
+      onClose={onClose}
+      title={toolsGroup?.tools[0]?.toolType?.label}
+      subTitle={toolsGroup?.tools?.map((tool: any) => tool.sealNr).join(', ')}
     >
       <PopupContainer>
         {currentFishing?.type !== LocationType.INLAND_WATERS && (
@@ -47,16 +52,18 @@ const ToolActionsPopup = ({ toolGroup, onReturn, visible, location }: any) => {
             label="Sverti žuvį laive "
             icon={IconName.scales}
             onClick={() => {
-              navigate(slugs.fishingToolCaughtFishes(toolGroup?.id), {
-                state: {
-                  location: JSON.stringify(location),
+              showPopup({
+                type: PopupContentType.CAUGHT_FISH_WEIGHT,
+                content: {
+                  location,
+                  toolsGroup,
                 },
               });
             }}
           />
         )}
         <MenuButton
-          label="Sugrąžinti į sandėlį "
+          label="Sugrąžinti į sandėlį"
           icon={IconName.return}
           onClick={returnToolsMutation}
         />
@@ -68,4 +75,4 @@ const PopupContainer = styled.div`
   padding-top: 68px;
 `;
 
-export default ToolActionsPopup;
+export default ToolGroupAction;

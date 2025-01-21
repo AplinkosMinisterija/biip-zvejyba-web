@@ -1,13 +1,12 @@
 import styled from 'styled-components';
-import { getBuiltToolInfo, LocationType, theme, ToolsGroup } from '../../utils';
+import { getBuiltToolInfo, PopupContentType, theme, ToolsGroup } from '../../utils';
 import Icon, { IconName } from '../other/Icon';
 import Tag from '../other/Tag';
-import ToolActionsPopup from '../containers/ToolActionsPopup';
-import { useState } from 'react';
+import { useContext } from 'react';
+import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
 interface ToolsGroupCardProps {
   toolsGroup: ToolsGroup;
-  onSelect?: (toolsGroup?: ToolsGroup) => void;
   isEstuary?: boolean;
   selected?: boolean;
   isDisabled?: boolean;
@@ -15,15 +14,13 @@ interface ToolsGroupCardProps {
 }
 const ToolsGroupCard = ({
   toolsGroup,
-  onSelect = () => {},
   selected = false,
   isEstuary = false,
   isDisabled = false,
   location,
 }: ToolsGroupCardProps) => {
   const isCheckedTool = !!toolsGroup?.weightEvent;
-  const [visible, setVisible] = useState(false);
-
+  const { showPopup } = useContext<PopupContextProps>(PopupContext);
   const { label, sealNr, locationName } = getBuiltToolInfo(toolsGroup);
 
   return (
@@ -32,8 +29,13 @@ const ToolsGroupCard = ({
         <InnerContainer
           onClick={() => {
             if (!isDisabled) {
-              onSelect(toolsGroup);
-              setVisible(!visible);
+              showPopup({
+                type: PopupContentType.TOOL_GROUP_ACTION,
+                content: {
+                  location,
+                  toolsGroup,
+                },
+              });
             }
           }}
         >
@@ -52,14 +54,6 @@ const ToolsGroupCard = ({
         </InnerContainer>
         {isCheckedTool && <Tag color={theme.colors.success} label={'Patikrintas'} />}
       </Container>
-      <ToolActionsPopup
-        location={location}
-        visible={visible}
-        toolGroup={toolsGroup}
-        onReturn={() => {
-          setVisible(false);
-        }}
-      />
     </>
   );
 };

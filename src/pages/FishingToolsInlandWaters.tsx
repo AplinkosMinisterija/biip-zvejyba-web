@@ -35,7 +35,11 @@ const FishingTools = () => {
 
   return (
     <DefaultLayout>
-      <LocationInfo location={location} locationLoading={false} isEstuary={isEstuary} />
+      <LocationInfo
+        location={location}
+        locationLoading={false}
+        locationType={LocationType.INLAND_WATERS}
+      />
       <Container>
         {isEmpty(builtTools) ? (
           <NotFound message={'Nėra pastatytų įrankių'} />

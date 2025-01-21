@@ -48,11 +48,9 @@ const FishingToolsEstuary = () => {
 
   const isEstuary = currentFishing?.type === LocationType.ESTUARY;
   const locationId = (manualLocation || location)?.id;
-  console.log('locationId', locationId, location, manualLocation);
   const { data: builtTools, isLoading: builtToolsLoading } = useQuery(
     ['builtTools', locationId],
     () => {
-      console.log('builtTools', locationId);
       return api.getBuiltTools({ locationId });
     },
     {
@@ -65,10 +63,7 @@ const FishingToolsEstuary = () => {
     return <LoaderComponent />;
   }
 
-  const showBuildToolsButton =
-    locationType === LocationType.INLAND_WATERS
-      ? !!currentFishing?.location?.name
-      : !!location?.name;
+  const showBuildToolsButton = !!manualLocation?.id || !!location?.id;
 
   return (
     <DefaultLayout>
@@ -76,7 +71,8 @@ const FishingToolsEstuary = () => {
         location={manualLocation || location}
         locationLoading={locationLoading}
         setLocationManually={setManualLocation}
-        isEstuary={isEstuary}
+        locationType={LocationType.ESTUARY}
+        renewLocation={refetch}
       />
       <Container>
         {isEmpty(builtTools) ? (

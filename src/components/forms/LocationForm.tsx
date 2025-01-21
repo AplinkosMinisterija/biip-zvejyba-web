@@ -1,34 +1,47 @@
 import { Form, Formik } from 'formik';
 import styled from 'styled-components';
-import {
-  getBars,
-  getLocationList,
-  inputLabels,
-  locationSchema,
-  useLogoutMutation,
-} from '../../utils';
+import { handleErrorToastFromServer, locationSchema, LocationType } from '../../utils';
 import Button, { ButtonColors } from '../buttons/Button';
-import AsyncSelectField from '../fields/AsyncSelect';
 import NumericTextField from '../fields/NumericTextField';
 import SelectField from '../fields/SelectField';
 import { Grid } from '../other/CommonStyles';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import api from '../../utils/api';
 
-const LocationForm = ({ handleSetLocationManually, isEstuary, onClose }: any) => {
-  const { data: bars } = useQuery(['bars'], async () => api.getFishinSections(), {
-    enabled: isEstuary,
+const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any) => {
+  const queryClient = useQueryClient();
+  const { data: bars, isLoading } = useQuery(['bars'], async () => api.getFishinSections(), {
+    enabled: locationType === LocationType.ESTUARY,
     retry: false,
   });
 
-  const initialValues = { location: '', x: '', y: '' };
+  const initialValues = { location: '', x: '21.163359', y: '55.456693' };
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = async (values: any) => {
     if (values.location) {
       handleSetLocationManually(values.location);
+      onClose();
     } else if (values.x && values.y) {
+      queryClient
+        .fetchQuery({
+          queryKey: ['manualLocation'],
+          queryFn: () => {
+            return api.getLocation({
+              query: JSON.stringify({
+                type: locationType,
+                coordinates: { x: values.x, y: values.y },
+              }),
+            });
+          },
+        })
+        .then((data) => {
+          handleSetLocationManually({ ...data, x: values.x, y: values.y });
+          onClose();
+        })
+        .catch((error) => {
+          handleErrorToastFromServer(error?.response);
+        });
     }
-    onClose();
   };
 
   return (
@@ -57,6 +70,7 @@ const LocationForm = ({ handleSetLocationManually, isEstuary, onClose }: any) =>
                 onChange={(value) => {
                   setFieldValue('location', value);
                 }}
+                loading={isLoading}
               />
               <Or>
                 <Separator />
