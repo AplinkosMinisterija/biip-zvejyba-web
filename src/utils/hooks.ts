@@ -2,7 +2,7 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from 'react-q
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { actions, initialState } from '../state/user/reducer';
 import api from './api';
-import { intersectionObserverConfig, LOCATION_ERRORS, LocationType, RoleTypes } from './constants';
+import { intersectionObserverConfig, RoleTypes } from './constants';
 import {
   clearCookies,
   handleErrorToastFromServer,

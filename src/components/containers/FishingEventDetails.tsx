@@ -25,7 +25,7 @@ const FishingEventDetails = ({ event }: any) => {
       <Title>{FishingEventLabels[event.type as EventTypes]}</Title>
       {tools && <Subtitle>{tools}</Subtitle>}
       <MapContainer>
-        <PreviewMap value={event?.geom} height={'150px'} preview={true} />
+        <PreviewMap value={event?.geom} height={'15rem'} preview={true} />
       </MapContainer>
       <FishingInfo>
         <FishingInfoCell>
@@ -61,9 +61,9 @@ const Container = styled.div`
   margin: auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   width: 100%;
-  height: 100%;
+  height: fit-content;
+  padding-top: 40px;
 `;
 
 const Title = styled.div`

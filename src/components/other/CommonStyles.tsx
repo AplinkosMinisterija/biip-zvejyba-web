@@ -89,7 +89,7 @@ export const Footer = styled.div`
   padding: 16px 0;
   text-decoration: none;
   width: 100%;
-  background-color: white;
+  //background-color: white;
   @media ${device.desktop} {
     padding: 16px 0 0 0;
   }

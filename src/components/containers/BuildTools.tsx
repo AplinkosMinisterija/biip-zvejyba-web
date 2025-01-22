@@ -2,7 +2,7 @@ import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { handleErrorToastFromServer, slugs } from '../../utils';
+import { handleErrorToast, handleErrorToastFromServer, slugs } from '../../utils';
 import api from '../../utils/api';
 import { FishingToolsType } from '../../utils/constants';
 import { Location } from '../../utils/types';
@@ -67,14 +67,18 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   };
 
   const handleBuildTools = () => {
-    if (window.coordinates) {
+    const coordinates: any = {
+      x: location?.x || window.coordinates?.x,
+      y: location?.y || window.coordinates?.y,
+    };
+    if (coordinates.x && coordinates.y) {
       buildToolsMutation({
         tools: selectedTools,
         location,
-        coordinates: window.coordinates,
+        coordinates,
       });
     } else {
-      //TODO: display error
+      handleErrorToast('Nenustatyta buvimo vieta');
     }
   };
 

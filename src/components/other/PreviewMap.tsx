@@ -55,6 +55,7 @@ const PreviewMap = ({ height = '230px', error, value, showError = true, label }:
   const src = `${mapsHost}/edit?preview=true`;
 
   const handleLoadMap = () => {
+    console.log('map', value);
     if (!value) return;
     iframeRef?.current?.contentWindow?.postMessage({ geom: value }, '*');
   };
@@ -137,8 +138,8 @@ const StyledIframe = styled.iframe<{
   $height: string;
   $width: string;
 }>`
-  width: ${({ $width }) => $width};
-  height: ${({ $height }) => $height};
+  width: ${({ $width }) => $width || '100%'};
+  height: ${({ $height }) => $height || '15rem'};
 `;
 
 export default PreviewMap;

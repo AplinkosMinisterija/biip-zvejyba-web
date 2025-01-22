@@ -10,7 +10,6 @@ import {
   LocationType,
   validationTexts,
 } from '../../utils';
-import LoaderComponent from '../other/LoaderComponent';
 import { Grid } from '../other/CommonStyles';
 import Button from '../buttons/Button';
 import styled from 'styled-components';
@@ -40,8 +39,8 @@ const StartFishingInlandWater = ({ onClose }: any) => {
     if (coordinates) {
       startFishing({
         type: LocationType.INLAND_WATERS,
-        coordinates,
-        uetkCadastralId: selectedLocation?.id,
+        coordinates: { x: coordinates?.x, y: coordinates?.y },
+        uetkCadastralId: selectedLocation?.cadastralId,
       });
     } else {
       handleErrorToast(validationTexts.mustAllowToSetCoordinates);

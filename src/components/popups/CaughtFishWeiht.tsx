@@ -3,24 +3,30 @@ import Button from '../buttons/Button';
 import { Form, Formik } from 'formik';
 import FishRow from '../other/FishRow';
 import { Footer } from '../other/CommonStyles';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {
   getBuiltToolInfo,
+  handleErrorToast,
   handleErrorToastFromServer,
-  PopupContentType,
   useFishTypes,
   useGetCurrentRoute,
 } from '../../utils';
 import api from '../../utils/api';
 import LoaderComponent from '../other/LoaderComponent';
 import Popup from '../layouts/Popup';
-import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
-import { useContext } from 'react';
 
 const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) => {
   const queryClient = useQueryClient();
   const currentRoute = useGetCurrentRoute();
   const { fishTypes, fishTypesLoading } = useFishTypes();
+
+  const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
+    ['fishingWeights'],
+    api.getFishingWeights,
+    {
+      retry: false,
+    },
+  );
 
   const { mutateAsync: weighToolsMutation, isLoading: weighToolsIsLoading } = useMutation(
     (data: any) => {
@@ -29,6 +35,7 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     {
       onSuccess: async () => {
         queryClient.invalidateQueries(['builtTools', location.id]);
+        queryClient.invalidateQueries(['fishingWeights']);
         onClose();
       },
       onError: () => {
@@ -37,33 +44,41 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     },
   );
 
-  if (fishTypesLoading) return <LoaderComponent />;
+  if (fishTypesLoading || fishingWeightsLoading) return <LoaderComponent />;
 
   const { label, sealNr } = getBuiltToolInfo(toolsGroup);
 
   const handleSubmit = (data: any) => {
-    if (!window.coordinates) return;
-
-    const filteredData = data.filter((fishType: any) => fishType.amount);
-
-    const mappedWeights = filteredData.reduce((obj: any, curr: any) => {
-      obj[curr.id] = curr.amount;
-      return obj;
-    }, {});
-
-    const params = {
-      data: mappedWeights,
-      coordinates: window.coordinates,
-      location,
+    const coordinates: any = {
+      x: location?.x || window.coordinates?.x,
+      y: location?.y || window.coordinates?.y,
     };
-    weighToolsMutation(params);
+    if (coordinates.x && coordinates.y) {
+      const filteredData = data.filter((fishType: any) => fishType.amount);
+
+      const mappedWeights = filteredData.reduce((obj: any, curr: any) => {
+        obj[curr.id] = curr.amount;
+        return obj;
+      }, {});
+
+      const params = {
+        data: mappedWeights,
+        coordinates: window.coordinates,
+        location,
+      };
+      weighToolsMutation(params);
+    } else {
+      handleErrorToast('Nenustatyta buvimo vieta');
+    }
   };
 
-  const initialValues = fishTypes.map((fishType) => ({
-    ...fishType,
-    preliminaryAmount: '',
-    amount: '',
-  }));
+  const initialValues = fishTypes.map((fishType) => {
+    const preliminaryAmount = fishingWeights?.preliminary?.[fishType.id];
+    return {
+      ...fishType,
+      amount: preliminaryAmount || '',
+    };
+  });
 
   return (
     <Popup visible={true} onClose={onClose}>
@@ -132,6 +147,7 @@ const SealNumbers = styled.div`
   margin-top: 4px;
   font-size: 1.6rem;
   margin-bottom: 32px;
+  text-align: center;
 `;
 
 const StyledForm = styled(Form)`

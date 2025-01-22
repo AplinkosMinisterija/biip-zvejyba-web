@@ -10,7 +10,6 @@ import Tools from '../pages/Tools';
 import UserForm from '../pages/User';
 import Users from '../pages/Users';
 import FishingToolsEstuary from '../pages/FishingToolsEstuary';
-import FishingToolWeight from '../pages/FishingToolWeight';
 import FishingWeight from '../pages/FishingWeight';
 import FishingToolsInlandWatters from '../pages/FishingToolsInlandWaters';
 import FishingToolsPolders from '../pages/FishingToolsPolders';
@@ -77,12 +76,6 @@ export const routes = [
     component: <FishingToolsPolders />,
     back: true,
     regExp: new RegExp(`^/zvejyba/${FishingTypeRoute.POLDERS}/irankiai$`),
-  },
-  {
-    slug: slugs.fishingToolCaughtFishes(Ids.TOOL_ID),
-    component: <FishingToolWeight />,
-    back: true,
-    regExp: new RegExp('^/zvejyba/irankiai/[0-9]+/sugautos-zuvys$'),
   },
   {
     title: 'Tikslus svoris, kg',

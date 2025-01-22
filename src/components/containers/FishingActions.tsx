@@ -13,12 +13,14 @@ import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 declare global {
   interface Window {
     coordinates?: { x: number; y: number };
+    coordinatesError?: string;
   }
 }
 
 interface FishingActionsProps {
   fishing: Fishing;
 }
+
 const FishingActions = ({ fishing }: FishingActionsProps) => {
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
   const navigate = useNavigate();
@@ -31,10 +33,13 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
     },
   );
 
+  const locationType = fishing?.type;
+
   const loading = fishingWeightsLoading;
 
   const weightOnBoatExist =
     !!fishingWeights?.preliminary && !!Object.keys(fishingWeights.preliminary).length;
+
   const weightOnShoreExist = !!fishingWeights?.total && !!Object.keys(fishingWeights.total).length;
 
   return loading ? (
@@ -45,16 +50,16 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
         <LargeButton
           variant={Variant.FLORAL_WHITE}
           title={
-            fishing?.type === LocationType.INLAND_WATERS
+            locationType === LocationType.INLAND_WATERS
               ? 'Statykite arba</br>ištraukite įrankius'
               : 'Tikrinkite arba</br>statykite įrankius'
           }
           subtitle="Esate žvejybos vietoje"
           buttonLabel="Atidaryti"
           onClick={() => {
-            navigate(slugs.fishingTools(FishingTypeRoute[fishing.type]));
+            navigate(slugs.fishingTools(FishingTypeRoute[locationType]));
           }}
-          isDisabled={weightOnShoreExist}
+          isDisabled={locationType !== LocationType.INLAND_WATERS && weightOnShoreExist}
         />
         <LargeButton
           variant={Variant.GHOST_WHITE}
@@ -64,7 +69,6 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           onClick={() => {
             navigate(slugs.fishingWeight);
           }}
-          isDisabled={!weightOnBoatExist || weightOnShoreExist}
         />
         <LargeButton
           variant={Variant.AZURE}
@@ -72,7 +76,9 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           subtitle="Užbaikite žvejybą"
           buttonLabel="Baigti"
           onClick={() => showPopup({ type: PopupContentType.END_FISHING })}
-          isDisabled={weightOnBoatExist && !weightOnShoreExist}
+          isDisabled={
+            locationType !== LocationType.INLAND_WATERS && weightOnBoatExist && !weightOnShoreExist
+          }
         />
       </Container>
     </>

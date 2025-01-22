@@ -5,14 +5,13 @@ import FishingLocationButton, { Variant } from '../buttons/FishingLocationButton
 import { useContext } from 'react';
 import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
-const FishingLocation = ({ isDisabled }: any) => {
+const FishingLocation = () => {
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
   return (
     <>
       <Container>
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
-          isDisabled={isDisabled}
           title="Kuršių mariose"
           image={'/marios.jpg'}
           onClick={() => {
@@ -24,7 +23,6 @@ const FishingLocation = ({ isDisabled }: any) => {
         />
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
-          isDisabled={isDisabled}
           title="Vidaus vandenyse"
           image={'/vidaus_vandens_telkiniai.jpg'}
           onClick={() => {
@@ -33,7 +31,6 @@ const FishingLocation = ({ isDisabled }: any) => {
         />
         <FishingLocationButton
           variant={Variant.GHOST_WHITE}
-          isDisabled={isDisabled}
           title="Polderiuose"
           image={'/polderiai.jpg'}
           onClick={() => {
