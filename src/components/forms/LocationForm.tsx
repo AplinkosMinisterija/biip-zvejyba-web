@@ -15,7 +15,7 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
     retry: false,
   });
 
-  const initialValues = { location: '', x: '21.163359', y: '55.456693' };
+  const initialValues = { location: '', x: '', y: '' };
 
   const handleSubmit = async (values: any) => {
     if (values.location) {
@@ -36,7 +36,6 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
         })
         .then((data) => {
           handleSetLocationManually({ ...data, x: values.x, y: values.y });
-          alert(data?.id);
           queryClient.refetchQueries(['builtTools', data?.id]);
           onClose();
         })
