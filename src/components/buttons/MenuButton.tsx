@@ -1,16 +1,29 @@
 import styled from 'styled-components';
 import Icon, { IconName } from '../other/Icon';
+import Loader from '../other/Loader';
 interface MenuButtonProps {
   label: string;
   icon?: IconName;
   onClick: () => void;
   isActive?: boolean;
+  loading?: boolean;
 }
-const MenuButton = ({ label, icon, onClick, isActive = false }: MenuButtonProps) => {
+const MenuButton = ({
+  label,
+  icon,
+  onClick,
+  isActive = false,
+  loading = false,
+}: MenuButtonProps) => {
   //TODO: disable option
   return (
     <Container $isActive={isActive} onClick={onClick}>
-      <IconContainer>{icon ? <StyledIcon name={icon} /> : null}</IconContainer>
+      {/*<IconContainer>{icon ? <StyledIcon name={icon} /> : null}</IconContainer>*/}
+      {loading ? (
+        <Loader />
+      ) : (
+        <IconContainer>{icon ? <StyledIcon name={icon} /> : null}</IconContainer>
+      )}
       {label}
       <Icon name={IconName.right} />
     </Container>

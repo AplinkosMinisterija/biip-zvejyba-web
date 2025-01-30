@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from 'react';
 import { matchPath, useLocation } from 'react-router';
 import Cookies from 'universal-cookie';
-import { RootState } from '../state/store';
+import { AppDispatch, RootState } from '../state/store';
 import { routes, slugs } from './routes';
 import { User } from './types';
 import { useNavigate } from 'react-router-dom';
