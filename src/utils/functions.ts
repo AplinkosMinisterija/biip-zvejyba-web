@@ -4,8 +4,15 @@ import Cookies from 'universal-cookie';
 import api from './api';
 import { ToolTypeType } from './constants';
 import { validationTexts } from './texts';
-import { Profile, ProfileId, ResponseProps, ToolsGroup } from './types';
+import { Profile, ProfileId, ReactQueryError, ResponseProps, ToolsGroup } from './types';
 const cookies = new Cookies();
+
+interface UpdateTokenProps {
+  token?: string;
+  error?: string;
+  message?: string;
+  refreshToken?: string;
+}
 
 export const clearCookies = () => {
   cookies.remove('token', { path: '/' });
@@ -14,12 +21,11 @@ export const clearCookies = () => {
   cookies.remove('profileId', { path: '/' });
 };
 
-export const getErrorMessage = (responseError: string) =>
-  validationTexts[responseError as keyof typeof validationTexts] || validationTexts.error;
+export const getErrorMessage = (errorMessage: string) =>
+  validationTexts[errorMessage as keyof typeof validationTexts] || validationTexts.error;
 
-export const handleErrorToastFromServer = (responseError: string = 'error') => {
-  const errorMessage = getErrorMessage(getReactQueryErrorMessage(responseError));
-  handleErrorToast(errorMessage);
+export const handleErrorToastFromServer = (responseError?: ReactQueryError) => {
+  handleErrorToast(getErrorMessage(getReactQueryErrorMessage(responseError)));
 };
 
 export const handleErrorToast = (message: string) => {
@@ -65,28 +71,21 @@ export const handleSelectProfile = (profileId: ProfileId) => {
   window.location.reload();
 };
 
-export const handleUpdateTokens = (data: {
-  token?: string;
-  error?: string;
-  message?: string;
-  refreshToken?: string;
-}) => {
-  const { token, refreshToken, error } = data;
+export const handleUpdateTokens = (data: UpdateTokenProps) => {
+  const { token, refreshToken } = data;
+
   if (token) {
     cookies.set('token', `${token}`, {
       path: '/',
       expires: new Date(new Date().getTime() + 60 * 60 * 24 * 1000),
     });
-
-    if (refreshToken) {
-      cookies.set('refreshToken', `${refreshToken}`, {
-        path: '/',
-        expires: new Date(new Date().getTime() + 60 * 60 * 24 * 1000 * 30),
-      });
-    }
   }
-  if (error) {
-    return { error };
+
+  if (refreshToken) {
+    cookies.set('refreshToken', `${refreshToken}`, {
+      path: '/',
+      expires: new Date(new Date().getTime() + 60 * 60 * 24 * 1000 * 30),
+    });
   }
 };
 
@@ -190,7 +189,8 @@ export const getBuiltToolInfo = (toolsGroup: ToolsGroup) => {
   };
 };
 
-export const getReactQueryErrorMessage = (response: any) => response?.data?.message;
+export const getReactQueryErrorMessage = (response?: ReactQueryError) =>
+  response?.data?.message || 'error';
 
 export const formatDate = (date?: Date | string) =>
   date ? format(new Date(date), 'yyyy-MM-dd') : '-';

@@ -1,12 +1,10 @@
 import ResearchesList from '../components/containers/ResearchesList';
 import ResearchForm from '../components/forms/ResearchForm';
 import DefaultLayout from '../components/layouts/DefaultLayout';
-import { useGetCurrentRoute } from '../utils';
-import { slugs } from '../utils/routes';
+import { useGetCurrentRoute, slugs } from '../utils';
 export const Research = () => {
   const currentRoute = useGetCurrentRoute();
 
-  //TODO: bereikalinga funkcija
   const renderContainer = () => {
     if (!currentRoute?.slug) return <></>;
 

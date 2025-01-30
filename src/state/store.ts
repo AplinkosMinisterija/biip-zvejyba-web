@@ -7,7 +7,6 @@ import { UserReducer } from './user/reducer';
 const persistConfig = {
   key: 'animalsConfig',
   storage,
-  whitelist: ['user'],
 };
 
 const reducers = combineReducers({

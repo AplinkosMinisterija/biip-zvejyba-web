@@ -22,6 +22,7 @@ export const validationTexts = {
   [ServerErrors.FISH_MUST_BE_WEIGHTED]:
     'Sužvejotos žuvys turi būti pasvertos krante, prieš užbaigiant žvejybą',
   [ServerErrors.LOCATION_NOT_FOUND]: 'Nepavyo nustatyti vandens telkinio pagal įvestas koordinates',
+  [ServerErrors.FISH_ALREADY_WEIGHTED]: 'Žuvis krante jau buvo pasverta',
   badFileTypes: 'Blogi failų tipai',
   fileSizesExceeded: 'Viršyti failų dydžiai',
   personalCode: 'Neteisingas asmens kodo formatas',

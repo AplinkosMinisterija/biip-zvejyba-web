@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from 'react-query';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import { actions, initialState } from '../state/user/reducer';
+import { actions } from '../state/user/reducer';
 import api from './api';
 import { intersectionObserverConfig, RoleTypes } from './constants';
 import {
@@ -20,28 +20,38 @@ import { useNavigate } from 'react-router-dom';
 
 const cookies = new Cookies();
 
+export const emptyUser = {
+  userData: {},
+  loggedIn: false,
+};
+
+export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
-export const useCheckAuthMutation = () => {
-  const dispatch = useDispatch();
+export const useCheckUserInfo = () => {
+  const dispatch = useAppDispatch();
   const token = cookies.get('token');
 
   const { isLoading } = useQuery([token], () => api.userInfo(), {
     onError: ({ response }: any) => {
       if (response.status === 401) {
         clearCookies();
-        dispatch(actions.setUser(initialState));
+        dispatch(actions.setUser(emptyUser));
+
         return;
       }
       return handleErrorToastFromServer();
+
+      return handleErrorToastFromServer(response);
     },
-    onSuccess: (data: User) => {
+    onSuccess: async (data: User) => {
       if (data) {
         handleSetProfile(data?.profiles);
         dispatch(actions.setUser({ userData: data, loggedIn: true }));
       }
     },
     retry: false,
+    refetchOnWindowFocus: false,
     enabled: !!token,
   });
 
@@ -109,7 +119,7 @@ export const useLogoutMutation = () => {
     },
     onSuccess: () => {
       clearCookies();
-      dispatch(actions.setUser(initialState));
+      dispatch(actions.setUser(emptyUser));
     },
   });
   return { mutateAsync };

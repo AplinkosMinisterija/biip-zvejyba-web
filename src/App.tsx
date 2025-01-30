@@ -18,12 +18,7 @@ import { CantLogin } from './pages/CantLogin';
 import { Login } from './pages/Login';
 import api from './utils/api';
 import { handleUpdateTokens } from './utils/functions';
-import {
-  useAppSelector,
-  useCheckAuthMutation,
-  useEGatesSign,
-  useFilteredRoutes,
-} from './utils/hooks';
+import { useAppSelector, useCheckUserInfo, useEGatesSign, useFilteredRoutes } from './utils/hooks';
 import { slugs } from './utils/routes';
 import { ProfileId } from './utils/types';
 import DefaultLayout from './components/layouts/DefaultLayout';
@@ -76,7 +71,7 @@ function App() {
 
   const { mutateAsync: eGateSignsMutation, isLoading: eGatesSignLoading } = useEGatesSign();
 
-  const { isLoading: checkAuthLoading } = useCheckAuthMutation();
+  const { isLoading: userInfoLoading } = useCheckUserInfo();
 
   const eGatesLoginMutation = useMutation((ticket: string) => api.eGatesLogin({ ticket }), {
     onError: () => {
@@ -93,7 +88,7 @@ function App() {
     eGatesLoginMutation.isLoading,
     eGatesSignLoading,
     updateTokensMutation.isLoading,
-    checkAuthLoading,
+    userInfoLoading,
   ].some((loading) => loading);
 
   useEffect(() => {

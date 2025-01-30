@@ -205,3 +205,10 @@ export interface FishingHistoryResponse {
 export interface GenericObject {
   [key: string]: any;
 }
+
+export interface ReactQueryError {
+  data: {
+    type: string;
+    message: string;
+  };
+}
