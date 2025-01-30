@@ -19,7 +19,6 @@ export const EndFishing = ({ content, onClose }: any) => {
     api.finishFishing,
     {
       onError: ({ response }) => {
-        console.log('finishFishing', response?.data?.message);
         handleErrorToastFromServer(response);
       },
       onSuccess: () => {

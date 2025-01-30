@@ -10,12 +10,6 @@ const SelectWaterBody = ({ onStartFishing, loading }: any) => {
   const [location, setLocation] = useState<any>();
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    // if (getLocation) {
-    //   // getLocation(LocationType.INLAND_WATERS).then((l) => setLocation(l));
-    // }
-  }, []);
-
   const handleChangeValue = (value: any) => {
     setError('');
     setLocation(value);

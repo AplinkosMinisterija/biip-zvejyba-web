@@ -13,7 +13,7 @@ export const LocationPermission = ({ content, onClose }: any) => {
       visible={true}
       title={'Geografinės vietos leidimas'}
       description={
-        'Norint naudotis elektroniniu žvejybos žurnalu, prašome suteikti leidimą naudotis jūsų geografinę vietą.'
+        'Norint naudotis elektroniniu žvejybos žurnalu, prašome suteikti leidimą naudoti jūsų geografinę vietą.'
       }
     >
       <Grid>

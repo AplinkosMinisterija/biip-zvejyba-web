@@ -38,9 +38,6 @@ const ToolGroupAction = ({ onClose, content }: any) => {
         queryClient.invalidateQueries('builtTools');
         onClose();
       },
-      onError: () => {
-        //TODO: display error
-      },
     },
   );
   return (

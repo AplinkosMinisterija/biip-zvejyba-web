@@ -55,7 +55,6 @@ const PreviewMap = ({ height = '230px', error, value, showError = true, label }:
   const src = `${mapsHost}/edit?preview=true`;
 
   const handleLoadMap = () => {
-    console.log('map', value);
     if (!value) return;
     iframeRef?.current?.contentWindow?.postMessage({ geom: value }, '*');
   };
