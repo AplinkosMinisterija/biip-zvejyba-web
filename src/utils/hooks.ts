@@ -1,16 +1,22 @@
-import { useInfiniteQuery, useMutation, useQuery } from 'react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from 'react-query';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { actions } from '../state/user/reducer';
 import api from './api';
-import { intersectionObserverConfig, LOCATION_ERRORS, RoleTypes } from './constants';
-import { clearCookies, handleErrorToastFromServer, handleSetProfile } from './functions';
+import { intersectionObserverConfig, RoleTypes } from './constants';
+import {
+  clearCookies,
+  handleErrorToastFromServer,
+  handleSetProfile,
+  handleSuccessToast,
+} from './functions';
 
 import { useEffect, useState } from 'react';
 import { matchPath, useLocation } from 'react-router';
 import Cookies from 'universal-cookie';
 import { AppDispatch, RootState } from '../state/store';
-import { routes } from './routes';
+import { routes, slugs } from './routes';
 import { User } from './types';
+import { useNavigate } from 'react-router-dom';
 
 const cookies = new Cookies();
 
@@ -34,6 +40,7 @@ export const useCheckUserInfo = () => {
 
         return;
       }
+      return handleErrorToastFromServer();
 
       return handleErrorToastFromServer(response);
     },
@@ -65,11 +72,19 @@ export const useEGatesSign = () => {
 };
 
 export const useFishTypes = () => {
-  const { data = [], isLoading } = useQuery(['fishTypes'], api.getFishTypes, { retry: false });
-
-  return { fishTypes: data, isLoading };
+  const { data = [], isLoading: fishTypesLoading } = useQuery(['fishTypes'], api.getFishTypes, {
+    retry: false,
+  });
+  return { fishTypes: data, fishTypesLoading };
 };
 
+export const useFishWeights = () => {
+  const {
+    data: fishingWeights = { preliminary: {}, total: {} },
+    isLoading: fishingWeightsLoading,
+  } = useQuery(['fishingWeights'], api.getFishingWeights, { retry: false });
+  return { fishingWeights, fishingWeightsLoading };
+};
 export const useGetCurrentProfile = () => {
   const profiles = useAppSelector((state) => state.user.userData.profiles);
   const profileId = cookies.get('profileId');
@@ -88,7 +103,6 @@ export const useFilteredRoutes = () => {
     if (route.isInvestigator) {
       return !!profile?.isInvestigator;
     }
-
     return true;
   });
 };
@@ -109,37 +123,6 @@ export const useLogoutMutation = () => {
     },
   });
   return { mutateAsync };
-};
-
-export const useGeolocationWatcher = () => {
-  const [coordinates, setCoordinates] = useState<any>();
-  const [error, setError] = useState<LOCATION_ERRORS>();
-  const options = {
-    enableHighAccuracy: true,
-    timeout: 100000,
-  };
-  const successHandler = (position: GeolocationPosition) => {
-    setError(undefined);
-    setCoordinates({
-      x: position.coords.longitude,
-      y: position.coords.latitude,
-    });
-  };
-  const errorHandler = ({ code }: GeolocationPositionError) => {
-    setError(code);
-  };
-
-  const getCurrentPosition = () => {
-    navigator.geolocation.getCurrentPosition(successHandler, () => {}, options);
-  };
-
-  useEffect(() => {
-    getCurrentPosition();
-    const id = navigator.geolocation.watchPosition(successHandler, errorHandler, options);
-    return () => navigator.geolocation.clearWatch(id);
-  }, []);
-
-  return { coordinates, error, getCurrentPosition };
 };
 
 export const useWindowSize = (width: string) => {
@@ -216,4 +199,30 @@ export const useInfinityLoad = (
   }, [hasNextPage, isFetchingNextPage, fetchNextPage, data, observerRef]);
 
   return result;
+};
+
+export const useCurrentFishing = () => {
+  return useQuery(['currentFishing'], () => api.getCurrentFishing(), {
+    retry: false,
+  });
+};
+
+export const useFishingWeightMutation = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const { mutateAsync: fishingWeightMutation, isLoading: fishingWeightLoading } = useMutation(
+    (data: any) => api.createFishingFishWeights(data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['fishingWeights']);
+        handleSuccessToast('Žuvis sėkmingai pasverta krante.');
+        navigate(slugs.fishingCurrent);
+      },
+      onError: () => {
+        handleErrorToastFromServer();
+      },
+    },
+  );
+  return { fishingWeightMutation, fishingWeightLoading };
 };

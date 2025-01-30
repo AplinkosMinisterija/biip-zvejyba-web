@@ -234,11 +234,7 @@ class Api {
       params,
     });
   };
-  skipFishing = async (params: {
-    type: LocationType;
-    coordinates: { x: number; y: number };
-    note: string;
-  }) => {
+  skipFishing = async (params: { type: LocationType; coordinates: any; note: string }) => {
     return this.post({
       resource: 'fishings/skip',
       params,
@@ -423,6 +419,12 @@ class Api {
     await this.getPublic({
       resource: this.barSearchUrl,
     });
+
+  getFishinSections = async () => {
+    return this.get({
+      resource: 'locations/fishing_sections',
+    });
+  };
 
   getFishTypes = async (): Promise<FishType[]> =>
     await this.getAll({

@@ -2,7 +2,7 @@ import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { Coordinates, handleErrorToastFromServer } from '../../utils';
+import { Coordinates, handleErrorToast, handleErrorToastFromServer, slugs } from '../../utils';
 import api from '../../utils/api';
 import { FishingToolsType } from '../../utils/constants';
 import { Location } from '../../utils/types';
@@ -20,9 +20,9 @@ const FishingOptions = [
 interface BuiltToolsProps {
   onClose: () => void;
   location: Location;
-  coordinates?: Coordinates;
 }
-const BuildTools = ({ onClose, location, coordinates }: BuiltToolsProps) => {
+
+const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   const queryClient = useQueryClient();
   const [selectedTools, setSelectedTools] = useState<number[]>([]);
   const [type, setType] = useState<FishingToolsType>(FishingToolsType.SINGLE);
@@ -67,14 +67,18 @@ const BuildTools = ({ onClose, location, coordinates }: BuiltToolsProps) => {
   };
 
   const handleBuildTools = () => {
-    if (coordinates) {
+    const coordinates: any = {
+      x: location?.x || window.coordinates?.x,
+      y: location?.y || window.coordinates?.y,
+    };
+    if (coordinates.x && coordinates.y) {
       buildToolsMutation({
         tools: selectedTools,
         location,
         coordinates,
       });
     } else {
-      //TODO: display error
+      handleErrorToast('Nenustatyta buvimo vieta');
     }
   };
 

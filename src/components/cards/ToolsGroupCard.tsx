@@ -1,44 +1,60 @@
 import styled from 'styled-components';
-import { getBuiltToolInfo, theme, ToolsGroup } from '../../utils';
+import { getBuiltToolInfo, PopupContentType, theme, ToolsGroup } from '../../utils';
 import Icon, { IconName } from '../other/Icon';
 import Tag from '../other/Tag';
+import { useContext } from 'react';
+import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
 interface ToolsGroupCardProps {
   toolsGroup: ToolsGroup;
-  onSelect: (toolsGroup?: ToolsGroup) => void;
   isEstuary?: boolean;
   selected?: boolean;
   isDisabled?: boolean;
+  location?: any;
 }
 const ToolsGroupCard = ({
   toolsGroup,
-  onSelect,
   selected = false,
   isEstuary = false,
   isDisabled = false,
+  location,
 }: ToolsGroupCardProps) => {
   const isCheckedTool = !!toolsGroup?.weightEvent;
-
+  const { showPopup } = useContext<PopupContextProps>(PopupContext);
   const { label, sealNr, locationName } = getBuiltToolInfo(toolsGroup);
 
   return (
-    <Container $isDisabled={isDisabled} $isCheckedTool={isCheckedTool}>
-      <InnerContainer onClick={() => !isDisabled && onSelect(toolsGroup)}>
-        <IconContainer $selected={isCheckedTool}>
-          {isEstuary ? (
-            <Estuary>{locationName.replace(/[^\d]/g, '')}</Estuary>
-          ) : (
-            <StyledIcon name={IconName.tools} $selected={selected!} />
-          )}
-        </IconContainer>
-        <div>
-          <ToolName>{label}</ToolName>
-          {!isEstuary ? <SealNr>{`Telkinys: ${locationName} `}</SealNr> : ''}
-          <SealNr>{sealNr}</SealNr>
-        </div>
-      </InnerContainer>
-      {isCheckedTool && <Tag color={theme.colors.success} label={'Patikrintas'} />}
-    </Container>
+    <>
+      <Container $isDisabled={isDisabled} $isCheckedTool={isCheckedTool}>
+        <InnerContainer
+          onClick={() => {
+            if (!isDisabled) {
+              showPopup({
+                type: PopupContentType.TOOL_GROUP_ACTION,
+                content: {
+                  location,
+                  toolsGroup,
+                },
+              });
+            }
+          }}
+        >
+          <IconContainer $selected={isCheckedTool}>
+            {isEstuary ? (
+              <Estuary>{locationName.replace(/[^\d]/g, '')}</Estuary>
+            ) : (
+              <StyledIcon name={IconName.tools} $selected={selected!} />
+            )}
+          </IconContainer>
+          <div>
+            <ToolName>{label}</ToolName>
+            {!isEstuary ? <SealNr>{`Telkinys: ${locationName} `}</SealNr> : ''}
+            <SealNr>{sealNr}</SealNr>
+          </div>
+        </InnerContainer>
+        {isCheckedTool && <Tag color={theme.colors.success} label={'Patikrintas'} />}
+      </Container>
+    </>
   );
 };
 

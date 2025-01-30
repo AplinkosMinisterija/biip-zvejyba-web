@@ -1,49 +1,30 @@
-import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useContext } from 'react';
+import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import {
-  buttonLabels,
-  Fishing,
-  handleErrorToast,
-  handleErrorToastFromServer,
-  handleSuccessToast,
-  LocationType,
-  slugs,
-  validationTexts,
-} from '../../utils';
+import { Fishing, FishingTypeRoute, LocationType, PopupContentType, slugs } from '../../utils';
 import api from '../../utils/api';
-import Button, { ButtonColors } from '../buttons/Button';
 import { Variant } from '../buttons/FishingLocationButton';
 import LargeButton from '../buttons/LargeButton';
-import PopUpWithImage from '../layouts/PopUpWithImage';
-import { Grid } from '../other/CommonStyles';
-import { IconName } from '../other/Icon';
 import LoaderComponent from '../other/LoaderComponent';
+import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
+
+// Extend the Window interface to include the `coordinates` property
+declare global {
+  interface Window {
+    coordinates?: { x: number; y: number };
+    coordinatesError?: string;
+  }
+}
 
 interface FishingActionsProps {
   fishing: Fishing;
-  coordinates: any;
-  isDisabled: boolean;
 }
-const FishingActions = ({ fishing, coordinates, isDisabled }: FishingActionsProps) => {
-  const queryClient = useQueryClient();
-  const [showFinishFishing, setShowFinishFishing] = useState(false);
+
+const FishingActions = ({ fishing }: FishingActionsProps) => {
+  const { showPopup } = useContext<PopupContextProps>(PopupContext);
   const navigate = useNavigate();
 
-  const { mutateAsync: finishFishing, isLoading: finishFishingLoading } = useMutation(
-    api.finishFishing,
-    {
-      onError: ({ response }) => {
-        handleErrorToastFromServer(response);
-      },
-      onSuccess: () => {
-        handleSuccessToast(validationTexts.fishingFinished);
-        queryClient.invalidateQueries('currentFishing');
-      },
-      retry: false,
-    },
-  );
   const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
     ['fishingWeights'],
     api.getFishingWeights,
@@ -52,19 +33,14 @@ const FishingActions = ({ fishing, coordinates, isDisabled }: FishingActionsProp
     },
   );
 
-  const handleFinishFishing = () => {
-    if (coordinates) {
-      finishFishing({ coordinates });
-    } else {
-      handleErrorToast(validationTexts.mustAllowToSetCoordinates);
-    }
-  };
+  const locationType = fishing?.type;
 
-  const loading = finishFishingLoading || fishingWeightsLoading;
+  const loading = fishingWeightsLoading;
 
-  const canWeigh =
-    fishing?.type === LocationType.INLAND_WATERS ||
-    !!Object.keys(fishingWeights?.preliminary || {})?.length;
+  const weightOnBoatExist =
+    !!fishingWeights?.preliminary && !!Object.keys(fishingWeights.preliminary).length;
+
+  const weightOnShoreExist = !!fishingWeights?.total && !!Object.keys(fishingWeights.total).length;
 
   return loading ? (
     <LoaderComponent />
@@ -72,62 +48,39 @@ const FishingActions = ({ fishing, coordinates, isDisabled }: FishingActionsProp
     <>
       <Container>
         <LargeButton
-          isDisabled={isDisabled}
           variant={Variant.FLORAL_WHITE}
-          title="Tikrinkite arba</br>statykite įrankius"
+          title={
+            locationType === LocationType.INLAND_WATERS
+              ? 'Statykite arba</br>ištraukite įrankius'
+              : 'Tikrinkite arba</br>statykite įrankius'
+          }
           subtitle="Esate žvejybos vietoje"
           buttonLabel="Atidaryti"
           onClick={() => {
-            navigate(slugs.fishingTools);
+            navigate(slugs.fishingTools(FishingTypeRoute[locationType]));
+          }}
+          isDisabled={locationType !== LocationType.INLAND_WATERS && weightOnShoreExist}
+        />
+        <LargeButton
+          variant={Variant.GHOST_WHITE}
+          title="Žuvies svoris</br>krante"
+          subtitle="Pasverkite bendrą svorį"
+          buttonLabel="Sverti"
+          onClick={() => {
+            navigate(slugs.fishingWeight);
           }}
         />
-        {canWeigh && (
-          <LargeButton
-            isDisabled={isDisabled}
-            variant={Variant.GHOST_WHITE}
-            title="Žuvies svoris</br>krante"
-            subtitle="Pasverkite bendrą svorį"
-            buttonLabel="Sverti"
-            onClick={() => {
-              navigate(slugs.fishingWeight);
-            }}
-          />
-        )}
         <LargeButton
-          isDisabled={isDisabled}
           variant={Variant.AZURE}
           title="Žvejybos baigimo</br>nustatymas"
           subtitle="Užbaikite žvejybą"
           buttonLabel="Baigti"
-          onClick={() => setShowFinishFishing(true)}
+          onClick={() => showPopup({ type: PopupContentType.END_FISHING })}
+          isDisabled={
+            locationType !== LocationType.INLAND_WATERS && weightOnBoatExist && !weightOnShoreExist
+          }
         />
       </Container>
-      <PopUpWithImage
-        iconName={IconName.endFishing}
-        visible={showFinishFishing}
-        onClose={() => setShowFinishFishing(false)}
-        title={'Žvejybos pabaiga'}
-        description={'Ar esate tikri, kad norite baigti žvejybą?'}
-      >
-        <Grid $columns={2}>
-          <Button
-            loading={finishFishingLoading}
-            disabled={finishFishingLoading}
-            onClick={handleFinishFishing}
-          >
-            {buttonLabels.endFishing}
-          </Button>
-          <Button
-            disabled={finishFishingLoading}
-            variant={ButtonColors.SECONDARY}
-            onClick={() => {
-              setShowFinishFishing(false);
-            }}
-          >
-            {buttonLabels.cancel}
-          </Button>
-        </Grid>
-      </PopUpWithImage>
     </>
   );
 };

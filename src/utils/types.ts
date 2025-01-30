@@ -16,7 +16,9 @@ export interface Location {
   type: LocationType;
   cadastralId?: string;
   area: number;
-  municipality: string;
+  municipality: { id: number; name: string };
+  x?: number;
+  y?: number;
 }
 
 export interface Coordinates {

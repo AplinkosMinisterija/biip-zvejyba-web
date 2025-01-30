@@ -29,6 +29,7 @@ export interface SelectFieldProps {
   dependantId?: string;
   refreshOptions?: (dependantId?: string) => any;
   height?: number;
+  loading?: boolean;
 }
 
 const SelectField = ({
@@ -48,6 +49,7 @@ const SelectField = ({
   dependantId,
   refreshOptions,
   height = 56,
+  loading,
 }: SelectFieldProps) => {
   const {
     suggestions,
@@ -57,7 +59,6 @@ const SelectField = ({
     handleBlur,
     handleClick,
     handleOnChange,
-    loading,
   } = useSelectData({
     options,
     disabled,

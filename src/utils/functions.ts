@@ -2,8 +2,7 @@ import format from 'date-fns/format';
 import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
 import api from './api';
-import { LOCATION_ERRORS, ToolTypeType } from './constants';
-import { routes } from './routes';
+import { ToolTypeType } from './constants';
 import { validationTexts } from './texts';
 import { Profile, ProfileId, ReactQueryError, ResponseProps, ToolsGroup } from './types';
 const cookies = new Cookies();
@@ -118,38 +117,6 @@ export const getOnLineStatus = () =>
     ? navigator.onLine
     : true;
 
-export const getCurrentLocation = ({
-  onSuccess,
-  onError,
-}: {
-  onSuccess: (position: { lat: number; lng: number }) => void;
-  onError: (e: LOCATION_ERRORS, data?: any) => void;
-}) => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(() => {});
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        if (position?.coords) {
-          onSuccess({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        }
-      },
-      (e) => {
-        onError(LOCATION_ERRORS.POINT_NOT_FOUND, e);
-      },
-      { enableHighAccuracy: true },
-    );
-  } else {
-    onError(LOCATION_ERRORS.GEOLOCATION_NOT_SUPPORTE);
-  }
-};
-
-export const getCurrentRoute = (pathname: any) => {
-  return routes?.find((route: any) => route.regExp.test(pathname));
-};
-
 export const getToolTypeList = async (input: string, page: number, toolType: ToolTypeType) => {
   return await api.toolTypes({
     filter: { label: input, type: toolType },
@@ -227,7 +194,5 @@ export const getReactQueryErrorMessage = (response?: ReactQueryError) =>
 
 export const formatDate = (date?: Date | string) =>
   date ? format(new Date(date), 'yyyy-MM-dd') : '-';
-
-export const isEmpty = (arr: any[]) => !!arr.length;
 
 export const isNew = (id?: string) => !id || id === 'naujas';

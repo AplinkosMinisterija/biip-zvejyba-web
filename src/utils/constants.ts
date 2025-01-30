@@ -8,6 +8,7 @@ export enum ServerErrors {
   TOOL_WITH_THIS_SEAL_NUMBER_ALREADY_EXISTS = 'Tool with this seal number already exists',
   FISH_MUST_BE_WEIGHTED = 'Fish must be weighted',
   FISH_ALREADY_WEIGHTED = 'Fish already weighted',
+  LOCATION_NOT_FOUND = 'Location not found',
 }
 
 export enum RoleTypes {
@@ -73,4 +74,21 @@ export enum FishingEventType {
   START = 'START',
   END = 'END',
   SKIP = 'SKIP',
+}
+
+export enum PopupContentType {
+  CONFIRM = 'CONFIRM',
+  LOCATION_PERMISSION = 'location_permission',
+  START_FISHING = 'start_fishing',
+  START_FISHING_INLAND_WATERS = 'start_fishing_inland_water',
+  SKIP_FISHING = 'skip_fishing',
+  END_FISHING = 'end_fishing',
+  CAUGHT_FISH_WEIGHT = 'CAUGHT_FISH_WEIGHT',
+  TOOL_GROUP_ACTION = 'TOOL_GROUP_ACTION',
+}
+
+export enum FishingTypeRoute {
+  ESTUARY = 'marios',
+  POLDERS = 'polderiai',
+  INLAND_WATERS = 'vidaus_vandenys',
 }

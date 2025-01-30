@@ -137,8 +137,8 @@ const StyledIframe = styled.iframe<{
   $height: string;
   $width: string;
 }>`
-  width: ${({ $width }) => $width};
-  height: ${({ $height }) => $height};
+  width: ${({ $width }) => $width || '100%'};
+  height: ${({ $height }) => $height || '15rem'};
 `;
 
 export default PreviewMap;

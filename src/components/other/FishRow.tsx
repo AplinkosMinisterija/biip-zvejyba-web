@@ -1,12 +1,14 @@
 import styled from 'styled-components';
 import TextField from '../fields/TextField';
+import React from 'react';
 
 interface FishRowProp {
   onChange: (value: any) => void;
   fish: { label: string; photo: any; amount: number; preliminaryAmount?: number };
+  index?: number;
 }
 
-const FishRow = ({ onChange, fish }: FishRowProp) => {
+const FishRow = React.memo(({ onChange, fish, index }: FishRowProp) => {
   const preventNumInputFromScrolling = (e: any) =>
     e.target.addEventListener(
       'wheel',
@@ -15,7 +17,9 @@ const FishRow = ({ onChange, fish }: FishRowProp) => {
       },
       { passive: false },
     );
+
   const { label, photo, amount, preliminaryAmount } = fish;
+
   return (
     <Row>
       <ImageContainer>
@@ -46,14 +50,14 @@ const FishRow = ({ onChange, fish }: FishRowProp) => {
             inputMode="numeric"
             onFocus={preventNumInputFromScrolling}
           />
-          <Button type="button" onClick={() => onChange(amount + 1)}>
+          <Button type="button" onClick={() => onChange((amount || 0) + 1)}>
             +
           </Button>
         </InnerRow>
       </Column>
     </Row>
   );
-};
+});
 
 const StyledNumericTextField = styled(TextField)`
   width: 100%;

@@ -1,21 +1,49 @@
 import { Form, Formik } from 'formik';
 import styled from 'styled-components';
-import { getLocationList, inputLabels, locationSchema } from '../../utils';
+import { handleErrorToastFromServer, locationSchema, LocationType } from '../../utils';
 import Button, { ButtonColors } from '../buttons/Button';
-import AsyncSelectField from '../fields/AsyncSelect';
 import NumericTextField from '../fields/NumericTextField';
 import SelectField from '../fields/SelectField';
 import { Grid } from '../other/CommonStyles';
+import { useQuery, useQueryClient } from 'react-query';
+import api from '../../utils/api';
 
-const LocationForm = ({
-  initialValues,
-  handleSetLocationManually,
-  isEstuary,
-  bars,
-  onClose,
-}: any) => {
-  const getInputValue = (location: any) =>
-    location ? `${location?.name}, ${location?.cadastralId}` : '';
+const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any) => {
+  const queryClient = useQueryClient();
+  const { data: bars, isLoading } = useQuery(['bars'], async () => api.getFishinSections(), {
+    enabled: locationType === LocationType.ESTUARY,
+    retry: false,
+  });
+
+  const initialValues = { location: '', x: '', y: '' };
+
+  const handleSubmit = async (values: any) => {
+    if (values.location) {
+      handleSetLocationManually(values.location);
+      onClose();
+    } else if (values.x && values.y) {
+      queryClient
+        .fetchQuery({
+          queryKey: ['manualLocation'],
+          queryFn: () => {
+            return api.getLocation({
+              query: JSON.stringify({
+                type: locationType,
+                coordinates: { x: values.x, y: values.y },
+              }),
+            });
+          },
+        })
+        .then((data) => {
+          handleSetLocationManually({ ...data, x: values.x, y: values.y });
+          queryClient.refetchQueries(['builtTools', data?.id]);
+          onClose();
+        })
+        .catch((error) => {
+          handleErrorToastFromServer(error?.response);
+        });
+    }
+  };
 
   return (
     <Container>
@@ -26,50 +54,31 @@ const LocationForm = ({
       <Formik
         enableReinitialize={true}
         initialValues={initialValues}
-        onSubmit={handleSetLocationManually}
+        onSubmit={handleSubmit}
         validateOnChange={false}
         validationSchema={locationSchema}
       >
         {({ values, errors, setFieldValue }: any) => {
           return (
             <FormContainer>
-              {isEstuary ? (
-                <SelectField
-                  options={bars}
-                  getOptionLabel={(option) => option?.name}
-                  value={values.location}
-                  error={errors.location}
-                  label={'Baro nr.'}
-                  name={'location'}
-                  onChange={(value) => setFieldValue('location', value)}
-                />
-              ) : (
-                <AsyncSelectField
-                  name={'location'}
-                  label={inputLabels.location}
-                  value={values.location}
-                  error={errors.location}
-                  onChange={(value) => {
-                    const { lat, lng, name, cadastralId } = value;
-                    setFieldValue('location', { x: lng, y: lat, name, cadastralId });
-                  }}
-                  getOptionValue={(option) => option?.cadastralId}
-                  showError={false}
-                  getOptionLabel={getInputValue}
-                  inputValue={getInputValue(values.location)}
-                  loadOptions={(input: string, page: number | string) =>
-                    getLocationList(input, page)
-                  }
-                />
-              )}
-
+              <SelectField
+                options={bars}
+                getOptionLabel={(option) => option?.name}
+                value={values.location}
+                error={errors.location}
+                label={'Baro nr.'}
+                name={'location'}
+                onChange={(value) => {
+                  setFieldValue('location', value);
+                }}
+                loading={isLoading}
+              />
               <Or>
                 <Separator />
                 <SeparatorLabelContainer>
                   <SeparatorLabel>arba</SeparatorLabel>
                 </SeparatorLabelContainer>
               </Or>
-
               <Grid $columns={2}>
                 <NumericTextField
                   label="Platuma (WGS)"

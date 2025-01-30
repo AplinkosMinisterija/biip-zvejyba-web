@@ -9,6 +9,11 @@ import Tool from '../pages/Tool';
 import Tools from '../pages/Tools';
 import UserForm from '../pages/User';
 import Users from '../pages/Users';
+import FishingToolsEstuary from '../pages/FishingToolsEstuary';
+import FishingWeight from '../pages/FishingWeight';
+import FishingToolsInlandWatters from '../pages/FishingToolsInlandWaters';
+import FishingToolsPolders from '../pages/FishingToolsPolders';
+import { FishingTypeRoute } from './constants';
 
 export const slugs = {
   login: `/prisijungimas`,
@@ -16,10 +21,10 @@ export const slugs = {
   cantLogin: '/negalima_jungtis',
   fishingLocation: '/zvejyba',
   fishingCurrent: `/zvejyba/mano`,
-  fishingTools: `/zvejyba/mano/irankiai`,
-  fishingWeight: `/zvejyba/mano/svoris`,
-  fishingToolCaughtFishes: (toolId: string) => `/zvejyba/mano/irankiai/${toolId}/sugautos-zuvys`,
-  fishingToolConnect: (toolId: string) => `/zvejyba/mano/irankiai/${toolId}/irankiu_jungimas`,
+  fishingTools: (type: string) => `/zvejyba/${type}/irankiai`,
+  fishingWeight: `/zvejyba/svoris`,
+  fishingToolCaughtFishes: (toolId: string) => `/zvejyba/irankiai/${toolId}/sugautos-zuvys`,
+  fishingToolConnect: (toolId: string) => `/zvejyba/irankiai/${toolId}/irankiu_jungimas`,
   tools: '/irankiai',
   tool: (id: string) => `/irankiai/${id}`,
   users: '/nariai',
@@ -55,30 +60,29 @@ export const routes = [
     regExp: new RegExp('^/zvejyba$'),
   },
   {
-    title: 'Mano žvejyba',
-    subtitle: 'Pasirinkite žvejybos veiksmą',
-    slug: slugs.fishingCurrent,
-    component: <CurrentFishing />,
-    regExp: new RegExp('^/zvejyba/mano$'),
+    slug: slugs.fishingTools(FishingTypeRoute.ESTUARY),
+    component: <FishingToolsEstuary />,
+    back: true,
+    regExp: new RegExp(`^/zvejyba/${FishingTypeRoute.ESTUARY}/irankiai$`),
   },
   {
-    slug: slugs.fishingTools,
-    component: <CurrentFishing />,
+    slug: slugs.fishingTools(FishingTypeRoute.INLAND_WATERS),
+    component: <FishingToolsInlandWatters />,
     back: true,
-    regExp: new RegExp('^/zvejyba/mano/irankiai$'),
+    regExp: new RegExp(`^/zvejyba/${FishingTypeRoute.INLAND_WATERS}/irankiai$`),
   },
   {
-    slug: slugs.fishingToolCaughtFishes(Ids.TOOL_ID),
-    component: <CurrentFishing />,
+    slug: slugs.fishingTools(FishingTypeRoute.POLDERS),
+    component: <FishingToolsPolders />,
     back: true,
-    regExp: new RegExp('^/zvejyba/mano/irankiai/[0-9]+/sugautos-zuvys$'),
+    regExp: new RegExp(`^/zvejyba/${FishingTypeRoute.POLDERS}/irankiai$`),
   },
   {
     title: 'Tikslus svoris, kg',
     slug: slugs.fishingWeight,
-    component: <CurrentFishing />,
+    component: <FishingWeight />,
     back: true,
-    regExp: new RegExp('^/zvejyba/mano/svoris$'),
+    regExp: new RegExp('^/zvejyba/svoris$'),
   },
   {
     title: 'Žvejybos žurnalas',
