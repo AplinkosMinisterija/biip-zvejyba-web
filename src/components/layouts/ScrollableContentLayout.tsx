@@ -11,7 +11,7 @@ const ScrollableContentLayout = ({ currentRoute, children }: any) => {
         {currentRoute?.back ? <BackHeader /> : <LogoHeader />}
         <Content>
           {currentRoute?.title && <Title>{currentRoute?.title}</Title>}
-          {currentRoute?.title && <Subtitle>{currentRoute?.title}</Subtitle>}
+          {currentRoute?.subtitle && <Subtitle>{currentRoute?.subtitle}</Subtitle>}
           {children}
         </Content>
       </InnerContainer>

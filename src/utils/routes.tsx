@@ -86,7 +86,7 @@ export const routes = [
   },
   {
     title: 'Žvejybos žurnalas',
-    subtitle: 'Žvejybos istorija',
+    subtitle: 'Peržiūrėkite žvejybos istoriją',
     slug: slugs.fishingJournal,
     component: <FishingJournal />,
     regExp: new RegExp('^/zvevybos_zurnalas$'),
