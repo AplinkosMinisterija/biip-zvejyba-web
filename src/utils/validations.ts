@@ -2,6 +2,7 @@ import { isEmpty } from 'lodash';
 import * as Yup from 'yup';
 import { ToolTypeType } from './constants';
 import { validationTexts } from './texts';
+import { phoneNumberRegexPattern } from '@aplinkosministerija/design-system';
 
 export const loginSchema = Yup.object().shape({
   email: Yup.string().required(validationTexts.requireText).email(validationTexts.badEmailFormat),
@@ -13,7 +14,7 @@ export const profileSchema = Yup.object().shape({
   phone: Yup.string()
     .required(validationTexts.requireText)
     .trim()
-    .matches(/(86|\+3706)\d{7}$/, validationTexts.badPhoneFormat),
+    .matches(phoneNumberRegexPattern, validationTexts.badPhoneFormat),
 });
 
 export const tenantUserSchema = profileSchema.shape({
