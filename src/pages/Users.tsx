@@ -98,8 +98,8 @@ export const Users = () => {
   const { mutateAsync: createUserMutation, isLoading } = useMutation(
     (values: UserProps) => api.createUser(values),
     {
-      onError: () => {
-        handleErrorToastFromServer();
+      onError: ({ response }) => {
+        handleErrorToastFromServer(response);
       },
       onSuccess: async () => {
         await queryClient.invalidateQueries(['tenantUsers']);

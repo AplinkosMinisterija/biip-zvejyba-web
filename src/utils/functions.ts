@@ -189,8 +189,10 @@ export const getBuiltToolInfo = (toolsGroup: ToolsGroup) => {
   };
 };
 
-export const getReactQueryErrorMessage = (response?: ReactQueryError) =>
-  response?.data?.message || 'error';
+export const getReactQueryErrorMessage = (response?: ReactQueryError) => 
+  response?.data?.type ||
+  response?.data?.message || 
+  'error';
 
 export const formatDate = (date?: Date | string) =>
   date ? format(new Date(date), 'yyyy-MM-dd') : '-';
