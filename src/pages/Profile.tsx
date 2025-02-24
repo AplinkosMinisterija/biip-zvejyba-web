@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Cookies from 'universal-cookie';
+import { PhoneField } from '@aplinkosministerija/design-system';
 import Button from '../components/buttons/Button';
 import TextField from '../components/fields/TextField';
 import LogoHeader from '../components/headers/LogoHeader';
@@ -69,7 +70,7 @@ const Profile = () => {
           return (
             <FormContainer>
               <Grid $columns={1}>
-                <TextField
+                <PhoneField
                   label={inputLabels.phone}
                   value={values.phone}
                   error={errors.phone}

@@ -26,6 +26,7 @@ import {
 import api from '../utils/api';
 import { RoleTypes } from '../utils/constants';
 import { useAppSelector, useGetCurrentRoute } from '../utils/hooks';
+import { PhoneField } from '@aplinkosministerija/design-system';
 
 export interface UserProps {
   email?: string;
@@ -119,7 +120,7 @@ export const UserForm = () => {
               return (
                 <FormContainer>
                   <Grid $columns={1}>
-                    <TextField
+                    <PhoneField
                       label={inputLabels.phone}
                       value={values.phone}
                       error={errors.phone}
