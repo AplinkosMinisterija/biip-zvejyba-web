@@ -33,6 +33,7 @@ export const validationTexts = {
   fishingFinished: 'Žvejyba pabaigta',
   failedToSetLocation: 'Nepavyko nustatyti lokacijos',
   mustAllowToSetCoordinates: 'Privalote leisti nustatyti kordinates',
+  [ServerErrors.AUTH_USER_EXISTS]: 'Asmuo su tokiu asmens kodu jau registruotas.',
 };
 
 export const titles = {

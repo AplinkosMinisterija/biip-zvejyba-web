@@ -2,6 +2,7 @@ export enum ServerErrors {
   USER_NOT_FOUND = `Email not found.`,
   WRONG_PASSWORD = 'Wrong password.',
   NOT_FOUND = 'NOT_FOUND',
+  AUTH_USER_EXISTS = 'AUTH_USER_EXISTS',
   NO_PERMISSION = 'NO_PERMISSION',
   TOO_MANY_TOOLS = 'To many tool types',
   NO_TOOLS_IN_STORAGE = 'No tools in storage',
