@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { PhoneField } from '@aplinkosministerija/design-system';
 import Button from '../components/buttons/Button';
 import NumericTextField from '../components/fields/NumericTextField';
 import SelectField from '../components/fields/SelectField';
@@ -98,8 +99,8 @@ export const Users = () => {
   const { mutateAsync: createUserMutation, isLoading } = useMutation(
     (values: UserProps) => api.createUser(values),
     {
-      onError: () => {
-        handleErrorToastFromServer();
+      onError: ({ response }) => {
+        handleErrorToastFromServer(response);
       },
       onSuccess: async () => {
         await queryClient.invalidateQueries(['tenantUsers']);
@@ -180,7 +181,7 @@ export const Users = () => {
                     error={errors.lastName}
                     onChange={(email) => setFieldValue('lastName', email)}
                   />
-                  <TextField
+                  <PhoneField
                     label={inputLabels.phone}
                     value={values.phone}
                     error={errors.phone}
