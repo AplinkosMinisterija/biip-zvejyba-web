@@ -27,7 +27,7 @@ const FishRow = React.memo(({ onChange, fish, index }: FishRowProp) => {
           src={
             photo?.url
               ? photo?.url
-              : 'https://t0.gstatic.com/licensed-image?q=tbn:ANd9GcSFioPxAhwKJt3zlIkV4Q5Th0gkb5-428cZd0uPEjWoYn9Xkoi_L4C8kWaFu-KtqAvz'
+              : '/no-image.png'
           }
         />
       </ImageContainer>
