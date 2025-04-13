@@ -38,6 +38,7 @@ interface GetAll {
   id?: string;
   geom?: any;
   responseType?: any;
+  toolsGroup?: number;
 }
 
 export interface GetAllResponse<T> {
@@ -291,9 +292,10 @@ class Api {
     });
   };
 
-  getFishingWeights = async () => {
+  getFishingWeights = async (toolsGroup?: number) => {
     return this.get({
-      resource: 'fishings/weights',
+      resource: 'fishings/weights', 
+      ...(toolsGroup ? { toolsGroup } : {}),
     });
   };
 

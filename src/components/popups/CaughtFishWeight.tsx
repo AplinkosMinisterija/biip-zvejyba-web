@@ -21,13 +21,13 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
   const { fishTypes, fishTypesLoading } = useFishTypes();
 
   const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
-    ['fishingWeights'],
-    api.getFishingWeights,
+    ['fishingWeights', toolsGroup?.id],
+    () =>api.getFishingWeights(toolsGroup?.id),
     {
       retry: false,
     },
   );
-
+  
   const { mutateAsync: weighToolsMutation, isLoading: weighToolsIsLoading } = useMutation(
     (data: any) => {
       return api.weighTools(data, toolsGroup.id);
@@ -82,10 +82,11 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
 
   return (
     <Popup visible={true} onClose={onClose}>
-      <PopupContainer>
         <Title>{currentRoute?.title}</Title>
         <Heading>{label}</Heading>
-        <SealNumbers>{sealNr}</SealNumbers>
+        <SealNumbers>Plombos Nr. {sealNr}</SealNumbers>
+        <Message>Apytikslis svoris, kg</Message>
+        
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
           {({ values, setFieldValue }) => {
             return (
@@ -107,15 +108,21 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
             );
           }}
         </Formik>
-      </PopupContainer>
     </Popup>
   );
 };
 
-const PopupContainer = styled.div`
-  padding-top: 68px;
+const Message = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+  font-size: 2rem;
+  margin: 16px 0;
 `;
-
 const StyledButton = styled(Button)`
   width: 100%;
   border-radius: 28px;

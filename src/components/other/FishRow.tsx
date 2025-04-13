@@ -63,6 +63,15 @@ const StyledNumericTextField = styled(TextField)`
   width: 100%;
 `;
 
+const WeightClass = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.text.primary};
+`;
+
 const Row = styled.div`
   display: grid;
   grid-template-columns: 88px 1fr;
