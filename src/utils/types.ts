@@ -91,6 +91,11 @@ export interface ToolsGroupEvent {
   tenant: Tenant;
 }
 
+export interface FishingWeights {
+  preliminary: { [key: string]: number };
+  total: { [key: string]: number };
+}
+
 export interface WeightEvent {
   id: string;
   geom: any;

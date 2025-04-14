@@ -14,6 +14,7 @@ import {
   ToolFormRequest,
   ToolsGroup,
   User,
+  FishingWeights,
 } from './types';
 
 enum Populations {
@@ -292,9 +293,9 @@ class Api {
     });
   };
 
-  getFishingWeights = async (toolsGroup?: number) => {
+  getFishingWeights = async (toolsGroup?: number): Promise<FishingWeights> => {
     return this.get({
-      resource: 'fishings/weights', 
+      resource: 'fishings/weights',
       ...(toolsGroup ? { toolsGroup } : {}),
     });
   };

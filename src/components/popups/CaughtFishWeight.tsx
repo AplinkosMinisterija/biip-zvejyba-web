@@ -22,12 +22,12 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
 
   const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
     ['fishingWeights', toolsGroup?.id],
-    () =>api.getFishingWeights(toolsGroup?.id),
+    () => api.getFishingWeights(toolsGroup?.id),
     {
       retry: false,
     },
   );
-  
+
   const { mutateAsync: weighToolsMutation, isLoading: weighToolsIsLoading } = useMutation(
     (data: any) => {
       return api.weighTools(data, toolsGroup.id);
@@ -82,32 +82,32 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
 
   return (
     <Popup visible={true} onClose={onClose}>
-        <Title>{currentRoute?.title}</Title>
-        <Heading>{label}</Heading>
-        <SealNumbers>Plombos Nr. {sealNr}</SealNumbers>
-        <Message>Apytikslis svoris, kg</Message>
-        
-        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-          {({ values, setFieldValue }) => {
-            return (
-              <StyledForm>
-                {values?.map((value: any, index: number) => (
-                  <FishRow
-                    key={`fish_type_${value.id}`}
-                    fish={value}
-                    onChange={(value) => setFieldValue(`${index}.amount`, Number(value))}
-                    index={index}
-                  />
-                ))}
-                <Footer>
-                  <StyledButton loading={weighToolsIsLoading} disabled={weighToolsIsLoading}>
-                    Saugoti pakeitimus
-                  </StyledButton>
-                </Footer>
-              </StyledForm>
-            );
-          }}
-        </Formik>
+      <Title>{currentRoute?.title}</Title>
+      <Heading>{label}</Heading>
+      <SealNumbers>Plombos Nr. {sealNr}</SealNumbers>
+      <Message>Apytikslis svoris, kg</Message>
+
+      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        {({ values, setFieldValue }) => {
+          return (
+            <StyledForm>
+              {values?.map((value: any, index: number) => (
+                <FishRow
+                  key={`fish_type_${value.id}`}
+                  fish={value}
+                  onChange={(value) => setFieldValue(`${index}.amount`, Number(value))}
+                  index={index}
+                />
+              ))}
+              <Footer>
+                <StyledButton loading={weighToolsIsLoading} disabled={weighToolsIsLoading}>
+                  Saugoti pakeitimus
+                </StyledButton>
+              </Footer>
+            </StyledForm>
+          );
+        }}
+      </Formik>
     </Popup>
   );
 };
