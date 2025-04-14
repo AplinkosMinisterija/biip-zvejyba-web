@@ -22,7 +22,7 @@ interface BuiltToolsProps {
   location: Location;
 }
 
-const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
+const BuildTools = ({ onClose, location,  setBuildToolsIsLoading}: BuiltToolsProps & { setBuildToolsIsLoading: (isLoading: boolean) => void }) => {
   const queryClient = useQueryClient();
   const [selectedTools, setSelectedTools] = useState<number[]>([]);
   const [type, setType] = useState<FishingToolsType>(FishingToolsType.SINGLE);
@@ -35,6 +35,7 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   const { mutateAsync: buildToolsMutation, isLoading: buildToolsIsLoading } = useMutation(
     api.buildTools,
     {
+      onMutate: () => setBuildToolsIsLoading(true),
       onSuccess: (data) => {
         queryClient.invalidateQueries('availableTools');
         queryClient.invalidateQueries('builtTools');
@@ -43,6 +44,7 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
       },
       onError: ({ response }: any) => {
         handleErrorToastFromServer(response);
+        setBuildToolsIsLoading(false);
       },
     },
   );

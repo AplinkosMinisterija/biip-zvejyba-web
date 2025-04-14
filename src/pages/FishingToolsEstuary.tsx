@@ -16,6 +16,7 @@ import LocationInfo from '../components/other/LocationInfo';
 
 const FishingToolsEstuary = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);
+  const [buildToolsIsLoading, setBuildToolsIsLoading] = useState(false);
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
   const locationType = currentFishing?.type;
   const [manualLocation, setManualLocation] = useState<any>();
@@ -51,9 +52,13 @@ const FishingToolsEstuary = () => {
   const { data: builtTools } = useQuery(
     ['builtTools', locationId],
     () => {
+      setBuildToolsIsLoading(true);
       return api.getBuiltTools({ locationId });
     },
     {
+      onSuccess: () => {
+        setBuildToolsIsLoading(false);
+      },
       retry: false,
       enabled: !!locationId,
     },
@@ -75,19 +80,21 @@ const FishingToolsEstuary = () => {
         renewLocation={refetch}
       />
       <Container>
-        {isEmpty(builtTools) ? (
-          <NotFound message={'Nėra pastatytų įrankių'} />
-        ) : (
-          map(builtTools, (toolsGroup: any) => (
-            <ToolsGroupCard
-              isEstuary={isEstuary}
-              key={toolsGroup.id}
-              toolsGroup={toolsGroup}
-              location={manualLocation || location}
-            />
-          ))
-        )}
-      </Container>
+      {(buildToolsIsLoading || (builtTools === undefined && !!showBuildToolsButton)) ? ( 
+        <LoaderComponent />
+      ) : isEmpty(builtTools) && !!showBuildToolsButton ? (
+        <NotFound message={'Nėra pastatytų įrankių'} />
+      ) : (
+        map(builtTools, (toolsGroup: any) => (
+          <ToolsGroupCard
+            isEstuary={isEstuary}
+            key={toolsGroup.id}
+            toolsGroup={toolsGroup}
+            location={manualLocation || location}
+          />
+        ))
+      )}
+    </Container>
       {showBuildToolsButton && (
         <>
           <Footer>
@@ -97,6 +104,7 @@ const FishingToolsEstuary = () => {
             <BuildTools
               location={manualLocation || location}
               onClose={() => setShowBuildTools(false)}
+              setBuildToolsIsLoading={setBuildToolsIsLoading}
             />
           </Popup>
         </>

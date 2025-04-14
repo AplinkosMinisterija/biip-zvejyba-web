@@ -16,6 +16,7 @@ import LocationInfo from '../components/other/LocationInfo';
 
 const FishingTools = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);
+  const [buildToolsIsLoading, setBuildToolsIsLoading] = useState(false);
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
   const locationType = currentFishing?.type;
   const { data: location, isLoading: locationLoading } = useQuery({
@@ -33,10 +34,16 @@ const FishingTools = () => {
 
   const isEstuary = currentFishing?.type === LocationType.ESTUARY;
 
-  const { data: builtTools, isLoading: builtToolsLoading } = useQuery(
+  const { data: builtTools } = useQuery(
     ['builtTools', location?.id],
-    () => api.getBuiltTools({ locationId: location?.id }),
+    () => {
+      setBuildToolsIsLoading(true);
+      return api.getBuiltTools({ locationId: location?.id })
+    },
     {
+      onSuccess: () => {
+        setBuildToolsIsLoading(false);
+      },
       retry: false,
       enabled: !!location?.id,
     },
@@ -54,7 +61,9 @@ const FishingTools = () => {
         locationType={LocationType.POLDERS}
       />
       <Container>
-        {isEmpty(builtTools) ? (
+        {(buildToolsIsLoading || (builtTools === undefined)) ? ( 
+          <LoaderComponent />
+        ) : isEmpty(builtTools) ? (
           <NotFound message={'Nėra pastatytų įrankių'} />
         ) : (
           map(builtTools, (toolsGroup: any) => (
@@ -75,7 +84,7 @@ const FishingTools = () => {
             </StyledButton>
           </Footer>
           <Popup visible={showBuildTools} onClose={() => setShowBuildTools(false)}>
-            <BuildTools location={location} onClose={() => setShowBuildTools(false)} />
+            <BuildTools location={location} onClose={() => setShowBuildTools(false)}  setBuildToolsIsLoading={setBuildToolsIsLoading}/>
           </Popup>
         </>
       )}
