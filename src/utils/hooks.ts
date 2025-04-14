@@ -82,7 +82,7 @@ export const useFishWeights = () => {
   const {
     data: fishingWeights = { preliminary: {}, total: {} },
     isLoading: fishingWeightsLoading,
-  } = useQuery(['fishingWeights'], api.getFishingWeights, { retry: false });
+  } = useQuery(['fishingWeights'], () =>api.getFishingWeights(), { retry: false });
   return { fishingWeights, fishingWeightsLoading };
 };
 export const useGetCurrentProfile = () => {

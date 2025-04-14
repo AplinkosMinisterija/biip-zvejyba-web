@@ -5,7 +5,7 @@ import { StartFishing } from '../popups/StartFishing';
 import { SkipFishing } from '../popups/SkipFishing';
 import StartFishingInlandWater from '../popups/StartFishingInlandWater';
 import EndFishing from '../popups/EndFishing';
-import CaughtFishWeight from '../popups/CaughtFishWeiht';
+import CaughtFishWeight from '../popups/CaughtFishWeight';
 import ToolGroupAction from '../popups/ToolGroupAction';
 
 export interface PopupContextProps {

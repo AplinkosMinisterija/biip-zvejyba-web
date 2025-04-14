@@ -21,8 +21,8 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
   const { fishTypes, fishTypesLoading } = useFishTypes();
 
   const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
-    ['fishingWeights'],
-    api.getFishingWeights,
+    ['fishingWeights', toolsGroup?.id],
+    () => api.getFishingWeights(toolsGroup?.id),
     {
       retry: false,
     },
@@ -82,40 +82,47 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
 
   return (
     <Popup visible={true} onClose={onClose}>
-      <PopupContainer>
-        <Title>{currentRoute?.title}</Title>
-        <Heading>{label}</Heading>
-        <SealNumbers>{sealNr}</SealNumbers>
-        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-          {({ values, setFieldValue }) => {
-            return (
-              <StyledForm>
-                {values?.map((value: any, index: number) => (
-                  <FishRow
-                    key={`fish_type_${value.id}`}
-                    fish={value}
-                    onChange={(value) => setFieldValue(`${index}.amount`, Number(value))}
-                    index={index}
-                  />
-                ))}
-                <Footer>
-                  <StyledButton loading={weighToolsIsLoading} disabled={weighToolsIsLoading}>
-                    Saugoti pakeitimus
-                  </StyledButton>
-                </Footer>
-              </StyledForm>
-            );
-          }}
-        </Formik>
-      </PopupContainer>
+      <Title>{currentRoute?.title}</Title>
+      <Heading>{label}</Heading>
+      <SealNumbers>Plombos Nr. {sealNr}</SealNumbers>
+      <Message>Apytikslis svoris, kg</Message>
+
+      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        {({ values, setFieldValue }) => {
+          return (
+            <StyledForm>
+              {values?.map((value: any, index: number) => (
+                <FishRow
+                  key={`fish_type_${value.id}`}
+                  fish={value}
+                  onChange={(value) => setFieldValue(`${index}.amount`, Number(value))}
+                  index={index}
+                />
+              ))}
+              <Footer>
+                <StyledButton loading={weighToolsIsLoading} disabled={weighToolsIsLoading}>
+                  Saugoti pakeitimus
+                </StyledButton>
+              </Footer>
+            </StyledForm>
+          );
+        }}
+      </Formik>
     </Popup>
   );
 };
 
-const PopupContainer = styled.div`
-  padding-top: 68px;
+const Message = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+  font-size: 2rem;
+  margin: 16px 0;
 `;
-
 const StyledButton = styled(Button)`
   width: 100%;
   border-radius: 28px;

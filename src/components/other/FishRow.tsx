@@ -27,7 +27,7 @@ const FishRow = React.memo(({ onChange, fish, index }: FishRowProp) => {
           src={
             photo?.url
               ? photo?.url
-              : 'https://t0.gstatic.com/licensed-image?q=tbn:ANd9GcSFioPxAhwKJt3zlIkV4Q5Th0gkb5-428cZd0uPEjWoYn9Xkoi_L4C8kWaFu-KtqAvz'
+              : '/no-image.png'
           }
         />
       </ImageContainer>
@@ -61,6 +61,15 @@ const FishRow = React.memo(({ onChange, fish, index }: FishRowProp) => {
 
 const StyledNumericTextField = styled(TextField)`
   width: 100%;
+`;
+
+const WeightClass = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.text.primary};
 `;
 
 const Row = styled.div`

@@ -27,7 +27,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
 
   const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
     ['fishingWeights'],
-    api.getFishingWeights,
+    () =>api.getFishingWeights(),
     {
       retry: false,
     },

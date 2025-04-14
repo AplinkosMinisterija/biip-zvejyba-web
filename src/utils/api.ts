@@ -14,6 +14,7 @@ import {
   ToolFormRequest,
   ToolsGroup,
   User,
+  FishingWeights,
 } from './types';
 
 enum Populations {
@@ -38,6 +39,7 @@ interface GetAll {
   id?: string;
   geom?: any;
   responseType?: any;
+  toolsGroup?: number;
 }
 
 export interface GetAllResponse<T> {
@@ -291,9 +293,10 @@ class Api {
     });
   };
 
-  getFishingWeights = async () => {
+  getFishingWeights = async (toolsGroup?: number): Promise<FishingWeights> => {
     return this.get({
       resource: 'fishings/weights',
+      ...(toolsGroup ? { toolsGroup } : {}),
     });
   };
 
