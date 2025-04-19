@@ -1,11 +1,20 @@
 import styled from 'styled-components';
+import Loader from '../other/Loader';
 interface SwitchButtonProps {
   options: any[];
   onChange: (value: any) => void;
   value: any;
   className?: string;
+  disabled?: boolean;
+  loading?: boolean;
 }
-const SwitchButton = ({ options, onChange, value, className = '' }: SwitchButtonProps) => {
+const SwitchButton = ({
+  options,
+  onChange,
+  value,
+  className = '',
+  loading = false,
+}: SwitchButtonProps) => {
   return (
     <Container className={className}>
       <Content $numberOfColumns={options.length}>
@@ -15,13 +24,18 @@ const SwitchButton = ({ options, onChange, value, className = '' }: SwitchButton
             onClick={() => onChange(option.value)}
             $selected={option.value === value}
           >
-            {option.label}
+            {loading ? <StyledLoader color="white" /> : null} {option.label}
           </Button>
         ))}
       </Content>
     </Container>
   );
 };
+
+const StyledLoader = styled(Loader)`
+  position: absolute;
+  left: 0;
+`;
 
 const Container = styled.div`
   width: 100%;
@@ -47,6 +61,7 @@ const Button = styled.div<{ $selected: boolean }>`
   justify-content: center;
   height: 48px;
   width: 100%;
+  position: relative;
   font-size: 18px;
   font-weight: 500;
   border-radius: 99px;

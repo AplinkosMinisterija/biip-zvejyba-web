@@ -82,7 +82,7 @@ export const useFishWeights = () => {
   const {
     data: fishingWeights = { preliminary: {}, total: {} },
     isLoading: fishingWeightsLoading,
-  } = useQuery(['fishingWeights'], () =>api.getFishingWeights(), { retry: false });
+  } = useQuery(['fishingWeights'], () => api.getFishingWeights(), { retry: false });
   return { fishingWeights, fishingWeightsLoading };
 };
 export const useGetCurrentProfile = () => {
@@ -214,15 +214,20 @@ export const useFishingWeightMutation = () => {
   const { mutateAsync: fishingWeightMutation, isLoading: fishingWeightLoading } = useMutation(
     (data: any) => api.createFishingFishWeights(data),
     {
-      onSuccess: () => {
+      onSuccess: (_, variables) => {
         queryClient.invalidateQueries(['fishingWeights']);
-        handleSuccessToast('Žuvis sėkmingai pasverta krante.');
-        navigate(slugs.fishingCurrent);
+        if (variables.isAutoSave) {
+          handleSuccessToast('Žuvų svoriai automatiškai išsaugoti.');
+        } else {
+          handleSuccessToast('Žuvis sėkmingai pasverta krante.');
+          navigate(slugs.fishingCurrent);
+        }
       },
       onError: () => {
         handleErrorToastFromServer();
       },
     },
   );
+
   return { fishingWeightMutation, fishingWeightLoading };
 };

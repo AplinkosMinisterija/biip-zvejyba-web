@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import {
   FishingWeighType,
   LocationType,
@@ -23,6 +23,7 @@ const FishingWeightOptions = [
 
 const FishingWeight = () => {
   const [type, setType] = useState<FishingWeighType>(FishingWeighType.CAUGHT);
+  const [isSwitching, setIsSwitching] = useState(false);
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
   const showSwitch = currentFishing?.type !== LocationType.INLAND_WATERS;
   const { fishTypes, fishTypesLoading } = useFishTypes();
@@ -53,43 +54,101 @@ const FishingWeight = () => {
           };
         });
 
-  const handleSubmit = (values: any) => {
-    if (!window.coordinates) return;
-    const mappedWeights = values.reduce((obj: any, curr: any) => {
+  const mapWeights = (values: any) => {
+    return values.reduce((obj: any, curr: any) => {
       if (curr.amount) obj[curr.id] = Number(curr.amount) || undefined;
       return obj;
     }, {});
+  };
+
+  const handleSubmit = (values: any) => {
+    if (!window.coordinates) return;
+    const mappedWeights = mapWeights(values);
 
     fishingWeightMutation({
       data: mappedWeights,
       coordinates: window.coordinates,
+      isAutoSave: false,
     });
+  };
+
+  const handleSwitchChange = (newValue: FishingWeighType, values: any, setFieldValue: any) => {
+    setIsSwitching(true);
+    setType(newValue);
+    if (!window.coordinates) {
+      setIsSwitching(false);
+      return;
+    }
+    try {
+      const mappedWeights = mapWeights(values);
+
+      fishingWeightMutation({
+        data: mappedWeights,
+        coordinates: window.coordinates,
+        isAutoSave: true,
+      });
+
+      const updatedValues =
+        newValue === FishingWeighType.CAUGHT
+          ? fishTypes.map((fishType) => {
+              const amount = (fishingWeights?.total || fishingWeights?.preliminary)?.[fishType.id];
+              return {
+                ...fishType,
+                preliminaryAmount: amount || '',
+                amount: amount || '',
+              };
+            })
+          : Object.keys(caughtFishData)?.map((key: string) => {
+              const fishType = fishTypes.find((fishType) => fishType.id === Number(key));
+              return {
+                ...fishType,
+                preliminaryAmount: caughtFishData[key] || '',
+                amount: caughtFishData[key] || '',
+              };
+            });
+
+      updatedValues.forEach((item: any, index: number) => {
+        setFieldValue(`${index}.amount`, item.amount);
+      });
+    } catch (error) {
+      console.error('Klaida keičiant tipą:', error);
+    } finally {
+      setIsSwitching(false);
+    }
   };
 
   return (
     <DefaultLayout>
-      {showSwitch && (
-        <SwitchButton options={FishingWeightOptions} value={type} onChange={setType} />
-      )}
       <Formik initialValues={initialValues} enableReinitialize={true} onSubmit={handleSubmit}>
         {({ values, setFieldValue }) => {
           return (
-            <StyledForm>
-              {values?.map((item: any, index: number) => (
-                <FishRow
-                  key={`fish_type_${item.id}`}
-                  fish={item}
-                  onChange={(value) => {
-                    setFieldValue(`${index}.amount`, value);
-                  }}
+            <>
+              {showSwitch && (
+                <SwitchButton
+                  options={FishingWeightOptions}
+                  value={type}
+                  onChange={(newValue) => handleSwitchChange(newValue, values, setFieldValue)}
+                  disabled={fishingWeightLoading || isSwitching}
+                  loading={fishingWeightLoading || isSwitching}
                 />
-              ))}
-              <Footer>
-                <StyledButton loading={fishingWeightLoading} disabled={fishingWeightLoading}>
-                  Saugoti pakeitimus
-                </StyledButton>
-              </Footer>
-            </StyledForm>
+              )}
+              <StyledForm $disabled={fishingWeightLoading || isSwitching}>
+                {values?.map((item: any, index: number) => (
+                  <FishRow
+                    key={`fish_type_${item.id}`}
+                    fish={item}
+                    onChange={(value) => {
+                      setFieldValue(`${index}.amount`, value);
+                    }}
+                  />
+                ))}
+                <Footer>
+                  <StyledButton loading={fishingWeightLoading || isSwitching} disabled={fishingWeightLoading || isSwitching}>
+                    Saugoti pakeitimus
+                  </StyledButton>
+                </Footer>
+              </StyledForm>
+            </>
           );
         }}
       </Formik>
@@ -97,12 +156,13 @@ const FishingWeight = () => {
   );
 };
 
-const StyledForm = styled(Form)`
+const StyledForm = styled(Form)<{ $disabled?: boolean }>`
   width: 100%;
   height: fit-content;
+  ${({ $disabled }) => $disabled && `opacity: 0.7; pointer-events: none;`}
 `;
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(Button)<{ $disabled?: boolean }>`
   width: 100%;
   border-radius: 28px;
   height: 56px;
@@ -111,6 +171,7 @@ const StyledButton = styled(Button)`
   font-size: 20px;
   font-weight: 600;
   padding: 0;
+  ${({ $disabled }) => $disabled && `opacity: 0.7; pointer-events: none;`}
 `;
 
 export default FishingWeight;
