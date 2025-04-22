@@ -117,6 +117,8 @@ const FishingWeight = () => {
     }
   };
 
+  const fishingWeightLoadingOrSwitching = fishingWeightLoading || isSwitching
+
   return (
     <DefaultLayout>
       <Formik initialValues={initialValues} enableReinitialize={true} onSubmit={handleSubmit}>
@@ -128,11 +130,11 @@ const FishingWeight = () => {
                   options={FishingWeightOptions}
                   value={type}
                   onChange={(newValue) => handleSwitchChange(newValue, values, setFieldValue)}
-                  disabled={fishingWeightLoading || isSwitching}
-                  loading={fishingWeightLoading || isSwitching}
+                  disabled={fishingWeightLoadingOrSwitching}
+                  loading={fishingWeightLoadingOrSwitching}
                 />
               )}
-              <StyledForm $disabled={fishingWeightLoading || isSwitching}>
+              <StyledForm $disabled={fishingWeightLoadingOrSwitching}>
                 {values?.map((item: any, index: number) => (
                   <FishRow
                     key={`fish_type_${item.id}`}
@@ -143,7 +145,7 @@ const FishingWeight = () => {
                   />
                 ))}
                 <Footer>
-                  <StyledButton loading={fishingWeightLoading || isSwitching} disabled={fishingWeightLoading || isSwitching}>
+                  <StyledButton loading={fishingWeightLoadingOrSwitching} disabled={fishingWeightLoadingOrSwitching}>
                     Saugoti pakeitimus
                   </StyledButton>
                 </Footer>
