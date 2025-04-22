@@ -23,6 +23,7 @@ const SwitchButton = ({
             key={`switch_btn_${index}`}
             onClick={() => onChange(option.value)}
             $selected={option.value === value}
+            $disabled={loading}
           >
             {loading ? <StyledLoader color="white" /> : null} {option.label}
           </Button>
@@ -53,7 +54,7 @@ const Content = styled.div<{ $numberOfColumns?: number }>`
   border-radius: 99px;
 `;
 
-const Button = styled.div<{ $selected: boolean }>`
+const Button = styled.div<{ $selected: boolean; $disabled?: boolean }>`
   display: flex;
   background-color: ${({ $selected, theme }) => ($selected ? theme.colors.primary : 'transparent')};
   color: ${({ $selected, theme }) => ($selected ? 'white' : theme.colors.text.primary)};
@@ -65,7 +66,8 @@ const Button = styled.div<{ $selected: boolean }>`
   font-size: 18px;
   font-weight: 500;
   border-radius: 99px;
-  cursor: pointer;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
 `;
 
 export default SwitchButton;
