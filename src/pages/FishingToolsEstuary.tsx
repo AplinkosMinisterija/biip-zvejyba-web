@@ -16,7 +16,6 @@ import LocationInfo from '../components/other/LocationInfo';
 
 const FishingToolsEstuary = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);
-  const [buildToolsIsLoading, setBuildToolsIsLoading] = useState(false);
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
   const locationType = currentFishing?.type;
   const [manualLocation, setManualLocation] = useState<any>();
@@ -49,15 +48,17 @@ const FishingToolsEstuary = () => {
 
   const isEstuary = currentFishing?.type === LocationType.ESTUARY;
   const locationId = (manualLocation || location)?.id;
-  const { data: builtTools } = useQuery(
+  const {
+    data: builtTools,
+    isFetching: builtToolsFetching,
+  } = useQuery(
     ['builtTools', locationId],
     () => {
-      setBuildToolsIsLoading(true);
       return api.getBuiltTools({ locationId });
     },
     {
-      onSuccess: () => {
-        setBuildToolsIsLoading(false);
+      onError: (error) => {
+        console.error('Klaida gaunant pastatytus įrankius:', error);
       },
       retry: false,
       enabled: !!locationId,
@@ -68,33 +69,34 @@ const FishingToolsEstuary = () => {
     return <LoaderComponent />;
   }
 
-  const showBuildToolsButton = !!manualLocation?.id || !!location?.id;
+  const currentLocation = manualLocation || location;
+  const showBuildToolsButton = !!currentLocation?.id;
 
   return (
     <DefaultLayout>
       <LocationInfo
-        location={manualLocation || location}
+        location={currentLocation}
         locationLoading={locationLoading}
         setLocationManually={setManualLocation}
         locationType={LocationType.ESTUARY}
         renewLocation={refetch}
       />
       <Container>
-      {(buildToolsIsLoading || (builtTools === undefined && !!showBuildToolsButton)) ? ( 
-        <LoaderComponent />
-      ) : isEmpty(builtTools) && !!showBuildToolsButton ? (
-        <NotFound message={'Nėra pastatytų įrankių'} />
-      ) : (
-        map(builtTools, (toolsGroup: any) => (
-          <ToolsGroupCard
-            isEstuary={isEstuary}
-            key={toolsGroup.id}
-            toolsGroup={toolsGroup}
-            location={manualLocation || location}
-          />
-        ))
-      )}
-    </Container>
+        {(builtToolsFetching || (builtTools === undefined && !!showBuildToolsButton)) ? (
+          <LoaderComponent />
+        ) : isEmpty(builtTools) && !!showBuildToolsButton ? (
+          <NotFound message={'Nėra pastatytų įrankių'} />
+        ) : (
+          map(builtTools, (toolsGroup: any) => (
+            <ToolsGroupCard
+              isEstuary={isEstuary}
+              key={toolsGroup.id}
+              toolsGroup={toolsGroup}
+              location={currentLocation}
+            />
+          ))
+        )}
+      </Container>
       {showBuildToolsButton && (
         <>
           <Footer>
@@ -102,9 +104,8 @@ const FishingToolsEstuary = () => {
           </Footer>
           <Popup visible={showBuildTools} onClose={() => setShowBuildTools(false)}>
             <BuildTools
-              location={manualLocation || location}
-              onClose={() => setShowBuildTools(false)}
-              setBuildToolsIsLoading={setBuildToolsIsLoading}
+              location={currentLocation}
+              onClose={() => { setShowBuildTools(false); refetch(); }}
             />
           </Popup>
         </>
