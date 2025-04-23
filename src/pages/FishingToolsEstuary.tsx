@@ -2,7 +2,7 @@ import { isEmpty, map } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { LocationType, useCurrentFishing } from '../utils';
+import { LocationType, useCurrentFishing, handleErrorToastFromServer } from '../utils';
 import api from '../utils/api';
 import Button from '../components/buttons/Button';
 import ToolsGroupCard from '../components/cards/ToolsGroupCard';
@@ -57,8 +57,8 @@ const FishingToolsEstuary = () => {
       return api.getBuiltTools({ locationId });
     },
     {
-      onError: (error) => {
-        console.error('Klaida gaunant pastatytus įrankius:', error);
+      onError: ({ response }: any) => {
+        handleErrorToastFromServer(response);
       },
       retry: false,
       enabled: !!locationId,

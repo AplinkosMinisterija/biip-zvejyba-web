@@ -2,7 +2,7 @@ import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { device, LocationType, useCurrentFishing } from '../utils';
+import { device, LocationType, useCurrentFishing, handleErrorToastFromServer } from '../utils';
 import api from '../utils/api';
 import Button from '../components/buttons/Button';
 import ToolsGroupCard from '../components/cards/ToolsGroupCard';
@@ -39,6 +39,9 @@ const FishingTools = () => {
       return api.getBuiltTools({ locationId: location?.id });
     },
     {
+      onError: ({ response }: any) => {
+        handleErrorToastFromServer(response);
+      },
       retry: false,
       enabled: !!location?.id,
     },
