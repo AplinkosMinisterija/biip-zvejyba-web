@@ -6,6 +6,7 @@ import { device } from '../../utils';
 import { useState } from 'react';
 import PopUpWithImage from '../layouts/PopUpWithImage';
 import LocationForm from '../forms/LocationForm';
+import LoaderComponent from '../other/LoaderComponent';
 
 const LocationInfo = ({
   location,
@@ -26,6 +27,7 @@ const LocationInfo = ({
           </IconContainer>
         )}
       </TitleWrapper>
+      {locationLoading && <LoaderComponent />}
       {!location && !locationLoading && (
         <>
           <Message>
