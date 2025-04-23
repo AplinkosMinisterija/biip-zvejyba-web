@@ -38,7 +38,6 @@ const Content = styled.div`
     border-radius: 16px;
     margin: 0 auto;
     padding: 40px;
-    overflow-y: auto;
     height: fit-content;
   }
 `;
