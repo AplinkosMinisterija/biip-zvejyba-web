@@ -54,7 +54,7 @@ const Content = styled.div<{ $numberOfColumns?: number }>`
   border-radius: 99px;
 `;
 
-const Button = styled.div<{ $selected: boolean; $disabled?: boolean }>`
+const Button = styled.button<{ $selected: boolean; $disabled?: boolean }>`
   display: flex;
   background-color: ${({ $selected, theme }) => ($selected ? theme.colors.primary : 'transparent')};
   color: ${({ $selected, theme }) => ($selected ? 'white' : theme.colors.text.primary)};
@@ -66,8 +66,7 @@ const Button = styled.div<{ $selected: boolean; $disabled?: boolean }>`
   font-size: 18px;
   font-weight: 500;
   border-radius: 99px;
-  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
-  pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
+  ${({ $disabled }) => $disabled && `opacity: 0.7; pointer-events: none;`}
 `;
 
 export default SwitchButton;

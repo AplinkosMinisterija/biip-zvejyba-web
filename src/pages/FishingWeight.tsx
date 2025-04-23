@@ -130,7 +130,6 @@ const FishingWeight = () => {
                   options={FishingWeightOptions}
                   value={type}
                   onChange={(newValue) => handleSwitchChange(newValue, values, setFieldValue)}
-                  disabled={fishingWeightLoadingOrSwitching}
                   loading={fishingWeightLoadingOrSwitching}
                 />
               )}
