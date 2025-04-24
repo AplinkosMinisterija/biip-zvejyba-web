@@ -2,7 +2,7 @@ import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { LocationType, useCurrentFishing } from '../utils';
+import { LocationType, useCurrentFishing, handleErrorToastFromServer } from '../utils';
 import api from '../utils/api';
 import Button from '../components/buttons/Button';
 import ToolsGroupCard from '../components/cards/ToolsGroupCard';
@@ -20,10 +20,15 @@ const FishingTools = () => {
   const location = currentFishing?.location;
   const isEstuary = currentFishing?.type === LocationType.ESTUARY;
 
-  const { data: builtTools, isLoading: builtToolsLoading } = useQuery(
+  const { data: builtTools, isFetching: builtToolsFetching } = useQuery(
     ['builtTools', location?.id],
-    () => api.getBuiltTools({ locationId: location?.id }),
+    () => {
+      return api.getBuiltTools({ locationId: location?.id });
+    },
     {
+      onError: ({ response }: any) => {
+        handleErrorToastFromServer(response);
+      },
       retry: false,
       enabled: !!location?.id,
     },
@@ -41,7 +46,9 @@ const FishingTools = () => {
         locationType={LocationType.INLAND_WATERS}
       />
       <Container>
-        {isEmpty(builtTools) ? (
+        {builtToolsFetching || builtTools === undefined ? (
+          <LoaderComponent />
+        ) : isEmpty(builtTools) ? (
           <NotFound message={'Nėra pastatytų įrankių'} />
         ) : (
           map(builtTools, (toolsGroup: any) => (
