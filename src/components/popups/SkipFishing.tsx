@@ -14,11 +14,13 @@ import styled from 'styled-components';
 import { useContext, useState } from 'react';
 import { useMutation } from 'react-query';
 import api from '../../utils/api';
+import { TextAreaField } from '@aplinkosministerija/design-system';
 
 export const SkipFishing = ({ content, onClose }: any) => {
   const { locationType } = content;
 
-  const [skipReason, setSkipReason] = useState(SickReasons.BAD_WEATHER);
+  const [skipReason, setSkipReason] = useState<any>(SickReasons.BAD_WEATHER);
+  const [skipReasonNote, setSkipReasonNote] = useState<string>();
 
   const { isLoading: skipLoading, mutateAsync: skipFishing } = useMutation(api.skipFishing, {
     onError: ({ response }: any) => {
@@ -29,9 +31,16 @@ export const SkipFishing = ({ content, onClose }: any) => {
   });
 
   const handleSkipFishing = () => {
+    if (skipReason.value === SickReasons.OTHER && !skipReasonNote) {
+      return handleErrorToast(validationTexts.provideSkipReason);
+    }
     const coordinates = window.coordinates;
     if (locationType && coordinates) {
-      skipFishing({ type: locationType, coordinates, note: skipReason });
+      skipFishing({
+        type: locationType,
+        coordinates,
+        note: skipReason.value === SickReasons.OTHER ? skipReasonNote : skipReason.label,
+      });
     } else {
       handleErrorToast(validationTexts.mustAllowToSetCoordinates);
     }
@@ -45,16 +54,29 @@ export const SkipFishing = ({ content, onClose }: any) => {
       description={'Pasirinkite priežastį, dėl ko negalite žvejoti'}
     >
       <Grid $columns={3}>
-        {map(skipOptions, (item, index) => (
-          <SelectButton
-            $selected={item.value === skipReason}
-            key={`skip-reasons-${index}`}
-            onClick={() => setSkipReason(item.value)}
-          >
-            {item.label}
-          </SelectButton>
-        ))}
+        {map(skipOptions, (item, index) => {
+          return (
+            <SelectButton
+              $selected={item.value === skipReason.value}
+              key={`skip-reasons-${index}`}
+              onClick={() => setSkipReason(item)}
+            >
+              {item.label}
+            </SelectButton>
+          );
+        })}
       </Grid>
+
+      {skipReason.additionalInfo ? (
+        <Grid $columns={1}>
+          <TextAreaField
+            label="Pateikite priežastį"
+            value={skipReasonNote || ''}
+            onChange={(e) => setSkipReasonNote(e)}
+          />
+        </Grid>
+      ) : null}
+
       <Grid $columns={2}>
         <Button loading={skipLoading} disabled={skipLoading} onClick={handleSkipFishing}>
           {buttonLabels.save}

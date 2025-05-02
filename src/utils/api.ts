@@ -16,6 +16,8 @@ import {
   User,
   FishingWeights,
 } from './types';
+import { validationTexts } from './texts';
+import { handleErrorToast } from './functions';
 
 enum Populations {
   USER = 'user',
@@ -114,8 +116,18 @@ class Api {
   }
 
   errorWrapper = async (endpoint: () => Promise<AxiosResponse<any, any>>) => {
-    const { data } = await endpoint();
-    return data;
+    try {
+      const { data } = await endpoint();
+      return data;
+    } catch (error) {
+      const errorMessage = (error as any)?.response?.data?.message;
+      const message = validationTexts[errorMessage];
+      if (message) {
+        handleErrorToast(message);
+      } else {
+        throw error;
+      }
+    }
   };
 
   getCommonConfigs = ({ page, pageSize, ...rest }: GetAll) => {

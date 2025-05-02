@@ -37,6 +37,7 @@ const FishingJournal = () => {
               onClick={() => {
                 navigate(slugs.fishing(fishing.id));
               }}
+              skipNote={fishing?.skipEvent?.data?.note}
             />
           );
         })}

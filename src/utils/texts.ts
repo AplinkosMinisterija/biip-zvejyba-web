@@ -1,5 +1,6 @@
 import { EventTypes, RoleTypes, ServerErrors } from './constants';
-export const validationTexts = {
+
+export const validationTexts: { [key: string]: string } = {
   requireMap: 'Privalote pasirinkti vietą žemėlapyje',
   requirePhotos: 'Privalote įkelti nuotrauką',
   userDeniedLocation: 'Turite leisti nustatyti jūsų buvimo vietą',
@@ -16,7 +17,7 @@ export const validationTexts = {
   [ServerErrors.WRONG_PASSWORD]: 'Blogas elektroninis paštas arba slaptažodis',
   [ServerErrors.USER_NOT_FOUND]: 'Naudotojo su tokiu el. paštu nėra',
   [ServerErrors.TOO_MANY_TOOLS]: 'Galimos tik vieno  tipo  įrankių grupės',
-  [ServerErrors.NO_TOOLS_IN_STORAGE]: 'Neturite įrankių sandelyje',
+  [ServerErrors.NO_TOOLS_IN_STORAGE]: 'Neturite įrankių sandėlyje',
   [ServerErrors.TOOL_WITH_THIS_SEAL_NUMBER_ALREADY_EXISTS]:
     'Įrankis su šiuo plombos numeriu jau egzistuoja',
   [ServerErrors.FISH_MUST_BE_WEIGHTED]:
@@ -33,6 +34,7 @@ export const validationTexts = {
   fishingFinished: 'Žvejyba pabaigta',
   failedToSetLocation: 'Nepavyko nustatyti lokacijos',
   mustAllowToSetCoordinates: 'Privalote leisti nustatyti kordinates',
+  provideSkipReason: 'Pateikite priežasty dėl kurios praleidžiate žvejybą',
   [ServerErrors.AUTH_USER_EXISTS]: 'Asmuo su tokiu asmens kodu jau registruotas.',
 };
 

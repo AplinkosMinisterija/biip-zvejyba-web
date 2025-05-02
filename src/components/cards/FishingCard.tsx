@@ -54,7 +54,15 @@ const getWeightString = (
   return weightOnBoat ? `~${weightOnBoat}kg` : '';
 };
 
-const FishingCard = ({ startDate, endDate, fishOnBoat, fishOnShore, skipped, onClick }: any) => {
+const FishingCard = ({
+  startDate,
+  endDate,
+  fishOnBoat,
+  fishOnShore,
+  skipped,
+  skipNote,
+  onClick,
+}: any) => {
   const month: string = startDate ? format(new Date(startDate), 'M') : '';
   const dayOfMonth = startDate ? format(new Date(startDate), 'd') : '';
 
@@ -77,6 +85,7 @@ const FishingCard = ({ startDate, endDate, fishOnBoat, fishOnShore, skipped, onC
           </FishingWeight>
         )}
       </Row>
+      {skipNote && <SkipNote>{skipNote}</SkipNote>}
       <MiddleRow>
         <Circle $active={active} />
         <Line $active={active} />
@@ -171,6 +180,11 @@ const FishingDate = styled.div`
   font-size: 20px;
   font-weight: 700;
   color: ${({ theme }) => theme.colors.text.primary};
+`;
+
+const SkipNote = styled.div`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.text.secondary};
 `;
 
 const FishingWeight = styled.div`
