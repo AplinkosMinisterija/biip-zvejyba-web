@@ -71,6 +71,8 @@ const TimelineItem = ({ event, isLast }: any) => {
             {FishingEventLabels[type]}
             {weightLabel && <WeightLabel>{weightLabel}</WeightLabel>}
           </ItemLabel>
+          {showSkipNote && <SkipNote>Priežastis: {event?.data?.note}</SkipNote>}
+
           <ItemDate>
             <div>{date}</div>
             {location && (
@@ -86,7 +88,6 @@ const TimelineItem = ({ event, isLast }: any) => {
               </div>
             )}
           </ItemDate>
-          {showSkipNote && <SkipNote>{event?.data?.note}</SkipNote>}
           {showMoreButton && (
             <MoreButton
               onClick={() => {
