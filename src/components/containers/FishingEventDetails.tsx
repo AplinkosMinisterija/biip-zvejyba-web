@@ -18,14 +18,14 @@ const FishingEventDetails = ({ event }: any) => {
   );
 
   //TODO: should be converted to wgs
-  const coordinates = event.coordinates ? `${event.coordinates.x}, ${event.coordinates.y}` : '-';
+  const coordinates = event.coordinates ? `${event.coordinates.x?.toFixed(6)}, ${event.coordinates.y?.toFixed(6)}` : '-';
 
   return (
     <Container>
       <Title>{FishingEventLabels[event.type as EventTypes]}</Title>
       {tools && <Subtitle>{tools}</Subtitle>}
       <MapContainer>
-        <PreviewMap value={event?.geom} height={'15rem'} preview={true} />
+        <PreviewMap value={event?.geom} height={'23rem'} />
       </MapContainer>
       <FishingInfo>
         <FishingInfoCell>

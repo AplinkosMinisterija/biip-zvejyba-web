@@ -1,9 +1,8 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components';
-import { device } from '../../utils';
-import FieldWrapper from '../fields/components/FieldWrapper';
-
-const mapsHost = import.meta.env.VITE_MAPS_HOST;
+import { device, Url } from '../../utils';
+import Button from '../buttons/Button';
+import Icon, { IconName } from './Icon';
 
 type FeatureCollection = {
   type: 'FeatureCollection';
@@ -41,18 +40,14 @@ type CoordinatesTypes =
 
 interface MapProps {
   height?: string;
-  onSave?: (data: any) => void;
-  error?: string;
   value?: FeatureCollection;
-  label?: string;
-  showError?: boolean;
-  preview?: boolean;
 }
 
-const PreviewMap = ({ height = '230px', error, value, showError = true, label }: MapProps) => {
+const PreviewMap = ({ height = '270px', value }: MapProps) => {
   const iframeRef = useRef<any>(null);
+  const [showModal, setShowModal] = useState(false);
 
-  const src = `${mapsHost}/edit?preview=true`;
+  const src = `${Url.EDIT}?hideToolbar=1&preview=1`;
 
   const handleLoadMap = () => {
     if (!value) return;
@@ -60,30 +55,39 @@ const PreviewMap = ({ height = '230px', error, value, showError = true, label }:
   };
 
   return (
-    <FieldWrapper showError={showError} error={error} label={label}>
-      <Container $showModal={false} $error={!!error}>
-        <InnerContainer $showModal={false}>
-          <StyledIframe
-            allow="geolocation *"
-            ref={iframeRef}
-            src={src}
-            $width={'100%'}
-            $height={height}
-            style={{ border: 0 }}
-            allowFullScreen={true}
-            onLoad={handleLoadMap}
-            aria-hidden="false"
-            tabIndex={1}
-          />
-        </InnerContainer>
-      </Container>
-    </FieldWrapper>
+    <Container $showModal={showModal}>
+      <InnerContainer $showModal={showModal}>
+        <StyledButton
+          $popup={showModal}
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowModal(!showModal);
+          }}
+        >
+          <StyledIconContainer>
+            <StyledIcon name={showModal ? IconName.exitFullScreen : IconName.fullscreen} />
+          </StyledIconContainer>
+        </StyledButton>
+        <StyledIframe
+          allow="geolocation *"
+          ref={iframeRef}
+          src={src}
+          $width={'100%'}
+          $height={showModal ? '100%' : height}
+          style={{ border: 0 }}
+          allowFullScreen={true}
+          onLoad={handleLoadMap}
+          aria-hidden="false"
+          tabIndex={1}
+        />
+      </InnerContainer>
+    </Container>
   );
 };
 
 const Container = styled.div<{
   $showModal: boolean;
-  $error: boolean;
 }>`
   width: 100%;
   ${({ $showModal }) =>
@@ -98,19 +102,14 @@ const Container = styled.div<{
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
   overflow-y: auto;
   position: absolute;
   width: 100%;
   height: 100%;
   background-color: #0b1b607a;
-  top: 0;
-  left: 0;
   overflow-y: auto;
-  z-index: 1001;
-  
+  z-index: 1002;
   `}
-  ${({ theme, $error }) => $error && `border: 1px solid ${theme.colors.error};`}
 `;
 
 const InnerContainer = styled.div<{
@@ -125,6 +124,7 @@ const InnerContainer = styled.div<{
   ${({ $showModal }) =>
     $showModal &&
     `
+    position: fixed;
     padding: 16px;
   `}
 
@@ -137,8 +137,47 @@ const StyledIframe = styled.iframe<{
   $height: string;
   $width: string;
 }>`
-  width: ${({ $width }) => $width || '100%'};
-  height: ${({ $height }) => $height || '15rem'};
+  width: ${({ $width }) => $width};
+  height: ${({ $height }) => $height};
+`;
+
+const StyledButton = styled(Button)<{ $popup: boolean }>`
+  position: absolute;
+  z-index: 3000;
+  right: ${({ $popup }) => ($popup ? 28 : 11)}px;
+  top: ${({ $popup }) => ($popup ? 28 : 15)}px;
+  width: 28px;
+  background-color: white;
+  height: 28px;
+  padding: 0;
+  border-radius: 4px;
+  border: 0;
+  :hover {
+    background-color: ${({ theme }) => theme.colors.cardBackground.primary};
+    border-radius: 4px;
+  }
+  @media ${device.mobileL} {
+    top: 10px;
+    right: 10px;
+  }
+  button {
+    border-color: #e5e7eb;
+    background-color: white !important;
+    width: 28px;
+    height: 28px;
+    box-shadow: 1px 18px 41px #121a5529;
+  }
+`;
+
+const StyledIcon = styled(Icon)`
+  font-size: 3rem;
+  color: #6b7280;
+`;
+
+const StyledIconContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export default PreviewMap;

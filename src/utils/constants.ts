@@ -12,6 +12,12 @@ export enum ServerErrors {
   LOCATION_NOT_FOUND = 'Location not found',
 }
 
+const mapsHost = import.meta.env.VITE_MAPS_HOST;
+
+export const Url = {
+  EDIT: `${mapsHost}/edit`,
+};
+
 export enum RoleTypes {
   USER = 'USER',
   USER_ADMIN = 'USER_ADMIN',
