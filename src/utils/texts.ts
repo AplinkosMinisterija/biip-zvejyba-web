@@ -34,7 +34,7 @@ export const validationTexts: { [key: string]: string } = {
   fishingFinished: 'Žvejyba pabaigta',
   failedToSetLocation: 'Nepavyko nustatyti lokacijos',
   mustAllowToSetCoordinates: 'Privalote leisti nustatyti kordinates',
-  provideSkipReason: 'Pateikite priežasty dėl kurios praleidžiate žvejybą',
+  provideSkipReason: 'Pateikite priežastį, dėl kurios praleidžiate žvejybą',
   [ServerErrors.AUTH_USER_EXISTS]: 'Asmuo su tokiu asmens kodu jau registruotas.',
 };
 
