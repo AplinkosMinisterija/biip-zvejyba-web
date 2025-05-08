@@ -58,6 +58,8 @@ const TimelineItem = ({ event, isLast }: any) => {
     EventTypes.WEIGHT_ON_BOAT,
   ].some((e) => e === type);
 
+  const showSkipNote = [EventTypes.SKIP].some((e) => e === type) && event?.data?.note;
+
   return (
     <>
       <Container $isLast={isLast}>
@@ -69,6 +71,8 @@ const TimelineItem = ({ event, isLast }: any) => {
             {FishingEventLabels[type]}
             {weightLabel && <WeightLabel>{weightLabel}</WeightLabel>}
           </ItemLabel>
+          {showSkipNote && <SkipNote>Priežastis: {event?.data?.note}</SkipNote>}
+
           <ItemDate>
             <div>{date}</div>
             {location && (
@@ -184,4 +188,9 @@ const MoreButton = styled.div`
 const IconNext = styled(Icon)`
   font-size: 14px;
   margin-top: 3px;
+`;
+
+const SkipNote = styled.div`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.text.secondary};
 `;

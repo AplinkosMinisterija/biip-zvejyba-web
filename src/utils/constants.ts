@@ -46,6 +46,7 @@ export enum LocationType {
   POLDERS = 'POLDERS',
   INLAND_WATERS = 'INLAND_WATERS',
 }
+
 export enum ToolTypeType {
   NET = 'NET',
   CATCHER = 'CATCHER',

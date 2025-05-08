@@ -15,5 +15,6 @@ export const skipOptions = [
   {
     label: buttonLabels.other,
     value: SickReasons.OTHER,
+    additionalInfo: true,
   },
 ];

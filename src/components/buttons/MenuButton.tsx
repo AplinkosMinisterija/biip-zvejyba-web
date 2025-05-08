@@ -15,7 +15,6 @@ const MenuButton = ({
   isActive = false,
   loading = false,
 }: MenuButtonProps) => {
-  //TODO: disable option
   return (
     <Container $isActive={isActive} onClick={onClick}>
       {/*<IconContainer>{icon ? <StyledIcon name={icon} /> : null}</IconContainer>*/}
@@ -43,7 +42,6 @@ const Container = styled.div<{ $isActive: boolean }>`
   display: grid;
   text-decoration: none;
   gap: 12px;
-
   ${({ $isActive, theme }) =>
     $isActive &&
     `
@@ -56,6 +54,7 @@ const Container = styled.div<{ $isActive: boolean }>`
     border: 1px solid ${({ theme }) => theme.colors.primary};
   }
 `;
+
 const IconContainer = styled.div`
   background-color: white;
   border-radius: 50%;
