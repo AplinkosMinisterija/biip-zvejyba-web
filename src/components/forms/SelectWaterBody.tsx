@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { buttonLabels, getLocationList, LocationType, validationTexts } from '../../utils';
+import { buttonLabels, getLocationList, validationTexts } from '../../utils';
 import Button from '../buttons/Button';
 import AsyncSelectField from '../fields/AsyncSelect';
 import { Grid } from '../other/CommonStyles';
@@ -12,7 +12,9 @@ const SelectWaterBody = ({ onStartFishing, loading }: any) => {
 
   const handleChangeValue = (value: any) => {
     setError('');
-    setLocation(value);
+    const { municipality, municipalityCode, ...rest } = value;
+
+    setLocation({ ...rest, municipality: { name: municipality, id: municipalityCode } });
   };
 
   const handleSubmit = () => {
