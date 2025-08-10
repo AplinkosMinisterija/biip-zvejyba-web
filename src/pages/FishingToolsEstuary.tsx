@@ -2,17 +2,17 @@ import { isEmpty, map } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { LocationType, useCurrentFishing, handleErrorToastFromServer } from '../utils';
-import api from '../utils/api';
 import Button from '../components/buttons/Button';
 import ToolsGroupCard from '../components/cards/ToolsGroupCard';
+import BuildTools from '../components/containers/BuildTools';
+import DefaultLayout from '../components/layouts/DefaultLayout';
 import Popup from '../components/layouts/Popup';
 import { Footer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
-import { NotFound } from '../components/other/NotFound';
-import DefaultLayout from '../components/layouts/DefaultLayout';
-import BuildTools from '../components/containers/BuildTools';
 import LocationInfo from '../components/other/LocationInfo';
+import { NotFound } from '../components/other/NotFound';
+import { handleErrorToastFromServer, LocationType, useCurrentFishing } from '../utils';
+import api from '../utils/api';
 
 const FishingToolsEstuary = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);
@@ -48,10 +48,7 @@ const FishingToolsEstuary = () => {
 
   const isEstuary = currentFishing?.type === LocationType.ESTUARY;
   const locationId = (manualLocation || location)?.id;
-  const {
-    data: builtTools,
-    isFetching: builtToolsFetching,
-  } = useQuery(
+  const { data: builtTools, isFetching: builtToolsFetching } = useQuery(
     ['builtTools', locationId],
     () => {
       return api.getBuiltTools({ locationId });
@@ -82,7 +79,7 @@ const FishingToolsEstuary = () => {
         renewLocation={refetch}
       />
       <Container>
-        {(builtToolsFetching || (builtTools === undefined && !!showBuildToolsButton)) ? (
+        {builtToolsFetching || (builtTools === undefined && !!showBuildToolsButton) ? (
           <LoaderComponent />
         ) : isEmpty(builtTools) && !!showBuildToolsButton ? (
           <NotFound message={'Nėra pastatytų įrankių'} />
@@ -105,7 +102,10 @@ const FishingToolsEstuary = () => {
           <Popup visible={showBuildTools} onClose={() => setShowBuildTools(false)}>
             <BuildTools
               location={currentLocation}
-              onClose={() => { setShowBuildTools(false); refetch(); }}
+              onClose={() => {
+                setShowBuildTools(false);
+                refetch();
+              }}
             />
           </Popup>
         </>

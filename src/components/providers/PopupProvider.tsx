@@ -48,12 +48,6 @@ export const PopupProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
         {
           // start fishing in inland water reservoir
-          visiblePopup?.type === PopupContentType.START_FISHING_INLAND_WATERS && (
-            <StartFishingInlandWater content={visiblePopup.content} onClose={hidePopup} />
-          )
-        }
-        {
-          // start fishing in inland water reservoir
           visiblePopup?.type === PopupContentType.SKIP_FISHING && (
             <SkipFishing content={visiblePopup.content} onClose={hidePopup} />
           )

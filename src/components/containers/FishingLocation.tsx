@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { LocationType, PopupContentType } from '../../utils';
 
-import FishingLocationButton, { Variant } from '../buttons/FishingLocationButton';
 import { useContext } from 'react';
+import FishingLocationButton, { Variant } from '../buttons/FishingLocationButton';
 import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
 const FishingLocation = () => {
@@ -26,7 +26,10 @@ const FishingLocation = () => {
           title="Vidaus vandenyse"
           image={'/vidaus_vandens_telkiniai.jpg'}
           onClick={() => {
-            showPopup({ type: PopupContentType.START_FISHING_INLAND_WATERS });
+            showPopup({
+              type: PopupContentType.START_FISHING,
+              content: { type: LocationType.INLAND_WATERS },
+            });
           }}
         />
         <FishingLocationButton
