@@ -97,8 +97,8 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
 
                     setFieldValue('location', {
                       ...rest,
-                      x: lat,
-                      y: lng,
+                      x: lng,
+                      y: lat,
                       municipality: { name: municipality, id: municipalityCode },
                     });
                   }}
