@@ -2,35 +2,58 @@ import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { LocationType, useCurrentFishing, handleErrorToastFromServer } from '../utils';
-import api from '../utils/api';
 import Button from '../components/buttons/Button';
 import ToolsGroupCard from '../components/cards/ToolsGroupCard';
+import BuildTools from '../components/containers/BuildTools';
+import DefaultLayout from '../components/layouts/DefaultLayout';
 import Popup from '../components/layouts/Popup';
 import { Footer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
-import { NotFound } from '../components/other/NotFound';
-import DefaultLayout from '../components/layouts/DefaultLayout';
-import BuildTools from '../components/containers/BuildTools';
 import LocationInfo from '../components/other/LocationInfo';
+import { NotFound } from '../components/other/NotFound';
+import { handleErrorToastFromServer, LocationType, useCurrentFishing } from '../utils';
+import api from '../utils/api';
 
 const FishingTools = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
-  const location = currentFishing?.location;
   const isEstuary = currentFishing?.type === LocationType.ESTUARY;
+  const locationType = currentFishing?.type;
+  const [manualLocation, setManualLocation] = useState<any>();
+
+  const {
+    data: location,
+    isLoading: locationLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ['location'],
+    queryFn: () => {
+      return api.getLocation({
+        query: JSON.stringify({
+          type: locationType,
+          coordinates: window.coordinates,
+        }),
+      });
+    },
+    retry: false,
+    enabled: !!currentFishing,
+  });
+
+  const currentLocation = manualLocation || location;
+
+  const locationId = (manualLocation || location)?.id;
 
   const { data: builtTools, isFetching: builtToolsFetching } = useQuery(
     ['builtTools', location?.id],
     () => {
-      return api.getBuiltTools({ locationId: location?.id });
+      return api.getBuiltTools({ locationId: locationId });
     },
     {
       onError: ({ response }: any) => {
         handleErrorToastFromServer(response);
       },
       retry: false,
-      enabled: !!location?.id,
+      enabled: !!locationId,
     },
   );
 
@@ -41,9 +64,11 @@ const FishingTools = () => {
   return (
     <DefaultLayout>
       <LocationInfo
-        location={location}
-        locationLoading={false}
         locationType={LocationType.INLAND_WATERS}
+        location={currentLocation}
+        locationLoading={locationLoading}
+        setLocationManually={setManualLocation}
+        renewLocation={refetch}
       />
       <Container>
         {builtToolsFetching || builtTools === undefined ? (
@@ -56,20 +81,20 @@ const FishingTools = () => {
               isEstuary={isEstuary}
               key={toolsGroup.id}
               toolsGroup={toolsGroup}
-              location={location}
+              location={currentLocation}
             />
           ))
         )}
       </Container>
-      {location?.name && (
+      {currentLocation?.name && (
         <>
           <Footer>
-            <StyledButton disabled={!location} onClick={() => setShowBuildTools(true)}>
+            <StyledButton disabled={!currentLocation} onClick={() => setShowBuildTools(true)}>
               Pastatyti įrankį
             </StyledButton>
           </Footer>
           <Popup visible={showBuildTools} onClose={() => setShowBuildTools(false)}>
-            <BuildTools location={location} onClose={() => setShowBuildTools(false)} />
+            <BuildTools location={currentLocation} onClose={() => setShowBuildTools(false)} />
           </Popup>
         </>
       )}

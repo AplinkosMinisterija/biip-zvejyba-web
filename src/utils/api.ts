@@ -2,10 +2,13 @@ import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { isEmpty } from 'lodash';
 import Cookies from 'universal-cookie';
 import { LocationType } from './constants';
+import { handleErrorToast } from './functions';
+import { validationTexts } from './texts';
 import {
   Coordinates,
   Fishing,
   FishingHistoryResponse,
+  FishingWeights,
   FishType,
   Location,
   Research,
@@ -14,10 +17,7 @@ import {
   ToolFormRequest,
   ToolsGroup,
   User,
-  FishingWeights,
 } from './types';
-import { validationTexts } from './texts';
-import { handleErrorToast } from './functions';
 
 enum Populations {
   USER = 'user',

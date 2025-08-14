@@ -1,12 +1,18 @@
 import { Form, Formik } from 'formik';
+import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { handleErrorToastFromServer, locationSchema, LocationType } from '../../utils';
+import {
+  getLocationList,
+  handleErrorToastFromServer,
+  locationSchema,
+  LocationType,
+} from '../../utils';
+import api from '../../utils/api';
 import Button, { ButtonColors } from '../buttons/Button';
+import AsyncSelectField from '../fields/AsyncSelect';
 import NumericTextField from '../fields/NumericTextField';
 import SelectField from '../fields/SelectField';
 import { Grid } from '../other/CommonStyles';
-import { useQuery, useQueryClient } from 'react-query';
-import api from '../../utils/api';
 
 const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any) => {
   const queryClient = useQueryClient();
@@ -45,11 +51,16 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
     }
   };
 
+  const getInputValue = (location: any) =>
+    location ? `${location?.name}, ${location?.cadastralId}` : '';
+
   return (
     <Container>
       <Heading>Esate kitur?</Heading>
       <Description>
-        Prašome pasirinkti iš sąrašo baro numerį arba įrašykite koordinates.
+        Prašome pasirinkti iš sąrašo
+        {locationType === LocationType.ESTUARY ? ' baro numerį ' : ' vandens telkinį '} arba
+        įrašykite koordinates.
       </Description>
       <Formik
         enableReinitialize={true}
@@ -61,18 +72,44 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
         {({ values, errors, setFieldValue }: any) => {
           return (
             <FormContainer>
-              <SelectField
-                options={bars}
-                getOptionLabel={(option) => option?.name}
-                value={values.location}
-                error={errors.location}
-                label={'Baro nr.'}
-                name={'location'}
-                onChange={(value) => {
-                  setFieldValue('location', value);
-                }}
-                loading={isLoading}
-              />
+              {locationType === LocationType.ESTUARY && (
+                <SelectField
+                  options={bars}
+                  getOptionLabel={(option) => option?.name}
+                  value={values.location}
+                  error={errors.location}
+                  label={'Baro nr.'}
+                  name={'location'}
+                  onChange={(value) => {
+                    setFieldValue('location', value);
+                  }}
+                  loading={isLoading}
+                />
+              )}
+              {locationType === LocationType.INLAND_WATERS && (
+                <AsyncSelectField
+                  name={'location'}
+                  value={values.location}
+                  error={errors.location}
+                  label={'Pasirinkite vandens telkinį'}
+                  onChange={(val) => {
+                    const { municipality, municipalityCode, lat, lng, ...rest } = val;
+
+                    setFieldValue('location', {
+                      ...rest,
+                      x: lng,
+                      y: lat,
+                      municipality: { name: municipality, id: municipalityCode },
+                    });
+                  }}
+                  getOptionValue={(option) => option?.cadastralId}
+                  getOptionLabel={getInputValue}
+                  loadOptions={(input: string, page: number | string) =>
+                    getLocationList(input, page)
+                  }
+                  inputValue={getInputValue(values.location)}
+                />
+              )}
               <Or>
                 <Separator />
                 <SeparatorLabelContainer>
