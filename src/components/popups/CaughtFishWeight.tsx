@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Button from '../buttons/Button';
+import { useEffect, useMemo } from 'react';
 import { Form, Formik } from 'formik';
 import FishRow from '../other/FishRow';
 import { Footer } from '../other/CommonStyles';
@@ -20,13 +21,22 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
   const currentRoute = useGetCurrentRoute();
   const { fishTypes, fishTypesLoading } = useFishTypes();
 
-  const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
+  const { data: fishingWeights, isLoading: fishingWeightsLoading, isFetching: fishingWeightsFetching } = useQuery(
     ['fishingWeights', toolsGroup?.id],
     () => api.getFishingWeights(toolsGroup?.id),
     {
       retry: false,
+      enabled: !!toolsGroup?.id,
+      staleTime: 0, 
+      refetchOnMount: 'always',
     },
   );
+
+  useEffect(() => {
+    return () => {
+      queryClient.removeQueries(['fishingWeights', toolsGroup?.id]);
+    };
+  }, [queryClient, toolsGroup?.id]);
 
   const { mutateAsync: weighToolsMutation, isLoading: weighToolsIsLoading } = useMutation(
     (data: any) => {
@@ -35,7 +45,7 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     {
       onSuccess: async () => {
         queryClient.invalidateQueries(['builtTools', location.id]);
-        queryClient.invalidateQueries(['fishingWeights']);
+        queryClient.invalidateQueries(['fishingWeights', toolsGroup.id]);
         onClose();
       },
       onError: () => {
@@ -44,7 +54,18 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     },
   );
 
-  if (fishTypesLoading || fishingWeightsLoading) return <LoaderComponent />;
+  const initialValues = useMemo(() => {
+    const list = fishTypes ?? [];
+    return list.map((fishType) => {
+      const preliminaryAmount = fishingWeights?.preliminary?.[fishType.id];
+      return {
+        ...fishType,
+        amount: preliminaryAmount ?? '',
+      };
+    });
+  }, [fishTypes, fishingWeights?.preliminary]);
+
+  if (fishTypesLoading || fishingWeightsLoading || fishingWeightsFetching) return <LoaderComponent />;
 
   const { label, sealNr } = getBuiltToolInfo(toolsGroup);
 
@@ -72,13 +93,7 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     }
   };
 
-  const initialValues = fishTypes.map((fishType) => {
-    const preliminaryAmount = fishingWeights?.preliminary?.[fishType.id];
-    return {
-      ...fishType,
-      amount: preliminaryAmount || '',
-    };
-  });
+
 
   return (
     <Popup visible={true} onClose={onClose}>
@@ -87,7 +102,11 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
       <SealNumbers>Plombos Nr. {sealNr}</SealNumbers>
       <Message>Apytikslis svoris, kg</Message>
 
-      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+      <Formik 
+        key={toolsGroup?.id}
+        initialValues={initialValues} 
+        enableReinitialize={true}
+        onSubmit={handleSubmit}>
         {({ values, setFieldValue }) => {
           return (
             <StyledForm>
