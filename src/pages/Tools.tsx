@@ -74,7 +74,7 @@ const Tools = () => {
           ) : (
             <ListContainer>
               {map(tools, (tool: any) => (
-                <ToolCard tool={tool} onClick={() => navigate(slugs.tool(tool.id))} />
+                <ToolCard key={tool.id} tool={tool} onClick={() => navigate(slugs.tool(tool.id))} />
               ))}
             </ListContainer>
           )}

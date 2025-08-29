@@ -12,15 +12,16 @@ const ToolCard = ({ tool, onClick }: ToolCardProps) => {
   const location = isInWater ? tool.toolsGroup?.buildEvent.location : undefined;
 
   const isEstuary = location?.name?.includes('baras');
-  const toolInfo =
-    tool.toolType.type == ToolTypeType.NET && tool.data.eyeSize ? `, ${tool.data.eyeSize} mm` : '';
-  const toolLabel = tool.toolType.label + toolInfo;
+  const isNet = tool.toolType?.type === ToolTypeType.NET;
+  const eyeSize = tool.data?.eyeSize;
+  const toolInfo = isNet && eyeSize ? `, ${eyeSize} mm` : '';
+  const toolLabel = (tool.toolType?.label ?? 'Įrankis') + toolInfo;
 
   return (
     <Container onClick={onClick}>
       <IconContainer>
         {!isInWater && <Icon name={IconName.home} />}
-        {isEstuary && <BarNumber>{location?.name.replace(/[^\d]/g, '')}</BarNumber>}
+        {isEstuary && <BarNumber>{location?.name?.replace(/[^\d]/g, '')}</BarNumber>}
         {isInWater && !isEstuary && <Icon name={IconName.tools} />}
       </IconContainer>
       <div>
