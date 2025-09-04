@@ -38,8 +38,8 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
         queryClient.invalidateQueries(['fishingWeights']);
         onClose();
       },
-      onError: () => {
-        handleErrorToastFromServer();
+      onError: ({ response }: any) => {
+        handleErrorToastFromServer(response);
       },
     },
   );
@@ -49,11 +49,8 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
   const { label, sealNr } = getBuiltToolInfo(toolsGroup);
 
   const handleSubmit = (data: any) => {
-    const coordinates: any = {
-      x: location?.x || window.coordinates?.x,
-      y: location?.y || window.coordinates?.y,
-    };
-    if (coordinates.x && coordinates.y) {
+    const coordinates: any = window.coordinates;
+    if (coordinates?.x && coordinates?.y) {
       const filteredData = data.filter((fishType: any) => fishType.amount);
 
       const mappedWeights = filteredData.reduce((obj: any, curr: any) => {
@@ -61,14 +58,16 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
         return obj;
       }, {});
 
-      const params = {
+  const params = {
         data: mappedWeights,
-        coordinates: window.coordinates,
+        coordinates,
         location,
       };
       weighToolsMutation(params);
     } else {
-      handleErrorToast('Nenustatyta buvimo vieta');
+      handleErrorToast(
+        'Nepavyko nustatyti jūsų vietos. Pabandykite dar kartą vėliau ir įsitikinkite, kad naršyklėje suteikti vietos nustatymo leidimai.',
+      );
     }
   };
 

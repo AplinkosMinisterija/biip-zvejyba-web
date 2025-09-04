@@ -13,7 +13,7 @@ const ToolCardSelectable = ({ tool, onSelect, selected = false }: ToolCardSelect
         <StyledIcon name={selected ? IconName.check : IconName.home} $selected={selected} />
       </IconContainer>
       <div>
-        <ToolName>{tool.toolType.label}</ToolName>
+        <ToolName>{tool.toolType?.label ?? 'Įrankis'}</ToolName>
         <SealNr>{tool.sealNr}</SealNr>
       </div>
     </Container>
