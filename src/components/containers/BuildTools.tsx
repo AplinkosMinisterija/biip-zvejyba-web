@@ -103,6 +103,7 @@ const BuildTools = ({ onClose, location}: BuiltToolsProps) => {
           <>
             {map(availableTools, (tool: any) => (
               <ToolCardSelectable
+                key={tool.id}
                 tool={tool}
                 selected={selectedTools.includes(tool.id)}
                 onSelect={handleSelectTool}
