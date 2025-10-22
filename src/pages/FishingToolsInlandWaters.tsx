@@ -40,6 +40,7 @@ const FishingTools = () => {
   });
 
   const currentLocation = manualLocation || location;
+  const showBuildToolsButton = !!currentLocation?.id;
 
   const locationId = (manualLocation || location)?.id;
 
@@ -71,7 +72,7 @@ const FishingTools = () => {
         renewLocation={refetch}
       />
       <Container>
-        {builtToolsFetching || builtTools === undefined ? (
+        {builtToolsFetching || (builtTools === undefined && !!showBuildToolsButton) ? (
           <LoaderComponent />
         ) : isEmpty(builtTools) ? (
           <NotFound message={'Nėra pastatytų įrankių'} />
