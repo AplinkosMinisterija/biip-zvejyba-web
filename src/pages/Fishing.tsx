@@ -11,7 +11,7 @@ export const CurrentFishing = () => {
   const { fishingId = '' } = useParams();
   const navigate = useNavigate();
   const { data, isLoading: currentFishingLoading }: any = useQuery<FishingHistoryResponse | any>(
-    ['fishingHistory'],
+    ['fishingHistory', fishingId],
     () => api.getFishingHistory({ id: fishingId }),
     {
       onError: () => {

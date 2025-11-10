@@ -22,10 +22,10 @@ const FishingTools = () => {
 
   const {
     data: location,
-    isLoading: locationLoading,
+    isFetching: locationLoading,
     refetch,
   } = useQuery({
-    queryKey: ['location'],
+    queryKey: ['location', currentFishing?.id],
     queryFn: () => {
       return api.getLocation({
         query: JSON.stringify({
@@ -42,7 +42,7 @@ const FishingTools = () => {
   const showBuildToolsButton = !!currentLocation?.id;
 
   const { data: builtTools, isFetching: builtToolsFetching } = useQuery(
-    ['builtTools', location?.id],
+    ['builtTools', location?.id, currentFishing?.id],
     () => {
       return api.getBuiltTools({ locationId: location?.id });
     },
