@@ -1,7 +1,4 @@
-import PopUpWithImage from '../layouts/PopUpWithImage';
-import { IconName } from '../other/Icon';
-import { Grid } from '../other/CommonStyles';
-import Button, { ButtonColors } from '../buttons/Button';
+import { useMutation, useQueryClient } from 'react-query';
 import {
   buttonLabels,
   handleErrorToast,
@@ -9,8 +6,11 @@ import {
   handleSuccessToast,
   validationTexts,
 } from '../../utils';
-import { useMutation, useQueryClient } from 'react-query';
 import api from '../../utils/api';
+import Button, { ButtonColors } from '../buttons/Button';
+import PopUpWithImage from '../layouts/PopUpWithImage';
+import { Grid } from '../other/CommonStyles';
+import { IconName } from '../other/Icon';
 
 export const EndFishing = ({ content, onClose }: any) => {
   const queryClient = useQueryClient();
@@ -31,6 +31,8 @@ export const EndFishing = ({ content, onClose }: any) => {
   );
   const handleFinishFishing = () => {
     const coordinates = window.coordinates;
+
+    console.log(coordinates, 'cord');
     if (coordinates) {
       finishFishing({ coordinates });
     } else {
