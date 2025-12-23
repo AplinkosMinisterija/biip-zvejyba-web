@@ -5,7 +5,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import { useCurrentFishing } from '../utils';
 
 export const CurrentFishing = () => {
-  const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
+  const { data: currentFishing, isFetching: currentFishingLoading } = useCurrentFishing();
 
   if (currentFishingLoading) {
     return <LoaderComponent />;

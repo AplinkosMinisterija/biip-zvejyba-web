@@ -2,24 +2,30 @@ import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { device, LocationType, useCurrentFishing, handleErrorToastFromServer } from '../utils';
-import api from '../utils/api';
 import Button from '../components/buttons/Button';
 import ToolsGroupCard from '../components/cards/ToolsGroupCard';
+import BuildTools from '../components/containers/BuildTools';
+import DefaultLayout from '../components/layouts/DefaultLayout';
 import Popup from '../components/layouts/Popup';
 import { Footer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
-import { NotFound } from '../components/other/NotFound';
-import DefaultLayout from '../components/layouts/DefaultLayout';
-import BuildTools from '../components/containers/BuildTools';
 import LocationInfo from '../components/other/LocationInfo';
+import { NotFound } from '../components/other/NotFound';
+import { device, handleErrorToastFromServer, LocationType, useCurrentFishing } from '../utils';
+import api from '../utils/api';
 
 const FishingTools = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
   const locationType = currentFishing?.type;
-  const { data: location, isLoading: locationLoading } = useQuery({
-    queryKey: ['location'],
+  const [manualLocation, setManualLocation] = useState<any>();
+
+  const {
+    data: location,
+    isFetching: locationLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ['location', currentFishing?.id],
     queryFn: () => {
       return api.getLocation({
         query: JSON.stringify({
@@ -32,9 +38,11 @@ const FishingTools = () => {
   });
 
   const isEstuary = currentFishing?.type === LocationType.ESTUARY;
+  const currentLocation = manualLocation || location;
+  const showBuildToolsButton = !!currentLocation?.id;
 
   const { data: builtTools, isFetching: builtToolsFetching } = useQuery(
-    ['builtTools', location?.id],
+    ['builtTools', location?.id, currentFishing?.id],
     () => {
       return api.getBuiltTools({ locationId: location?.id });
     },
@@ -57,9 +65,11 @@ const FishingTools = () => {
         location={location}
         locationLoading={locationLoading}
         locationType={LocationType.POLDERS}
+        setLocationManually={setManualLocation}
+        renewLocation={refetch}
       />
       <Container>
-        {builtToolsFetching || builtTools === undefined ? (
+        {builtToolsFetching || (builtTools === undefined && !!showBuildToolsButton) ? (
           <LoaderComponent />
         ) : isEmpty(builtTools) ? (
           <NotFound message={'Nėra pastatytų įrankių'} />

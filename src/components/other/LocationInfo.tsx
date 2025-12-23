@@ -1,12 +1,12 @@
+import { useState } from 'react';
+import styled from 'styled-components';
+import { device } from '../../utils';
+import Button, { ButtonColors } from '../buttons/Button';
+import LocationForm from '../forms/LocationForm';
+import PopUpWithImage from '../layouts/PopUpWithImage';
+import LoaderComponent from '../other/LoaderComponent';
 import { IconContainer } from './CommonStyles';
 import Icon, { IconName } from './Icon';
-import styled from 'styled-components';
-import Button, { ButtonColors } from '../buttons/Button';
-import { device } from '../../utils';
-import { useState } from 'react';
-import PopUpWithImage from '../layouts/PopUpWithImage';
-import LocationForm from '../forms/LocationForm';
-import LoaderComponent from '../other/LoaderComponent';
 
 const LocationInfo = ({
   location,

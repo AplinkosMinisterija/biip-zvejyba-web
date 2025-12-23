@@ -13,15 +13,15 @@ import {
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'universal-cookie';
+import DefaultLayout from './components/layouts/DefaultLayout';
 import LoaderComponent from './components/other/LoaderComponent';
 import { CantLogin } from './pages/CantLogin';
 import { Login } from './pages/Login';
 import api from './utils/api';
-import { handleUpdateTokens } from './utils/functions';
+import { clearCookies, handleUpdateTokens } from './utils/functions';
 import { useAppSelector, useCheckUserInfo, useEGatesSign, useFilteredRoutes } from './utils/hooks';
 import { slugs } from './utils/routes';
 import { ProfileId } from './utils/types';
-import DefaultLayout from './components/layouts/DefaultLayout';
 const cookies = new Cookies();
 interface RouteProps {
   loggedIn: boolean;
@@ -66,6 +66,9 @@ function App() {
   const shouldUpdateTokens = useCallback(async () => {
     if (!cookies.get('token') && cookies.get('refreshToken')) {
       await updateTokensMutationMutateAsyncFunction();
+    } else if (!cookies.get('token') && !cookies.get('refreshToken')) {
+      localStorage.clear();
+      clearCookies();
     }
   }, [updateTokensMutationMutateAsyncFunction]);
 
