@@ -109,7 +109,6 @@ const ToolGroupAction = ({ onClose, content }: any) => {
                   icon={IconName.check}
                   onClick={handleSubmit}
                   loading={weighToolsIsLoading}
-                  isActive={!weighToolsIsLoading}
                 />
               </>
             )}
