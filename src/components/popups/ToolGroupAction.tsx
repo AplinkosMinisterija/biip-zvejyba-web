@@ -1,13 +1,18 @@
+import { useContext } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { LocationType, PopupContentType } from '../../utils';
+import styled from 'styled-components';
+import {
+  handleErrorToast,
+  handleErrorToastFromServer,
+  LocationType,
+  PopupContentType,
+} from '../../utils';
 import api from '../../utils/api';
 import MenuButton from '../buttons/MenuButton';
-import { IconName } from '../other/Icon';
 import Popup from '../layouts/Popup';
-import styled from 'styled-components';
-import { useContext } from 'react';
-import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
+import { IconName } from '../other/Icon';
 import LoaderComponent from '../other/LoaderComponent';
+import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
 const ToolGroupAction = ({ onClose, content }: any) => {
   const { toolsGroup, location } = content;
@@ -22,6 +27,38 @@ const ToolGroupAction = ({ onClose, content }: any) => {
       retry: false,
     },
   );
+
+  const { mutateAsync: weighToolsMutation, isLoading: weighToolsIsLoading } = useMutation(
+    (data: any) => {
+      return api.weighTools(data, toolsGroup.id);
+    },
+    {
+      onSuccess: async () => {
+        queryClient.invalidateQueries(['builtTools', location.id]);
+        queryClient.invalidateQueries(['fishingWeights', toolsGroup.id]);
+        onClose();
+      },
+      onError: ({ response }: any) => {
+        handleErrorToastFromServer(response);
+      },
+    },
+  );
+
+  const handleSubmit = () => {
+    const coordinates: any = window.coordinates;
+    if (coordinates?.x && coordinates?.y) {
+      const params = {
+        data: {},
+        coordinates,
+        location,
+      };
+      weighToolsMutation(params);
+    } else {
+      handleErrorToast(
+        'Nepavyko nustatyti jūsų vietos. Pabandykite dar kartą vėliau ir įsitikinkite, kad naršyklėje suteikti vietos nustatymo leidimai.',
+      );
+    }
+  };
 
   const { mutateAsync: returnToolsMutation, isLoading: removeToolLoading } = useMutation(
     () =>
@@ -53,19 +90,27 @@ const ToolGroupAction = ({ onClose, content }: any) => {
         ) : (
           <>
             {currentFishing?.type !== LocationType.INLAND_WATERS && (
-              <MenuButton
-                label="Sverti žuvį laive "
-                icon={IconName.scales}
-                onClick={() => {
-                  showPopup({
-                    type: PopupContentType.CAUGHT_FISH_WEIGHT,
-                    content: {
-                      location,
-                      toolsGroup,
-                    },
-                  });
-                }}
-              />
+              <>
+                <MenuButton
+                  label="Sverti žuvį laive "
+                  icon={IconName.scales}
+                  onClick={() => {
+                    showPopup({
+                      type: PopupContentType.CAUGHT_FISH_WEIGHT,
+                      content: {
+                        location,
+                        toolsGroup,
+                      },
+                    });
+                  }}
+                />
+                <MenuButton
+                  label="Patikrinta"
+                  icon={IconName.check}
+                  onClick={handleSubmit}
+                  loading={weighToolsIsLoading}
+                />
+              </>
             )}
             <MenuButton
               label="Sugrąžinti į sandėlį"
