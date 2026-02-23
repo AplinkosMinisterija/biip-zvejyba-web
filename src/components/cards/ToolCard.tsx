@@ -76,7 +76,12 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
       <InnerContainer>
         {canConnect ? (
           <RelativeContainer>
-            <IconContainer onClick={() => setOpenConnect(!openConnect)}>
+            <IconContainer
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenConnect(!openConnect);
+              }}
+            >
               <Icon name={IconName.connect} />
             </IconContainer>
             <StyledOptionsContainer
@@ -99,7 +104,12 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
 
         {canDisconnect ? (
           <RelativeContainer>
-            <IconContainer onClick={() => setOpenDisconnect(!openDisconnect)}>
+            <IconContainer
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenDisconnect(!openDisconnect);
+              }}
+            >
               <Icon name={IconName.disconnect} />
             </IconContainer>
             <StyledOptionsContainer

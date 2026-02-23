@@ -71,6 +71,7 @@ const Tools = () => {
       if (currentToolGroupId && tools[currentToolGroupId]) {
         tools[currentToolGroupId].tools.push(currentTool);
       } else if (currentToolGroupId) {
+        console.log(!currentTool?.toolsGroup?.removeEvent, currentTool?.toolsGroup);
         tools[currentToolGroupId] = {
           id: currentToolGroupId,
           isInWater: !!currentTool?.toolsGroup?.buildEvent && !currentTool?.toolsGroup.removeEvent,
@@ -99,7 +100,7 @@ const Tools = () => {
                   connectOptions={Object.values(groupedByToolGroup!).filter(
                     (toolGroup) =>
                       !toolGroup?.isInWater &&
-                      toolGroup.toolType.type === currentToolGroup.toolType.type &&
+                      toolGroup.toolType.id === currentToolGroup.toolType.id &&
                       toolGroup.id !== currentToolGroup.id,
                   )}
                   onClick={(id: number) => navigate(slugs.tool(id.toString()))}

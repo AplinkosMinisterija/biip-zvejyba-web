@@ -1,4 +1,4 @@
-import { isEmpty, map } from 'lodash';
+import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
@@ -17,19 +17,21 @@ interface BuiltToolsProps {
 
 const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   const queryClient = useQueryClient();
-  const [selectedTools, setSelectedTools] = useState<number[]>([]);
+  const [selectedTool, setSelectedTool] = useState<number>();
 
   const { data: availableTools } = useQuery(['availableTools'], () => api.getAvailableTools(), {
     retry: false,
   });
 
   const { mutateAsync: buildToolsMutation, isLoading: buildToolsIsLoading } = useMutation(
-    api.buildTools,
+    (data: any) => {
+      return api.buildTools(data, `${selectedTool}`);
+    },
     {
       onSuccess: () => {
         queryClient.invalidateQueries('availableTools');
         queryClient.invalidateQueries('builtTools');
-        setSelectedTools([]);
+        setSelectedTool(undefined);
         onClose();
       },
       onError: ({ response }: any) => {
@@ -58,7 +60,7 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   );
 
   const handleSelectTool = (toolId: number) => {
-    setSelectedTools([toolId]);
+    setSelectedTool(toolId);
   };
 
   const handleBuildTools = () => {
@@ -68,7 +70,7 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
     };
     if (coordinates.x && coordinates.y) {
       buildToolsMutation({
-        tools: selectedTools,
+        tools: selectedTool,
         location,
         coordinates,
       });
@@ -90,7 +92,7 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
               <ToolCardSelectable
                 key={currentToolGroup.id}
                 toolGroupInfo={currentToolGroup}
-                selected={selectedTools.includes(currentToolGroup.id)}
+                selected={selectedTool === currentToolGroup.id}
                 onSelect={handleSelectTool}
               />
             ))}
@@ -100,7 +102,7 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
           <StyledButton
             onClick={handleBuildTools}
             loading={buildToolsIsLoading}
-            disabled={buildToolsIsLoading || !selectedTools.length}
+            disabled={buildToolsIsLoading || !selectedTool}
           >
             Pastatyti
           </StyledButton>

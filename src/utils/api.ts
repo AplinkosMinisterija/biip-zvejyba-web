@@ -295,14 +295,17 @@ class Api {
     });
   };
 
-  buildTools = async (params: {
-    tools: number[];
-    coordinates: Coordinates;
-    location: Location;
-  }) => {
+  buildTools = async (
+    params: {
+      coordinates: Coordinates;
+      location: Location;
+    },
+    id: string,
+  ) => {
     return this.post({
       resource: 'toolsGroups/build',
       params,
+      id,
     });
   };
 
