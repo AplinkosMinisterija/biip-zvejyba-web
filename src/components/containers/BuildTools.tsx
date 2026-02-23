@@ -2,31 +2,22 @@ import { isEmpty, map } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { Coordinates, handleErrorToast, handleErrorToastFromServer, slugs } from '../../utils';
+import { handleErrorToast, handleErrorToastFromServer } from '../../utils';
 import api from '../../utils/api';
-import { FishingToolsType } from '../../utils/constants';
-import { Location } from '../../utils/types';
+import { Location, Tool, ToolType } from '../../utils/types';
 import Button from '../buttons/Button';
-import SwitchButton from '../buttons/SwitchButton';
 import ToolCardSelectable from '../cards/ToolCardSelecetable';
 import { Footer } from '../other/CommonStyles';
 import { NotFound } from '../other/NotFound';
-
-const FishingOptions = [
-  { label: 'Atskiras įrankis', value: FishingToolsType.SINGLE },
-  { label: 'Įrankių grupė', value: FishingToolsType.GROUP },
-];
 
 interface BuiltToolsProps {
   onClose: () => void;
   location: Location;
 }
 
-const BuildTools = ({ onClose, location}: BuiltToolsProps) => {
+const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   const queryClient = useQueryClient();
   const [selectedTools, setSelectedTools] = useState<number[]>([]);
-  const [type, setType] = useState<FishingToolsType>(FishingToolsType.SINGLE);
-  const [toolType, setToolType] = useState<number | null>(null);
 
   const { data: availableTools } = useQuery(['availableTools'], () => api.getAvailableTools(), {
     retry: false,
@@ -47,23 +38,27 @@ const BuildTools = ({ onClose, location}: BuiltToolsProps) => {
     },
   );
 
+  const groupedByToolGroup = availableTools?.reduce(
+    (tools, currentTool) => {
+      const currentToolGroupId = currentTool.toolsGroup?.id;
+      if (currentToolGroupId && tools[currentToolGroupId]) {
+        tools[currentToolGroupId].tools.push(currentTool);
+      } else if (currentToolGroupId) {
+        tools[currentToolGroupId] = {
+          id: currentToolGroupId,
+          isInWater: !!currentTool?.toolsGroup?.buildEvent && !currentTool?.toolsGroup.removeEvent,
+          toolType: currentTool.toolType,
+          tools: [currentTool],
+        };
+      }
+
+      return tools;
+    },
+    {} as { [key: string]: { id: number; tools: Tool[]; toolType: ToolType; isInWater: boolean } },
+  );
+
   const handleSelectTool = (toolId: number) => {
-    if (selectedTools.includes(toolId)) {
-      const filtered = selectedTools.filter((id) => id !== toolId);
-      setSelectedTools(filtered);
-      if (type === FishingToolsType.GROUP && !filtered.length) {
-        setToolType(null);
-      }
-    } else {
-      if (type === FishingToolsType.GROUP) {
-        setSelectedTools([...selectedTools, toolId]);
-        if (toolType === null) {
-          setToolType(toolId);
-        }
-      } else {
-        setSelectedTools([toolId]);
-      }
-    }
+    setSelectedTools([toolId]);
   };
 
   const handleBuildTools = () => {
@@ -86,26 +81,16 @@ const BuildTools = ({ onClose, location}: BuiltToolsProps) => {
     <>
       <PopupContainer>
         <PopupTitle>Įrankių pridėjimas</PopupTitle>
-        <SwitchButton
-          options={FishingOptions}
-          value={type}
-          onChange={(value: FishingToolsType) => {
-            setType(value);
-            setSelectedTools([]);
-            if (value === FishingToolsType.SINGLE) {
-              setToolType(null);
-            }
-          }}
-        />
+
         {isEmpty(availableTools) ? (
           <NotFound message={'Nėra laisvų įrankių sandėlyje'} />
         ) : (
           <>
-            {map(availableTools, (tool: any) => (
+            {Object.values(groupedByToolGroup || {}).map((currentToolGroup) => (
               <ToolCardSelectable
-                key={tool.id}
-                tool={tool}
-                selected={selectedTools.includes(tool.id)}
+                key={currentToolGroup.id}
+                toolGroupInfo={currentToolGroup}
+                selected={selectedTools.includes(currentToolGroup.id)}
                 onSelect={handleSelectTool}
               />
             ))}

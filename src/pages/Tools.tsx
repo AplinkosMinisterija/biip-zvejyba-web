@@ -1,4 +1,4 @@
-import { isEmpty, map } from 'lodash';
+import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +11,7 @@ import PopUpWithTitles from '../components/layouts/PopUpWithTitle';
 import { Footer, ListContainer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
 import { NotFound } from '../components/other/NotFound';
-import { slugs, useGetCurrentRoute } from '../utils';
+import { slugs, Tool, ToolType, useGetCurrentRoute } from '../utils';
 import api from '../utils/api';
 import { ToolTypeType } from '../utils/constants';
 import { handleErrorToastFromServer } from '../utils/functions';
@@ -23,7 +23,7 @@ const Tools = () => {
   const currentRoute = useGetCurrentRoute();
   const navigate = useNavigate();
 
-  const { data: tools, isLoading: toolsLoading } = useQuery(
+  const { data: tools, isFetching: toolsLoading } = useQuery(
     ['tools'],
     () => api.tools({ populate: ['toolType', 'toolsGroup'] }),
     {
@@ -65,6 +65,25 @@ const Tools = () => {
     return <LoaderComponent />;
   }
 
+  const groupedByToolGroup = tools?.reduce(
+    (tools, currentTool) => {
+      const currentToolGroupId = currentTool.toolsGroup?.id;
+      if (currentToolGroupId && tools[currentToolGroupId]) {
+        tools[currentToolGroupId].tools.push(currentTool);
+      } else if (currentToolGroupId) {
+        tools[currentToolGroupId] = {
+          id: currentToolGroupId,
+          isInWater: !!currentTool?.toolsGroup?.buildEvent && !currentTool?.toolsGroup.removeEvent,
+          toolType: currentTool.toolType,
+          tools: [currentTool],
+        };
+      }
+
+      return tools;
+    },
+    {} as { [key: string]: { id: number; tools: Tool[]; toolType: ToolType; isInWater: boolean } },
+  );
+
   return (
     <>
       <DefaultLayout title={currentRoute?.title} subtitle={currentRoute?.subtitle}>
@@ -73,8 +92,18 @@ const Tools = () => {
             <NotFound message={'Nėra sukurtų įrankių sandėlyje'} />
           ) : (
             <ListContainer>
-              {map(tools, (tool: any) => (
-                <ToolCard key={tool.id} tool={tool} onClick={() => navigate(slugs.tool(tool.id))} />
+              {Object.values(groupedByToolGroup || {}).map((currentToolGroup) => (
+                <ToolCard
+                  key={currentToolGroup.id}
+                  toolGroupInfo={currentToolGroup}
+                  connectOptions={Object.values(groupedByToolGroup!).filter(
+                    (toolGroup) =>
+                      !toolGroup?.isInWater &&
+                      toolGroup.toolType.type === currentToolGroup.toolType.type &&
+                      toolGroup.id !== currentToolGroup.id,
+                  )}
+                  onClick={(id: number) => navigate(slugs.tool(id.toString()))}
+                />
               ))}
             </ListContainer>
           )}

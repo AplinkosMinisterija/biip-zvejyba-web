@@ -272,10 +272,26 @@ class Api {
       ...params,
     });
   };
-  getAvailableTools = async () => {
+  getAvailableTools = async (): Promise<Tool[]> => {
     return this.get({
       resource: 'tools/available',
       populate: ['toolType'],
+    });
+  };
+
+  connectTools = async (params: { tools: number[] }, id: string) => {
+    return this.post({
+      resource: 'toolsGroups/connect',
+      id,
+      params,
+    });
+  };
+
+  disconnectTools = async (params: { tools: number[] }, id: string) => {
+    return this.post({
+      resource: 'toolsGroups/disconnect',
+      id,
+      params,
     });
   };
 

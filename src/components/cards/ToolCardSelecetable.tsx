@@ -1,20 +1,23 @@
 import styled from 'styled-components';
-import { Tool } from '../../utils';
+import { Tool, ToolType } from '../../utils';
 import Icon, { IconName } from '../other/Icon';
 interface ToolCardSelectable {
-  tool: Tool;
+  toolGroupInfo: { id: number; tools: Tool[]; toolType: ToolType; isInWater: boolean };
   onSelect: (toolId: number) => void;
   selected?: boolean;
 }
-const ToolCardSelectable = ({ tool, onSelect, selected = false }: ToolCardSelectable) => {
+const ToolCardSelectable = ({ onSelect, selected = false, toolGroupInfo }: ToolCardSelectable) => {
+  const toolLabel = toolGroupInfo?.toolType?.label ?? 'Įrankis';
+  const sealNr = toolGroupInfo.tools.map((tool) => `(${tool.sealNr})`);
+
   return (
-    <Container onClick={() => onSelect(tool.id)}>
+    <Container onClick={() => onSelect(toolGroupInfo.id)}>
       <IconContainer $selected={selected}>
         <StyledIcon name={selected ? IconName.check : IconName.home} $selected={selected} />
       </IconContainer>
       <div>
-        <ToolName>{tool.toolType?.label ?? 'Įrankis'}</ToolName>
-        <SealNr>{tool.sealNr}</SealNr>
+        <ToolName>{toolLabel}</ToolName>
+        <SealNr>Plombų nr: {sealNr.join(',')}</SealNr>
       </div>
     </Container>
   );
