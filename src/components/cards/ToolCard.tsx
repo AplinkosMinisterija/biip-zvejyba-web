@@ -6,6 +6,7 @@ import api from '../../utils/api';
 import { Tool, ToolType } from '../../utils/types';
 import OptionsContainer from '../fields/components/OptionsContainer';
 import Icon, { IconName } from '../other/Icon';
+import Loader from '../other/Loader';
 
 interface ToolCardProps {
   toolGroupInfo: { id: number; tools: Tool[]; toolType: ToolType; isInWater: boolean };
@@ -18,7 +19,14 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
   const [openConnect, setOpenConnect] = useState(false);
   const [openDisconnect, setOpenDisconnect] = useState(false);
 
-  const { mutateAsync: connectToolMutation } = useMutation(
+  const handleBlur = (event: any) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      // setOpenDisconnect(false);
+      // setOpenConnect(false);
+    }
+  };
+
+  const { mutateAsync: connectToolMutation, isLoading: connectToolIsLoading } = useMutation(
     (data: any) => {
       return api.connectTools(data, `${toolGroupInfo.id}`);
     },
@@ -32,7 +40,7 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
     },
   );
 
-  const { mutateAsync: disconnectToolMutation } = useMutation(
+  const { mutateAsync: disconnectToolMutation, isLoading: disconnectToolIsLoading } = useMutation(
     (data: any) => {
       return api.disconnectTools(data, `${toolGroupInfo.id}`);
     },
@@ -77,12 +85,16 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
         {canConnect ? (
           <RelativeContainer>
             <IconContainer
+              tabIndex={1}
+              onBlur={handleBlur}
               onClick={(e) => {
+                if (connectToolIsLoading) return;
+
                 e.stopPropagation();
                 setOpenConnect(!openConnect);
               }}
             >
-              <Icon name={IconName.connect} />
+              {connectToolIsLoading ? <Loader /> : <Icon name={IconName.connect} />}
             </IconContainer>
             <StyledOptionsContainer
               getOptionLabel={(item) =>
@@ -105,12 +117,16 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
         {canDisconnect ? (
           <RelativeContainer>
             <IconContainer
+              tabIndex={1}
+              onBlur={handleBlur}
               onClick={(e) => {
+                if (disconnectToolIsLoading) return;
+
                 e.stopPropagation();
                 setOpenDisconnect(!openDisconnect);
               }}
             >
-              <Icon name={IconName.disconnect} />
+              {disconnectToolIsLoading ? <Loader /> : <Icon name={IconName.disconnect} />}
             </IconContainer>
             <StyledOptionsContainer
               getOptionLabel={(item) => `${item.toolType.label} Plombos nr. ${item.sealNr}`}
@@ -145,6 +161,7 @@ const Container = styled.div`
   gap: 12px;
   border: 1px solid transparent;
   position: relative;
+  flex-wrap: wrap;
 
   &:hover {
     background-color: #f5f6fe;
@@ -162,7 +179,9 @@ const InnerContainer = styled.div`
 const RelativeContainer = styled.div``;
 
 const StyledOptionsContainer = styled(OptionsContainer)`
-  top: 10px;
+  position: absolute;
+  top: 70px;
+  left: 0;
 `;
 
 const IconContainer = styled.div`

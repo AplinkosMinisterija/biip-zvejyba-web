@@ -10,6 +10,7 @@ export interface OptionsContainerProps {
   showSelect: boolean;
   hideNoOptions?: boolean;
   handleClick: (option: any) => any;
+  className?: string;
 }
 
 const OptionsContainer = ({
@@ -21,6 +22,7 @@ const OptionsContainer = ({
   handleScroll,
   showSelect,
   loading,
+  className,
 }: OptionsContainerProps) => {
   if (!showSelect || disabled) {
     return <></>;
@@ -56,7 +58,7 @@ const OptionsContainer = ({
   return (
     <OptionContainer
       onClick={(e) => e.stopPropagation()}
-      className="optionContainer"
+      className={className || 'optionContainer'}
       onScroll={handleScroll}
     >
       {renderOptions()}
