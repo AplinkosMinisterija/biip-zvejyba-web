@@ -24,6 +24,7 @@ const ToolCardSelectable = ({ onSelect, selected = false, toolGroupInfo }: ToolC
 };
 
 const Container = styled.div`
+  cursor: pointer;
   grid-template-columns: 48px 1fr;
   width: 100%;
   align-items: center;

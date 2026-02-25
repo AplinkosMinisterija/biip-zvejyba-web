@@ -21,8 +21,8 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
 
   const handleBlur = (event: any) => {
     if (!event.currentTarget.contains(event.relatedTarget)) {
-      // setOpenDisconnect(false);
-      // setOpenConnect(false);
+      setOpenDisconnect(false);
+      setOpenConnect(false);
     }
   };
 
@@ -55,21 +55,22 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
   );
 
   const isInWater = toolGroupInfo.isInWater;
-  const location = isInWater
-    ? toolGroupInfo.tools?.[0]?.toolsGroup?.buildEvent?.location
-    : undefined;
+  const tools = toolGroupInfo?.tools || [];
+  const location = isInWater ? tools?.[0]?.toolsGroup?.buildEvent?.location : undefined;
 
   const isEstuary = location?.name?.includes('baras');
 
   const toolLabel = toolGroupInfo?.toolType?.label ?? 'Įrankis';
-  const sealNr = toolGroupInfo.tools.map((tool) => `(${tool.sealNr})`);
 
-  const canOpenTool = toolGroupInfo.tools.length === 1;
-  const canDisconnect = !isInWater && toolGroupInfo.tools.length > 1;
+  const canOpenTool = tools.length === 1;
+  const canDisconnect = !isInWater && tools.length > 1;
   const canConnect = !isInWater && connectOptions.length;
 
   return (
-    <Container onClick={() => (canOpenTool ? onClick(toolGroupInfo.tools[0].id) : undefined)}>
+    <Container
+      clickable={canOpenTool}
+      onClick={() => (canOpenTool ? onClick(toolGroupInfo.tools[0].id) : undefined)}
+    >
       <InnerContainer>
         <IconContainer>
           {!isInWater && <Icon name={IconName.home} />}
@@ -78,15 +79,21 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
         </IconContainer>
         <div>
           <ToolName>{toolLabel}</ToolName>
-          <div> Plombų nr.: {sealNr.join(',')}</div>
+          <div>
+            Plombų nr.:{' '}
+            {tools.map((tool, index) => (
+              <SealNr key={index} onClick={() => onClick(tool.id)} style={{ cursor: 'pointer' }}>
+                {tool.sealNr}
+                {index < tools.length - 1 && ', '}
+              </SealNr>
+            ))}
+          </div>
         </div>
       </InnerContainer>
       <InnerContainer>
         {canConnect ? (
-          <RelativeContainer>
+          <RelativeContainer tabIndex={1} onBlur={handleBlur}>
             <IconContainer
-              tabIndex={1}
-              onBlur={handleBlur}
               onClick={(e) => {
                 if (connectToolIsLoading) return;
 
@@ -98,7 +105,7 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
             </IconContainer>
             <StyledOptionsContainer
               getOptionLabel={(item) =>
-                `${item.toolType.label} Kiekis: ${item.tools.length} Plombų nr: (${item.tools.map(
+                `${item.toolType.label}. Plombų nr: (${item.tools.map(
                   (tool: any) => tool?.sealNr,
                 )})`
               }
@@ -115,10 +122,8 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
         )}
 
         {canDisconnect ? (
-          <RelativeContainer>
+          <RelativeContainer tabIndex={1} onBlur={handleBlur}>
             <IconContainer
-              tabIndex={1}
-              onBlur={handleBlur}
               onClick={(e) => {
                 if (disconnectToolIsLoading) return;
 
@@ -129,7 +134,7 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
               {disconnectToolIsLoading ? <Loader /> : <Icon name={IconName.disconnect} />}
             </IconContainer>
             <StyledOptionsContainer
-              getOptionLabel={(item) => `${item.toolType.label} Plombos nr. ${item.sealNr}`}
+              getOptionLabel={(item) => `${item.toolType.label}. Plombos nr. ${item.sealNr}`}
               values={toolGroupInfo.tools}
               showSelect={openDisconnect}
               handleClick={(option) => {
@@ -146,8 +151,16 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
   );
 };
 
-const Container = styled.div`
+const SealNr = styled.span`
   cursor: pointer;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+const Container = styled.div<{ clickable: boolean }>`
+  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'not-allowed')};
   width: 100%;
   align-items: center;
   background-color: ${({ theme }) => theme.colors.largeButton.GREY};
@@ -192,6 +205,7 @@ const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 `;
 
 const BarNumber = styled.div``;
