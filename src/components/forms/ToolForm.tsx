@@ -85,9 +85,9 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                 error={errors.toolType}
                 disabled={disabled}
               />
-              {type === ToolTypeType.CATCHER && <SectionTitle>Gaudyklės akių dydis</SectionTitle>}
-              <ToolDetails $columns={type === ToolTypeType.NET ? 2 : 3}>
-                <TextField
+              {/* {type === ToolTypeType.CATCHER && <SectionTitle>Gaudyklės akių dydis</SectionTitle>} */}
+              <ToolDetails $columns={1}>
+                {/* <TextField
                   label={type === ToolTypeType.NET ? 'Akių dydis, mm' : 'Sparnuose, mm'}
                   name="eyeSize"
                   value={values.eyeSize || ''}
@@ -121,7 +121,7 @@ const ToolForm = ({ onSubmit, initialValues, isLoading, isNew }: any) => {
                       onFocus={preventNumInputFromScrolling}
                     />
                   </>
-                )}
+                )} */}
                 {type === ToolTypeType.NET && (
                   <TextField
                     label="Tinklo ilgis, m"
