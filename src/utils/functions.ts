@@ -186,13 +186,12 @@ export const getBuiltToolInfo = (toolsGroup: ToolsGroup) => {
     sealNr: toolsGroup.tools?.map((tool: any) => tool?.sealNr)?.join(', '),
     isGroup: toolsGroup?.tools?.length > 1,
     locationName: toolsGroup?.buildEvent?.location?.name,
+    netLength: toolsGroup.tools.reduce((sum, { data }) => sum + (data?.netLength ?? 0), 0),
   };
 };
 
-export const getReactQueryErrorMessage = (response?: ReactQueryError) => 
-  response?.data?.type ||
-  response?.data?.message || 
-  'error';
+export const getReactQueryErrorMessage = (response?: ReactQueryError) =>
+  response?.data?.type || response?.data?.message || 'error';
 
 export const formatDate = (date?: Date | string) =>
   date ? format(new Date(date), 'yyyy-MM-dd') : '-';

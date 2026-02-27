@@ -366,6 +366,12 @@ class Api {
     });
   };
 
+  getNotCheckedToolsLocations = async (): Promise<{ id: number; name: string }[]> => {
+    return this.get({
+      resource: `toolsGroups/notChecked`,
+    });
+  };
+
   updateProfile = async (params: any): Promise<User> =>
     await this.patch({
       resource: 'users/me',

@@ -8,7 +8,10 @@ interface ToolCardSelectable {
 }
 const ToolCardSelectable = ({ onSelect, selected = false, toolGroupInfo }: ToolCardSelectable) => {
   const toolLabel = toolGroupInfo?.toolType?.label ?? 'Įrankis';
-  const sealNr = toolGroupInfo.tools.map((tool) => `(${tool.sealNr})`);
+  const tools = toolGroupInfo.tools;
+  const sealNr = tools.map((tool) => `(${tool.sealNr})`);
+
+  const netLength = tools.reduce((sum, { data }) => sum + (data?.netLength ?? 0), 0);
 
   return (
     <Container onClick={() => onSelect(toolGroupInfo.id)}>
@@ -16,7 +19,9 @@ const ToolCardSelectable = ({ onSelect, selected = false, toolGroupInfo }: ToolC
         <StyledIcon name={selected ? IconName.check : IconName.home} $selected={selected} />
       </IconContainer>
       <div>
-        <ToolName>{toolLabel}</ToolName>
+        <ToolName>
+          {toolLabel} {netLength ? `. Tinklo ilgis: ${netLength}` : ''}
+        </ToolName>
         <SealNr>Plombų nr: {sealNr.join(',')}</SealNr>
       </div>
     </Container>

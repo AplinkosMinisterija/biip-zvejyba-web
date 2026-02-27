@@ -66,6 +66,7 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
   const canDisconnect = !isInWater && tools.length > 1;
   const canConnect = !isInWater && connectOptions.length;
 
+  const netLength = tools.reduce((sum, { data }) => sum + (data?.netLength ?? 0), 0);
   return (
     <Container
       clickable={canOpenTool}
@@ -78,11 +79,13 @@ const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => 
           {isInWater && !isEstuary && <Icon name={IconName.tools} />}
         </IconContainer>
         <div>
-          <ToolName>{toolLabel}</ToolName>
+          <ToolName>
+            {toolLabel} {netLength ? `. Tinklo ilgis: ${netLength}` : ''}
+          </ToolName>
           <div>
             Plombų nr.:{' '}
             {tools.map((tool, index) => (
-              <SealNr key={index} onClick={() => onClick(tool.id)} style={{ cursor: 'pointer' }}>
+              <SealNr key={index} onClick={() => onClick(tool.id)}>
                 {tool.sealNr}
                 {index < tools.length - 1 && ', '}
               </SealNr>
