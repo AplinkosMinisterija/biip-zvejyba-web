@@ -1,55 +1,205 @@
+import { useState } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { Tool } from '../../utils/types';
+import { handleErrorToastFromServer } from '../../utils';
+import api from '../../utils/api';
+import { Tool, ToolType } from '../../utils/types';
+import OptionsContainer from '../fields/components/OptionsContainer';
 import Icon, { IconName } from '../other/Icon';
-import { ToolTypeType } from '../../utils';
+import Loader from '../other/Loader';
 
 interface ToolCardProps {
-  tool: Tool;
-  onClick: () => void;
+  toolGroupInfo: { id: number; tools: Tool[]; toolType: ToolType; isInWater: boolean };
+  onClick: (id: number) => void;
+  connectOptions: { tools: Tool[]; toolType: ToolType; isInWater: boolean }[];
 }
-const ToolCard = ({ tool, onClick }: ToolCardProps) => {
-  const isInWater = !!tool.toolsGroup && !tool.toolsGroup.removeEvent;
-  const location = isInWater ? tool.toolsGroup?.buildEvent.location : undefined;
+
+const ToolCard = ({ toolGroupInfo, onClick, connectOptions }: ToolCardProps) => {
+  const queryClient = useQueryClient();
+  const [openConnect, setOpenConnect] = useState(false);
+  const [openDisconnect, setOpenDisconnect] = useState(false);
+
+  const handleBlur = (event: any) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setOpenDisconnect(false);
+      setOpenConnect(false);
+    }
+  };
+
+  const { mutateAsync: connectToolMutation, isLoading: connectToolIsLoading } = useMutation(
+    (data: any) => {
+      return api.connectTools(data, `${toolGroupInfo.id}`);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('tools');
+      },
+      onError: ({ response }) => {
+        handleErrorToastFromServer(response);
+      },
+    },
+  );
+
+  const { mutateAsync: disconnectToolMutation, isLoading: disconnectToolIsLoading } = useMutation(
+    (data: any) => {
+      return api.disconnectTools(data, `${toolGroupInfo.id}`);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('tools');
+      },
+      onError: ({ response }) => {
+        handleErrorToastFromServer(response);
+      },
+    },
+  );
+
+  const isInWater = toolGroupInfo.isInWater;
+  const tools = toolGroupInfo?.tools || [];
+  const location = isInWater ? tools?.[0]?.toolsGroup?.buildEvent?.location : undefined;
 
   const isEstuary = location?.name?.includes('baras');
-  const isNet = tool.toolType?.type === ToolTypeType.NET;
-  const eyeSize = tool.data?.eyeSize;
-  const toolInfo = isNet && eyeSize ? `, ${eyeSize} mm` : '';
-  const toolLabel = (tool.toolType?.label ?? 'Įrankis') + toolInfo;
 
+  const toolLabel = toolGroupInfo?.toolType?.label ?? 'Įrankis';
+
+  const canOpenTool = tools.length === 1;
+  const canDisconnect = !isInWater && tools.length > 1;
+  const canConnect = !isInWater && connectOptions.length;
+
+  const netLength = tools.reduce((sum, { data }) => sum + (data?.netLength ?? 0), 0);
   return (
-    <Container onClick={onClick}>
-      <IconContainer>
-        {!isInWater && <Icon name={IconName.home} />}
-        {isEstuary && <BarNumber>{location?.name?.replace(/[^\d]/g, '')}</BarNumber>}
-        {isInWater && !isEstuary && <Icon name={IconName.tools} />}
-      </IconContainer>
-      <div>
-        <ToolName>{toolLabel}</ToolName>
-        <div>{tool.sealNr}</div>
-      </div>
+    <Container
+      clickable={canOpenTool}
+      onClick={() => (canOpenTool ? onClick(toolGroupInfo.tools[0].id) : undefined)}
+    >
+      <InnerContainer>
+        <IconContainer>
+          {!isInWater && <Icon name={IconName.home} />}
+          {isEstuary && <BarNumber>{location?.name?.replace(/[^\d]/g, '')}</BarNumber>}
+          {isInWater && !isEstuary && <Icon name={IconName.tools} />}
+        </IconContainer>
+        <div>
+          <ToolName>
+            {toolLabel} {netLength ? `. Tinklo ilgis: ${netLength}` : ''}
+          </ToolName>
+          <div>
+            Plombų nr.:{' '}
+            {tools.map((tool, index) => (
+              <SealNr key={index} onClick={() => onClick(tool.id)}>
+                {tool.sealNr}
+                {index < tools.length - 1 && ', '}
+              </SealNr>
+            ))}
+          </div>
+        </div>
+      </InnerContainer>
+      <InnerContainer>
+        {canConnect ? (
+          <RelativeContainer tabIndex={1} onBlur={handleBlur}>
+            <IconContainer
+              onClick={(e) => {
+                if (connectToolIsLoading) return;
+
+                e.stopPropagation();
+                setOpenConnect(!openConnect);
+              }}
+            >
+              {connectToolIsLoading ? <Loader /> : <Icon name={IconName.connect} />}
+            </IconContainer>
+            <StyledOptionsContainer
+              getOptionLabel={(item) =>
+                `${item.toolType.label}. Plombų nr: (${item.tools.map(
+                  (tool: any) => tool?.sealNr,
+                )})`
+              }
+              values={connectOptions}
+              showSelect={openConnect}
+              handleClick={(option) => {
+                connectToolMutation({ tools: option.tools.map((tool: any) => tool.id) });
+                setOpenConnect(false);
+              }}
+            />
+          </RelativeContainer>
+        ) : (
+          <></>
+        )}
+
+        {canDisconnect ? (
+          <RelativeContainer tabIndex={1} onBlur={handleBlur}>
+            <IconContainer
+              onClick={(e) => {
+                if (disconnectToolIsLoading) return;
+
+                e.stopPropagation();
+                setOpenDisconnect(!openDisconnect);
+              }}
+            >
+              {disconnectToolIsLoading ? <Loader /> : <Icon name={IconName.disconnect} />}
+            </IconContainer>
+            <StyledOptionsContainer
+              getOptionLabel={(item) => `${item.toolType.label}. Plombos nr. ${item.sealNr}`}
+              values={toolGroupInfo.tools}
+              showSelect={openDisconnect}
+              handleClick={(option) => {
+                disconnectToolMutation({ tools: [option.id] });
+                setOpenDisconnect(false);
+              }}
+            />
+          </RelativeContainer>
+        ) : (
+          <></>
+        )}
+      </InnerContainer>
     </Container>
   );
 };
 
-const Container = styled.div`
+const SealNr = styled.span`
   cursor: pointer;
-  grid-template-columns: 48px 1fr;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+const Container = styled.div<{ clickable: boolean }>`
+  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'not-allowed')};
   width: 100%;
   align-items: center;
   background-color: ${({ theme }) => theme.colors.largeButton.GREY};
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
-  display: grid;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   text-decoration: none;
   gap: 12px;
   border: 1px solid transparent;
+  position: relative;
+  flex-wrap: wrap;
+
   &:hover {
     background-color: #f5f6fe;
     border: 1px solid ${({ theme }) => theme.colors.primary};
   }
 `;
+
+const InnerContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+`;
+
+const RelativeContainer = styled.div``;
+
+const StyledOptionsContainer = styled(OptionsContainer)`
+  position: absolute;
+  top: 70px;
+  left: 0;
+`;
+
 const IconContainer = styled.div`
   background-color: white;
   border-radius: 50%;
@@ -58,6 +208,7 @@ const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 `;
 
 const BarNumber = styled.div``;

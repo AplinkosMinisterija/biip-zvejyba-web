@@ -2,10 +2,13 @@ import { CgClose } from 'react-icons/cg';
 import { FaAnchor, FaCheck, FaTrash } from 'react-icons/fa';
 import { FaChevronRight } from 'react-icons/fa6';
 import { FiArrowLeft, FiClock, FiDownload, FiMail, FiMenu } from 'react-icons/fi';
+import { GoLink, GoUnlink } from 'react-icons/go';
 import { HiOutlineUsers } from 'react-icons/hi';
 import { IoMdCalendar } from 'react-icons/io';
 import { IoPersonOutline } from 'react-icons/io5';
 import { LiaBalanceScaleSolid } from 'react-icons/lia';
+
+import { IoLocationOutline } from 'react-icons/io5';
 import {
   MdDone,
   MdExitToApp,
@@ -20,9 +23,10 @@ import {
   MdUnfoldMore,
 } from 'react-icons/md';
 import { PiArrowBendDownLeftBold } from 'react-icons/pi';
-import { IoLocationOutline } from 'react-icons/io5';
 
 export enum IconName {
+  connect = 'connect',
+  disconnect = 'disconnect',
   remove = 'remove',
   download = 'download',
   logout = 'logout',
@@ -86,6 +90,10 @@ interface IconProps {
 
 const Icon = ({ name, className }: IconProps) => {
   switch (name) {
+    case IconName.connect:
+      return <GoLink className={className} />;
+    case IconName.disconnect:
+      return <GoUnlink className={className} />;
     case IconName.sidebarLogo:
       return (
         <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 407.18 71.87">

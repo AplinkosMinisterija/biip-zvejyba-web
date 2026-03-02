@@ -272,21 +272,40 @@ class Api {
       ...params,
     });
   };
-  getAvailableTools = async () => {
+  getAvailableTools = async (): Promise<Tool[]> => {
     return this.get({
       resource: 'tools/available',
       populate: ['toolType'],
     });
   };
 
-  buildTools = async (params: {
-    tools: number[];
-    coordinates: Coordinates;
-    location: Location;
-  }) => {
+  connectTools = async (params: { tools: number[] }, id: string) => {
+    return this.post({
+      resource: 'toolsGroups/connect',
+      id,
+      params,
+    });
+  };
+
+  disconnectTools = async (params: { tools: number[] }, id: string) => {
+    return this.post({
+      resource: 'toolsGroups/disconnect',
+      id,
+      params,
+    });
+  };
+
+  buildTools = async (
+    params: {
+      coordinates: Coordinates;
+      location: Location;
+    },
+    id: string,
+  ) => {
     return this.post({
       resource: 'toolsGroups/build',
       params,
+      id,
     });
   };
 
@@ -344,6 +363,12 @@ class Api {
   getBuiltTools = async ({ locationId }: { locationId?: string }): Promise<any> => {
     return this.get({
       resource: `toolsGroups/location/${locationId}`,
+    });
+  };
+
+  getNotCheckedToolsLocations = async (): Promise<{ id: number; name: string }[]> => {
+    return this.get({
+      resource: `toolsGroups/notChecked`,
     });
   };
 

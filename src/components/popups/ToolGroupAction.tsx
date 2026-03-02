@@ -34,8 +34,8 @@ const ToolGroupAction = ({ onClose, content }: any) => {
     },
     {
       onSuccess: async () => {
-        queryClient.invalidateQueries(['builtTools', location.id]);
-        queryClient.invalidateQueries(['fishingWeights', toolsGroup.id]);
+        queryClient.invalidateQueries(['builtTools', location?.id]);
+        queryClient.invalidateQueries(['fishingWeights', toolsGroup?.id]);
         onClose();
       },
       onError: ({ response }: any) => {

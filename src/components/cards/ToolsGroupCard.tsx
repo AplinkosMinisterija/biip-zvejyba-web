@@ -1,8 +1,8 @@
+import { useContext } from 'react';
 import styled from 'styled-components';
 import { getBuiltToolInfo, PopupContentType, theme, ToolsGroup } from '../../utils';
 import Icon, { IconName } from '../other/Icon';
 import Tag from '../other/Tag';
-import { useContext } from 'react';
 import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
 interface ToolsGroupCardProps {
@@ -21,7 +21,7 @@ const ToolsGroupCard = ({
 }: ToolsGroupCardProps) => {
   const isCheckedTool = !!toolsGroup?.weightEvent;
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
-  const { label, sealNr, locationName } = getBuiltToolInfo(toolsGroup);
+  const { label, sealNr, locationName, netLength } = getBuiltToolInfo(toolsGroup);
 
   return (
     <>
@@ -47,9 +47,11 @@ const ToolsGroupCard = ({
             )}
           </IconContainer>
           <div>
-            <ToolName>{label}</ToolName>
+            <ToolName>
+              {label} {netLength ? `. Tinklo ilgis: ${netLength}` : ''}
+            </ToolName>
             {!isEstuary ? <SealNr>{`Telkinys: ${locationName} `}</SealNr> : ''}
-            <SealNr>{sealNr}</SealNr>
+            <SealNr> Plombų nr.: {sealNr}</SealNr>
           </div>
         </InnerContainer>
         {isCheckedTool && <Tag color={theme.colors.success} label={'Patikrintas'} />}

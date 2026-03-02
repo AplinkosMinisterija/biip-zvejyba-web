@@ -1,8 +1,8 @@
+import { phoneNumberRegexPattern } from '@aplinkosministerija/design-system';
 import { isEmpty } from 'lodash';
 import * as Yup from 'yup';
 import { ToolTypeType } from './constants';
 import { validationTexts } from './texts';
-import { phoneNumberRegexPattern } from '@aplinkosministerija/design-system';
 
 export const loginSchema = Yup.object().shape({
   email: Yup.string().required(validationTexts.requireText).email(validationTexts.badEmailFormat),
@@ -32,19 +32,19 @@ export const toolSchema = Yup.object().shape({
   type: Yup.string().required(validationTexts.requireText),
   sealNr: Yup.string().required(validationTexts.requireText),
   toolType: Yup.object().required(validationTexts.requireText),
-  eyeSize: Yup.number().required(validationTexts.requireText),
-  eyeSize2: Yup.number().when(['type'], (type: any, schema) => {
-    if (type[0] === ToolTypeType.CATCHER) {
-      return schema.required(validationTexts.requireText);
-    }
-    return schema.nullable();
-  }),
-  eyeSize3: Yup.number().when(['type'], (type: any, schema) => {
-    if (type[0] === ToolTypeType.CATCHER) {
-      return schema.required(validationTexts.requireText);
-    }
-    return schema.nullable();
-  }),
+  // eyeSize: Yup.number().required(validationTexts.requireText),
+  // eyeSize2: Yup.number().when(['type'], (type: any, schema) => {
+  //   if (type[0] === ToolTypeType.CATCHER) {
+  //     return schema.required(validationTexts.requireText);
+  //   }
+  //   return schema.nullable();
+  // }),
+  // eyeSize3: Yup.number().when(['type'], (type: any, schema) => {
+  //   if (type[0] === ToolTypeType.CATCHER) {
+  //     return schema.required(validationTexts.requireText);
+  //   }
+  //   return schema.nullable();
+  // }),
   netLength: Yup.number().when(['type'], (type: any, schema) => {
     if (type[0] === ToolTypeType.NET) {
       return schema.required(validationTexts.requireText);

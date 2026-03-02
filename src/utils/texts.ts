@@ -71,6 +71,7 @@ export const buttonLabels = {
   sick: 'Sergu',
   other: 'Kita',
   confirm: 'Patvirtinti',
+  close: 'Uždaryti',
 };
 
 export const inputLabels = {

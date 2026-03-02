@@ -5,6 +5,7 @@ import Button, { ButtonColors } from '../buttons/Button';
 import LocationForm from '../forms/LocationForm';
 import PopUpWithImage from '../layouts/PopUpWithImage';
 import LoaderComponent from '../other/LoaderComponent';
+import NotCheckedToolsLocations from '../popups/NotCheckedToolsLocations';
 import { IconContainer } from './CommonStyles';
 import Icon, { IconName } from './Icon';
 
@@ -19,6 +20,7 @@ const LocationInfo = ({
 
   return (
     <>
+      <NotCheckedToolsLocations location={location} />
       <TitleWrapper>
         <Title>{location?.name || 'Nenustatytas vandens telkinys'}</Title>
         {setLocationManually && (

@@ -1,26 +1,35 @@
 import styled from 'styled-components';
-import { Tool } from '../../utils';
+import { Tool, ToolType } from '../../utils';
 import Icon, { IconName } from '../other/Icon';
 interface ToolCardSelectable {
-  tool: Tool;
+  toolGroupInfo: { id: number; tools: Tool[]; toolType: ToolType; isInWater: boolean };
   onSelect: (toolId: number) => void;
   selected?: boolean;
 }
-const ToolCardSelectable = ({ tool, onSelect, selected = false }: ToolCardSelectable) => {
+const ToolCardSelectable = ({ onSelect, selected = false, toolGroupInfo }: ToolCardSelectable) => {
+  const toolLabel = toolGroupInfo?.toolType?.label ?? 'Įrankis';
+  const tools = toolGroupInfo.tools;
+  const sealNr = tools.map((tool) => `(${tool.sealNr})`);
+
+  const netLength = tools.reduce((sum, { data }) => sum + (data?.netLength ?? 0), 0);
+
   return (
-    <Container onClick={() => onSelect(tool.id)}>
+    <Container onClick={() => onSelect(toolGroupInfo.id)}>
       <IconContainer $selected={selected}>
         <StyledIcon name={selected ? IconName.check : IconName.home} $selected={selected} />
       </IconContainer>
       <div>
-        <ToolName>{tool.toolType?.label ?? 'Įrankis'}</ToolName>
-        <SealNr>{tool.sealNr}</SealNr>
+        <ToolName>
+          {toolLabel} {netLength ? `. Tinklo ilgis: ${netLength}` : ''}
+        </ToolName>
+        <SealNr>Plombų nr: {sealNr.join(',')}</SealNr>
       </div>
     </Container>
   );
 };
 
 const Container = styled.div`
+  cursor: pointer;
   grid-template-columns: 48px 1fr;
   width: 100%;
   align-items: center;
