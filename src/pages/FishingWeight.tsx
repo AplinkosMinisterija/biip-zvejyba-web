@@ -32,6 +32,8 @@ const FishingWeight = () => {
   const { fishingWeights, fishingWeightsLoading } = useFishWeights();
   const { fishingWeightLoading, fishingWeightMutation } = useFishingWeightMutation();
 
+  console.log(showSwitch, 'showSwitch');
+
   if (currentFishingLoading || fishTypesLoading || fishingWeightsLoading) {
     return <LoaderComponent />;
   }
