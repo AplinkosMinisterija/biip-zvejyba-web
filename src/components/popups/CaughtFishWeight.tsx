@@ -1,10 +1,7 @@
-import styled from 'styled-components';
-import Button from '../buttons/Button';
-import { useEffect, useMemo } from 'react';
 import { Form, Formik } from 'formik';
-import FishRow from '../other/FishRow';
-import { Footer } from '../other/CommonStyles';
+import { useEffect, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import styled from 'styled-components';
 import {
   getBuiltToolInfo,
   handleErrorToast,
@@ -13,24 +10,27 @@ import {
   useGetCurrentRoute,
 } from '../../utils';
 import api from '../../utils/api';
-import LoaderComponent from '../other/LoaderComponent';
+import Button from '../buttons/Button';
 import Popup from '../layouts/Popup';
+import { Footer } from '../other/CommonStyles';
+import FishRow from '../other/FishRow';
+import LoaderComponent from '../other/LoaderComponent';
 
 const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) => {
   const queryClient = useQueryClient();
   const currentRoute = useGetCurrentRoute();
   const { fishTypes, fishTypesLoading } = useFishTypes();
 
-  const { data: fishingWeights, isLoading: fishingWeightsLoading, isFetching: fishingWeightsFetching } = useQuery(
-    ['fishingWeights', toolsGroup?.id],
-    () => api.getFishingWeights(toolsGroup?.id),
-    {
-      retry: false,
-      enabled: !!toolsGroup?.id,
-      staleTime: 0, 
-      refetchOnMount: 'always',
-    },
-  );
+  const {
+    data: fishingWeights,
+    isLoading: fishingWeightsLoading,
+    isFetching: fishingWeightsFetching,
+  } = useQuery(['fishingWeights', toolsGroup?.id], () => api.getFishingWeights(toolsGroup?.id), {
+    retry: false,
+    enabled: !!toolsGroup?.id,
+    staleTime: 0,
+    refetchOnMount: 'always',
+  });
 
   useEffect(() => {
     return () => {
@@ -55,9 +55,11 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
   );
 
   const initialValues = useMemo(() => {
-    const list = fishTypes ?? [];
+    const list = [...(fishTypes ?? [])].sort((a, b) => b.priority - a.priority);
+
     return list.map((fishType) => {
       const preliminaryAmount = fishingWeights?.preliminary?.[fishType.id];
+
       return {
         ...fishType,
         amount: preliminaryAmount ?? '',
@@ -65,7 +67,8 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     });
   }, [fishTypes, fishingWeights?.preliminary]);
 
-  if (fishTypesLoading || fishingWeightsLoading || fishingWeightsFetching) return <LoaderComponent />;
+  if (fishTypesLoading || fishingWeightsLoading || fishingWeightsFetching)
+    return <LoaderComponent />;
 
   const { label, sealNr } = getBuiltToolInfo(toolsGroup);
 
@@ -79,7 +82,7 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
         return obj;
       }, {});
 
-  const params = {
+      const params = {
         data: mappedWeights,
         coordinates,
         location,
@@ -92,8 +95,6 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     }
   };
 
-
-
   return (
     <Popup visible={true} onClose={onClose}>
       <Title>{currentRoute?.title}</Title>
@@ -101,11 +102,12 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
       <SealNumbers>Plombos Nr. {sealNr}</SealNumbers>
       <Message>Apytikslis svoris, kg</Message>
 
-      <Formik 
+      <Formik
         key={toolsGroup?.id}
-        initialValues={initialValues} 
+        initialValues={initialValues}
         enableReinitialize={true}
-        onSubmit={handleSubmit}>
+        onSubmit={handleSubmit}
+      >
         {({ values, setFieldValue }) => {
           return (
             <StyledForm>
