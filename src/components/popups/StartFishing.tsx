@@ -1,7 +1,5 @@
-import PopUpWithImage from '../layouts/PopUpWithImage';
-import { IconName } from '../other/Icon';
-import { Grid } from '../other/CommonStyles';
-import Button, { ButtonColors } from '../buttons/Button';
+import { useContext } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 import {
   buttonLabels,
   handleErrorToast,
@@ -9,9 +7,11 @@ import {
   PopupContentType,
   validationTexts,
 } from '../../utils';
-import { useMutation, useQueryClient } from 'react-query';
 import api from '../../utils/api';
-import { useContext } from 'react';
+import Button, { ButtonColors } from '../buttons/Button';
+import PopUpWithImage from '../layouts/PopUpWithImage';
+import { Grid } from '../other/CommonStyles';
+import { IconName } from '../other/Icon';
 import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
 export const StartFishing = ({ content, onClose }: any) => {

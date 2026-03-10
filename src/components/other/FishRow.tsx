@@ -1,6 +1,6 @@
+import React from 'react';
 import styled from 'styled-components';
 import TextField from '../fields/TextField';
-import React from 'react';
 
 interface FishRowProp {
   onChange: (value: any) => void;
@@ -23,17 +23,11 @@ const FishRow = React.memo(({ onChange, fish, index }: FishRowProp) => {
   return (
     <Row>
       <ImageContainer>
-        <Image
-          src={
-            photo?.url
-              ? photo?.url
-              : '/no-image.png'
-          }
-        />
+        <Image src={photo?.url ? photo?.url : '/no-image.png'} />
       </ImageContainer>
       <Column>
         <TextColumn>
-          <Title>{label.charAt(0).toUpperCase() + label.slice(1)}</Title>
+          <Title>{label ? label?.charAt(0).toUpperCase() + label?.slice(1) : ''}</Title>
           {preliminaryAmount && <Caught>{`Sugauta ${preliminaryAmount} kg`}</Caught>}
         </TextColumn>
         <InnerRow>
