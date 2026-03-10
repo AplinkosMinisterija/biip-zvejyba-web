@@ -1,20 +1,22 @@
+import { Form, Formik } from 'formik';
 import { useState } from 'react';
+import styled from 'styled-components';
+import Button from '../components/buttons/Button';
+import SwitchButton from '../components/buttons/SwitchButton';
+import DefaultLayout from '../components/layouts/DefaultLayout';
+import { Footer } from '../components/other/CommonStyles';
+import FishRow from '../components/other/FishRow';
+import LoaderComponent from '../components/other/LoaderComponent';
 import {
   FishingWeighType,
+  handleErrorToast,
   LocationType,
   useCurrentFishing,
   useFishingWeightMutation,
   useFishTypes,
   useFishWeights,
+  validationTexts,
 } from '../utils';
-import SwitchButton from '../components/buttons/SwitchButton';
-import DefaultLayout from '../components/layouts/DefaultLayout';
-import { Form, Formik } from 'formik';
-import FishRow from '../components/other/FishRow';
-import { Footer } from '../components/other/CommonStyles';
-import styled from 'styled-components';
-import Button from '../components/buttons/Button';
-import LoaderComponent from '../components/other/LoaderComponent';
 
 const FishingWeightOptions = [
   { label: 'Sugautos žuvys', value: FishingWeighType.CAUGHT },
@@ -35,7 +37,7 @@ const FishingWeight = () => {
   }
 
   const caughtFishData = fishingWeights?.total || fishingWeights?.preliminary || {};
-  const initialValues =
+  const initialValues = (
     currentFishing?.type === LocationType.INLAND_WATERS || type !== FishingWeighType.CAUGHT
       ? fishTypes.map((fishType) => {
           const amount = (fishingWeights?.total || fishingWeights?.preliminary)?.[fishType.id];
@@ -52,7 +54,8 @@ const FishingWeight = () => {
             preliminaryAmount: caughtFishData[key] || '',
             amount: caughtFishData[key] || '',
           };
-        });
+        })
+  ).sort((a, b) => (Number(b.preliminaryAmount) || 0) - (Number(a.preliminaryAmount) || 0));
 
   const mapWeights = (values: any) => {
     return values.reduce((obj: any, curr: any) => {
@@ -62,7 +65,8 @@ const FishingWeight = () => {
   };
 
   const handleSubmit = (values: any) => {
-    if (!window.coordinates) return;
+    if (!window?.coordinates) return handleErrorToast(validationTexts.mustAllowToSetCoordinates);
+
     const mappedWeights = mapWeights(values);
 
     fishingWeightMutation({
@@ -117,7 +121,7 @@ const FishingWeight = () => {
     }
   };
 
-  const fishingWeightLoadingOrSwitching = fishingWeightLoading || isSwitching
+  const fishingWeightLoadingOrSwitching = fishingWeightLoading || isSwitching;
 
   return (
     <DefaultLayout>
@@ -144,7 +148,11 @@ const FishingWeight = () => {
                   />
                 ))}
                 <Footer>
-                  <StyledButton loading={fishingWeightLoadingOrSwitching} disabled={fishingWeightLoadingOrSwitching}>
+                  <StyledButton
+                    type="submit"
+                    loading={fishingWeightLoadingOrSwitching}
+                    disabled={fishingWeightLoadingOrSwitching}
+                  >
                     Saugoti pakeitimus
                   </StyledButton>
                 </Footer>

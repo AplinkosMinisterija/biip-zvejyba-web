@@ -32,7 +32,6 @@ export const EndFishing = ({ content, onClose }: any) => {
   const handleFinishFishing = () => {
     const coordinates = window.coordinates;
 
-    console.log(coordinates, 'cord');
     if (coordinates) {
       finishFishing({ coordinates });
     } else {
