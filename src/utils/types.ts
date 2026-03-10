@@ -142,6 +142,7 @@ export interface FishType {
   id: number;
   label: string;
   photo: any;
+  priority: number;
 }
 
 export interface Research {
