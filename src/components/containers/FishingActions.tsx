@@ -27,7 +27,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
 
   const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
     ['fishingWeights'],
-    () =>api.getFishingWeights(),
+    () => api.getFishingWeights(),
     {
       retry: false,
     },
@@ -66,6 +66,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           title="Žuvies svoris</br>krante"
           subtitle="Pasverkite bendrą svorį"
           buttonLabel="Sverti"
+          isDisabled={locationType !== LocationType.INLAND_WATERS && weightOnShoreExist}
           onClick={() => {
             navigate(slugs.fishingWeight);
           }}
