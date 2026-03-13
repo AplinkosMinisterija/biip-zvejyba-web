@@ -5,10 +5,10 @@ import TextField from '../fields/TextField';
 interface FishRowProp {
   onChange: (value: any) => void;
   fish: { label: string; photo: any; amount: number; preliminaryAmount?: number };
-  disabled?: boolean;
+  index?: number;
 }
 
-const FishRow = React.memo(({ onChange, fish, disabled }: FishRowProp) => {
+const FishRow = React.memo(({ onChange, fish, index }: FishRowProp) => {
   const preventNumInputFromScrolling = (e: any) =>
     e.target.addEventListener(
       'wheel',
@@ -31,11 +31,7 @@ const FishRow = React.memo(({ onChange, fish, disabled }: FishRowProp) => {
           {preliminaryAmount && <Caught>{`Sugauta ${preliminaryAmount} kg`}</Caught>}
         </TextColumn>
         <InnerRow>
-          <Button
-            disabled={disabled}
-            type="button"
-            onClick={() => amount > 0 && onChange(amount - 1)}
-          >
+          <Button type="button" onClick={() => amount > 0 && onChange(amount - 1)}>
             -
           </Button>
           <StyledNumericTextField
@@ -47,9 +43,8 @@ const FishRow = React.memo(({ onChange, fish, disabled }: FishRowProp) => {
             pattern={/[0-9]+/}
             inputMode="numeric"
             onFocus={preventNumInputFromScrolling}
-            disabled={disabled}
           />
-          <Button disabled={disabled} type="button" onClick={() => onChange((amount || 0) + 1)}>
+          <Button type="button" onClick={() => onChange((amount || 0) + 1)}>
             +
           </Button>
         </InnerRow>

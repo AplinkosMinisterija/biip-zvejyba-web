@@ -95,8 +95,6 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     }
   };
 
-  const disabled = !!Object.keys(fishingWeights?.preliminary || {}).length;
-
   return (
     <Popup visible={true} onClose={onClose}>
       <Title>{currentRoute?.title}</Title>
@@ -118,16 +116,14 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
                   key={`fish_type_${value.id}`}
                   fish={value}
                   onChange={(value) => setFieldValue(`${index}.amount`, Number(value))}
-                  disabled={disabled}
+                  index={index}
                 />
               ))}
-              {!disabled && (
-                <Footer>
-                  <StyledButton loading={weighToolsIsLoading} disabled={weighToolsIsLoading}>
-                    Saugoti pakeitimus
-                  </StyledButton>
-                </Footer>
-              )}
+              <Footer>
+                <StyledButton loading={weighToolsIsLoading} disabled={weighToolsIsLoading}>
+                  Saugoti pakeitimus
+                </StyledButton>
+              </Footer>
             </StyledForm>
           );
         }}

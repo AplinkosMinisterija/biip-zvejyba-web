@@ -15,7 +15,7 @@ import LoaderComponent from '../other/LoaderComponent';
 import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
 const ToolGroupAction = ({ onClose, content }: any) => {
-  const { toolsGroup, location, disabled } = content;
+  const { toolsGroup, location } = content;
 
   const queryClient = useQueryClient();
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
@@ -89,7 +89,7 @@ const ToolGroupAction = ({ onClose, content }: any) => {
           <LoaderComponent />
         ) : (
           <>
-            {currentFishing?.type !== LocationType.INLAND_WATERS && !disabled && (
+            {currentFishing?.type !== LocationType.INLAND_WATERS && (
               <>
                 <MenuButton
                   label="Sverti žuvį laive "

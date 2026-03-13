@@ -34,7 +34,6 @@ const ToolsGroupCard = ({
                 content: {
                   location,
                   toolsGroup,
-                  disabled: isCheckedTool,
                 },
               });
             }
