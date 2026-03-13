@@ -314,6 +314,7 @@ class Api {
       data: { [key: number]: number };
       coordinates: Coordinates;
       location: Location;
+      preliminaryData: { [key: number]: number };
     },
     id: string,
   ) => {

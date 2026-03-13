@@ -10,8 +10,8 @@ export enum ServerErrors {
   FISH_MUST_BE_WEIGHTED = 'Fish must be weighted',
   FISH_ALREADY_WEIGHTED = 'Fish already weighted',
   LOCATION_NOT_FOUND = 'Location not found',
+  WEIGHT_DIFFERENCE = 'Weight difference greater than 20%',
 }
-
 const mapsHost = import.meta.env.VITE_MAPS_HOST;
 
 export const Url = {

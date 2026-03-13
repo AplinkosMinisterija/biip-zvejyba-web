@@ -12,11 +12,11 @@ import {
 
 import { useEffect, useState } from 'react';
 import { matchPath, useLocation } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import { AppDispatch, RootState } from '../state/store';
 import { routes, slugs } from './routes';
 import { User } from './types';
-import { useNavigate } from 'react-router-dom';
 
 const cookies = new Cookies();
 
@@ -212,19 +212,25 @@ export const useFishingWeightMutation = () => {
   const navigate = useNavigate();
 
   const { mutateAsync: fishingWeightMutation, isLoading: fishingWeightLoading } = useMutation(
-    (data: any) => api.createFishingFishWeights(data),
+    async (data: any) => {
+      const res = await api.createFishingFishWeights(data);
+
+      if (!res.success) {
+        return handleErrorToastFromServer();
+      }
+
+      return res;
+    },
     {
       onSuccess: (_, variables) => {
         queryClient.invalidateQueries(['fishingWeights']);
+
         if (variables.isAutoSave) {
           handleSuccessToast('Žuvų svoriai automatiškai išsaugoti.');
         } else {
           handleSuccessToast('Žuvis sėkmingai pasverta krante.');
           navigate(slugs.fishingCurrent);
         }
-      },
-      onError: () => {
-        handleErrorToastFromServer();
       },
     },
   );

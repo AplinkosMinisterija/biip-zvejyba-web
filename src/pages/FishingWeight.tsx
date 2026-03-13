@@ -71,6 +71,7 @@ const FishingWeight = () => {
 
     fishingWeightMutation({
       data: mappedWeights,
+      preliminaryData: fishingWeights?.preliminary,
       coordinates: window.coordinates,
       isAutoSave: false,
     });
@@ -95,7 +96,7 @@ const FishingWeight = () => {
       const updatedValues =
         newValue === FishingWeighType.CAUGHT
           ? fishTypes.map((fishType) => {
-              const amount = (fishingWeights?.total || fishingWeights?.preliminary)?.[fishType.id];
+              const amount = fishingWeights?.preliminary?.[fishType.id];
               return {
                 ...fishType,
                 preliminaryAmount: amount || '',
