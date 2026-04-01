@@ -1,11 +1,11 @@
 import React, { createContext, useCallback, useState } from 'react';
 import { PopupContentType } from '../../utils/constants';
-import LocationPermission from '../popups/LocationPermission';
-import { StartFishing } from '../popups/StartFishing';
-import { SkipFishing } from '../popups/SkipFishing';
-import StartFishingInlandWater from '../popups/StartFishingInlandWater';
-import EndFishing from '../popups/EndFishing';
 import CaughtFishWeight from '../popups/CaughtFishWeight';
+import ConfirmWeight from '../popups/ConfirmWeight';
+import EndFishing from '../popups/EndFishing';
+import LocationPermission from '../popups/LocationPermission';
+import { SkipFishing } from '../popups/SkipFishing';
+import { StartFishing } from '../popups/StartFishing';
 import ToolGroupAction from '../popups/ToolGroupAction';
 
 export interface PopupContextProps {
@@ -60,6 +60,9 @@ export const PopupProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
         {visiblePopup?.type === PopupContentType.CAUGHT_FISH_WEIGHT && (
           <CaughtFishWeight content={visiblePopup.content} onClose={hidePopup} />
+        )}
+        {visiblePopup?.type === PopupContentType.CONFIRM_WEIGHT && (
+          <ConfirmWeight content={visiblePopup.content} onClose={hidePopup} />
         )}
         {visiblePopup?.type === PopupContentType.TOOL_GROUP_ACTION && (
           <ToolGroupAction content={visiblePopup.content} onClose={hidePopup} />

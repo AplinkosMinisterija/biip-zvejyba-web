@@ -1,5 +1,5 @@
 import { Form, Formik } from 'formik';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../components/buttons/Button';
 import SwitchButton from '../components/buttons/SwitchButton';
@@ -7,10 +7,12 @@ import DefaultLayout from '../components/layouts/DefaultLayout';
 import { Footer } from '../components/other/CommonStyles';
 import FishRow from '../components/other/FishRow';
 import LoaderComponent from '../components/other/LoaderComponent';
+import { PopupContext, PopupContextProps } from '../components/providers/PopupProvider';
 import {
   FishingWeighType,
   handleErrorToast,
   LocationType,
+  PopupContentType,
   useCurrentFishing,
   useFishingWeightMutation,
   useFishTypes,
@@ -31,6 +33,7 @@ const FishingWeight = () => {
   const { fishTypes, fishTypesLoading } = useFishTypes();
   const { fishingWeights, fishingWeightsLoading } = useFishWeights();
   const { fishingWeightLoading, fishingWeightMutation } = useFishingWeightMutation();
+  const { showPopup } = useContext<PopupContextProps>(PopupContext);
 
   if (currentFishingLoading || fishTypesLoading || fishingWeightsLoading) {
     return <LoaderComponent />;
@@ -126,7 +129,18 @@ const FishingWeight = () => {
 
   return (
     <DefaultLayout>
-      <Formik initialValues={initialValues} enableReinitialize={true} onSubmit={handleSubmit}>
+      <Formik
+        initialValues={initialValues}
+        enableReinitialize={true}
+        onSubmit={(data) => {
+          showPopup({
+            type: PopupContentType.CONFIRM_WEIGHT,
+            content: {
+              submit: () => handleSubmit(data),
+            },
+          });
+        }}
+      >
         {({ values, setFieldValue }) => {
           return (
             <>
