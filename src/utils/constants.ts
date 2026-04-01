@@ -93,6 +93,7 @@ export enum PopupContentType {
   END_FISHING = 'end_fishing',
   CAUGHT_FISH_WEIGHT = 'CAUGHT_FISH_WEIGHT',
   TOOL_GROUP_ACTION = 'TOOL_GROUP_ACTION',
+  CONFIRM_WEIGHT = 'CONFIRM_WEIGHT',
 }
 
 export enum FishingTypeRoute {

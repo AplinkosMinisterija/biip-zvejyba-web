@@ -27,7 +27,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
 
   const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
     ['fishingWeights'],
-    () =>api.getFishingWeights(),
+    () => api.getFishingWeights(),
     {
       retry: false,
     },
@@ -41,6 +41,8 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
     !!fishingWeights?.preliminary && !!Object.keys(fishingWeights.preliminary).length;
 
   const weightOnShoreExist = !!fishingWeights?.total && !!Object.keys(fishingWeights.total).length;
+
+  const isDisabled = locationType !== LocationType.INLAND_WATERS && weightOnShoreExist;
 
   return loading ? (
     <LoaderComponent />
@@ -59,13 +61,14 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           onClick={() => {
             navigate(slugs.fishingTools(FishingTypeRoute[locationType]));
           }}
-          isDisabled={locationType !== LocationType.INLAND_WATERS && weightOnShoreExist}
+          isDisabled={isDisabled}
         />
         <LargeButton
           variant={Variant.GHOST_WHITE}
           title="Žuvies svoris</br>krante"
           subtitle="Pasverkite bendrą svorį"
           buttonLabel="Sverti"
+          isDisabled={isDisabled}
           onClick={() => {
             navigate(slugs.fishingWeight);
           }}
