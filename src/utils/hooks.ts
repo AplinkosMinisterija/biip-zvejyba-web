@@ -257,7 +257,8 @@ export const useGeolocation = () => {
 
     const options = {
       enableHighAccuracy: true,
-      timeout: 100000,
+      timeout: 5000,
+      maximumAge: 15000,
     };
 
     const successHandler = (position: GeolocationPosition) => {
@@ -283,8 +284,6 @@ export const useGeolocation = () => {
       navigator.geolocation.clearWatch(watchId);
     };
   }, []);
-
-  console.log(error, coordinates, loading);
 
   return { coordinates, error, loading };
 };
