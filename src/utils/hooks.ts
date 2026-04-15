@@ -10,7 +10,7 @@ import {
   handleSuccessToast,
 } from './functions';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { matchPath, useLocation } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
@@ -23,6 +23,25 @@ const cookies = new Cookies();
 type Coordinates = {
   x: number;
   y: number;
+};
+
+type UseGeolocationResult = {
+  coordinates: Coordinates | null;
+  error: number | null;
+  loading: boolean;
+  refresh: () => void;
+};
+
+const INITIAL_OPTIONS: PositionOptions = {
+  enableHighAccuracy: false,
+  timeout: 5000,
+  maximumAge: 30000,
+};
+
+const WATCH_OPTIONS: PositionOptions = {
+  enableHighAccuracy: true,
+  timeout: 10000,
+  maximumAge: 15000,
 };
 
 export const emptyUser = {
@@ -243,10 +262,48 @@ export const useFishingWeightMutation = () => {
   return { fishingWeightMutation, fishingWeightLoading };
 };
 
-export const useGeolocation = () => {
+export const useGeolocation = (): UseGeolocationResult => {
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [error, setError] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const watchIdRef = useRef<number | null>(null);
+  const resolvedInitialRef = useRef(false);
+
+  const applyPosition = (position: GeolocationPosition) => {
+    setCoordinates({
+      x: position.coords.longitude,
+      y: position.coords.latitude,
+    });
+    setError(null);
+
+    if (!resolvedInitialRef.current) {
+      resolvedInitialRef.current = true;
+      setLoading(false);
+    }
+  };
+
+  const applyError = (err: GeolocationPositionError) => {
+    setError(err.code);
+
+    if (!resolvedInitialRef.current) {
+      resolvedInitialRef.current = true;
+      setLoading(false);
+    }
+  };
+
+  const requestCurrentPosition = () => {
+    if (!navigator.geolocation) {
+      setError(-1);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    resolvedInitialRef.current = false;
+
+    navigator.geolocation.getCurrentPosition(applyPosition, applyError, INITIAL_OPTIONS);
+  };
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -255,35 +312,27 @@ export const useGeolocation = () => {
       return;
     }
 
-    const options = {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 15000,
-    };
+    requestCurrentPosition();
 
-    const successHandler = (position: GeolocationPosition) => {
-      setCoordinates({
-        x: position.coords.longitude,
-        y: position.coords.latitude,
-      });
-      setError(null);
-      setLoading(false);
-    };
-
-    const errorHandler = (err: GeolocationPositionError) => {
-      setError(err.code);
-      setCoordinates(null);
-      setLoading(false);
-    };
-
-    navigator.geolocation.getCurrentPosition(successHandler, errorHandler, options);
-
-    const watchId = navigator.geolocation.watchPosition(successHandler, errorHandler, options);
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      applyPosition,
+      () => {
+        // watch klaidos nebūtinai turi numušti jau turimas koordinates
+      },
+      WATCH_OPTIONS,
+    );
 
     return () => {
-      navigator.geolocation.clearWatch(watchId);
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
     };
   }, []);
 
-  return { coordinates, error, loading };
+  return {
+    coordinates,
+    error,
+    loading,
+    refresh: requestCurrentPosition,
+  };
 };
