@@ -316,9 +316,7 @@ export const useGeolocation = (): UseGeolocationResult => {
 
     watchIdRef.current = navigator.geolocation.watchPosition(
       applyPosition,
-      () => {
-        // watch klaidos nebūtinai turi numušti jau turimas koordinates
-      },
+      () => {},
       WATCH_OPTIONS,
     );
 
