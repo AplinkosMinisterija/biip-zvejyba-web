@@ -17,6 +17,7 @@ import {
   useFishingWeightMutation,
   useFishTypes,
   useFishWeights,
+  useGeolocation,
   validationTexts,
 } from '../utils';
 
@@ -34,6 +35,7 @@ const FishingWeight = () => {
   const { fishingWeights, fishingWeightsLoading } = useFishWeights();
   const { fishingWeightLoading, fishingWeightMutation } = useFishingWeightMutation();
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
+  const { coordinates, loading } = useGeolocation();
 
   if (currentFishingLoading || fishTypesLoading || fishingWeightsLoading) {
     return <LoaderComponent />;
@@ -68,14 +70,14 @@ const FishingWeight = () => {
   };
 
   const handleSubmit = (values: any) => {
-    if (!window?.coordinates) return handleErrorToast(validationTexts.mustAllowToSetCoordinates);
+    if (!coordinates) return handleErrorToast(validationTexts.mustAllowToSetCoordinates);
 
     const mappedWeights = mapWeights(values);
 
     fishingWeightMutation({
       data: mappedWeights,
       preliminaryData: fishingWeights?.preliminary,
-      coordinates: window.coordinates,
+      coordinates: coordinates,
       isAutoSave: false,
     });
   };
@@ -83,7 +85,7 @@ const FishingWeight = () => {
   const handleSwitchChange = (newValue: FishingWeighType, values: any, setFieldValue: any) => {
     setIsSwitching(true);
     setType(newValue);
-    if (!window.coordinates) {
+    if (!coordinates) {
       setIsSwitching(false);
       return;
     }
@@ -92,7 +94,7 @@ const FishingWeight = () => {
 
       fishingWeightMutation({
         data: mappedWeights,
-        coordinates: window.coordinates,
+        coordinates: coordinates,
         isAutoSave: true,
       });
 
@@ -125,7 +127,7 @@ const FishingWeight = () => {
     }
   };
 
-  const fishingWeightLoadingOrSwitching = fishingWeightLoading || isSwitching;
+  const fishingWeightLoadingOrSwitching = fishingWeightLoading || isSwitching || loading;
 
   return (
     <DefaultLayout>

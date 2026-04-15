@@ -20,6 +20,11 @@ import { User } from './types';
 
 const cookies = new Cookies();
 
+type Coordinates = {
+  x: number;
+  y: number;
+};
+
 export const emptyUser = {
   userData: {},
   loggedIn: false,
@@ -236,4 +241,50 @@ export const useFishingWeightMutation = () => {
   );
 
   return { fishingWeightMutation, fishingWeightLoading };
+};
+
+export const useGeolocation = () => {
+  const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
+  const [error, setError] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setError(-1);
+      setLoading(false);
+      return;
+    }
+
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 100000,
+    };
+
+    const successHandler = (position: GeolocationPosition) => {
+      setCoordinates({
+        x: position.coords.longitude,
+        y: position.coords.latitude,
+      });
+      setError(null);
+      setLoading(false);
+    };
+
+    const errorHandler = (err: GeolocationPositionError) => {
+      setError(err.code);
+      setCoordinates(null);
+      setLoading(false);
+    };
+
+    navigator.geolocation.getCurrentPosition(successHandler, errorHandler, options);
+
+    const watchId = navigator.geolocation.watchPosition(successHandler, errorHandler, options);
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, []);
+
+  console.log(error, coordinates, loading);
+
+  return { coordinates, error, loading };
 };

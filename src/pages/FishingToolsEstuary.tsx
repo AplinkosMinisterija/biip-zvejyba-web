@@ -11,12 +11,19 @@ import { Footer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
 import LocationInfo from '../components/other/LocationInfo';
 import { NotFound } from '../components/other/NotFound';
-import { handleErrorToastFromServer, LocationType, useCurrentFishing } from '../utils';
+import {
+  handleErrorToastFromServer,
+  LocationType,
+  useCurrentFishing,
+  useGeolocation,
+} from '../utils';
 import api from '../utils/api';
 
 const FishingToolsEstuary = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
+  const { coordinates } = useGeolocation();
+
   const locationType = currentFishing?.type;
   const [manualLocation, setManualLocation] = useState<any>();
   const {
@@ -29,7 +36,7 @@ const FishingToolsEstuary = () => {
       return api.getLocation({
         query: JSON.stringify({
           type: locationType,
-          coordinates: window.coordinates,
+          coordinates: coordinates,
         }),
       });
     },
@@ -39,7 +46,7 @@ const FishingToolsEstuary = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (locationType === LocationType.ESTUARY && window.coordinates && !manualLocation) {
+      if (locationType === LocationType.ESTUARY && coordinates && !manualLocation) {
         refetch();
       }
     }, 60000); // 60000ms = 1 minute

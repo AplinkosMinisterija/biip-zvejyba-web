@@ -11,7 +11,13 @@ import { Footer } from '../components/other/CommonStyles';
 import LoaderComponent from '../components/other/LoaderComponent';
 import LocationInfo from '../components/other/LocationInfo';
 import { NotFound } from '../components/other/NotFound';
-import { device, handleErrorToastFromServer, LocationType, useCurrentFishing } from '../utils';
+import {
+  device,
+  handleErrorToastFromServer,
+  LocationType,
+  useCurrentFishing,
+  useGeolocation,
+} from '../utils';
 import api from '../utils/api';
 
 const FishingTools = () => {
@@ -19,6 +25,7 @@ const FishingTools = () => {
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
   const locationType = currentFishing?.type;
   const [manualLocation, setManualLocation] = useState<any>();
+  const { coordinates, loading } = useGeolocation();
 
   const {
     data: location,
@@ -30,7 +37,7 @@ const FishingTools = () => {
       return api.getLocation({
         query: JSON.stringify({
           type: locationType,
-          coordinates: window.coordinates,
+          coordinates: coordinates,
         }),
       });
     },
@@ -63,7 +70,7 @@ const FishingTools = () => {
     <DefaultLayout>
       <LocationInfo
         location={location}
-        locationLoading={locationLoading}
+        locationLoading={locationLoading || loading}
         locationType={LocationType.POLDERS}
         setLocationManually={setManualLocation}
         renewLocation={refetch}
@@ -87,7 +94,7 @@ const FishingTools = () => {
       {location?.name && (
         <>
           <Footer>
-            <StyledButton disabled={!location} onClick={() => setShowBuildTools(true)}>
+            <StyledButton disabled={!location || loading} onClick={() => setShowBuildTools(true)}>
               Pastatyti įrankį
             </StyledButton>
           </Footer>

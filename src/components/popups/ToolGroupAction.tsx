@@ -6,6 +6,7 @@ import {
   handleErrorToastFromServer,
   LocationType,
   PopupContentType,
+  useGeolocation,
 } from '../../utils';
 import api from '../../utils/api';
 import MenuButton from '../buttons/MenuButton';
@@ -16,6 +17,7 @@ import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
 const ToolGroupAction = ({ onClose, content }: any) => {
   const { toolsGroup, location, disabled } = content;
+  const { coordinates,loading } = useGeolocation();
 
   const queryClient = useQueryClient();
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
@@ -45,7 +47,6 @@ const ToolGroupAction = ({ onClose, content }: any) => {
   );
 
   const handleSubmit = () => {
-    const coordinates: any = window.coordinates;
     if (coordinates?.x && coordinates?.y) {
       const params = {
         data: {},
@@ -65,7 +66,7 @@ const ToolGroupAction = ({ onClose, content }: any) => {
       api.removeTool(
         {
           location,
-          coordinates: window.coordinates as any,
+          coordinates: coordinates as any,
         },
         toolsGroup?.id,
       ),
@@ -116,7 +117,8 @@ const ToolGroupAction = ({ onClose, content }: any) => {
               label="Sugrąžinti į sandėlį"
               icon={IconName.return}
               onClick={returnToolsMutation}
-              loading={removeToolLoading}
+              loading={removeToolLoading || loading}
+              
               isActive={!removeToolLoading}
             />
           </>
