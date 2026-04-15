@@ -8,6 +8,7 @@ import {
   handleErrorToastFromServer,
   PopupContentType,
   useFishTypes,
+  useGeolocation,
   useGetCurrentRoute,
 } from '../../utils';
 import api from '../../utils/api';
@@ -23,6 +24,7 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
   const currentRoute = useGetCurrentRoute();
   const { fishTypes, fishTypesLoading } = useFishTypes();
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
+  const { coordinates, loading } = useGeolocation();
 
   const {
     data: fishingWeights,
@@ -76,7 +78,6 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
   const { label, sealNr } = getBuiltToolInfo(toolsGroup);
 
   const handleSubmit = (data: any) => {
-    const coordinates: any = window.coordinates;
     if (coordinates?.x && coordinates?.y) {
       const filteredData = data.filter((fishType: any) => fishType.amount);
 
@@ -129,7 +130,10 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
                 />
               ))}
               <Footer>
-                <StyledButton loading={weighToolsIsLoading} disabled={weighToolsIsLoading}>
+                <StyledButton
+                  loading={weighToolsIsLoading}
+                  disabled={weighToolsIsLoading || loading}
+                >
                   Saugoti pakeitimus
                 </StyledButton>
               </Footer>

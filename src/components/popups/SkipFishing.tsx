@@ -1,26 +1,28 @@
-import PopUpWithImage from '../layouts/PopUpWithImage';
-import { Grid } from '../other/CommonStyles';
+import { TextAreaField } from '@aplinkosministerija/design-system';
 import { map } from 'lodash';
+import { useState } from 'react';
+import { useMutation } from 'react-query';
+import styled from 'styled-components';
 import {
   buttonLabels,
   handleErrorToast,
   handleErrorToastFromServer,
   SickReasons,
   skipOptions,
+  useGeolocation,
   validationTexts,
 } from '../../utils';
-import Button, { ButtonColors } from '../buttons/Button';
-import styled from 'styled-components';
-import { useContext, useState } from 'react';
-import { useMutation } from 'react-query';
 import api from '../../utils/api';
-import { TextAreaField } from '@aplinkosministerija/design-system';
+import Button, { ButtonColors } from '../buttons/Button';
+import PopUpWithImage from '../layouts/PopUpWithImage';
+import { Grid } from '../other/CommonStyles';
 
 export const SkipFishing = ({ content, onClose }: any) => {
   const { locationType } = content;
 
   const [skipReason, setSkipReason] = useState<any>(SickReasons.BAD_WEATHER);
   const [skipReasonNote, setSkipReasonNote] = useState<string>();
+  const { coordinates, loading } = useGeolocation();
 
   const { isLoading: skipLoading, mutateAsync: skipFishing } = useMutation(api.skipFishing, {
     onError: ({ response }: any) => {
@@ -34,7 +36,6 @@ export const SkipFishing = ({ content, onClose }: any) => {
     if (skipReason.value === SickReasons.OTHER && !skipReasonNote) {
       return handleErrorToast(validationTexts.provideSkipReason);
     }
-    const coordinates = window.coordinates;
     if (locationType && coordinates) {
       skipFishing({
         type: locationType,
@@ -78,7 +79,7 @@ export const SkipFishing = ({ content, onClose }: any) => {
       ) : null}
 
       <Grid $columns={2}>
-        <Button loading={skipLoading} disabled={skipLoading} onClick={handleSkipFishing}>
+        <Button loading={skipLoading} disabled={skipLoading || loading} onClick={handleSkipFishing}>
           {buttonLabels.save}
         </Button>
         <Button

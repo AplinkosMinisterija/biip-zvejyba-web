@@ -2,7 +2,7 @@ import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { handleErrorToast, handleErrorToastFromServer } from '../../utils';
+import { handleErrorToast, handleErrorToastFromServer, useGeolocation } from '../../utils';
 import api from '../../utils/api';
 import { Location, Tool, ToolType } from '../../utils/types';
 import Button from '../buttons/Button';
@@ -18,6 +18,7 @@ interface BuiltToolsProps {
 const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   const queryClient = useQueryClient();
   const [selectedTool, setSelectedTool] = useState<number>();
+  const { coordinates, loading } = useGeolocation();
 
   const { data: availableTools } = useQuery(['availableTools'], () => api.getAvailableTools(), {
     retry: false,
@@ -64,15 +65,15 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   };
 
   const handleBuildTools = () => {
-    const coordinates: any = {
-      x: location?.x || window.coordinates?.x,
-      y: location?.y || window.coordinates?.y,
+    const buildToolsCoordinates: any = {
+      x: location?.x || coordinates?.x,
+      y: location?.y || coordinates?.y,
     };
-    if (coordinates.x && coordinates.y) {
+    if (buildToolsCoordinates.x && buildToolsCoordinates.y) {
       buildToolsMutation({
         tools: selectedTool,
         location,
-        coordinates,
+        coordinates: buildToolsCoordinates,
       });
     } else {
       handleErrorToast('Nenustatyta buvimo vieta');
@@ -102,7 +103,7 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
           <StyledButton
             onClick={handleBuildTools}
             loading={buildToolsIsLoading}
-            disabled={buildToolsIsLoading || !selectedTool}
+            disabled={buildToolsIsLoading || !selectedTool || loading}
           >
             Pastatyti
           </StyledButton>

@@ -1,24 +1,26 @@
-import { IconName } from '../other/Icon';
-import PopUpWithImage from '../layouts/PopUpWithImage';
+import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import api from '../../utils/api';
+import styled from 'styled-components';
 import {
   buttonLabels,
   getLocationList,
   handleErrorToast,
   handleErrorToastFromServer,
   LocationType,
+  useGeolocation,
   validationTexts,
 } from '../../utils';
-import { Grid } from '../other/CommonStyles';
+import api from '../../utils/api';
 import Button from '../buttons/Button';
-import styled from 'styled-components';
 import AsyncSelectField from '../fields/AsyncSelect';
-import { useState } from 'react';
+import PopUpWithImage from '../layouts/PopUpWithImage';
+import { Grid } from '../other/CommonStyles';
+import { IconName } from '../other/Icon';
 
 const StartFishingInlandWater = ({ onClose }: any) => {
   const queryClient = useQueryClient();
   const [selectedLocation, setSelectedLocation] = useState<any>();
+  const { coordinates, loading } = useGeolocation();
 
   const getInputValue = (location: any) =>
     location ? `${location?.name}, ${location?.cadastralId}` : '';
@@ -27,7 +29,7 @@ const StartFishingInlandWater = ({ onClose }: any) => {
     onError: ({ response }) => {
       handleErrorToastFromServer(response);
     },
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries('currentFishing');
       onClose();
     },
@@ -35,7 +37,6 @@ const StartFishingInlandWater = ({ onClose }: any) => {
   });
 
   const handleStartFishing = () => {
-    const coordinates = window.coordinates;
     if (coordinates) {
       startFishing({
         type: LocationType.INLAND_WATERS,
@@ -78,7 +79,11 @@ const StartFishingInlandWater = ({ onClose }: any) => {
           inputValue={getInputValue(selectedLocation)}
         />
         <Grid $columns={1}>
-          <Button loading={startLoading} disabled={startLoading} onClick={handleStartFishing}>
+          <Button
+            loading={startLoading}
+            disabled={startLoading || loading}
+            onClick={handleStartFishing}
+          >
             {buttonLabels.startFishing}
           </Button>
         </Grid>

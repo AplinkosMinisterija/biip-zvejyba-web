@@ -4,6 +4,7 @@ import {
   handleErrorToast,
   handleErrorToastFromServer,
   handleSuccessToast,
+  useGeolocation,
   validationTexts,
 } from '../../utils';
 import api from '../../utils/api';
@@ -11,9 +12,12 @@ import Button, { ButtonColors } from '../buttons/Button';
 import PopUpWithImage from '../layouts/PopUpWithImage';
 import { Grid } from '../other/CommonStyles';
 import { IconName } from '../other/Icon';
+import LoaderComponent from '../other/LoaderComponent';
 
-export const EndFishing = ({ content, onClose }: any) => {
+export const EndFishing = ({ onClose }: any) => {
   const queryClient = useQueryClient();
+
+  const { coordinates, loading } = useGeolocation();
 
   const { mutateAsync: finishFishing, isLoading: finishFishingLoading } = useMutation(
     api.finishFishing,
@@ -30,8 +34,6 @@ export const EndFishing = ({ content, onClose }: any) => {
     },
   );
   const handleFinishFishing = () => {
-    const coordinates = window.coordinates;
-
     if (coordinates) {
       finishFishing({ coordinates });
     } else {
@@ -46,18 +48,26 @@ export const EndFishing = ({ content, onClose }: any) => {
       title={'Žvejybos pabaiga'}
       description={'Ar esate tikri, kad norite baigti žvejybą?'}
     >
-      <Grid $columns={2}>
-        <Button
-          loading={finishFishingLoading}
-          disabled={finishFishingLoading}
-          onClick={handleFinishFishing}
-        >
-          {buttonLabels.endFishing}
-        </Button>
-        <Button disabled={finishFishingLoading} variant={ButtonColors.SECONDARY} onClick={onClose}>
-          {buttonLabels.cancel}
-        </Button>
-      </Grid>
+      {loading ? (
+        <LoaderComponent />
+      ) : (
+        <Grid $columns={2}>
+          <Button
+            loading={finishFishingLoading}
+            disabled={finishFishingLoading}
+            onClick={handleFinishFishing}
+          >
+            {buttonLabels.endFishing}
+          </Button>
+          <Button
+            disabled={finishFishingLoading}
+            variant={ButtonColors.SECONDARY}
+            onClick={onClose}
+          >
+            {buttonLabels.cancel}
+          </Button>
+        </Grid>
+      )}
     </PopUpWithImage>
   );
 };

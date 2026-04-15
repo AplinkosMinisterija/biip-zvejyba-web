@@ -5,6 +5,7 @@ import {
   handleErrorToast,
   handleErrorToastFromServer,
   PopupContentType,
+  useGeolocation,
   validationTexts,
 } from '../../utils';
 import api from '../../utils/api';
@@ -18,6 +19,7 @@ export const StartFishing = ({ content, onClose }: any) => {
   const queryClient = useQueryClient();
   const { type } = content;
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
+  const { coordinates, loading } = useGeolocation();
 
   const { isLoading: startLoading, mutateAsync: startFishing } = useMutation(api.startFishing, {
     onError: ({ response }) => {
@@ -31,7 +33,6 @@ export const StartFishing = ({ content, onClose }: any) => {
   });
 
   const handleStartFishing = () => {
-    const coordinates = window.coordinates;
     if (coordinates && type) {
       startFishing({
         type: type,
@@ -51,12 +52,16 @@ export const StartFishing = ({ content, onClose }: any) => {
       description={'Lengvai ir paprastai praneškite apie žvejybos pradžią'}
     >
       <Grid $columns={2}>
-        <Button loading={startLoading} disabled={startLoading} onClick={handleStartFishing}>
+        <Button
+          loading={startLoading}
+          disabled={startLoading || loading}
+          onClick={handleStartFishing}
+        >
           {buttonLabels.startFishing}
         </Button>
         <Button
           loading={startLoading}
-          disabled={startLoading}
+          disabled={startLoading || loading}
           variant={ButtonColors.SECONDARY}
           onClick={() => {
             showPopup({ type: PopupContentType.SKIP_FISHING, content: { locationType: type } });
