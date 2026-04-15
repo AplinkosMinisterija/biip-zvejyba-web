@@ -83,7 +83,7 @@ export const Tool = () => {
       infoTitle={tool?.toolType?.label}
       infoSubTitle={tool?.sealNr}
       back={currentRoute?.back}
-      deleteInfo={!tool.toolsGroup && deleteInfo}
+      deleteInfo={!tool.toolsGroup?.buildEvent && deleteInfo}
     >
       <Container>
         <ToolForm
