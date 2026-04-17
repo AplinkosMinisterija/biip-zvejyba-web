@@ -20,6 +20,8 @@ const FishRow = React.memo(({ onChange, fish, index }: FishRowProp) => {
 
   const { label, photo, amount, preliminaryAmount } = fish;
 
+  console.log(preliminaryAmount, 'preliminaryAmountpreliminaryAmount');
+
   return (
     <Row>
       <ImageContainer>
@@ -28,7 +30,9 @@ const FishRow = React.memo(({ onChange, fish, index }: FishRowProp) => {
       <Column>
         <TextColumn>
           <Title>{label ? label?.charAt(0).toUpperCase() + label?.slice(1) : ''}</Title>
-          {preliminaryAmount && <Caught>{`Sugauta ${preliminaryAmount} kg`}</Caught>}
+          {preliminaryAmount !== undefined && preliminaryAmount !== null && (
+            <Caught>{`Sugauta ${preliminaryAmount} kg`}</Caught>
+          )}
         </TextColumn>
         <InnerRow>
           <Button type="button" onClick={() => amount > 0 && onChange(amount - 1)}>
@@ -36,10 +40,10 @@ const FishRow = React.memo(({ onChange, fish, index }: FishRowProp) => {
           </Button>
           <StyledNumericTextField
             type="number"
-            placeholder="0"
+            placeholder="-"
             name="personalCode"
-            value={amount}
-            onChange={(amount) => onChange(Number(amount))}
+            value={amount ?? ''}
+            onChange={(amount) => onChange(amount === '' ? '' : Number(amount))}
             pattern={/[0-9]+/}
             inputMode="numeric"
             onFocus={preventNumInputFromScrolling}

@@ -48,19 +48,21 @@ const FishingWeight = () => {
           const amount = (fishingWeights?.total || fishingWeights?.preliminary)?.[fishType.id];
           return {
             ...fishType,
-            preliminaryAmount: amount || '',
-            amount: amount || '',
+            preliminaryAmount: amount ?? '',
+            amount: amount ?? '',
           };
         })
       : Object.keys(caughtFishData)?.map((key: string) => {
           const fishType = fishTypes.find((fishType) => fishType.id === Number(key));
           return {
             ...fishType,
-            preliminaryAmount: caughtFishData[key] || '',
-            amount: caughtFishData[key] || '',
+            preliminaryAmount: caughtFishData[key] ?? '',
+            amount: caughtFishData[key] ?? '',
           };
         })
   ).sort((a, b) => (Number(b.preliminaryAmount) || 0) - (Number(a.preliminaryAmount) || 0));
+
+  console.log(initialValues, 'initialValues');
 
   const mapWeights = (values: any) => {
     return values.reduce((obj: any, curr: any) => {
@@ -135,6 +137,15 @@ const FishingWeight = () => {
         initialValues={initialValues}
         enableReinitialize={true}
         onSubmit={(data) => {
+          const hasAtLeastOneFilled = data.some(
+            (item: any) => item.amount !== undefined && item.amount !== null && item.amount !== '',
+          );
+
+          if (!hasAtLeastOneFilled) {
+            handleErrorToast('Bent viena žuvis turi būti įvesta');
+            return;
+          }
+
           showPopup({
             type: PopupContentType.CONFIRM_WEIGHT,
             content: {

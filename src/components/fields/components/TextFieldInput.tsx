@@ -45,7 +45,7 @@ const TextFieldInput = ({
         type={type}
         name={name}
         autoComplete="off"
-        value={value || ''}
+        value={value ?? ''}
         onChange={(e) => onChange && onChange(e?.target?.value || '')}
         placeholder={placeholder}
         disabled={disabled}

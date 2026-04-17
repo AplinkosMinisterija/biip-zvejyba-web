@@ -16,8 +16,8 @@ import LoaderComponent from '../other/LoaderComponent';
 import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
 const ToolGroupAction = ({ onClose, content }: any) => {
-  const { toolsGroup, location, disabled } = content;
-  const { coordinates,loading } = useGeolocation();
+  const { toolsGroup, location, showWeightButtons, showCheckButton } = content;
+  const { coordinates, loading } = useGeolocation();
 
   const queryClient = useQueryClient();
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
@@ -90,7 +90,7 @@ const ToolGroupAction = ({ onClose, content }: any) => {
           <LoaderComponent />
         ) : (
           <>
-            {currentFishing?.type !== LocationType.INLAND_WATERS && !disabled && (
+            {currentFishing?.type !== LocationType.INLAND_WATERS && showWeightButtons && (
               <>
                 <MenuButton
                   label="Sverti žuvį laive "
@@ -105,12 +105,14 @@ const ToolGroupAction = ({ onClose, content }: any) => {
                     });
                   }}
                 />
-                <MenuButton
-                  label="Patikrinta"
-                  icon={IconName.check}
-                  onClick={handleSubmit}
-                  loading={weighToolsIsLoading}
-                />
+                {showCheckButton && (
+                  <MenuButton
+                    label="Patikrinta"
+                    icon={IconName.check}
+                    onClick={handleSubmit}
+                    loading={weighToolsIsLoading}
+                  />
+                )}
               </>
             )}
             <MenuButton
@@ -118,7 +120,6 @@ const ToolGroupAction = ({ onClose, content }: any) => {
               icon={IconName.return}
               onClick={returnToolsMutation}
               loading={removeToolLoading || loading}
-              
               isActive={!removeToolLoading}
             />
           </>

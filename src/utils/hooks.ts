@@ -5,7 +5,9 @@ import api from './api';
 import { intersectionObserverConfig, RoleTypes } from './constants';
 import {
   clearCookies,
+  handleErrorToast,
   handleErrorToastFromServer,
+  handleGeolocationToast,
   handleSetProfile,
   handleSuccessToast,
 } from './functions';
@@ -27,21 +29,20 @@ type Coordinates = {
 
 type UseGeolocationResult = {
   coordinates: Coordinates | null;
-  error: number | null;
   loading: boolean;
   refresh: () => void;
 };
 
 const INITIAL_OPTIONS: PositionOptions = {
   enableHighAccuracy: false,
-  timeout: 5000,
+  timeout: 15000,
   maximumAge: 30000,
 };
 
 const WATCH_OPTIONS: PositionOptions = {
   enableHighAccuracy: true,
-  timeout: 10000,
-  maximumAge: 15000,
+  timeout: 20000,
+  maximumAge: 25000,
 };
 
 export const emptyUser = {
@@ -65,8 +66,6 @@ export const useCheckUserInfo = () => {
         return;
       }
       return handleErrorToastFromServer();
-
-      return handleErrorToastFromServer(response);
     },
     onSuccess: async (data: User) => {
       if (data) {
@@ -264,37 +263,45 @@ export const useFishingWeightMutation = () => {
 
 export const useGeolocation = (): UseGeolocationResult => {
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
-  const [error, setError] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   const watchIdRef = useRef<number | null>(null);
   const resolvedInitialRef = useRef(false);
+  const loadingToastShownRef = useRef(false);
 
   const applyPosition = (position: GeolocationPosition) => {
     setCoordinates({
       x: position.coords.longitude,
       y: position.coords.latitude,
     });
-    setError(null);
 
     if (!resolvedInitialRef.current) {
       resolvedInitialRef.current = true;
       setLoading(false);
+      loadingToastShownRef.current = false;
     }
   };
 
   const applyError = (err: GeolocationPositionError) => {
-    setError(err.code);
+    const error = err.code;
+
+    if (error === 1) {
+      handleErrorToast('Nesuteikti vietos nustatymo leidimai. Patikrinkite naršyklės nustatymus.');
+    } else if (error === 2) {
+      handleErrorToast('Nepavyko nustatyti jūsų vietos.');
+    } else if (error === 3) {
+      handleErrorToast('Baigėsi vietos nustatymo laukimo laikas. Bandykite dar kartą.');
+    }
 
     if (!resolvedInitialRef.current) {
       resolvedInitialRef.current = true;
       setLoading(false);
+      loadingToastShownRef.current = false;
     }
   };
 
   const requestCurrentPosition = () => {
     if (!navigator.geolocation) {
-      setError(-1);
       setLoading(false);
       return;
     }
@@ -302,12 +309,16 @@ export const useGeolocation = (): UseGeolocationResult => {
     setLoading(true);
     resolvedInitialRef.current = false;
 
+    if (!loadingToastShownRef.current) {
+      loadingToastShownRef.current = true;
+      handleGeolocationToast(true);
+    }
+
     navigator.geolocation.getCurrentPosition(applyPosition, applyError, INITIAL_OPTIONS);
   };
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setError(-1);
       setLoading(false);
       return;
     }
@@ -329,7 +340,6 @@ export const useGeolocation = (): UseGeolocationResult => {
 
   return {
     coordinates,
-    error,
     loading,
     refresh: requestCurrentPosition,
   };

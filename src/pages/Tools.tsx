@@ -71,7 +71,6 @@ const Tools = () => {
       if (currentToolGroupId && tools[currentToolGroupId]) {
         tools[currentToolGroupId].tools.push(currentTool);
       } else if (currentToolGroupId) {
-        console.log(!currentTool?.toolsGroup?.removeEvent, currentTool?.toolsGroup);
         tools[currentToolGroupId] = {
           id: currentToolGroupId,
           isInWater: !!currentTool?.toolsGroup?.buildEvent && !currentTool?.toolsGroup.removeEvent,

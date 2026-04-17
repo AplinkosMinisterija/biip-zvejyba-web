@@ -48,6 +48,29 @@ export const handleSuccessToast = (message: string) => {
   });
 };
 
+export const handleInfoToast = (message: string) => {
+  toast.info(message, {
+    position: 'top-center',
+    autoClose: 5000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+  });
+};
+
+export const handleGeolocationToast = (loading: boolean) => {
+  if (loading) {
+    toast.info('Dar nustatoma jūsų vieta. Palaukite kelias sekundes', {
+      position: 'top-center',
+      autoClose: 5000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+    });
+    return;
+  }
+};
+
 export const handleSetProfile = (profiles?: Profile[], justLoggedIn: boolean = false) => {
   const isOneProfile = profiles?.length === 1;
   const profileId = cookies.get('profileId');
