@@ -23,7 +23,6 @@ const FormLayout = ({
   const navigate = useNavigate();
   const showInfoContainer = infoTitle || infoSubTitle;
 
-  console.log(deleteInfo, 'deleteInfo');
   return (
     <DefaultLayoutWrapper back={back}>
       <FormTitleGrid>

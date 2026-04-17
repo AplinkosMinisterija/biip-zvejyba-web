@@ -79,7 +79,9 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
 
   const handleSubmit = (data: any) => {
     if (coordinates?.x && coordinates?.y) {
-      const filteredData = data.filter((fishType: any) => fishType.amount);
+      const filteredData = data.filter(
+        (fishType: any) => fishType.amount != null && fishType.amount !== '',
+      );
 
       const mappedWeights = filteredData.reduce((obj: any, curr: any) => {
         obj[curr.id] = curr.amount;
@@ -110,6 +112,15 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
         initialValues={initialValues}
         enableReinitialize={true}
         onSubmit={(data) => {
+          const hasAtLeastOneFilled = data.some(
+            (item: any) => item.amount !== undefined && item.amount !== null && item.amount !== '',
+          );
+
+          if (!hasAtLeastOneFilled) {
+            handleErrorToast('Bent viena žuvis turi būti įvesta');
+            return;
+          }
+
           showPopup({
             type: PopupContentType.CONFIRM_WEIGHT,
             content: {
@@ -125,7 +136,9 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
                 <FishRow
                   key={`fish_type_${value.id}`}
                   fish={value}
-                  onChange={(value) => setFieldValue(`${index}.amount`, Number(value))}
+                  onChange={(value) =>
+                    setFieldValue(`${index}.amount`, value === '' ? '' : Number(value))
+                  }
                   index={index}
                 />
               ))}

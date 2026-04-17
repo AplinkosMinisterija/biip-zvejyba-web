@@ -48,7 +48,7 @@ const FishingTools = () => {
   const currentLocation = manualLocation || location;
   const showBuildToolsButton = !!currentLocation?.id;
 
-  const { data: builtTools, isFetching: builtToolsFetching } = useQuery(
+  const { data: builtTools = [], isFetching: builtToolsFetching } = useQuery(
     ['builtTools', location?.id, currentFishing?.id],
     () => {
       return api.getBuiltTools({ locationId: location?.id });
@@ -66,6 +66,35 @@ const FishingTools = () => {
     return <LoaderComponent />;
   }
 
+  const { toolTypesCounts, checkedToolTypesCounts } = builtTools.reduce(
+    (acc, tool) => {
+      const id = tool.tools?.[0]?.toolType?.id;
+      if (!id) return acc;
+
+      acc.toolTypesCounts[id] = (acc.toolTypesCounts[id] ?? 0) + 1;
+
+      if (tool.weightEvent) {
+        acc.checkedToolTypesCounts[id] = (acc.checkedToolTypesCounts[id] ?? 0) + 1;
+      }
+
+      return acc;
+    },
+    {
+      checkedToolTypesCounts: {} as Record<string, number>,
+      toolTypesCounts: {} as Record<string, number>,
+    },
+  );
+
+  const hasAnyChecked = Object.keys(checkedToolTypesCounts).length > 0;
+
+  const notCompletedToolType = hasAnyChecked
+    ? Object.keys(toolTypesCounts).find(
+        (key) =>
+          (checkedToolTypesCounts[key] ?? 0) > 0 &&
+          checkedToolTypesCounts[key] < toolTypesCounts[key],
+      )
+    : undefined;
+
   return (
     <DefaultLayout>
       <LocationInfo
@@ -81,14 +110,25 @@ const FishingTools = () => {
         ) : isEmpty(builtTools) ? (
           <NotFound message={'Nėra pastatytų įrankių'} />
         ) : (
-          map(builtTools, (toolsGroup: any) => (
-            <ToolsGroupCard
-              isEstuary={isEstuary}
-              key={toolsGroup.id}
-              toolsGroup={toolsGroup}
-              location={location}
-            />
-          ))
+          map(builtTools, (toolsGroup: any) => {
+            const toolTypeId = toolsGroup.tools[0].toolType.id;
+            const disableTool =
+              !!notCompletedToolType && notCompletedToolType !== toolTypeId.toString();
+
+            const showCheckButton =
+              toolTypesCounts[toolTypeId] - (checkedToolTypesCounts?.[toolTypeId] || 0) > 1;
+
+            return (
+              <ToolsGroupCard
+                isEstuary={isEstuary}
+                key={toolsGroup.id}
+                toolsGroup={toolsGroup}
+                location={location}
+                showCheckButton={showCheckButton}
+                isDisabled={disableTool}
+              />
+            );
+          })
         )}
       </Container>
       {location?.name && (

@@ -361,7 +361,7 @@ class Api {
     });
   };
 
-  getBuiltTools = async ({ locationId }: { locationId?: string }): Promise<any> => {
+  getBuiltTools = async ({ locationId }: { locationId?: string }): Promise<ToolsGroup[]> => {
     return this.get({
       resource: `toolsGroups/location/${locationId}`,
     });
