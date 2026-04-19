@@ -66,7 +66,10 @@ const FishingWeight = () => {
 
   const mapWeights = (values: any) => {
     return values.reduce((obj: any, curr: any) => {
-      if (curr.amount) obj[curr.id] = Number(curr.amount) || undefined;
+      if (curr.amount !== '' && curr.amount != null) {
+        obj[curr.id] = Number(curr.amount);
+      }
+
       return obj;
     }, {});
   };
