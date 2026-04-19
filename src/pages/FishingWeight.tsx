@@ -62,11 +62,12 @@ const FishingWeight = () => {
         })
   ).sort((a, b) => (Number(b.preliminaryAmount) || 0) - (Number(a.preliminaryAmount) || 0));
 
-  console.log(initialValues, 'initialValues');
-
   const mapWeights = (values: any) => {
     return values.reduce((obj: any, curr: any) => {
-      if (curr.amount) obj[curr.id] = Number(curr.amount) || undefined;
+      if (curr.amount !== '' && curr.amount != null) {
+        obj[curr.id] = Number(curr.amount);
+      }
+
       return obj;
     }, {});
   };
