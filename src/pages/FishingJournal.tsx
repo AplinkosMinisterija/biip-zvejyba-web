@@ -1,11 +1,13 @@
-import DefaultLayout from '../components/layouts/DefaultLayout';
-import { slugs, useInfinityLoad } from '../utils';
-import api from '../utils/api';
-import LoaderComponent from '../components/other/LoaderComponent';
-import FishingCard from '../components/cards/FishingCard';
-import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
+import { useMutation } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import FishingCard from '../components/cards/FishingCard';
+import DefaultLayout from '../components/layouts/DefaultLayout';
+import Icon, { IconName } from '../components/other/Icon';
+import LoaderComponent from '../components/other/LoaderComponent';
+import { handleGetCaughtFishExcel, slugs, useInfinityLoad } from '../utils';
+import api from '../utils/api';
 
 const FishingJournal = () => {
   const navigate = useNavigate();
@@ -17,6 +19,10 @@ const FishingJournal = () => {
     observerRef,
   );
 
+  const { isLoading: downloading, mutateAsync: handleDownload } = useMutation({
+    mutationFn: () => handleGetCaughtFishExcel({}),
+  });
+
   const fishings: any = data?.pages
     .flat()
     .map((item) => item?.rows)
@@ -25,6 +31,10 @@ const FishingJournal = () => {
   return (
     <DefaultLayout>
       <Container>
+        <ExportButton onClick={() => handleDownload()} disabled={downloading}>
+          <Icon name={downloading ? IconName.loader : IconName.excel} />
+        </ExportButton>
+
         {fishings?.map((fishing: any) => {
           return (
             <FishingCard
@@ -60,4 +70,17 @@ const Container = styled.div`
 const Invisible = styled.div`
   width: 10px;
   height: 16px;
+`;
+
+const ExportButton = styled.button`
+  width: ${({ theme }) => theme.height?.buttons || 4}rem;
+  height: ${({ theme }) => theme.height?.buttons || 4}rem;
+  padding: ${({ theme }) => (theme.height?.buttons || 4) / 4}rem;
+  background-color: white;
+  color: #7b8b90;
+  justify-content: center;
+  border: 1px solid ${({ theme }) => theme.colors.tertiary};
+  border-radius: 8px;
+  margin-bottom: 16px;
+  cursor: pointer;
 `;

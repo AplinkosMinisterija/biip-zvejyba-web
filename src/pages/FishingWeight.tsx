@@ -2,7 +2,6 @@ import { Form, Formik } from 'formik';
 import { useContext, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../components/buttons/Button';
-import SwitchButton from '../components/buttons/SwitchButton';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import { Footer } from '../components/other/CommonStyles';
 import FishRow from '../components/other/FishRow';
@@ -20,11 +19,6 @@ import {
   useGeolocation,
   validationTexts,
 } from '../utils';
-
-const FishingWeightOptions = [
-  { label: 'Sugautos žuvys', value: FishingWeighType.CAUGHT },
-  { label: 'Visos žuvys', value: FishingWeighType.All },
-];
 
 const FishingWeight = () => {
   const [type, setType] = useState<FishingWeighType>(FishingWeighType.CAUGHT);
@@ -160,14 +154,6 @@ const FishingWeight = () => {
         {({ values, setFieldValue }) => {
           return (
             <>
-              {showSwitch && (
-                <SwitchButton
-                  options={FishingWeightOptions}
-                  value={type}
-                  onChange={(newValue) => handleSwitchChange(newValue, values, setFieldValue)}
-                  loading={fishingWeightLoadingOrSwitching}
-                />
-              )}
               <StyledForm $disabled={fishingWeightLoadingOrSwitching}>
                 {values?.map((item: any, index: number) => (
                   <FishRow

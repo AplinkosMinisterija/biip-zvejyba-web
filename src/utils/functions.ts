@@ -220,3 +220,15 @@ export const formatDate = (date?: Date | string) =>
   date ? format(new Date(date), 'yyyy-MM-dd') : '-';
 
 export const isNew = (id?: string) => !id || id === 'naujas';
+
+export const handleGetCaughtFishExcel = async (mappedQuery: any) => {
+  const data = await api.exportLoots({ query: mappedQuery.query, scope: mappedQuery.scope });
+  const url = window.URL.createObjectURL(data);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `Sugautos žuvys.xlsx`);
+  link.target = '_blank';
+  document.body.appendChild(link);
+  link.click();
+  window.URL.revokeObjectURL(url);
+};
