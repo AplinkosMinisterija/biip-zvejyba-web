@@ -1,6 +1,12 @@
 import { useContext } from 'react';
 import styled from 'styled-components';
-import { getBuiltToolInfo, PopupContentType, theme, ToolsGroup } from '../../utils';
+import {
+  getBuiltToolInfo,
+  handleErrorToast,
+  PopupContentType,
+  theme,
+  ToolsGroup,
+} from '../../utils';
 import Icon, { IconName } from '../other/Icon';
 import Tag from '../other/Tag';
 import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
@@ -40,6 +46,8 @@ const ToolsGroupCard = ({
                   showCheckButton,
                 },
               });
+            } else {
+              handleErrorToast('Turite užbaigti tikrinti to paties tipo įrankius.');
             }
           }}
         >
