@@ -82,6 +82,8 @@ export enum IconName {
   researches = 'researches',
   fullscreen = 'fullscreen',
   exitFullScreen = 'exitFullScreen',
+  loader = 'loader',
+  excel = 'excel',
 }
 interface IconProps {
   name: IconName | string;
@@ -90,6 +92,63 @@ interface IconProps {
 
 const Icon = ({ name, className }: IconProps) => {
   switch (name) {
+    case IconName.loader:
+      return (
+        <svg
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          x="0px"
+          y="0px"
+          width={'16px'}
+          height={'16px'}
+          viewBox="0 0 50 50"
+        >
+          <path
+            fill={'black'}
+            d="M43.935,25.145c0-10.318-8.364-18.683-18.683-18.683c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615c8.072,0,14.615,6.543,14.615,14.615H43.935z"
+          >
+            <animateTransform
+              attributeType="xml"
+              attributeName="transform"
+              type="rotate"
+              from="0 25 25"
+              to="360 25 25"
+              dur="0.6s"
+              repeatCount="indefinite"
+            />
+          </path>
+        </svg>
+      );
+    case IconName.excel:
+      return (
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect
+            x="1.5"
+            y="2"
+            width="13"
+            height="12"
+            rx="1.5"
+            fill="#1D9E75"
+            opacity="0.15"
+            stroke="#1D9E75"
+            stroke-width="1"
+          />
+          <path
+            d="M4 6h2.5M4 8.5h2.5M4 11h2.5"
+            stroke="#1D9E75"
+            stroke-width="1.2"
+            stroke-linecap="round"
+          />
+          <path
+            d="M9.5 5.5L11.5 8l-2 2.5"
+            stroke="#0F6E56"
+            stroke-width="1.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path d="M9.5 10.5h2" stroke="#0F6E56" stroke-width="1.2" stroke-linecap="round" />
+        </svg>
+      );
     case IconName.connect:
       return <GoLink className={className} />;
     case IconName.disconnect:

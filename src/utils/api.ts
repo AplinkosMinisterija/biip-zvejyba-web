@@ -537,6 +537,33 @@ class Api {
       resource: `fishings/history`,
       id,
     });
+
+  exportCaughtFishes = async ({ id }: { id: string }): Promise<FishingHistoryResponse> =>
+    this.get({
+      resource: `fishings/history`,
+      id,
+    });
+
+  exportLoots = async ({ query = {} }: any): Promise<any> => {
+    const token = cookies.get('token');
+    const profileId = cookies.get('profileId');
+
+    const queryParams = new URLSearchParams({
+      query: JSON.stringify(query),
+    }).toString();
+
+    const response = await fetch(`/api/fishings/exportCaughtFishes?${queryParams}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+        ...(!isNaN(profileId) && { 'X-Profile': profileId }),
+      },
+    });
+
+    const data = await response.blob();
+
+    return data;
+  };
 }
 
 export default new Api();
