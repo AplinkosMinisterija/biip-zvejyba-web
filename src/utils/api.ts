@@ -524,9 +524,16 @@ class Api {
     });
   };
 
-  getFishingJournal = async ({ page }: { page: number }): Promise<GetAllResponse<Fishing>> => {
+  getFishingJournal = async ({
+    page,
+    query,
+  }: {
+    page: number;
+    query: any;
+  }): Promise<GetAllResponse<Fishing>> => {
     return await this.get({
       resource: 'fishings',
+      query,
       populate: ['startEvent', 'endEvent', 'skipEvent', 'weightEvents'],
       page,
     });

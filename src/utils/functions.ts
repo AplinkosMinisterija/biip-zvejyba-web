@@ -1,4 +1,5 @@
-import format from 'date-fns/format';
+import { endOfDay, format, startOfDay } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
 import api from './api';
@@ -221,8 +222,8 @@ export const formatDate = (date?: Date | string) =>
 
 export const isNew = (id?: string) => !id || id === 'naujas';
 
-export const handleGetCaughtFishExcel = async (mappedQuery: any) => {
-  const data = await api.exportLoots({ query: mappedQuery.query, scope: mappedQuery.scope });
+export const handleGetCaughtFishExcel = async (query: any) => {
+  const data = await api.exportLoots({ query });
   const url = window.URL.createObjectURL(data);
   const link = document.createElement('a');
   link.href = url;
@@ -231,4 +232,12 @@ export const handleGetCaughtFishExcel = async (mappedQuery: any) => {
   document.body.appendChild(link);
   link.click();
   window.URL.revokeObjectURL(url);
+};
+
+export const formatDateTo = (date: Date) => {
+  return toZonedTime(endOfDay(new Date(date)), 'Europe/Vilnius');
+};
+
+export const formatDateFrom = (date: Date) => {
+  return toZonedTime(startOfDay(new Date(date)), 'Europe/Vilnius');
 };

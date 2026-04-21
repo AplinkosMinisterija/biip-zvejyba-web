@@ -1,4 +1,4 @@
-import { EventTypes, RoleTypes, ServerErrors } from './constants';
+import { EventTypes, LocationType, RoleTypes, ServerErrors } from './constants';
 
 export const validationTexts: { [key: string]: string } = {
   requireMap: 'Privalote pasirinkti vietą žemėlapyje',
@@ -116,4 +116,21 @@ export const FishingEventLabels = {
   [EventTypes.REMOVE_TOOLS]: 'Ištrauktas įrankis',
   [EventTypes.WEIGHT_ON_SHORE]: 'Tikslus svoris krante',
   [EventTypes.WEIGHT_ON_BOAT]: 'Patikrintas įrankis',
+};
+
+export const locationTypeLabels = {
+  [LocationType.ESTUARY]: 'Kuršių mariose',
+  [LocationType.INLAND_WATERS]: 'Vidaus vandenyse',
+  [LocationType.POLDERS]: 'Polderiuose',
+};
+
+export const journalTableFilters = {
+  type: 'Žvejybos vieta',
+  createdFrom: 'Žvejybos sukūrimo data nuo',
+  createdTo: 'Žvejybos sukūrimo data iki',
+};
+
+export const filtersTexts = {
+  clearAll: 'Išvalyti visus',
+  filter: 'Filtruoti',
 };
