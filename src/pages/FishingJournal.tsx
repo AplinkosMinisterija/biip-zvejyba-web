@@ -1,3 +1,4 @@
+import { DynamicFilter, FilterInputTypes, useStorage } from '@aplinkosministerija/design-system';
 import { useRef } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -6,21 +7,83 @@ import FishingCard from '../components/cards/FishingCard';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import Icon, { IconName } from '../components/other/Icon';
 import LoaderComponent from '../components/other/LoaderComponent';
-import { handleGetCaughtFishExcel, slugs, useInfinityLoad } from '../utils';
+import {
+  filtersTexts,
+  FishingFilters,
+  formatDateFrom,
+  formatDateTo,
+  getLocationTypeOptions,
+  handleGetCaughtFishExcel,
+  journalTableFilters,
+  LocationType,
+  slugs,
+  useInfinityLoad,
+} from '../utils';
 import api from '../utils/api';
 
 const FishingJournal = () => {
+  const filterConfig = {
+    type: {
+      label: journalTableFilters.type,
+      key: 'type',
+      inputType: FilterInputTypes.singleSelect,
+      optionLabel: (option: { id: LocationType; label: string }) => option?.label,
+      options: getLocationTypeOptions(),
+    },
+    createdFrom: {
+      label: journalTableFilters.createdFrom,
+      key: 'createdFrom',
+      inputType: FilterInputTypes.date,
+    },
+    createdTo: {
+      label: journalTableFilters.createdTo,
+      key: 'createdTo',
+      inputType: FilterInputTypes.date,
+    },
+  };
+
+  const rowConfig = [['type'], ['createdFrom', 'createdTo']];
+
+  const mapFilters = (filters: FishingFilters) => {
+    const params: any = {};
+
+    if (filters) {
+      (!!filters.createdFrom || !!filters.createdTo) &&
+        (params.createdAt = {
+          ...(filters.createdFrom && {
+            $gte: formatDateFrom(new Date(filters.createdFrom)),
+          }),
+          ...(filters.createdTo && {
+            $lt: formatDateTo(new Date(filters.createdTo)),
+          }),
+        });
+
+      if (filters.type?.id) {
+        params.type = filters.type?.id;
+      }
+    }
+
+    return params;
+  };
+
   const navigate = useNavigate();
   const observerRef = useRef<any>(null);
 
+  const { value: filters, setValue: setFilters } = useStorage<FishingFilters>(
+    `fishing_journal_filters`,
+    {},
+    true,
+  );
+
   const { data, isFetching } = useInfinityLoad(
-    'fishingJournal',
-    api.getFishingJournal,
+    `fishingJournal`,
+    ({ page, ...filters }) => api.getFishingJournal({ page, query: mapFilters(filters) }),
     observerRef,
+    filters,
   );
 
   const { isLoading: downloading, mutateAsync: handleDownload } = useMutation({
-    mutationFn: () => handleGetCaughtFishExcel({}),
+    mutationFn: () => handleGetCaughtFishExcel({ type: mapFilters(filters) }),
   });
 
   const fishings: any = data?.pages
@@ -31,9 +94,19 @@ const FishingJournal = () => {
   return (
     <DefaultLayout>
       <Container>
-        <ExportButton onClick={() => handleDownload()} disabled={downloading}>
-          <Icon name={downloading ? IconName.loader : IconName.excel} />
-        </ExportButton>
+        <Row>
+          <DynamicFilter
+            filters={filters}
+            filterConfig={filterConfig}
+            rowConfig={rowConfig}
+            onSetFilters={setFilters}
+            disabled={isFetching}
+            texts={filtersTexts}
+          />
+          <ExportButton onClick={() => handleDownload()} disabled={downloading}>
+            <Icon name={downloading ? IconName.loader : IconName.excel} />
+          </ExportButton>
+        </Row>
 
         {fishings?.map((fishing: any) => {
           return (
@@ -67,6 +140,12 @@ const Container = styled.div`
   overflow-x: hidden;
 `;
 
+const Row = styled.div`
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+`;
+
 const Invisible = styled.div`
   width: 10px;
   height: 16px;
@@ -81,6 +160,5 @@ const ExportButton = styled.button`
   justify-content: center;
   border: 1px solid ${({ theme }) => theme.colors.tertiary};
   border-radius: 8px;
-  margin-bottom: 16px;
   cursor: pointer;
 `;

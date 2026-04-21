@@ -178,7 +178,7 @@ export const useGetCurrentRoute = () => {
 
 export const useInfinityLoad = (
   queryKey: string,
-  fn: (params: { page: number }) => any,
+  fn: (params: { page: number; [key: string]: any }) => any,
   observerRef: any,
   filters = {},
 ) => {
@@ -194,7 +194,7 @@ export const useInfinityLoad = (
   };
 
   const result = useInfiniteQuery({
-    queryKey: [queryKey],
+    queryKey: [queryKey, filters],
     queryFn: ({ pageParam }: any) => queryFn(pageParam),
     getNextPageParam: (lastPage: any) => {
       return lastPage?.page < lastPage?.totalPages ? lastPage.page + 1 : undefined;

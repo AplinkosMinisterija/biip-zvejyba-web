@@ -218,3 +218,9 @@ export interface ReactQueryError {
     message: string;
   };
 }
+
+export interface FishingFilters {
+  createdFrom?: string;
+  createdTo?: string;
+  type?: { id: LocationType; label: string };
+}

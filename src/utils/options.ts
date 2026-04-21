@@ -1,5 +1,6 @@
-import { RoleTypes, SickReasons } from './constants';
-import { buttonLabels } from './texts';
+import { map } from 'lodash';
+import { LocationType, RoleTypes, SickReasons } from './constants';
+import { buttonLabels, locationTypeLabels } from './texts';
 
 export const roleOptions = [RoleTypes.USER, RoleTypes.USER_ADMIN];
 
@@ -18,3 +19,9 @@ export const skipOptions = [
     additionalInfo: true,
   },
 ];
+
+export const getLocationTypeOptions = () =>
+  map(LocationType, (type) => ({
+    id: type,
+    label: locationTypeLabels[type],
+  }));
