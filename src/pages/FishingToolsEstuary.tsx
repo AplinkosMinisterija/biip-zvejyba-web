@@ -1,5 +1,5 @@
 import { isEmpty, map } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import Button from '../components/buttons/Button';
@@ -31,7 +31,7 @@ const FishingToolsEstuary = () => {
     isLoading: locationLoading,
     refetch,
   } = useQuery({
-    queryKey: ['location', currentFishing?.id],
+    queryKey: ['location', currentFishing?.id, coordinates?.x, coordinates?.y],
     queryFn: () => {
       return api.getLocation({
         query: JSON.stringify({
@@ -41,17 +41,12 @@ const FishingToolsEstuary = () => {
       });
     },
     retry: false,
-    enabled: !!currentFishing && currentFishing?.type !== LocationType.INLAND_WATERS,
+    enabled:
+      !!currentFishing &&
+      !!coordinates &&
+      currentFishing?.type !== LocationType.INLAND_WATERS &&
+      !manualLocation,
   });
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (locationType === LocationType.ESTUARY && coordinates && !manualLocation) {
-        refetch();
-      }
-    }, 60000); // 60000ms = 1 minute
-    return () => clearInterval(interval);
-  }, []);
 
   const isEstuary = currentFishing?.type === LocationType.ESTUARY;
   const locationId = (manualLocation || location)?.id;
