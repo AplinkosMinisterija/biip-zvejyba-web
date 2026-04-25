@@ -5,45 +5,24 @@ import api from './api';
 import { intersectionObserverConfig, RoleTypes } from './constants';
 import {
   clearCookies,
-  handleErrorToast,
   handleErrorToastFromServer,
-  handleGeolocationToast,
   handleSetProfile,
   handleSuccessToast,
 } from './functions';
 
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { matchPath, useLocation } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
+import {
+  GeolocationContext,
+  GeolocationContextProps,
+} from '../components/providers/GeolocationProvider';
 import { AppDispatch, RootState } from '../state/store';
 import { routes, slugs } from './routes';
 import { User } from './types';
 
 const cookies = new Cookies();
-
-type Coordinates = {
-  x: number;
-  y: number;
-};
-
-type UseGeolocationResult = {
-  coordinates: Coordinates | null;
-  loading: boolean;
-  refresh: () => void;
-};
-
-const INITIAL_OPTIONS: PositionOptions = {
-  enableHighAccuracy: false,
-  timeout: 15000,
-  maximumAge: 30000,
-};
-
-const WATCH_OPTIONS: PositionOptions = {
-  enableHighAccuracy: true,
-  timeout: 20000,
-  maximumAge: 25000,
-};
 
 export const emptyUser = {
   userData: {},
@@ -261,86 +240,4 @@ export const useFishingWeightMutation = () => {
   return { fishingWeightMutation, fishingWeightLoading };
 };
 
-export const useGeolocation = (): UseGeolocationResult => {
-  const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const watchIdRef = useRef<number | null>(null);
-  const resolvedInitialRef = useRef(false);
-  const loadingToastShownRef = useRef(false);
-
-  const applyPosition = (position: GeolocationPosition) => {
-    setCoordinates({
-      x: position.coords.longitude,
-      y: position.coords.latitude,
-    });
-
-    if (!resolvedInitialRef.current) {
-      resolvedInitialRef.current = true;
-      setLoading(false);
-      loadingToastShownRef.current = false;
-    }
-  };
-
-  const applyError = (err: GeolocationPositionError) => {
-    const error = err.code;
-
-    if (error === 1) {
-      handleErrorToast('Nesuteikti vietos nustatymo leidimai. Patikrinkite naršyklės nustatymus.');
-    } else if (error === 2) {
-      handleErrorToast('Nepavyko nustatyti jūsų vietos.');
-    } else if (error === 3) {
-      handleErrorToast('Baigėsi vietos nustatymo laukimo laikas. Bandykite dar kartą.');
-    }
-
-    if (!resolvedInitialRef.current) {
-      resolvedInitialRef.current = true;
-      setLoading(false);
-      loadingToastShownRef.current = false;
-    }
-  };
-
-  const requestCurrentPosition = () => {
-    if (!navigator.geolocation) {
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    resolvedInitialRef.current = false;
-
-    if (!loadingToastShownRef.current) {
-      loadingToastShownRef.current = true;
-      handleGeolocationToast(true);
-    }
-
-    navigator.geolocation.getCurrentPosition(applyPosition, applyError, INITIAL_OPTIONS);
-  };
-
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      setLoading(false);
-      return;
-    }
-
-    requestCurrentPosition();
-
-    watchIdRef.current = navigator.geolocation.watchPosition(
-      applyPosition,
-      () => {},
-      WATCH_OPTIONS,
-    );
-
-    return () => {
-      if (watchIdRef.current !== null) {
-        navigator.geolocation.clearWatch(watchIdRef.current);
-      }
-    };
-  }, []);
-
-  return {
-    coordinates,
-    loading,
-    refresh: requestCurrentPosition,
-  };
-};
+export const useGeolocation = (): GeolocationContextProps => useContext(GeolocationContext);
