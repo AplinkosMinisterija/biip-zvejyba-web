@@ -32,7 +32,7 @@ const FishingTools = () => {
     isFetching: locationLoading,
     refetch,
   } = useQuery({
-    queryKey: ['location', currentFishing?.id],
+    queryKey: ['location', currentFishing?.id, coordinates?.x, coordinates?.y],
     queryFn: () => {
       return api.getLocation({
         query: JSON.stringify({
@@ -41,7 +41,7 @@ const FishingTools = () => {
         }),
       });
     },
-    enabled: !!currentFishing,
+    enabled: !!currentFishing && !!coordinates && !manualLocation,
   });
 
   const isEstuary = currentFishing?.type === LocationType.ESTUARY;

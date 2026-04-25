@@ -32,7 +32,7 @@ const FishingTools = () => {
     isFetching: locationLoading,
     refetch,
   } = useQuery({
-    queryKey: ['location', currentFishing?.id],
+    queryKey: ['location', currentFishing?.id, coordinates?.x, coordinates?.y],
     queryFn: () => {
       return api.getLocation({
         query: JSON.stringify({
@@ -42,7 +42,7 @@ const FishingTools = () => {
       });
     },
     retry: false,
-    enabled: !!currentFishing,
+    enabled: !!currentFishing && !!coordinates && !manualLocation,
   });
 
   const currentLocation = manualLocation || location;
