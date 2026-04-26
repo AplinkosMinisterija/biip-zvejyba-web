@@ -37,12 +37,16 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
 
   const loading = fishingWeightsLoading;
 
-  const weightOnBoatExist =
-    !!fishingWeights?.preliminary && !!Object.keys(fishingWeights.preliminary).length;
+  const hasFishAmount = (record?: Record<string, unknown>) =>
+    !!record && Object.values(record).some((amount) => Number(amount) > 0);
 
-  const weightOnShoreExist = !!fishingWeights?.total && !!Object.keys(fishingWeights.total).length;
+  const weightOnBoatExist = hasFishAmount(fishingWeights?.preliminary);
+
+  const weightOnShoreExist = hasFishAmount(fishingWeights?.total);
 
   const isDisabled = locationType !== LocationType.INLAND_WATERS && weightOnShoreExist;
+
+  const shoreWeighingDisabled = isDisabled || !weightOnBoatExist;
 
   return loading ? (
     <LoaderComponent />
@@ -68,7 +72,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           title="Žuvies svoris</br>krante"
           subtitle="Pasverkite bendrą svorį"
           buttonLabel="Sverti"
-          isDisabled={isDisabled}
+          isDisabled={shoreWeighingDisabled}
           onClick={() => {
             navigate(slugs.fishingWeight);
           }}
