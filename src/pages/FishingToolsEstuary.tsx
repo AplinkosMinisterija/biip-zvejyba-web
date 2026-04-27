@@ -53,7 +53,7 @@ const FishingToolsEstuary = () => {
   const { data: builtTools = [], isFetching: builtToolsFetching } = useQuery(
     ['builtTools', locationId, currentFishing?.id],
     () => {
-      return api.getBuiltTools({ locationId });
+      return api.getBuiltTools({ locationId, locationType: LocationType.ESTUARY });
     },
     {
       onError: ({ response }: any) => {

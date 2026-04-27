@@ -43,6 +43,7 @@ interface GetAll {
   geom?: any;
   responseType?: any;
   toolsGroup?: number;
+  locationType?: string;
 }
 
 export interface GetAllResponse<T> {
@@ -373,9 +374,16 @@ class Api {
     });
   };
 
-  getBuiltTools = async ({ locationId }: { locationId?: string }): Promise<ToolsGroup[]> => {
+  getBuiltTools = async ({
+    locationId,
+    locationType,
+  }: {
+    locationId?: string;
+    locationType?: LocationType;
+  }): Promise<ToolsGroup[]> => {
     return this.get({
       resource: `toolsGroups/location/${locationId}`,
+      locationType,
     });
   };
 

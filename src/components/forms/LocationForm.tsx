@@ -140,7 +140,7 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
                   label={'Baro nr.'}
                   name={'location'}
                   onChange={(value) => {
-                    setFieldValue('location', value);
+                    setFieldValue('location', { ...value, type: LocationType.ESTUARY });
                   }}
                   loading={isLoading}
                 />
@@ -158,6 +158,7 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
                       ...rest,
                       x: lng,
                       y: lat,
+                      type: LocationType.INLAND_WATERS,
                       municipality: { name: municipality, id: municipalityCode },
                     });
                   }}
