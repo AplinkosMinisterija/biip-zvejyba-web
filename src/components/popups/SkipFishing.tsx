@@ -18,7 +18,7 @@ import PopUpWithImage from '../layouts/PopUpWithImage';
 import { Grid } from '../other/CommonStyles';
 
 export const SkipFishing = ({ content, onClose }: any) => {
-  const { locationType } = content;
+  const { locationType, polderId } = content;
 
   const [skipReason, setSkipReason] = useState<any>(SickReasons.BAD_WEATHER);
   const [skipReasonNote, setSkipReasonNote] = useState<string>();
@@ -40,6 +40,7 @@ export const SkipFishing = ({ content, onClose }: any) => {
       skipFishing({
         type: locationType,
         coordinates,
+        ...(polderId ? { polderId } : {}),
         note: skipReason.value === SickReasons.OTHER ? skipReasonNote : skipReason.label,
       });
     } else {

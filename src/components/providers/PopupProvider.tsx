@@ -6,6 +6,7 @@ import EndFishing from '../popups/EndFishing';
 import LocationPermission from '../popups/LocationPermission';
 import { SkipFishing } from '../popups/SkipFishing';
 import { StartFishing } from '../popups/StartFishing';
+import StartFishingPolders from '../popups/StartFishingPolders';
 import ToolGroupAction from '../popups/ToolGroupAction';
 
 export interface PopupContextProps {
@@ -44,6 +45,12 @@ export const PopupProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           // start fishing
           visiblePopup?.type === PopupContentType.START_FISHING && (
             <StartFishing content={visiblePopup.content} onClose={hidePopup} />
+          )
+        }
+        {
+          // start fishing in a polder (manual polder pick, no coordinates)
+          visiblePopup?.type === PopupContentType.START_FISHING_POLDERS && (
+            <StartFishingPolders content={visiblePopup.content} onClose={hidePopup} />
           )
         }
         {

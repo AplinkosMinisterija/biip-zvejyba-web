@@ -11,6 +11,7 @@ import {
   FishingWeights,
   FishType,
   Location,
+  Polder,
   Research,
   TenantUser,
   Tool,
@@ -242,13 +243,19 @@ class Api {
     type: LocationType;
     coordinates: { x: number; y: number };
     uetkCadastralId?: string;
+    polderId?: number;
   }) => {
     return this.post({
       resource: 'fishings/start',
       params,
     });
   };
-  skipFishing = async (params: { type: LocationType; coordinates: any; note: string }) => {
+  skipFishing = async (params: {
+    type: LocationType;
+    coordinates: any;
+    note: string;
+    polderId?: number;
+  }) => {
     return this.post({
       resource: 'fishings/skip',
       params,
@@ -260,6 +267,11 @@ class Api {
       params,
     });
   };
+  getPolders = async (): Promise<Polder[]> =>
+    await this.getAll({
+      resource: 'polders',
+      pageSize: '100',
+    });
   toolTypes = async (params: any) => {
     return this.get({
       resource: 'toolTypes',
