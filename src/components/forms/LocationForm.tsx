@@ -80,22 +80,24 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
         >
           {({ values, errors, setFieldValue }: any) => (
             <FormContainer>
-              <SelectField
-                options={polders}
-                getOptionLabel={(option: Polder) => option?.name}
-                value={values.location}
-                error={errors.location}
-                label={'Polderis'}
-                name={'location'}
-                loading={poldersLoading}
-                onChange={(polder: Polder) => {
-                  setFieldValue('location', {
-                    id: polder.id,
-                    name: polder.name,
-                    type: LocationType.POLDERS,
-                  });
-                }}
-              />
+              <Grid $columns={1}>
+                <SelectField
+                  options={polders}
+                  getOptionLabel={(option: Polder) => option?.name}
+                  value={values.location}
+                  error={errors.location}
+                  label={'Polderis'}
+                  name={'location'}
+                  loading={poldersLoading}
+                  onChange={(polder: Polder) => {
+                    setFieldValue('location', {
+                      id: polder.id,
+                      name: polder.name,
+                      type: LocationType.POLDERS,
+                    });
+                  }}
+                />
+              </Grid>
               <Grid>
                 <Button type="button" variant={ButtonColors.SECONDARY} onClick={onClose}>
                   {'Atšaukti'}
