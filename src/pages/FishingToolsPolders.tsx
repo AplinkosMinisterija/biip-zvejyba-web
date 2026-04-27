@@ -108,7 +108,15 @@ const FishingTools = () => {
         location={currentLocation}
         locationLoading={locationLoading || loading}
         locationType={LocationType.POLDERS}
-        setLocationManually={setManualLocation}
+        setLocationManually={(picked: any) => {
+          // Polder pick by itself only carries id/name/type; the backend's
+          // LocationProp also requires `municipality`, which the auto-detect
+          // (getPolder) already resolved from the user's coordinates.
+          setManualLocation({
+            ...picked,
+            municipality: picked?.municipality || location?.municipality,
+          });
+        }}
         renewLocation={refetch}
       />
       {polderPicked && (

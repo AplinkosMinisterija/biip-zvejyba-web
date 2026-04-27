@@ -90,8 +90,11 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
                   name={'location'}
                   loading={poldersLoading}
                   onChange={(polder: Polder) => {
+                    // Backend's LocationProp validator requires `id` as a
+                    // string (matches the cadastralId/bar id shape) — polder
+                    // PKs are integers, so coerce on the way out.
                     setFieldValue('location', {
-                      id: polder.id,
+                      id: String(polder.id),
                       name: polder.name,
                       type: LocationType.POLDERS,
                     });
