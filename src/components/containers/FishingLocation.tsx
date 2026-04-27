@@ -37,7 +37,10 @@ const FishingLocation = () => {
           title="Polderiuose"
           image={'/polderiai.jpg'}
           onClick={() => {
-            showPopup({ type: PopupContentType.START_FISHING_POLDERS });
+            showPopup({
+              type: PopupContentType.START_FISHING,
+              content: { type: LocationType.POLDERS },
+            });
           }}
         />
       </Container>

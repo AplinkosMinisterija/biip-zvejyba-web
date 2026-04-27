@@ -89,7 +89,6 @@ export enum PopupContentType {
   LOCATION_PERMISSION = 'location_permission',
   START_FISHING = 'start_fishing',
   START_FISHING_INLAND_WATERS = 'start_fishing_inland_water',
-  START_FISHING_POLDERS = 'start_fishing_polders',
   SKIP_FISHING = 'skip_fishing',
   END_FISHING = 'end_fishing',
   CAUGHT_FISH_WEIGHT = 'CAUGHT_FISH_WEIGHT',
