@@ -130,6 +130,12 @@ export interface Fishing {
   user: User;
 }
 
+export interface Polder {
+  id: number;
+  name: string;
+  area: number;
+}
+
 export interface FishingEvent {
   id: number;
   geom: any;

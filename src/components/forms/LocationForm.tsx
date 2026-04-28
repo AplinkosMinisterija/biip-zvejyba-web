@@ -6,6 +6,7 @@ import {
   handleErrorToastFromServer,
   locationSchema,
   LocationType,
+  Polder,
 } from '../../utils';
 import api from '../../utils/api';
 import Button, { ButtonColors } from '../buttons/Button';
@@ -16,10 +17,22 @@ import { Grid } from '../other/CommonStyles';
 
 const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any) => {
   const queryClient = useQueryClient();
+  const isPolders = locationType === LocationType.POLDERS;
+
   const { data: bars, isLoading } = useQuery(['bars'], async () => api.getFishinSections(), {
     enabled: locationType === LocationType.ESTUARY,
     retry: false,
   });
+
+  const { data: polders = [], isLoading: poldersLoading } = useQuery<Polder[]>(
+    ['polders'],
+    () => api.getPolders(),
+    {
+      enabled: isPolders,
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  );
 
   const initialValues = { location: '', x: '', y: '' };
 
@@ -54,6 +67,55 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
   const getInputValue = (location: any) =>
     location ? `${location?.name}, ${location?.cadastralId}` : '';
 
+  if (isPolders) {
+    return (
+      <Container>
+        <Heading>Pasirinkite polderį</Heading>
+        <Description>Kuriame polderyje žvejojate?</Description>
+        <Formik
+          enableReinitialize={true}
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validateOnChange={false}
+        >
+          {({ values, errors, setFieldValue }: any) => (
+            <FormContainer>
+              <Grid $columns={1}>
+                <SelectField
+                  options={polders}
+                  getOptionLabel={(option: Polder) => option?.name}
+                  value={values.location}
+                  error={errors.location}
+                  label={'Polderis'}
+                  name={'location'}
+                  loading={poldersLoading}
+                  onChange={(polder: Polder) => {
+                    // Backend's LocationProp validator requires `id` as a
+                    // string (matches the cadastralId/bar id shape) — polder
+                    // PKs are integers, so coerce on the way out.
+                    setFieldValue('location', {
+                      id: String(polder.id),
+                      name: polder.name,
+                      type: LocationType.POLDERS,
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid>
+                <Button type="button" variant={ButtonColors.SECONDARY} onClick={onClose}>
+                  {'Atšaukti'}
+                </Button>
+                <Button type="submit" disabled={!values.location}>
+                  {'Saugoti'}
+                </Button>
+              </Grid>
+            </FormContainer>
+          )}
+        </Formik>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       <Heading>Esate kitur?</Heading>
@@ -81,7 +143,7 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
                   label={'Baro nr.'}
                   name={'location'}
                   onChange={(value) => {
-                    setFieldValue('location', value);
+                    setFieldValue('location', { ...value, type: LocationType.ESTUARY });
                   }}
                   loading={isLoading}
                 />
@@ -99,6 +161,7 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
                       ...rest,
                       x: lng,
                       y: lat,
+                      type: LocationType.INLAND_WATERS,
                       municipality: { name: municipality, id: municipalityCode },
                     });
                   }}
@@ -154,6 +217,7 @@ export default LocationForm;
 
 const Container = styled.div`
   padding: 68px 16px 16px 16px;
+  width: 100%;
 `;
 
 const Heading = styled.div`

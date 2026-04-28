@@ -45,20 +45,27 @@ const FishingTools = () => {
   });
 
   const isEstuary = currentFishing?.type === LocationType.ESTUARY;
+  // currentLocation drives the title; auto-detected stub shows "Polderiai"
+  // until the user picks a specific polder via the LocationForm popup.
   const currentLocation = manualLocation || location;
-  const showBuildToolsButton = !!currentLocation?.id;
+  // Tools / build button only make sense once a real polder is picked —
+  // the auto-detected stub has a non-numeric placeholder id.
+  const polderPicked = !!manualLocation?.id;
 
   const { data: builtTools = [], isFetching: builtToolsFetching } = useQuery(
-    ['builtTools', location?.id, currentFishing?.id],
+    ['builtTools', manualLocation?.id, currentFishing?.id],
     () => {
-      return api.getBuiltTools({ locationId: location?.id });
+      return api.getBuiltTools({
+        locationId: manualLocation?.id,
+        locationType: LocationType.POLDERS,
+      });
     },
     {
       onError: ({ response }: any) => {
         handleErrorToastFromServer(response);
       },
       retry: false,
-      enabled: !!location?.id,
+      enabled: polderPicked,
     },
   );
 
@@ -98,48 +105,58 @@ const FishingTools = () => {
   return (
     <DefaultLayout>
       <LocationInfo
-        location={location}
+        location={currentLocation}
         locationLoading={locationLoading || loading}
         locationType={LocationType.POLDERS}
-        setLocationManually={setManualLocation}
+        setLocationManually={(picked: any) => {
+          // Polder pick by itself only carries id/name/type; the backend's
+          // LocationProp also requires `municipality`, which the auto-detect
+          // (getPolder) already resolved from the user's coordinates.
+          setManualLocation({
+            ...picked,
+            municipality: picked?.municipality || location?.municipality,
+          });
+        }}
         renewLocation={refetch}
       />
-      <Container>
-        {builtToolsFetching || (builtTools === undefined && !!showBuildToolsButton) ? (
-          <LoaderComponent />
-        ) : isEmpty(builtTools) ? (
-          <NotFound message={'Nėra pastatytų įrankių'} />
-        ) : (
-          map(builtTools, (toolsGroup: any) => {
-            const toolTypeId = toolsGroup.tools[0].toolType.id;
-            const disableTool =
-              !!notCompletedToolType && notCompletedToolType !== toolTypeId.toString();
+      {polderPicked && (
+        <Container>
+          {builtToolsFetching ? (
+            <LoaderComponent />
+          ) : isEmpty(builtTools) ? (
+            <NotFound message={'Nėra pastatytų įrankių'} />
+          ) : (
+            map(builtTools, (toolsGroup: any) => {
+              const toolTypeId = toolsGroup.tools[0].toolType.id;
+              const disableTool =
+                !!notCompletedToolType && notCompletedToolType !== toolTypeId.toString();
 
-            const showCheckButton =
-              toolTypesCounts[toolTypeId] - (checkedToolTypesCounts?.[toolTypeId] || 0) > 1;
+              const showCheckButton =
+                toolTypesCounts[toolTypeId] - (checkedToolTypesCounts?.[toolTypeId] || 0) > 1;
 
-            return (
-              <ToolsGroupCard
-                isEstuary={isEstuary}
-                key={toolsGroup.id}
-                toolsGroup={toolsGroup}
-                location={location}
-                showCheckButton={showCheckButton}
-                isDisabled={disableTool}
-              />
-            );
-          })
-        )}
-      </Container>
-      {location?.name && (
+              return (
+                <ToolsGroupCard
+                  isEstuary={isEstuary}
+                  key={toolsGroup.id}
+                  toolsGroup={toolsGroup}
+                  location={currentLocation}
+                  showCheckButton={showCheckButton}
+                  isDisabled={disableTool}
+                />
+              );
+            })
+          )}
+        </Container>
+      )}
+      {polderPicked && (
         <>
           <Footer>
-            <StyledButton disabled={!location || loading} onClick={() => setShowBuildTools(true)}>
+            <StyledButton disabled={loading} onClick={() => setShowBuildTools(true)}>
               Pastatyti įrankį
             </StyledButton>
           </Footer>
           <Popup visible={showBuildTools} onClose={() => setShowBuildTools(false)}>
-            <BuildTools location={location} onClose={() => setShowBuildTools(false)} />
+            <BuildTools location={currentLocation} onClose={() => setShowBuildTools(false)} />
           </Popup>
         </>
       )}

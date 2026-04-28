@@ -11,6 +11,7 @@ import {
   FishingWeights,
   FishType,
   Location,
+  Polder,
   Research,
   TenantUser,
   Tool,
@@ -42,6 +43,7 @@ interface GetAll {
   geom?: any;
   responseType?: any;
   toolsGroup?: number;
+  locationType?: string;
 }
 
 export interface GetAllResponse<T> {
@@ -242,13 +244,19 @@ class Api {
     type: LocationType;
     coordinates: { x: number; y: number };
     uetkCadastralId?: string;
+    polderId?: number;
   }) => {
     return this.post({
       resource: 'fishings/start',
       params,
     });
   };
-  skipFishing = async (params: { type: LocationType; coordinates: any; note: string }) => {
+  skipFishing = async (params: {
+    type: LocationType;
+    coordinates: any;
+    note: string;
+    polderId?: number;
+  }) => {
     return this.post({
       resource: 'fishings/skip',
       params,
@@ -260,6 +268,11 @@ class Api {
       params,
     });
   };
+  getPolders = async (): Promise<Polder[]> =>
+    await this.getAll({
+      resource: 'polders',
+      pageSize: '100',
+    });
   toolTypes = async (params: any) => {
     return this.get({
       resource: 'toolTypes',
@@ -361,9 +374,16 @@ class Api {
     });
   };
 
-  getBuiltTools = async ({ locationId }: { locationId?: string }): Promise<ToolsGroup[]> => {
+  getBuiltTools = async ({
+    locationId,
+    locationType,
+  }: {
+    locationId?: string;
+    locationType?: LocationType;
+  }): Promise<ToolsGroup[]> => {
     return this.get({
       resource: `toolsGroups/location/${locationId}`,
+      locationType,
     });
   };
 
