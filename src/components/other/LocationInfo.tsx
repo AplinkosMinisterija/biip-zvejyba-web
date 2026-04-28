@@ -28,7 +28,7 @@ const LocationInfo = ({
       <NotCheckedToolsLocations location={location} />
       <TitleWrapper>
         <Title>{location?.name || loadingMessage}</Title>
-        {setLocationManually && (
+        {!locationLoading && setLocationManually && (
           <IconContainer onClick={() => setShowLocationPopUp(true)}>
             <EditIcon name={IconName.edit} />
           </IconContainer>
