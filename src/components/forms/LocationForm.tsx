@@ -217,6 +217,7 @@ export default LocationForm;
 
 const Container = styled.div`
   padding: 68px 16px 16px 16px;
+  width: 100%;
 `;
 
 const Heading = styled.div`
