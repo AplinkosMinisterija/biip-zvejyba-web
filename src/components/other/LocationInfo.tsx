@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { device } from '../../utils';
+import { device, LocationType } from '../../utils';
 import Button, { ButtonColors } from '../buttons/Button';
 import LocationForm from '../forms/LocationForm';
 import PopUpWithImage from '../layouts/PopUpWithImage';
@@ -18,11 +18,16 @@ const LocationInfo = ({
 }: any) => {
   const [showLocationPopUp, setShowLocationPopUp] = useState(false);
 
+  const loadingMessage =
+    locationType === LocationType.POLDERS
+      ? 'Nustatoma jūsų buvimo vieta '
+      : 'Nenustatytas vandens telkinys';
+
   return (
     <>
       <NotCheckedToolsLocations location={location} />
       <TitleWrapper>
-        <Title>{location?.name || 'Nenustatytas vandens telkinys'}</Title>
+        <Title>{location?.name || loadingMessage}</Title>
         {setLocationManually && (
           <IconContainer onClick={() => setShowLocationPopUp(true)}>
             <EditIcon name={IconName.edit} />
