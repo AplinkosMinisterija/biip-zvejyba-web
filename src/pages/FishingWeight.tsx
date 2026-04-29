@@ -10,7 +10,7 @@ import { PopupContext, PopupContextProps } from '../components/providers/PopupPr
 import {
   FishingWeighType,
   handleErrorToast,
-  LocationType,
+  isShoreOnlyWeighing,
   PopupContentType,
   useCurrentFishing,
   useFishingWeightMutation,
@@ -24,7 +24,7 @@ const FishingWeight = () => {
   const [type, setType] = useState<FishingWeighType>(FishingWeighType.CAUGHT);
   const [isSwitching, setIsSwitching] = useState(false);
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
-  const showSwitch = currentFishing?.type !== LocationType.INLAND_WATERS;
+  const showSwitch = !isShoreOnlyWeighing(currentFishing?.type);
   const { fishTypes, fishTypesLoading } = useFishTypes();
   const { fishingWeights, fishingWeightsLoading } = useFishWeights();
   const { fishingWeightLoading, fishingWeightMutation } = useFishingWeightMutation();
@@ -37,7 +37,7 @@ const FishingWeight = () => {
 
   const caughtFishData = fishingWeights?.total || fishingWeights?.preliminary || {};
   const initialValues = (
-    currentFishing?.type === LocationType.INLAND_WATERS || type !== FishingWeighType.CAUGHT
+    isShoreOnlyWeighing(currentFishing?.type) || type !== FishingWeighType.CAUGHT
       ? fishTypes.map((fishType) => {
           const amount = (fishingWeights?.total || fishingWeights?.preliminary)?.[fishType.id];
           return {

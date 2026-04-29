@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import {
   handleErrorToast,
   handleErrorToastFromServer,
-  LocationType,
+  isShoreOnlyWeighing,
   PopupContentType,
   useGeolocation,
 } from '../../utils';
@@ -90,7 +90,7 @@ const ToolGroupAction = ({ onClose, content }: any) => {
           <LoaderComponent />
         ) : (
           <>
-            {currentFishing?.type !== LocationType.INLAND_WATERS && showWeightButtons && (
+            {!isShoreOnlyWeighing(currentFishing?.type) && showWeightButtons && (
               <>
                 <MenuButton
                   label="Sverti žuvį laive "

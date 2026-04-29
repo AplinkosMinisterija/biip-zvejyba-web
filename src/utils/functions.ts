@@ -3,7 +3,7 @@ import { toZonedTime } from 'date-fns-tz';
 import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
 import api from './api';
-import { ToolTypeType } from './constants';
+import { LocationType, ToolTypeType } from './constants';
 import { validationTexts } from './texts';
 import { Profile, ProfileId, ReactQueryError, ResponseProps, ToolsGroup } from './types';
 const cookies = new Cookies();
@@ -241,3 +241,8 @@ export const formatDateTo = (date: Date) => {
 export const formatDateFrom = (date: Date) => {
   return toZonedTime(startOfDay(new Date(date)), 'Europe/Vilnius');
 };
+
+// Polders and inland-water fishings only weigh fish on shore — no on-boat
+// preliminary step. Used to gate the boat-weighing UI consistently.
+export const isShoreOnlyWeighing = (type?: LocationType) =>
+  type === LocationType.INLAND_WATERS || type === LocationType.POLDERS;
