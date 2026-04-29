@@ -32,7 +32,12 @@ const FishingTools = () => {
     isFetching: locationLoading,
     refetch,
   } = useQuery({
-    queryKey: ['location', currentFishing?.id, coordinates?.x, coordinates?.y],
+    // Coordinates intentionally NOT in the queryKey — a moving boat would
+    // otherwise re-fire this query on every GPS tick and put the page back
+    // into the fetching state, blocking tool placement. The queryFn closure
+    // still uses the latest `coordinates` value, and the user can force a
+    // re-detect via the "Atnaujinti lokaciją" button (`refetch`).
+    queryKey: ['location', currentFishing?.id],
     queryFn: () => {
       return api.getLocation({
         query: JSON.stringify({
