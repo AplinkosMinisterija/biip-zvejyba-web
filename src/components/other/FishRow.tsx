@@ -20,8 +20,6 @@ const FishRow = React.memo(({ onChange, fish, index }: FishRowProp) => {
 
   const { label, photo, amount, preliminaryAmount } = fish;
 
-  console.log(preliminaryAmount, 'preliminaryAmountpreliminaryAmount');
-
   return (
     <Row>
       <ImageContainer>
