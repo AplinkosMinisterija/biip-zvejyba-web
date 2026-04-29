@@ -2,7 +2,13 @@ import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Fishing, FishingTypeRoute, LocationType, PopupContentType, slugs } from '../../utils';
+import {
+  Fishing,
+  FishingTypeRoute,
+  isShoreOnlyWeighing,
+  PopupContentType,
+  slugs,
+} from '../../utils';
 import api from '../../utils/api';
 import { Variant } from '../buttons/FishingLocationButton';
 import LargeButton from '../buttons/LargeButton';
@@ -44,7 +50,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
 
   const weightOnShoreExist = hasFishAmount(fishingWeights?.total);
 
-  const isDisabled = locationType !== LocationType.INLAND_WATERS && weightOnShoreExist;
+  const isDisabled = !isShoreOnlyWeighing(locationType) && weightOnShoreExist;
 
   const shoreWeighingDisabled = isDisabled || !weightOnBoatExist;
 
@@ -56,7 +62,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
         <LargeButton
           variant={Variant.FLORAL_WHITE}
           title={
-            locationType === LocationType.INLAND_WATERS
+            isShoreOnlyWeighing(locationType)
               ? 'Statykite arba</br>ištraukite įrankius'
               : 'Tikrinkite arba</br>statykite įrankius'
           }
@@ -84,7 +90,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           buttonLabel="Baigti"
           onClick={() => showPopup({ type: PopupContentType.END_FISHING })}
           isDisabled={
-            locationType !== LocationType.INLAND_WATERS && weightOnBoatExist && !weightOnShoreExist
+            !isShoreOnlyWeighing(locationType) && weightOnBoatExist && !weightOnShoreExist
           }
         />
       </Container>
