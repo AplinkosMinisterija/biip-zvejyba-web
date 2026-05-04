@@ -13,8 +13,8 @@ import api from '../../utils/api';
 import MenuButton from '../buttons/MenuButton';
 import Popup from '../layouts/Popup';
 import { IconName } from '../other/Icon';
-import LoaderComponent from '../other/LoaderComponent';
 import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
+import LoaderComponent from '../other/LoaderComponent';
 
 const ToolGroupAction = ({ onClose, content }: any) => {
   const { toolsGroup, location, showWeightButtons, showCheckButton } = content;
