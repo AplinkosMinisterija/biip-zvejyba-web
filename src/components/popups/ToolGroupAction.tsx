@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import {
   handleErrorToast,
   handleErrorToastFromServer,
+  LocationType,
   PopupContentType,
+  useCurrentFishing,
   useGeolocation,
 } from '../../utils';
 import api from '../../utils/api';
@@ -12,10 +14,12 @@ import MenuButton from '../buttons/MenuButton';
 import Popup from '../layouts/Popup';
 import { IconName } from '../other/Icon';
 import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
+import LoaderComponent from '../other/LoaderComponent';
 
 const ToolGroupAction = ({ onClose, content }: any) => {
   const { toolsGroup, location, showWeightButtons, showCheckButton } = content;
   const { coordinates, loading } = useGeolocation();
+  const { data: currentFishing, isFetching: currentFishingLoading } = useCurrentFishing();
 
   const queryClient = useQueryClient();
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
@@ -75,40 +79,48 @@ const ToolGroupAction = ({ onClose, content }: any) => {
       title={toolsGroup?.tools[0]?.toolType?.label}
       subTitle={toolsGroup?.tools?.map((tool: any) => tool.sealNr).join(', ')}
     >
-      <PopupContainer>
-        {showWeightButtons && (
-          <>
-            <MenuButton
-              label="Sverti žuvį laive "
-              icon={IconName.scales}
-              onClick={() => {
-                showPopup({
-                  type: PopupContentType.CAUGHT_FISH_WEIGHT,
-                  content: {
-                    location,
-                    toolsGroup,
-                  },
-                });
-              }}
-            />
-            {showCheckButton && (
+      {currentFishingLoading ? (
+        <LoaderComponent />
+      ) : (
+        <PopupContainer>
+          {showWeightButtons && (
+            <>
               <MenuButton
-                label="Patikrinta"
-                icon={IconName.check}
-                onClick={handleSubmit}
-                loading={weighToolsIsLoading}
+                label={
+                  currentFishing?.type === LocationType.ESTUARY
+                    ? 'Sverti žuvį laive'
+                    : 'Apytikslis svoris'
+                }
+                icon={IconName.scales}
+                onClick={() => {
+                  showPopup({
+                    type: PopupContentType.CAUGHT_FISH_WEIGHT,
+                    content: {
+                      location,
+                      toolsGroup,
+                    },
+                  });
+                }}
               />
-            )}
-          </>
-        )}
-        <MenuButton
-          label="Sugrąžinti į sandėlį"
-          icon={IconName.return}
-          onClick={returnToolsMutation}
-          loading={removeToolLoading || loading}
-          isActive={!removeToolLoading}
-        />
-      </PopupContainer>
+              {showCheckButton && (
+                <MenuButton
+                  label="Patikrinta"
+                  icon={IconName.check}
+                  onClick={handleSubmit}
+                  loading={weighToolsIsLoading}
+                />
+              )}
+            </>
+          )}
+          <MenuButton
+            label="Sugrąžinti į sandėlį"
+            icon={IconName.return}
+            onClick={returnToolsMutation}
+            loading={removeToolLoading || loading}
+            isActive={!removeToolLoading}
+          />
+        </PopupContainer>
+      )}
     </Popup>
   );
 };
