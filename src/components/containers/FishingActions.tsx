@@ -6,6 +6,7 @@ import {
   Fishing,
   FishingTypeRoute,
   isShoreOnlyWeighing,
+  LocationType,
   PopupContentType,
   slugs,
 } from '../../utils';
@@ -52,7 +53,8 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
 
   const isDisabled = !isShoreOnlyWeighing(locationType) && weightOnShoreExist;
 
-  const shoreWeighingDisabled = isDisabled || !weightOnBoatExist;
+  const shoreWeighingDisabled =
+    isDisabled || (locationType === LocationType.ESTUARY && !weightOnBoatExist);
 
   return loading ? (
     <LoaderComponent />
