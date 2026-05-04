@@ -65,7 +65,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
         />
         <LargeButton
           variant={Variant.GHOST_WHITE}
-          title="Žuvies svoris</br>krante"
+          title="Žuvų svoris</br>krante"
           subtitle="Pasverkite bendrą svorį"
           buttonLabel="Sverti"
           isDisabled={shoreWeighingDisabled}
