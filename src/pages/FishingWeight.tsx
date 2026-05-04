@@ -10,7 +10,6 @@ import { PopupContext, PopupContextProps } from '../components/providers/PopupPr
 import {
   FishingWeighType,
   handleErrorToast,
-  isShoreOnlyWeighing,
   PopupContentType,
   useCurrentFishing,
   useFishingWeightMutation,
@@ -23,8 +22,7 @@ import {
 const FishingWeight = () => {
   const [type, setType] = useState<FishingWeighType>(FishingWeighType.CAUGHT);
   const [isSwitching, setIsSwitching] = useState(false);
-  const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
-  const showSwitch = !isShoreOnlyWeighing(currentFishing?.type);
+  const { isLoading: currentFishingLoading } = useCurrentFishing();
   const { fishTypes, fishTypesLoading } = useFishTypes();
   const { fishingWeights, fishingWeightsLoading } = useFishWeights();
   const { fishingWeightLoading, fishingWeightMutation } = useFishingWeightMutation();
@@ -37,7 +35,7 @@ const FishingWeight = () => {
 
   const caughtFishData = fishingWeights?.total || fishingWeights?.preliminary || {};
   const initialValues = (
-    isShoreOnlyWeighing(currentFishing?.type) || type !== FishingWeighType.CAUGHT
+    type !== FishingWeighType.CAUGHT
       ? fishTypes.map((fishType) => {
           const amount = (fishingWeights?.total || fishingWeights?.preliminary)?.[fishType.id];
           return {
@@ -77,51 +75,6 @@ const FishingWeight = () => {
       coordinates: coordinates,
       isAutoSave: false,
     });
-  };
-
-  const handleSwitchChange = (newValue: FishingWeighType, values: any, setFieldValue: any) => {
-    setIsSwitching(true);
-    setType(newValue);
-    if (!coordinates) {
-      setIsSwitching(false);
-      return;
-    }
-    try {
-      const mappedWeights = mapWeights(values);
-
-      fishingWeightMutation({
-        data: mappedWeights,
-        coordinates: coordinates,
-        isAutoSave: true,
-      });
-
-      const updatedValues =
-        newValue === FishingWeighType.CAUGHT
-          ? fishTypes.map((fishType) => {
-              const amount = fishingWeights?.preliminary?.[fishType.id];
-              return {
-                ...fishType,
-                preliminaryAmount: amount || '',
-                amount: amount || '',
-              };
-            })
-          : Object.keys(caughtFishData)?.map((key: string) => {
-              const fishType = fishTypes.find((fishType) => fishType.id === Number(key));
-              return {
-                ...fishType,
-                preliminaryAmount: caughtFishData[key] || '',
-                amount: caughtFishData[key] || '',
-              };
-            });
-
-      updatedValues.forEach((item: any, index: number) => {
-        setFieldValue(`${index}.amount`, item.amount);
-      });
-    } catch (error) {
-      console.error('Klaida keičiant tipą:', error);
-    } finally {
-      setIsSwitching(false);
-    }
   };
 
   const fishingWeightLoadingOrSwitching = fishingWeightLoading || isSwitching || loading;
