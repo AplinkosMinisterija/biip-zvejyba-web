@@ -2,14 +2,7 @@ import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import {
-  Fishing,
-  FishingTypeRoute,
-  isShoreOnlyWeighing,
-  LocationType,
-  PopupContentType,
-  slugs,
-} from '../../utils';
+import { Fishing, FishingTypeRoute, PopupContentType, slugs } from '../../utils';
 import api from '../../utils/api';
 import { Variant } from '../buttons/FishingLocationButton';
 import LargeButton from '../buttons/LargeButton';
@@ -51,10 +44,9 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
 
   const weightOnShoreExist = hasFishAmount(fishingWeights?.total);
 
-  const isDisabled = !isShoreOnlyWeighing(locationType) && weightOnShoreExist;
+  const isDisabled = weightOnShoreExist;
 
-  const shoreWeighingDisabled =
-    isDisabled || (locationType === LocationType.ESTUARY && !weightOnBoatExist);
+  const shoreWeighingDisabled = isDisabled || !weightOnBoatExist;
 
   return loading ? (
     <LoaderComponent />
@@ -63,11 +55,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
       <Container>
         <LargeButton
           variant={Variant.FLORAL_WHITE}
-          title={
-            isShoreOnlyWeighing(locationType)
-              ? 'Statykite arba</br>ištraukite įrankius'
-              : 'Tikrinkite arba</br>statykite įrankius'
-          }
+          title="Tikrinkite arba</br>statykite įrankius"
           subtitle="Esate žvejybos vietoje"
           buttonLabel="Atidaryti"
           onClick={() => {
@@ -91,9 +79,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           subtitle="Užbaikite žvejybą"
           buttonLabel="Baigti"
           onClick={() => showPopup({ type: PopupContentType.END_FISHING })}
-          isDisabled={
-            !isShoreOnlyWeighing(locationType) && weightOnBoatExist && !weightOnShoreExist
-          }
+          isDisabled={weightOnBoatExist && !weightOnShoreExist}
         />
       </Container>
     </>

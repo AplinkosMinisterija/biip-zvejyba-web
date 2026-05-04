@@ -1,10 +1,9 @@
 import { useContext } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import {
   handleErrorToast,
   handleErrorToastFromServer,
-  isShoreOnlyWeighing,
   PopupContentType,
   useGeolocation,
 } from '../../utils';
@@ -12,7 +11,6 @@ import api from '../../utils/api';
 import MenuButton from '../buttons/MenuButton';
 import Popup from '../layouts/Popup';
 import { IconName } from '../other/Icon';
-import LoaderComponent from '../other/LoaderComponent';
 import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
 const ToolGroupAction = ({ onClose, content }: any) => {
@@ -21,14 +19,6 @@ const ToolGroupAction = ({ onClose, content }: any) => {
 
   const queryClient = useQueryClient();
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
-
-  const { data: currentFishing, isLoading } = useQuery(
-    ['currentFishing'],
-    () => api.getCurrentFishing(),
-    {
-      retry: false,
-    },
-  );
 
   const { mutateAsync: weighToolsMutation, isLoading: weighToolsIsLoading } = useMutation(
     (data: any) => {
@@ -86,44 +76,38 @@ const ToolGroupAction = ({ onClose, content }: any) => {
       subTitle={toolsGroup?.tools?.map((tool: any) => tool.sealNr).join(', ')}
     >
       <PopupContainer>
-        {isLoading ? (
-          <LoaderComponent />
-        ) : (
+        {showWeightButtons && (
           <>
-            {!isShoreOnlyWeighing(currentFishing?.type) && showWeightButtons && (
-              <>
-                <MenuButton
-                  label="Sverti žuvį laive "
-                  icon={IconName.scales}
-                  onClick={() => {
-                    showPopup({
-                      type: PopupContentType.CAUGHT_FISH_WEIGHT,
-                      content: {
-                        location,
-                        toolsGroup,
-                      },
-                    });
-                  }}
-                />
-                {showCheckButton && (
-                  <MenuButton
-                    label="Patikrinta"
-                    icon={IconName.check}
-                    onClick={handleSubmit}
-                    loading={weighToolsIsLoading}
-                  />
-                )}
-              </>
-            )}
             <MenuButton
-              label="Sugrąžinti į sandėlį"
-              icon={IconName.return}
-              onClick={returnToolsMutation}
-              loading={removeToolLoading || loading}
-              isActive={!removeToolLoading}
+              label="Sverti žuvį laive "
+              icon={IconName.scales}
+              onClick={() => {
+                showPopup({
+                  type: PopupContentType.CAUGHT_FISH_WEIGHT,
+                  content: {
+                    location,
+                    toolsGroup,
+                  },
+                });
+              }}
             />
+            {showCheckButton && (
+              <MenuButton
+                label="Patikrinta"
+                icon={IconName.check}
+                onClick={handleSubmit}
+                loading={weighToolsIsLoading}
+              />
+            )}
           </>
         )}
+        <MenuButton
+          label="Sugrąžinti į sandėlį"
+          icon={IconName.return}
+          onClick={returnToolsMutation}
+          loading={removeToolLoading || loading}
+          isActive={!removeToolLoading}
+        />
       </PopupContainer>
     </Popup>
   );
