@@ -18,7 +18,7 @@ import LoaderComponent from '../other/LoaderComponent';
 
 const ToolGroupAction = ({ onClose, content }: any) => {
   const { toolsGroup, location, showWeightButtons, showCheckButton } = content;
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
   const { data: currentFishing, isFetching: currentFishingLoading } = useCurrentFishing();
 
   const queryClient = useQueryClient();
@@ -48,11 +48,12 @@ const ToolGroupAction = ({ onClose, content }: any) => {
         location,
       };
       weighToolsMutation(params);
-    } else {
-      handleErrorToast(
-        'Nepavyko nustatyti jūsų vietos. Pabandykite dar kartą vėliau ir įsitikinkite, kad naršyklėje suteikti vietos nustatymo leidimai.',
-      );
+      return;
     }
+    refreshGeolocation();
+    handleErrorToast(
+      'Nepavyko nustatyti jūsų vietos. Pabandykite dar kartą vėliau ir įsitikinkite, kad naršyklėje suteikti vietos nustatymo leidimai.',
+    );
   };
 
   const { mutateAsync: returnToolsMutation, isLoading: removeToolLoading } = useMutation(

@@ -27,7 +27,7 @@ const FishingWeight = () => {
   const { fishingWeights, fishingWeightsLoading } = useFishWeights();
   const { fishingWeightLoading, fishingWeightMutation } = useFishingWeightMutation();
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
   if (currentFishingLoading || fishTypesLoading || fishingWeightsLoading) {
     return <LoaderComponent />;
@@ -65,7 +65,10 @@ const FishingWeight = () => {
   };
 
   const handleSubmit = (values: any) => {
-    if (!coordinates) return handleErrorToast(validationTexts.mustAllowToSetCoordinates);
+    if (!coordinates) {
+      refreshGeolocation();
+      return handleErrorToast(validationTexts.mustAllowToSetCoordinates);
+    }
 
     const mappedWeights = mapWeights(values);
 

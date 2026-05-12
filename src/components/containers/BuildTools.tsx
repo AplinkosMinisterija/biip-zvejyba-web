@@ -18,7 +18,7 @@ interface BuiltToolsProps {
 const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   const queryClient = useQueryClient();
   const [selectedTool, setSelectedTool] = useState<number>();
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
   const { data: availableTools } = useQuery(['availableTools'], () => api.getAvailableTools(), {
     retry: false,
@@ -75,9 +75,10 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
         location,
         coordinates: buildToolsCoordinates,
       });
-    } else {
-      handleErrorToast('Nenustatyta buvimo vieta');
+      return;
     }
+    refreshGeolocation();
+    handleErrorToast('Nenustatyta buvimo vieta');
   };
 
   return (

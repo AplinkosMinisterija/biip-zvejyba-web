@@ -24,7 +24,7 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
   const currentRoute = useGetCurrentRoute();
   const { fishTypes, fishTypesLoading } = useFishTypes();
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
   const {
     data: fishingWeights,
@@ -94,11 +94,12 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
         location,
       };
       weighToolsMutation(params);
-    } else {
-      handleErrorToast(
-        'Nepavyko nustatyti jūsų vietos. Pabandykite dar kartą vėliau ir įsitikinkite, kad naršyklėje suteikti vietos nustatymo leidimai.',
-      );
+      return;
     }
+    refreshGeolocation();
+    handleErrorToast(
+      'Nepavyko nustatyti jūsų vietos. Pabandykite dar kartą vėliau ir įsitikinkite, kad naršyklėje suteikti vietos nustatymo leidimai.',
+    );
   };
 
   return (

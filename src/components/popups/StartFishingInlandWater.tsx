@@ -20,7 +20,7 @@ import { IconName } from '../other/Icon';
 const StartFishingInlandWater = ({ onClose }: any) => {
   const queryClient = useQueryClient();
   const [selectedLocation, setSelectedLocation] = useState<any>();
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
   const getInputValue = (location: any) =>
     location ? `${location?.name}, ${location?.cadastralId}` : '';
@@ -43,9 +43,10 @@ const StartFishingInlandWater = ({ onClose }: any) => {
         coordinates: { x: coordinates?.x, y: coordinates?.y },
         uetkCadastralId: selectedLocation?.cadastralId,
       });
-    } else {
-      handleErrorToast(validationTexts.mustAllowToSetCoordinates);
+      return;
     }
+    refreshGeolocation();
+    handleErrorToast(validationTexts.mustAllowToSetCoordinates);
   };
 
   return (
