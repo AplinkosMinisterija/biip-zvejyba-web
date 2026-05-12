@@ -19,7 +19,7 @@ export const StartFishing = ({ content, onClose }: any) => {
   const queryClient = useQueryClient();
   const { type } = content;
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
   const { isLoading: startLoading, mutateAsync: startFishing } = useMutation(api.startFishing, {
     onError: ({ response }) => {
@@ -38,9 +38,12 @@ export const StartFishing = ({ content, onClose }: any) => {
         type: type,
         coordinates,
       });
-    } else {
-      handleErrorToast(validationTexts.mustAllowToSetCoordinates);
+      return;
     }
+    // No fix yet — re-trigger the geolocation provider so the user can
+    // recover without closing the popup.
+    refreshGeolocation();
+    handleErrorToast(validationTexts.mustAllowToSetCoordinates);
   };
 
   return (

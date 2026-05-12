@@ -17,7 +17,7 @@ import LoaderComponent from '../other/LoaderComponent';
 export const EndFishing = ({ onClose }: any) => {
   const queryClient = useQueryClient();
 
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
   const { mutateAsync: finishFishing, isLoading: finishFishingLoading } = useMutation(
     api.finishFishing,
@@ -36,9 +36,10 @@ export const EndFishing = ({ onClose }: any) => {
   const handleFinishFishing = () => {
     if (coordinates) {
       finishFishing({ coordinates });
-    } else {
-      handleErrorToast(validationTexts.mustAllowToSetCoordinates);
+      return;
     }
+    refreshGeolocation();
+    handleErrorToast(validationTexts.mustAllowToSetCoordinates);
   };
   return (
     <PopUpWithImage

@@ -25,7 +25,7 @@ const FishingTools = () => {
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
   const locationType = currentFishing?.type;
   const [manualLocation, setManualLocation] = useState<any>();
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
   const {
     data: location,
@@ -122,7 +122,14 @@ const FishingTools = () => {
             municipality: picked?.municipality || location?.municipality,
           });
         }}
-        renewLocation={refetch}
+        renewLocation={() => {
+          // The location query is gated on `!!coordinates`; if GPS hasn't
+          // produced a fix yet, refetch alone is a no-op. Re-trigger the
+          // geolocation provider too so the user can recover from a stuck
+          // "no fix" state.
+          refreshGeolocation();
+          refetch();
+        }}
       />
       {polderPicked && (
         <Container>

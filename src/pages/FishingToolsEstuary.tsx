@@ -22,7 +22,7 @@ import api from '../utils/api';
 const FishingToolsEstuary = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
-  const { coordinates } = useGeolocation();
+  const { coordinates, refresh: refreshGeolocation } = useGeolocation();
 
   const locationType = currentFishing?.type;
   const [manualLocation, setManualLocation] = useState<any>();
@@ -112,7 +112,13 @@ const FishingToolsEstuary = () => {
         locationLoading={locationLoading}
         setLocationManually={setManualLocation}
         locationType={LocationType.ESTUARY}
-        renewLocation={refetch}
+        renewLocation={() => {
+          // Also kick the geolocation provider — the query is gated on
+          // `!!coordinates`, so refetching alone is a no-op when GPS hasn't
+          // produced a fix yet.
+          refreshGeolocation();
+          refetch();
+        }}
       />
       <Container>
         {builtToolsFetching || (builtTools === undefined && !!showBuildToolsButton) ? (

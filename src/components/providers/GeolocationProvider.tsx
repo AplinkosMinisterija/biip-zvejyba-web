@@ -38,6 +38,16 @@ const INITIAL_FIX_OPTIONS: PositionOptions = {
 // of meters, so 50 m is well within the same bucket).
 const MIN_COORDINATE_DELTA = 0.0005;
 
+// Safety net: if neither the initial fix nor the watch yields a position
+// within this window, flip `loading` to false so consumers can fall back to
+// manual location entry / the "Atnaujinti lokaciją" retry button. The watch
+// continues running silently in the background, so a fix arriving later still
+// populates `coordinates`. Without this timer, a transient watch failure
+// followed by a slow initial fix used to flip loading to false with
+// `coordinates === null`, causing action popups to fire the
+// "mustAllowToSetCoordinates" toast even though GPS was still warming up.
+const SETTLE_LOADING_TIMEOUT_MS = 15000;
+
 export const GeolocationContext = createContext<GeolocationContextProps>({
   coordinates: null,
   loading: true,
@@ -49,15 +59,16 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [loading, setLoading] = useState(true);
 
   const watchIdRef = useRef<number | null>(null);
-  const resolvedInitialRef = useRef(false);
+  const settleTimerRef = useRef<number | null>(null);
   const loadingToastShownRef = useRef(false);
   const permissionDeniedRef = useRef(false);
 
-  const finishInitialResolve = () => {
-    if (!resolvedInitialRef.current) {
-      resolvedInitialRef.current = true;
-      setLoading(false);
-      loadingToastShownRef.current = false;
+  const settleLoading = () => {
+    setLoading(false);
+    loadingToastShownRef.current = false;
+    if (settleTimerRef.current !== null) {
+      clearTimeout(settleTimerRef.current);
+      settleTimerRef.current = null;
     }
   };
 
@@ -77,7 +88,7 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
       return next;
     });
-    finishInitialResolve();
+    settleLoading();
   };
 
   const handleGeolocationError = (err: GeolocationPositionError, isWatch: boolean) => {
@@ -88,12 +99,21 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         navigator.geolocation.clearWatch(watchIdRef.current);
         watchIdRef.current = null;
       }
+      settleLoading();
+      return;
     }
-    // Silent on unavailable / timeout — the continuous watch is running and
-    // will recover on its own. Surfacing a toast for every transient GPS
-    // hiccup spammed users on a moving boat.
 
-    finishInitialResolve();
+    // Transient unavailable / timeout. We deliberately do NOT settle loading
+    // here, because the watch is continuous and is still trying — flipping
+    // loading=false while coordinates is still null tricks consumers into
+    // enabling their action buttons, after which the user taps and hits the
+    // "mustAllowToSetCoordinates" toast even though GPS was just slow. The
+    // safety-net timer in requestCurrentPosition guarantees loading
+    // eventually flips so the manual-entry UI isn't blocked forever.
+    if (isWatch) return;
+
+    // Initial fast fix failed (often a cold-cache 8s timeout). Stay loading
+    // and lean on the continuous watch + safety-net timer.
   };
 
   const startWatch = () => {
@@ -118,12 +138,18 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
 
     setLoading(true);
-    resolvedInitialRef.current = false;
 
     if (!loadingToastShownRef.current) {
       loadingToastShownRef.current = true;
       handleGeolocationToast(true);
     }
+
+    if (settleTimerRef.current !== null) clearTimeout(settleTimerRef.current);
+    settleTimerRef.current = window.setTimeout(() => {
+      settleTimerRef.current = null;
+      setLoading(false);
+      loadingToastShownRef.current = false;
+    }, SETTLE_LOADING_TIMEOUT_MS);
 
     // Start the continuous watch immediately so we don't depend on a single
     // getCurrentPosition succeeding — boat GPS often takes 10s+ for the first
@@ -144,6 +170,10 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
         watchIdRef.current = null;
+      }
+      if (settleTimerRef.current !== null) {
+        clearTimeout(settleTimerRef.current);
+        settleTimerRef.current = null;
       }
     };
   }, [requestCurrentPosition]);
