@@ -155,6 +155,7 @@ const FishingToolsEstuary = () => {
           <Popup visible={showBuildTools} onClose={() => setShowBuildTools(false)}>
             <BuildTools
               location={currentLocation}
+              locationManual={!!manualLocation}
               onClose={() => {
                 setShowBuildTools(false);
                 refetch();

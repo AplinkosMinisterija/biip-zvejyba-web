@@ -13,9 +13,10 @@ import { NotFound } from '../other/NotFound';
 interface BuiltToolsProps {
   onClose: () => void;
   location: Location;
+  locationManual?: boolean;
 }
 
-const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
+const BuildTools = ({ onClose, location, locationManual }: BuiltToolsProps) => {
   const queryClient = useQueryClient();
   const [selectedTool, setSelectedTool] = useState<number>();
   const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
@@ -74,6 +75,7 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
         tools: selectedTool,
         location,
         coordinates: buildToolsCoordinates,
+        locationManual: !!locationManual,
       });
       return;
     }
