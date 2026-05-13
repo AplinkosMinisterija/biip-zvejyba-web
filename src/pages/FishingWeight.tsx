@@ -33,14 +33,22 @@ const FishingWeight = () => {
     return <LoaderComponent />;
   }
 
-  const caughtFishData = fishingWeights?.total || fishingWeights?.preliminary || {};
+  // Always include every fish the fisher registered on the boat: if the
+  // user previously submitted onshore weights without one of them, the
+  // entry would otherwise vanish from the form forever (preliminary keys
+  // missing from `total` would never re-render). Total values take
+  // precedence so already-edited rows keep the onshore amount.
+  const preliminaryData = fishingWeights?.preliminary ?? {};
+  const totalData = fishingWeights?.total ?? {};
+  const caughtFishData: { [key: string]: number } = { ...preliminaryData, ...totalData };
   const initialValues = (
     type !== FishingWeighType.CAUGHT
       ? fishTypes.map((fishType) => {
-          const amount = (fishingWeights?.total || fishingWeights?.preliminary)?.[fishType.id];
+          const amount = caughtFishData[fishType.id];
+          const preliminary = preliminaryData[fishType.id];
           return {
             ...fishType,
-            preliminaryAmount: amount ?? '',
+            preliminaryAmount: preliminary ?? '',
             amount: amount ?? '',
           };
         })
@@ -48,7 +56,7 @@ const FishingWeight = () => {
           const fishType = fishTypes.find((fishType) => fishType.id === Number(key));
           return {
             ...fishType,
-            preliminaryAmount: caughtFishData[key] ?? '',
+            preliminaryAmount: preliminaryData[key] ?? '',
             amount: caughtFishData[key] ?? '',
           };
         })
@@ -94,6 +102,26 @@ const FishingWeight = () => {
 
           if (!hasAtLeastOneFilled) {
             handleErrorToast('Bent viena žuvis turi būti įvesta');
+            return;
+          }
+
+          // Onshore weighing requires a value (0 is fine) for every fish
+          // the fisher registered on the boat — otherwise the boat-side
+          // preliminary entry would have no counterpart in the final
+          // report. Only enforce on rows that carry a server-provided
+          // `preliminaryAmount`.
+          const missing = data.filter(
+            (item: any) =>
+              item.preliminaryAmount !== undefined &&
+              item.preliminaryAmount !== null &&
+              item.preliminaryAmount !== '' &&
+              (item.amount === undefined || item.amount === null || item.amount === ''),
+          );
+          if (missing.length > 0) {
+            const labels = missing.map((m: any) => m.label).join(', ');
+            handleErrorToast(
+              `Užpildykite šių žuvų iškrovimą: ${labels}. Jei paleidote atgal, įveskite 0 kg.`,
+            );
             return;
           }
 
