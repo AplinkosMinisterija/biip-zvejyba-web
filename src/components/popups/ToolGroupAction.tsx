@@ -40,12 +40,19 @@ const ToolGroupAction = ({ onClose, content }: any) => {
     },
   );
 
+  // Auto-detect `getLocation` returns just {id,name,type,municipality}; the
+  // manual `getFishingSections` picker also carries x/y (bar centroid). Use
+  // that as the source of truth so every event creation path flags manual
+  // picks without prop-threading through every popup.
+  const locationManual = !!(location?.x && location?.y);
+
   const handleSubmit = () => {
     if (coordinates?.x && coordinates?.y) {
       const params = {
         data: {},
         coordinates,
         location,
+        locationManual,
       };
       weighToolsMutation(params);
       return;
@@ -62,6 +69,7 @@ const ToolGroupAction = ({ onClose, content }: any) => {
         {
           location,
           coordinates: coordinates as any,
+          locationManual,
         },
         toolsGroup?.id,
       ),

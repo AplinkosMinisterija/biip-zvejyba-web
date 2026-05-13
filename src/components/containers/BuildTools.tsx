@@ -13,10 +13,9 @@ import { NotFound } from '../other/NotFound';
 interface BuiltToolsProps {
   onClose: () => void;
   location: Location;
-  locationManual?: boolean;
 }
 
-const BuildTools = ({ onClose, location, locationManual }: BuiltToolsProps) => {
+const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   const queryClient = useQueryClient();
   const [selectedTool, setSelectedTool] = useState<number>();
   const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
@@ -75,7 +74,10 @@ const BuildTools = ({ onClose, location, locationManual }: BuiltToolsProps) => {
         tools: selectedTool,
         location,
         coordinates: buildToolsCoordinates,
-        locationManual: !!locationManual,
+        // Auto `getLocation` returns no x/y; manual `getFishingSections`
+        // picker carries the bar centroid x/y. Source of truth for the
+        // manual-pick flag without prop-threading from caller pages.
+        locationManual: !!(location?.x && location?.y),
       });
       return;
     }
