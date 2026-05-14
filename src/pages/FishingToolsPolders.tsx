@@ -168,7 +168,10 @@ const FishingTools = () => {
             </StyledButton>
           </Footer>
           <Popup visible={showBuildTools} onClose={() => setShowBuildTools(false)}>
-            <BuildTools location={currentLocation} onClose={() => setShowBuildTools(false)} />
+            <BuildTools
+              location={currentLocation}
+              onClose={() => setShowBuildTools(false)}
+            />
           </Popup>
         </>
       )}

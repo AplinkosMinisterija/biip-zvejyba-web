@@ -74,6 +74,10 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
         tools: selectedTool,
         location,
         coordinates: buildToolsCoordinates,
+        // Auto `getLocation` returns no x/y; manual `getFishingSections`
+        // picker carries the bar centroid x/y. Source of truth for the
+        // manual-pick flag without prop-threading from caller pages.
+        locationManual: !!(location?.x && location?.y),
       });
       return;
     }
