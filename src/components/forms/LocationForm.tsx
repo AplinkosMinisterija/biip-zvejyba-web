@@ -38,7 +38,9 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
 
   const handleSubmit = async (values: any) => {
     if (values.location) {
-      handleSetLocationManually(values.location);
+      // Picking a bar/water-body from the dropdown is just metadata — coords
+      // still come from the device GPS, so this is NOT a manual location.
+      handleSetLocationManually({ ...values.location, manual: false });
       onClose();
     } else if (values.x && values.y) {
       queryClient
@@ -54,7 +56,15 @@ const LocationForm = ({ handleSetLocationManually, locationType, onClose }: any)
           },
         })
         .then((data) => {
-          handleSetLocationManually({ ...data, x: values.x, y: values.y });
+          // User explicitly typed WGS coordinates → admin gets the manual
+          // warning. The x/y stay on the object so the build/weigh callers
+          // can override their GPS coords with the typed values.
+          handleSetLocationManually({
+            ...data,
+            x: Number(values.x),
+            y: Number(values.y),
+            manual: true,
+          });
           queryClient.refetchQueries(['builtTools', data?.id]);
           onClose();
         })
