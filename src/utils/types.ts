@@ -19,6 +19,7 @@ export interface Location {
   municipality: { id: number; name: string };
   x?: number;
   y?: number;
+  manual?: boolean;
 }
 
 export interface Coordinates {
