@@ -40,11 +40,9 @@ const ToolGroupAction = ({ onClose, content }: any) => {
     },
   );
 
-  // Auto-detect `getLocation` returns just {id,name,type,municipality}; the
-  // manual `getFishingSections` picker also carries x/y (bar centroid). Use
-  // that as the source of truth so every event creation path flags manual
-  // picks without prop-threading through every popup.
-  const locationManual = !!(location?.x && location?.y);
+  // Set in LocationForm when the user types WGS coordinates — admin uses
+  // this to render a warning on the affected events.
+  const locationManual = !!location?.manual;
 
   const handleSubmit = () => {
     if (coordinates?.x && coordinates?.y) {

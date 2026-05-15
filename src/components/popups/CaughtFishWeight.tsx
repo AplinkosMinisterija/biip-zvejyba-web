@@ -92,10 +92,7 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
         data: mappedWeights,
         coordinates,
         location,
-        // Auto `getLocation` returns no x/y; manual `getFishingSections`
-        // picker carries the bar centroid x/y. Source of truth without
-        // having to prop-thread a flag through popup chains.
-        locationManual: !!(location?.x && location?.y),
+        locationManual: !!location?.manual,
       };
       weighToolsMutation(params);
       return;

@@ -65,19 +65,19 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   };
 
   const handleBuildTools = () => {
-    const buildToolsCoordinates: any = {
-      x: location?.x || coordinates?.x,
-      y: location?.y || coordinates?.y,
-    };
+    // Only the manually-typed WGS path overrides device GPS. Picking a
+    // bar/water-body from the dropdown is just metadata — we still want
+    // the actual phone fix as the event coordinate so the admin map
+    // doesn't show every company stacked on the bar centroid.
+    const buildToolsCoordinates: any = location?.manual
+      ? { x: location?.x, y: location?.y }
+      : { x: coordinates?.x, y: coordinates?.y };
     if (buildToolsCoordinates.x && buildToolsCoordinates.y) {
       buildToolsMutation({
         tools: selectedTool,
         location,
         coordinates: buildToolsCoordinates,
-        // Auto `getLocation` returns no x/y; manual `getFishingSections`
-        // picker carries the bar centroid x/y. Source of truth for the
-        // manual-pick flag without prop-threading from caller pages.
-        locationManual: !!(location?.x && location?.y),
+        locationManual: !!location?.manual,
       });
       return;
     }
