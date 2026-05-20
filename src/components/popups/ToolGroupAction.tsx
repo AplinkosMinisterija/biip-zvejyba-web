@@ -17,7 +17,13 @@ import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 import LoaderComponent from '../other/LoaderComponent';
 
 const ToolGroupAction = ({ onClose, content }: any) => {
-  const { toolsGroup, location, showWeightButtons, showCheckButton } = content;
+  const {
+    toolsGroup,
+    location,
+    showWeightButtons,
+    showCheckButton,
+    canReturnToWarehouse = true,
+  } = content;
   const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
   const { data: currentFishing, isFetching: currentFishingLoading } = useCurrentFishing();
 
@@ -119,13 +125,15 @@ const ToolGroupAction = ({ onClose, content }: any) => {
               )}
             </>
           )}
-          <MenuButton
-            label="Sugrąžinti į sandėlį"
-            icon={IconName.return}
-            onClick={returnToolsMutation}
-            loading={removeToolLoading || loading}
-            isActive={!removeToolLoading}
-          />
+          {canReturnToWarehouse && (
+            <MenuButton
+              label="Sugrąžinti į sandėlį"
+              icon={IconName.return}
+              onClick={returnToolsMutation}
+              loading={removeToolLoading || loading}
+              isActive={!removeToolLoading}
+            />
+          )}
         </PopupContainer>
       )}
     </Popup>

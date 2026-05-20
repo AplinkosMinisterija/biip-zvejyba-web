@@ -214,6 +214,63 @@ export const getBuiltToolInfo = (toolsGroup: ToolsGroup) => {
   };
 };
 
+export type BuiltToolsGuards = {
+  toolTypesCounts: Record<string, number>;
+  checkedToolTypesCounts: Record<string, number>;
+  withFishToolTypesCounts: Record<string, number>;
+  notCompletedToolType?: string;
+  blockReturnToolTypes: Set<string>;
+};
+
+// Pre-computes the per-tool-type aggregates the tool-list pages need:
+// total / checked / with-fish counts, the type that's mid-checking, and the
+// types where returning the last unchecked tool would silently lose the
+// catch. Mirrors the BE `assertSiblingsHaveFishLogged` guard so the UI can
+// hide the "Sugrąžinti į sandėlį" button before the server errors out.
+export const computeBuiltToolsGuards = (builtTools: any[]): BuiltToolsGuards => {
+  const acc = {
+    toolTypesCounts: {} as Record<string, number>,
+    checkedToolTypesCounts: {} as Record<string, number>,
+    withFishToolTypesCounts: {} as Record<string, number>,
+  };
+
+  for (const tool of builtTools ?? []) {
+    const id = tool?.tools?.[0]?.toolType?.id;
+    if (id == null) continue;
+    const key = String(id);
+    acc.toolTypesCounts[key] = (acc.toolTypesCounts[key] ?? 0) + 1;
+    if (tool.weightEvent) {
+      acc.checkedToolTypesCounts[key] = (acc.checkedToolTypesCounts[key] ?? 0) + 1;
+      const data = tool.weightEvent.data;
+      if (data && Object.keys(data).length > 0) {
+        acc.withFishToolTypesCounts[key] = (acc.withFishToolTypesCounts[key] ?? 0) + 1;
+      }
+    }
+  }
+
+  const hasAnyChecked = Object.keys(acc.checkedToolTypesCounts).length > 0;
+
+  const notCompletedToolType = hasAnyChecked
+    ? Object.keys(acc.toolTypesCounts).find(
+        (key) =>
+          (acc.checkedToolTypesCounts[key] ?? 0) > 0 &&
+          acc.checkedToolTypesCounts[key] < acc.toolTypesCounts[key],
+      )
+    : undefined;
+
+  const blockReturnToolTypes = new Set<string>();
+  for (const key of Object.keys(acc.toolTypesCounts)) {
+    const total = acc.toolTypesCounts[key];
+    const checked = acc.checkedToolTypesCounts[key] ?? 0;
+    const withFish = acc.withFishToolTypesCounts[key] ?? 0;
+    if (total - checked === 1 && checked > 0 && withFish === 0) {
+      blockReturnToolTypes.add(key);
+    }
+  }
+
+  return { ...acc, notCompletedToolType, blockReturnToolTypes };
+};
+
 export const getReactQueryErrorMessage = (response?: ReactQueryError) =>
   response?.data?.type || response?.data?.message || 'error';
 
