@@ -5,7 +5,14 @@ import Cookies from 'universal-cookie';
 import api from './api';
 import { ToolTypeType } from './constants';
 import { validationTexts } from './texts';
-import { Profile, ProfileId, ReactQueryError, ResponseProps, ToolsGroup } from './types';
+import {
+  FishingWeights,
+  Profile,
+  ProfileId,
+  ReactQueryError,
+  ResponseProps,
+  ToolsGroup,
+} from './types';
 const cookies = new Cookies();
 
 interface UpdateTokenProps {
@@ -13,6 +20,20 @@ interface UpdateTokenProps {
   error?: string;
   message?: string;
   refreshToken?: string;
+}
+
+export interface BuiltToolsGuards {
+  toolTypesCounts: Record<string, number>;
+  checkedToolTypesCounts: Record<string, number>;
+  withFishToolTypesCounts: Record<string, number>;
+  notCompletedToolType?: string;
+  blockReturnToolTypes: Set<string>;
+}
+
+export interface FishingActionGuards {
+  fishingComplete: boolean;
+  shoreWeighingDisabled: boolean;
+  finishDisabled: boolean;
 }
 
 export const clearCookies = () => {
@@ -214,14 +235,6 @@ export const getBuiltToolInfo = (toolsGroup: ToolsGroup) => {
   };
 };
 
-export type BuiltToolsGuards = {
-  toolTypesCounts: Record<string, number>;
-  checkedToolTypesCounts: Record<string, number>;
-  withFishToolTypesCounts: Record<string, number>;
-  notCompletedToolType?: string;
-  blockReturnToolTypes: Set<string>;
-};
-
 // Pre-computes the per-tool-type aggregates the tool-list pages need:
 // total / checked / with-fish counts, the type that's mid-checking, and the
 // types where returning the last unchecked tool would silently lose the
@@ -269,6 +282,38 @@ export const computeBuiltToolsGuards = (builtTools: any[]): BuiltToolsGuards => 
   }
 
   return { ...acc, notCompletedToolType, blockReturnToolTypes };
+};
+
+// Resolves the three `LargeButton` enable/disable states on the fishing
+// actions screen off a single `fishings/weights` payload. Centralised so
+// the rules (and their relationship to the BE guards they mirror) live
+// in one place — see the matching `assertEveryToolTypeHasFishLogged`
+// and shore-weigh logic in biip-zvejyba-api `fishings.service.ts`.
+export const computeFishingActionGuards = (
+  fishingWeights?: FishingWeights,
+): FishingActionGuards => {
+  const hasFish = (record?: Record<string, unknown>) =>
+    !!record && Object.values(record).some((amount) => Number(amount) > 0);
+
+  const hasPreliminaryFish = hasFish(fishingWeights?.preliminary);
+  const hasShoreWeighedFish = hasFish(fishingWeights?.total);
+  const hasUncompletedTools = !!fishingWeights?.hasUncompletedTools;
+
+  // Shore weighing is the terminal catch step; once it's done the
+  // fishing is effectively closed and only Baigti is left.
+  const fishingComplete = hasShoreWeighedFish;
+
+  return {
+    fishingComplete,
+    // Shore weighing requires a preliminary catch and is locked once
+    // it's been performed.
+    shoreWeighingDisabled: fishingComplete || !hasPreliminaryFish,
+    // Two server-enforced rules block Baigti:
+    // - preliminary catch must be shore-weighed
+    // - no (tool type, location) bucket left in Patikrinta-without-fish state
+    finishDisabled:
+      (hasPreliminaryFish && !hasShoreWeighedFish) || hasUncompletedTools,
+  };
 };
 
 export const getReactQueryErrorMessage = (response?: ReactQueryError) =>
