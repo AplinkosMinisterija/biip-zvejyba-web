@@ -13,26 +13,36 @@ export interface GeolocationContextProps {
 }
 
 // Continuous high-accuracy watch — used once the angler is on the water.
+// 60 s `timeout` so each watch tick waits long enough to actually pick
+// up a GNSS fix on cold start; `maximumAge` is short so the OS reuses
+// only freshly-known positions when the boat is moving.
 const WATCH_OPTIONS: PositionOptions = {
   enableHighAccuracy: true,
-  timeout: 20000,
+  timeout: 60000,
   maximumAge: 25000,
 };
 
 // Initial fix — `enableHighAccuracy: true` lets the OS return the latest
-// cached GPS reading (within `maximumAge`) instead of a fresh cell/WiFi
-// triangulation that produced the 297/298/301 "all points raised up"
-// reports. 30 s covers a cold-start GNSS acquisition with AGPS over
-// cellular (5–15 s typical, occasionally up to ~25 s); indoor sessions
-// without a sky view never get a fix at any timeout. The watch runs
-// in parallel so this one-shot call is a best-effort shortcut, not a
-// gate; the `SETTLE_LOADING_TIMEOUT_MS` safety net still flips
-// `loading=false` after 15 s so the manual-entry retry button isn't
-// blocked.
+// cached GPS reading instead of a fresh cell/WiFi triangulation (that
+// shortcut produced the 297/298/301 "all points raised up" reports).
+//
+// `maximumAge: 10000` — only reuse a cached fix when the user opened
+// the app within the last 10 s. Larger windows let the OS return a
+// position from minutes ago that may be from a completely different
+// location (angler unlocks phone at home, drives to the dock, opens
+// the app — a 60 s cache would happily hand back the home reading).
+//
+// `timeout: 60000` — covers cold-start GNSS acquisition with AGPS
+// over cellular (5–15 s typical, occasionally up to ~25 s) and adds
+// generous slack for offline/no-AGPS cold starts that need ~30–60 s.
+// The watch runs in parallel, so this one-shot call is a best-effort
+// shortcut, not a gate; the `SETTLE_LOADING_TIMEOUT_MS` safety net
+// still flips `loading=false` after 15 s so the manual-entry retry
+// button isn't blocked.
 const INITIAL_FIX_OPTIONS: PositionOptions = {
   enableHighAccuracy: true,
-  timeout: 30000,
-  maximumAge: 60000,
+  timeout: 60000,
+  maximumAge: 10000,
 };
 
 // On a moving boat the GPS can fire several times per second with
