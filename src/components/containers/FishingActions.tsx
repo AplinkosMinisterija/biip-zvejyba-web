@@ -48,6 +48,14 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
 
   const shoreWeighingDisabled = isDisabled || !weightOnBoatExist;
 
+  // Mirrors the server-side `assertEveryToolTypeHasFishLogged` guard
+  // (biip-zvejyba-api: any tool type weighed with `data: {}` and no
+  // sibling carries fish). Comes back on the same `fishings/weights`
+  // payload — no extra round-trip.
+  const hasUncompletedTools = !!fishingWeights?.hasUncompletedTools;
+  const finishDisabled =
+    (weightOnBoatExist && !weightOnShoreExist) || hasUncompletedTools;
+
   return loading ? (
     <LoaderComponent />
   ) : (
@@ -79,7 +87,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           subtitle="Užbaikite žvejybą"
           buttonLabel="Baigti"
           onClick={() => showPopup({ type: PopupContentType.END_FISHING })}
-          isDisabled={weightOnBoatExist && !weightOnShoreExist}
+          isDisabled={finishDisabled}
         />
       </Container>
     </>
