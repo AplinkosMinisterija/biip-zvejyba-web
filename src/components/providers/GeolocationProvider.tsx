@@ -39,25 +39,56 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const watchIdRef = useRef<number | null>(null);
   const loadingToastShownRef = useRef(false);
   const permissionDeniedRef = useRef(false);
 
   const applyPosition = (position: GeolocationPosition) => {
-    setCoordinates({
+    const next = {
       x: position.coords.longitude,
       y: position.coords.latitude,
+    };
+    setCoordinates((prev) => {
+      // Skip byte-identical fixes to avoid pointless re-renders. GNSS
+      // produces sub-meter drift on every tick (the trailing float
+      // digits always change), so a real GNSS fix is never byte-equal
+      // to the previous one. WiFi/cell triangulation often returns the
+      // same rounded fix repeatedly — this filters those duplicates
+      // without rejecting better fixes (no distance threshold).
+      if (prev && prev.x === next.x && prev.y === next.y) return prev;
+      return next;
     });
     setLoading(false);
     loadingToastShownRef.current = false;
   };
 
-  const handleGeolocationError = (err: GeolocationPositionError) => {
+  const handleGeolocationError = (err: GeolocationPositionError, isWatch: boolean) => {
     if (err.code === 1) {
       permissionDeniedRef.current = true;
       handleErrorToast('Nesuteikti vietos nustatymo leidimai. Patikrinkite naršyklės nustatymus.');
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+        watchIdRef.current = null;
+      }
+      setLoading(false);
+      return;
     }
-    setLoading(false);
-    loadingToastShownRef.current = false;
+    // Transient errors on the watch are fine — it keeps running and a
+    // later tick will succeed. Only settle loading on the initial fix
+    // failure so consumers can fall back to manual entry.
+    if (!isWatch) {
+      setLoading(false);
+      loadingToastShownRef.current = false;
+    }
+  };
+
+  const startWatch = () => {
+    if (watchIdRef.current !== null || permissionDeniedRef.current) return;
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      applyPosition,
+      (err) => handleGeolocationError(err, true),
+      POSITION_OPTIONS,
+    );
   };
 
   const requestCurrentPosition = useCallback(() => {
@@ -78,15 +109,30 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
       handleGeolocationToast(true);
     }
 
+    // Continuous watch with the same options keeps the GPS chip warm
+    // and feeds fresh coordinates as the boat moves between spots, so
+    // the user doesn't have to mash "Atnaujinti lokaciją" before each
+    // tap. Each tick is equivalent to a fresh `getCurrentPosition`
+    // call with `maximumAge: 0`, so accuracy is identical.
+    startWatch();
+
+    // One-shot initial fix in parallel — sometimes succeeds before the
+    // watch's first tick on warm GPS.
     navigator.geolocation.getCurrentPosition(
       applyPosition,
-      handleGeolocationError,
+      (err) => handleGeolocationError(err, false),
       POSITION_OPTIONS,
     );
   }, []);
 
   useEffect(() => {
     requestCurrentPosition();
+    return () => {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+        watchIdRef.current = null;
+      }
+    };
   }, [requestCurrentPosition]);
 
   return (
