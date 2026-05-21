@@ -2,10 +2,10 @@ import { useContext } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import {
-  handleErrorToast,
   handleErrorToastFromServer,
   LocationType,
   PopupContentType,
+  requireCoordinates,
   useCurrentFishing,
   useGeolocation,
 } from '../../utils';
@@ -51,28 +51,28 @@ const ToolGroupAction = ({ onClose, content }: any) => {
   const locationManual = !!location?.manual;
 
   const handleSubmit = () => {
-    if (coordinates?.x && coordinates?.y) {
-      const params = {
-        data: {},
-        coordinates,
-        location,
-        locationManual,
-      };
-      weighToolsMutation(params);
-      return;
-    }
-    refreshGeolocation();
-    handleErrorToast(
-      'Nepavyko nustatyti jūsų vietos. Pabandykite dar kartą vėliau ir įsitikinkite, kad naršyklėje suteikti vietos nustatymo leidimai.',
-    );
+    const coords = requireCoordinates({ coordinates, loading, refresh: refreshGeolocation });
+    if (!coords) return;
+    weighToolsMutation({
+      data: {},
+      coordinates: coords,
+      location,
+      locationManual,
+    });
+  };
+
+  const handleReturnTools = () => {
+    const coords = requireCoordinates({ coordinates, loading, refresh: refreshGeolocation });
+    if (!coords) return;
+    returnToolsMutation({ coordinates: coords });
   };
 
   const { mutateAsync: returnToolsMutation, isLoading: removeToolLoading } = useMutation(
-    () =>
+    ({ coordinates: coords }: { coordinates: { x: number; y: number } }) =>
       api.removeTool(
         {
           location,
-          coordinates: coordinates as any,
+          coordinates: coords,
           locationManual,
         },
         toolsGroup?.id,
@@ -129,7 +129,7 @@ const ToolGroupAction = ({ onClose, content }: any) => {
             <MenuButton
               label="Sugrąžinti į sandėlį"
               icon={IconName.return}
-              onClick={returnToolsMutation}
+              onClick={handleReturnTools}
               loading={removeToolLoading || loading}
               isActive={!removeToolLoading}
             />
