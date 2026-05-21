@@ -11,12 +11,12 @@ import {
   FishingWeighType,
   handleErrorToast,
   PopupContentType,
+  requireCoordinates,
   useCurrentFishing,
   useFishingWeightMutation,
   useFishTypes,
   useFishWeights,
   useGeolocation,
-  validationTexts,
 } from '../utils';
 
 const FishingWeight = () => {
@@ -73,17 +73,15 @@ const FishingWeight = () => {
   };
 
   const handleSubmit = (values: any) => {
-    if (!coordinates) {
-      refreshGeolocation();
-      return handleErrorToast(validationTexts.mustAllowToSetCoordinates);
-    }
+    const coords = requireCoordinates({ coordinates, loading, refresh: refreshGeolocation });
+    if (!coords) return;
 
     const mappedWeights = mapWeights(values);
 
     fishingWeightMutation({
       data: mappedWeights,
       preliminaryData: fishingWeights?.preliminary,
-      coordinates: coordinates,
+      coordinates: coords,
       isAutoSave: false,
     });
   };

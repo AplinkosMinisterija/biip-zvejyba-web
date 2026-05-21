@@ -2,11 +2,10 @@ import { useContext } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import {
   buttonLabels,
-  handleErrorToast,
   handleErrorToastFromServer,
   PopupContentType,
+  requireCoordinates,
   useGeolocation,
-  validationTexts,
 } from '../../utils';
 import api from '../../utils/api';
 import Button, { ButtonColors } from '../buttons/Button';
@@ -33,17 +32,10 @@ export const StartFishing = ({ content, onClose }: any) => {
   });
 
   const handleStartFishing = () => {
-    if (coordinates && type) {
-      startFishing({
-        type: type,
-        coordinates,
-      });
-      return;
-    }
-    // No fix yet — re-trigger the geolocation provider so the user can
-    // recover without closing the popup.
-    refreshGeolocation();
-    handleErrorToast(validationTexts.mustAllowToSetCoordinates);
+    if (!type) return;
+    const coords = requireCoordinates({ coordinates, loading, refresh: refreshGeolocation });
+    if (!coords) return;
+    startFishing({ type, coordinates: coords });
   };
 
   return (
