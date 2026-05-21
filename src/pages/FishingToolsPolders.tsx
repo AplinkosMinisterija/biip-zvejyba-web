@@ -12,6 +12,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import LocationInfo from '../components/other/LocationInfo';
 import { NotFound } from '../components/other/NotFound';
 import {
+  computeBuiltToolsGuards,
   device,
   handleErrorToastFromServer,
   LocationType,
@@ -78,34 +79,8 @@ const FishingTools = () => {
     return <LoaderComponent />;
   }
 
-  const { toolTypesCounts, checkedToolTypesCounts } = builtTools.reduce(
-    (acc, tool) => {
-      const id = tool.tools?.[0]?.toolType?.id;
-      if (!id) return acc;
-
-      acc.toolTypesCounts[id] = (acc.toolTypesCounts[id] ?? 0) + 1;
-
-      if (tool.weightEvent) {
-        acc.checkedToolTypesCounts[id] = (acc.checkedToolTypesCounts[id] ?? 0) + 1;
-      }
-
-      return acc;
-    },
-    {
-      checkedToolTypesCounts: {} as Record<string, number>,
-      toolTypesCounts: {} as Record<string, number>,
-    },
-  );
-
-  const hasAnyChecked = Object.keys(checkedToolTypesCounts).length > 0;
-
-  const notCompletedToolType = hasAnyChecked
-    ? Object.keys(toolTypesCounts).find(
-        (key) =>
-          (checkedToolTypesCounts[key] ?? 0) > 0 &&
-          checkedToolTypesCounts[key] < toolTypesCounts[key],
-      )
-    : undefined;
+  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType, blockReturnToolTypes } =
+    computeBuiltToolsGuards(builtTools);
 
   return (
     <DefaultLayout>
@@ -140,11 +115,15 @@ const FishingTools = () => {
           ) : (
             map(builtTools, (toolsGroup: any) => {
               const toolTypeId = toolsGroup.tools[0].toolType.id;
+              const typeKey = String(toolTypeId);
               const disableTool =
-                !!notCompletedToolType && notCompletedToolType !== toolTypeId.toString();
+                !!notCompletedToolType && notCompletedToolType !== typeKey;
 
               const showCheckButton =
-                toolTypesCounts[toolTypeId] - (checkedToolTypesCounts?.[toolTypeId] || 0) > 1;
+                toolTypesCounts[typeKey] - (checkedToolTypesCounts?.[typeKey] || 0) > 1;
+
+              const canReturnToWarehouse =
+                !!toolsGroup.weightEvent || !blockReturnToolTypes.has(typeKey);
 
               return (
                 <ToolsGroupCard
@@ -153,6 +132,7 @@ const FishingTools = () => {
                   toolsGroup={toolsGroup}
                   location={currentLocation}
                   showCheckButton={showCheckButton}
+                  canReturnToWarehouse={canReturnToWarehouse}
                   isDisabled={disableTool}
                 />
               );
