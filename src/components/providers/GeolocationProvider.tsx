@@ -12,58 +12,22 @@ export interface GeolocationContextProps {
   refresh: () => void;
 }
 
-// Continuous high-accuracy watch — used once the angler is on the water.
-// 60 s `timeout` so each watch tick waits long enough to actually pick
-// up a GNSS fix on cold start; `maximumAge` is short so the OS reuses
-// only freshly-known positions when the boat is moving.
-const WATCH_OPTIONS: PositionOptions = {
+// Match gps-coordinates.net's behaviour as closely as we can with the
+// W3C Geolocation API:
+// - `enableHighAccuracy: true` — prefer GNSS over WiFi/cell triangulation.
+// - `maximumAge: 0` — never reuse a cached position; field reports of
+//   "shifted by kilometres" came from the OS handing back stale fixes
+//   from the previous location (angler unlocks phone at home, drives to
+//   the dock, the OS reuses the home reading).
+// - `timeout: 120000` — give the OS plenty of time to lock onto GNSS
+//   before giving up. Cold-start GPS over AGPS can take 30–60 s; first
+//   fix on the water with weak cellular can push past 90 s. Better to
+//   wait than to short-circuit into a WiFi fallback.
+const POSITION_OPTIONS: PositionOptions = {
   enableHighAccuracy: true,
-  timeout: 60000,
-  maximumAge: 25000,
+  timeout: 120000,
+  maximumAge: 0,
 };
-
-// Initial fix — `enableHighAccuracy: true` lets the OS return the latest
-// cached GPS reading instead of a fresh cell/WiFi triangulation (that
-// shortcut produced the 297/298/301 "all points raised up" reports).
-//
-// `maximumAge: 10000` — only reuse a cached fix when the user opened
-// the app within the last 10 s. Larger windows let the OS return a
-// position from minutes ago that may be from a completely different
-// location (angler unlocks phone at home, drives to the dock, opens
-// the app — a 60 s cache would happily hand back the home reading).
-//
-// `timeout: 60000` — covers cold-start GNSS acquisition with AGPS
-// over cellular (5–15 s typical, occasionally up to ~25 s) and adds
-// generous slack for offline/no-AGPS cold starts that need ~30–60 s.
-// The watch runs in parallel, so this one-shot call is a best-effort
-// shortcut, not a gate; the `SETTLE_LOADING_TIMEOUT_MS` safety net
-// still flips `loading=false` after 15 s so the manual-entry retry
-// button isn't blocked.
-const INITIAL_FIX_OPTIONS: PositionOptions = {
-  enableHighAccuracy: true,
-  timeout: 60000,
-  maximumAge: 10000,
-};
-
-// On a moving boat the GPS can fire several times per second with
-// sub-meter drift. Without a threshold every tick produced a new
-// coordinates object → React Query refetched the location lookup,
-// downstream components re-rendered, and the screen "shook".
-// 0.0005° ≈ 50 m at Lithuania's latitude — fine-grained enough for a
-// build-event geom yet coarse enough to keep fishing-tools queries
-// from firing on every GPS tick (a polder / bar / lake spans hundreds
-// of meters, so 50 m is well within the same bucket).
-const MIN_COORDINATE_DELTA = 0.0005;
-
-// Safety net: if neither the initial fix nor the watch yields a position
-// within this window, flip `loading` to false so consumers can fall back to
-// manual location entry / the "Atnaujinti lokaciją" retry button. The watch
-// continues running silently in the background, so a fix arriving later still
-// populates `coordinates`. Without this timer, a transient watch failure
-// followed by a slow initial fix used to flip loading to false with
-// `coordinates === null`, causing action popups to fire the
-// "mustAllowToSetCoordinates" toast even though GPS was still warming up.
-const SETTLE_LOADING_TIMEOUT_MS = 15000;
 
 export const GeolocationContext = createContext<GeolocationContextProps>({
   coordinates: null,
@@ -75,72 +39,25 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const watchIdRef = useRef<number | null>(null);
-  const settleTimerRef = useRef<number | null>(null);
   const loadingToastShownRef = useRef(false);
   const permissionDeniedRef = useRef(false);
 
-  const settleLoading = () => {
+  const applyPosition = (position: GeolocationPosition) => {
+    setCoordinates({
+      x: position.coords.longitude,
+      y: position.coords.latitude,
+    });
     setLoading(false);
     loadingToastShownRef.current = false;
-    if (settleTimerRef.current !== null) {
-      clearTimeout(settleTimerRef.current);
-      settleTimerRef.current = null;
-    }
   };
 
-  const applyPosition = (position: GeolocationPosition) => {
-    setCoordinates((prev) => {
-      const next = {
-        x: position.coords.longitude,
-        y: position.coords.latitude,
-      };
-      if (
-        prev &&
-        Math.abs(prev.x - next.x) < MIN_COORDINATE_DELTA &&
-        Math.abs(prev.y - next.y) < MIN_COORDINATE_DELTA
-      ) {
-        // Same reference → consumers' query keys stay equal, no refetch.
-        return prev;
-      }
-      return next;
-    });
-    settleLoading();
-  };
-
-  const handleGeolocationError = (err: GeolocationPositionError, isWatch: boolean) => {
+  const handleGeolocationError = (err: GeolocationPositionError) => {
     if (err.code === 1) {
       permissionDeniedRef.current = true;
       handleErrorToast('Nesuteikti vietos nustatymo leidimai. Patikrinkite naršyklės nustatymus.');
-      if (watchIdRef.current !== null) {
-        navigator.geolocation.clearWatch(watchIdRef.current);
-        watchIdRef.current = null;
-      }
-      settleLoading();
-      return;
     }
-
-    // Transient unavailable / timeout. We deliberately do NOT settle loading
-    // here, because the watch is continuous and is still trying — flipping
-    // loading=false while coordinates is still null tricks consumers into
-    // enabling their action buttons, after which the user taps and hits the
-    // "mustAllowToSetCoordinates" toast even though GPS was just slow. The
-    // safety-net timer in requestCurrentPosition guarantees loading
-    // eventually flips so the manual-entry UI isn't blocked forever.
-    if (isWatch) return;
-
-    // Initial fast fix failed (often a cold-cache 8s timeout). Stay loading
-    // and lean on the continuous watch + safety-net timer.
-  };
-
-  const startWatch = () => {
-    if (watchIdRef.current !== null || permissionDeniedRef.current) return;
-
-    watchIdRef.current = navigator.geolocation.watchPosition(
-      applyPosition,
-      (err) => handleGeolocationError(err, true),
-      WATCH_OPTIONS,
-    );
+    setLoading(false);
+    loadingToastShownRef.current = false;
   };
 
   const requestCurrentPosition = useCallback(() => {
@@ -161,38 +78,15 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
       handleGeolocationToast(true);
     }
 
-    if (settleTimerRef.current !== null) clearTimeout(settleTimerRef.current);
-    settleTimerRef.current = window.setTimeout(() => {
-      settleTimerRef.current = null;
-      setLoading(false);
-      loadingToastShownRef.current = false;
-    }, SETTLE_LOADING_TIMEOUT_MS);
-
-    // Start the continuous watch immediately so we don't depend on a single
-    // getCurrentPosition succeeding — boat GPS often takes 10s+ for the first
-    // fix, and the previous flow left the user with no coordinates at all if
-    // that initial call timed out.
-    startWatch();
-
     navigator.geolocation.getCurrentPosition(
       applyPosition,
-      (err) => handleGeolocationError(err, false),
-      INITIAL_FIX_OPTIONS,
+      handleGeolocationError,
+      POSITION_OPTIONS,
     );
   }, []);
 
   useEffect(() => {
     requestCurrentPosition();
-    return () => {
-      if (watchIdRef.current !== null) {
-        navigator.geolocation.clearWatch(watchIdRef.current);
-        watchIdRef.current = null;
-      }
-      if (settleTimerRef.current !== null) {
-        clearTimeout(settleTimerRef.current);
-        settleTimerRef.current = null;
-      }
-    };
   }, [requestCurrentPosition]);
 
   return (
