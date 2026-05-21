@@ -38,15 +38,6 @@ const INITIAL_FIX_OPTIONS: PositionOptions = {
 // of meters, so 50 m is well within the same bucket).
 const MIN_COORDINATE_DELTA = 0.0005;
 
-// Reject any fix worse than this — `enableHighAccuracy: false` initial
-// fixes (cell / WiFi triangulation) can be 500–5000 m off in coastal
-// Lithuania, which is what the field audit reported as "all points
-// raised up" on the admin map. Skipping the position keeps the watch
-// running and lets a real GPS fix arrive seconds later. 100 m is well
-// inside any bar / polder / lake bucket but tight enough to make
-// triangulation fixes unusable.
-const MAX_ACCURACY_METERS = 100;
-
 // Safety net: if neither the initial fix nor the watch yields a position
 // within this window, flip `loading` to false so consumers can fall back to
 // manual location entry / the "Atnaujinti lokaciją" retry button. The watch
@@ -82,12 +73,6 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
   };
 
   const applyPosition = (position: GeolocationPosition) => {
-    // Triangulation / coarse fixes report accuracy in the high hundreds or
-    // thousands of meters. Holding onto whatever the previous (or no) fix
-    // was buys time for the high-accuracy watch to deliver a real GPS fix.
-    const accuracy = position.coords.accuracy ?? Infinity;
-    if (accuracy > MAX_ACCURACY_METERS) return;
-
     setCoordinates((prev) => {
       const next = {
         x: position.coords.longitude,
