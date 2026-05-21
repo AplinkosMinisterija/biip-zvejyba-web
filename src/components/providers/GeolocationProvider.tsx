@@ -13,19 +13,36 @@ export interface GeolocationContextProps {
 }
 
 // Continuous high-accuracy watch — used once the angler is on the water.
+// 60 s `timeout` so each watch tick waits long enough to actually pick
+// up a GNSS fix on cold start; `maximumAge` is short so the OS reuses
+// only freshly-known positions when the boat is moving.
 const WATCH_OPTIONS: PositionOptions = {
   enableHighAccuracy: true,
-  timeout: 20000,
+  timeout: 60000,
   maximumAge: 25000,
 };
 
-// Initial fast fix using whatever the device has handy (cell / wifi cache).
-// Boat-side GPS warm-ups can take 10s+, which is why ~50% of users were
-// hitting the timeout error toast on first load.
+// Initial fix — `enableHighAccuracy: true` lets the OS return the latest
+// cached GPS reading instead of a fresh cell/WiFi triangulation (that
+// shortcut produced the 297/298/301 "all points raised up" reports).
+//
+// `maximumAge: 10000` — only reuse a cached fix when the user opened
+// the app within the last 10 s. Larger windows let the OS return a
+// position from minutes ago that may be from a completely different
+// location (angler unlocks phone at home, drives to the dock, opens
+// the app — a 60 s cache would happily hand back the home reading).
+//
+// `timeout: 60000` — covers cold-start GNSS acquisition with AGPS
+// over cellular (5–15 s typical, occasionally up to ~25 s) and adds
+// generous slack for offline/no-AGPS cold starts that need ~30–60 s.
+// The watch runs in parallel, so this one-shot call is a best-effort
+// shortcut, not a gate; the `SETTLE_LOADING_TIMEOUT_MS` safety net
+// still flips `loading=false` after 15 s so the manual-entry retry
+// button isn't blocked.
 const INITIAL_FIX_OPTIONS: PositionOptions = {
-  enableHighAccuracy: false,
-  timeout: 8000,
-  maximumAge: 60000,
+  enableHighAccuracy: true,
+  timeout: 60000,
+  maximumAge: 10000,
 };
 
 // On a moving boat the GPS can fire several times per second with
@@ -37,15 +54,6 @@ const INITIAL_FIX_OPTIONS: PositionOptions = {
 // from firing on every GPS tick (a polder / bar / lake spans hundreds
 // of meters, so 50 m is well within the same bucket).
 const MIN_COORDINATE_DELTA = 0.0005;
-
-// Reject any fix worse than this — `enableHighAccuracy: false` initial
-// fixes (cell / WiFi triangulation) can be 500–5000 m off in coastal
-// Lithuania, which is what the field audit reported as "all points
-// raised up" on the admin map. Skipping the position keeps the watch
-// running and lets a real GPS fix arrive seconds later. 100 m is well
-// inside any bar / polder / lake bucket but tight enough to make
-// triangulation fixes unusable.
-const MAX_ACCURACY_METERS = 100;
 
 // Safety net: if neither the initial fix nor the watch yields a position
 // within this window, flip `loading` to false so consumers can fall back to
@@ -82,12 +90,6 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
   };
 
   const applyPosition = (position: GeolocationPosition) => {
-    // Triangulation / coarse fixes report accuracy in the high hundreds or
-    // thousands of meters. Holding onto whatever the previous (or no) fix
-    // was buys time for the high-accuracy watch to deliver a real GPS fix.
-    const accuracy = position.coords.accuracy ?? Infinity;
-    if (accuracy > MAX_ACCURACY_METERS) return;
-
     setCoordinates((prev) => {
       const next = {
         x: position.coords.longitude,
