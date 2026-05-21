@@ -268,11 +268,6 @@ class Api {
       params,
     });
   };
-  canFinishFishing = async (): Promise<{ canFinish: boolean; reason?: string }> => {
-    return this.get({
-      resource: `fishings/canFinish`,
-    });
-  };
   getPolders = async (): Promise<Polder[]> =>
     await this.getAll({
       resource: 'polders',

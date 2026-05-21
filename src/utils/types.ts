@@ -95,6 +95,7 @@ export interface ToolsGroupEvent {
 export interface FishingWeights {
   preliminary: { [key: string]: number };
   total: { [key: string]: number };
+  hasUncompletedTools?: boolean;
 }
 
 export interface WeightEvent {
