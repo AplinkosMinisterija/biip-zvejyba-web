@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from 'react-query';
 import {
   buttonLabels,
-  handleErrorToast,
   handleErrorToastFromServer,
   handleSuccessToast,
+  requireCoordinates,
   useGeolocation,
   validationTexts,
 } from '../../utils';
@@ -34,12 +34,9 @@ export const EndFishing = ({ onClose }: any) => {
     },
   );
   const handleFinishFishing = () => {
-    if (coordinates) {
-      finishFishing({ coordinates });
-      return;
-    }
-    refreshGeolocation();
-    handleErrorToast(validationTexts.mustAllowToSetCoordinates);
+    const coords = requireCoordinates({ coordinates, loading, refresh: refreshGeolocation });
+    if (!coords) return;
+    finishFishing({ coordinates: coords });
   };
   return (
     <PopUpWithImage

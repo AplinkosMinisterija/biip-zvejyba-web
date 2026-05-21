@@ -82,7 +82,7 @@ export const handleInfoToast = (message: string) => {
 
 export const handleGeolocationToast = (loading: boolean) => {
   if (loading) {
-    toast.info('Dar nustatoma jūsų vieta. Palaukite kelias sekundes', {
+    toast.info(validationTexts.stillLocatingPleaseWait, {
       position: 'top-center',
       autoClose: 5000,
       hideProgressBar: true,
@@ -91,6 +91,30 @@ export const handleGeolocationToast = (loading: boolean) => {
     });
     return;
   }
+};
+
+// Shared shape for "I need coordinates to do X" handlers across the app.
+// The previous version stacked two toasts when a user clicked an action
+// after the safety-net settle timeout fired with no GPS fix — the refresh
+// re-triggered the Provider's "Dar nustatoma..." toast and the handler
+// dropped a second "Privalote leisti..." error toast on top of it
+// (https://github.com/AplinkosMinisterija/biip-zvejyba-web/pull/151).
+//
+// Trust the Provider to own the toast surface:
+// - `loading=true` → its "Dar nustatoma..." toast is already up; do nothing.
+// - settled with no coords → kick a refresh. The Provider shows the right
+//   toast based on internal state (permission-denied error, or another
+//   "Dar nustatoma..." while it tries again).
+//
+// Returns the coordinates so callers keep TS narrowing, or `null`.
+export const requireCoordinates = (state: {
+  coordinates: { x: number; y: number } | null;
+  loading: boolean;
+  refresh: () => void;
+}): { x: number; y: number } | null => {
+  if (state.coordinates) return state.coordinates;
+  if (!state.loading) state.refresh();
+  return null;
 };
 
 export const handleSetProfile = (profiles?: Profile[], justLoggedIn: boolean = false) => {
