@@ -2,11 +2,10 @@ import { useContext } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import {
   buttonLabels,
-  handleErrorToast,
   handleErrorToastFromServer,
   PopupContentType,
+  requireCoordinates,
   useGeolocation,
-  validationTexts,
 } from '../../utils';
 import api from '../../utils/api';
 import Button, { ButtonColors } from '../buttons/Button';
@@ -19,7 +18,7 @@ export const StartFishing = ({ content, onClose }: any) => {
   const queryClient = useQueryClient();
   const { type } = content;
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
   const { isLoading: startLoading, mutateAsync: startFishing } = useMutation(api.startFishing, {
     onError: ({ response }) => {
@@ -33,14 +32,10 @@ export const StartFishing = ({ content, onClose }: any) => {
   });
 
   const handleStartFishing = () => {
-    if (coordinates && type) {
-      startFishing({
-        type: type,
-        coordinates,
-      });
-    } else {
-      handleErrorToast(validationTexts.mustAllowToSetCoordinates);
-    }
+    if (!type) return;
+    const coords = requireCoordinates({ coordinates, loading, refresh: refreshGeolocation });
+    if (!coords) return;
+    startFishing({ type, coordinates: coords });
   };
 
   return (

@@ -12,31 +12,22 @@ export interface GeolocationContextProps {
   refresh: () => void;
 }
 
-// Continuous high-accuracy watch — used once the angler is on the water.
-const WATCH_OPTIONS: PositionOptions = {
+// Match gps-coordinates.net's behaviour as closely as we can with the
+// W3C Geolocation API:
+// - `enableHighAccuracy: true` — prefer GNSS over WiFi/cell triangulation.
+// - `maximumAge: 0` — never reuse a cached position; field reports of
+//   "shifted by kilometres" came from the OS handing back stale fixes
+//   from the previous location (angler unlocks phone at home, drives to
+//   the dock, the OS reuses the home reading).
+// - `timeout: 120000` — give the OS plenty of time to lock onto GNSS
+//   before giving up. Cold-start GPS over AGPS can take 30–60 s; first
+//   fix on the water with weak cellular can push past 90 s. Better to
+//   wait than to short-circuit into a WiFi fallback.
+const POSITION_OPTIONS: PositionOptions = {
   enableHighAccuracy: true,
-  timeout: 20000,
-  maximumAge: 25000,
+  timeout: 120000,
+  maximumAge: 0,
 };
-
-// Initial fast fix using whatever the device has handy (cell / wifi cache).
-// Boat-side GPS warm-ups can take 10s+, which is why ~50% of users were
-// hitting the timeout error toast on first load.
-const INITIAL_FIX_OPTIONS: PositionOptions = {
-  enableHighAccuracy: false,
-  timeout: 8000,
-  maximumAge: 60000,
-};
-
-// On a moving boat the GPS can fire several times per second with
-// sub-meter drift. Without a threshold every tick produced a new
-// coordinates object → React Query refetched the location lookup,
-// downstream components re-rendered, and the screen "shook".
-// 0.0005° ≈ 50 m at Lithuania's latitude — fine-grained enough for a
-// build-event geom yet coarse enough to keep fishing-tools queries
-// from firing on every GPS tick (a polder / bar / lake spans hundreds
-// of meters, so 50 m is well within the same bucket).
-const MIN_COORDINATE_DELTA = 0.0005;
 
 export const GeolocationContext = createContext<GeolocationContextProps>({
   coordinates: null,
@@ -49,35 +40,26 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [loading, setLoading] = useState(true);
 
   const watchIdRef = useRef<number | null>(null);
-  const resolvedInitialRef = useRef(false);
   const loadingToastShownRef = useRef(false);
   const permissionDeniedRef = useRef(false);
 
-  const finishInitialResolve = () => {
-    if (!resolvedInitialRef.current) {
-      resolvedInitialRef.current = true;
-      setLoading(false);
-      loadingToastShownRef.current = false;
-    }
-  };
-
   const applyPosition = (position: GeolocationPosition) => {
+    const next = {
+      x: position.coords.longitude,
+      y: position.coords.latitude,
+    };
     setCoordinates((prev) => {
-      const next = {
-        x: position.coords.longitude,
-        y: position.coords.latitude,
-      };
-      if (
-        prev &&
-        Math.abs(prev.x - next.x) < MIN_COORDINATE_DELTA &&
-        Math.abs(prev.y - next.y) < MIN_COORDINATE_DELTA
-      ) {
-        // Same reference → consumers' query keys stay equal, no refetch.
-        return prev;
-      }
+      // Skip byte-identical fixes to avoid pointless re-renders. GNSS
+      // produces sub-meter drift on every tick (the trailing float
+      // digits always change), so a real GNSS fix is never byte-equal
+      // to the previous one. WiFi/cell triangulation often returns the
+      // same rounded fix repeatedly — this filters those duplicates
+      // without rejecting better fixes (no distance threshold).
+      if (prev && prev.x === next.x && prev.y === next.y) return prev;
       return next;
     });
-    finishInitialResolve();
+    setLoading(false);
+    loadingToastShownRef.current = false;
   };
 
   const handleGeolocationError = (err: GeolocationPositionError, isWatch: boolean) => {
@@ -88,21 +70,24 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
         navigator.geolocation.clearWatch(watchIdRef.current);
         watchIdRef.current = null;
       }
+      setLoading(false);
+      return;
     }
-    // Silent on unavailable / timeout — the continuous watch is running and
-    // will recover on its own. Surfacing a toast for every transient GPS
-    // hiccup spammed users on a moving boat.
-
-    finishInitialResolve();
+    // Transient errors on the watch are fine — it keeps running and a
+    // later tick will succeed. Only settle loading on the initial fix
+    // failure so consumers can fall back to manual entry.
+    if (!isWatch) {
+      setLoading(false);
+      loadingToastShownRef.current = false;
+    }
   };
 
   const startWatch = () => {
     if (watchIdRef.current !== null || permissionDeniedRef.current) return;
-
     watchIdRef.current = navigator.geolocation.watchPosition(
       applyPosition,
       (err) => handleGeolocationError(err, true),
-      WATCH_OPTIONS,
+      POSITION_OPTIONS,
     );
   };
 
@@ -118,23 +103,25 @@ export const GeolocationProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
 
     setLoading(true);
-    resolvedInitialRef.current = false;
 
     if (!loadingToastShownRef.current) {
       loadingToastShownRef.current = true;
       handleGeolocationToast(true);
     }
 
-    // Start the continuous watch immediately so we don't depend on a single
-    // getCurrentPosition succeeding — boat GPS often takes 10s+ for the first
-    // fix, and the previous flow left the user with no coordinates at all if
-    // that initial call timed out.
+    // Continuous watch with the same options keeps the GPS chip warm
+    // and feeds fresh coordinates as the boat moves between spots, so
+    // the user doesn't have to mash "Atnaujinti lokaciją" before each
+    // tap. Each tick is equivalent to a fresh `getCurrentPosition`
+    // call with `maximumAge: 0`, so accuracy is identical.
     startWatch();
 
+    // One-shot initial fix in parallel — sometimes succeeds before the
+    // watch's first tick on warm GPS.
     navigator.geolocation.getCurrentPosition(
       applyPosition,
       (err) => handleGeolocationError(err, false),
-      INITIAL_FIX_OPTIONS,
+      POSITION_OPTIONS,
     );
   }, []);
 

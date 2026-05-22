@@ -1,34 +1,34 @@
 import { useContext } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import {
-  handleErrorToast,
   handleErrorToastFromServer,
-  isShoreOnlyWeighing,
+  LocationType,
   PopupContentType,
+  requireCoordinates,
+  useCurrentFishing,
   useGeolocation,
 } from '../../utils';
 import api from '../../utils/api';
 import MenuButton from '../buttons/MenuButton';
 import Popup from '../layouts/Popup';
 import { IconName } from '../other/Icon';
-import LoaderComponent from '../other/LoaderComponent';
 import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
+import LoaderComponent from '../other/LoaderComponent';
 
 const ToolGroupAction = ({ onClose, content }: any) => {
-  const { toolsGroup, location, showWeightButtons, showCheckButton } = content;
-  const { coordinates, loading } = useGeolocation();
+  const {
+    toolsGroup,
+    location,
+    showWeightButtons,
+    showCheckButton,
+    canReturnToWarehouse = true,
+  } = content;
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
+  const { data: currentFishing, isFetching: currentFishingLoading } = useCurrentFishing();
 
   const queryClient = useQueryClient();
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
-
-  const { data: currentFishing, isLoading } = useQuery(
-    ['currentFishing'],
-    () => api.getCurrentFishing(),
-    {
-      retry: false,
-    },
-  );
 
   const { mutateAsync: weighToolsMutation, isLoading: weighToolsIsLoading } = useMutation(
     (data: any) => {
@@ -46,27 +46,34 @@ const ToolGroupAction = ({ onClose, content }: any) => {
     },
   );
 
+  // Set in LocationForm when the user types WGS coordinates — admin uses
+  // this to render a warning on the affected events.
+  const locationManual = !!location?.manual;
+
   const handleSubmit = () => {
-    if (coordinates?.x && coordinates?.y) {
-      const params = {
-        data: {},
-        coordinates,
-        location,
-      };
-      weighToolsMutation(params);
-    } else {
-      handleErrorToast(
-        'Nepavyko nustatyti jūsų vietos. Pabandykite dar kartą vėliau ir įsitikinkite, kad naršyklėje suteikti vietos nustatymo leidimai.',
-      );
-    }
+    const coords = requireCoordinates({ coordinates, loading, refresh: refreshGeolocation });
+    if (!coords) return;
+    weighToolsMutation({
+      data: {},
+      coordinates: coords,
+      location,
+      locationManual,
+    });
+  };
+
+  const handleReturnTools = () => {
+    const coords = requireCoordinates({ coordinates, loading, refresh: refreshGeolocation });
+    if (!coords) return;
+    returnToolsMutation({ coordinates: coords });
   };
 
   const { mutateAsync: returnToolsMutation, isLoading: removeToolLoading } = useMutation(
-    () =>
+    ({ coordinates: coords }: { coordinates: { x: number; y: number } }) =>
       api.removeTool(
         {
           location,
-          coordinates: coordinates as any,
+          coordinates: coords,
+          locationManual,
         },
         toolsGroup?.id,
       ),
@@ -85,46 +92,50 @@ const ToolGroupAction = ({ onClose, content }: any) => {
       title={toolsGroup?.tools[0]?.toolType?.label}
       subTitle={toolsGroup?.tools?.map((tool: any) => tool.sealNr).join(', ')}
     >
-      <PopupContainer>
-        {isLoading ? (
-          <LoaderComponent />
-        ) : (
-          <>
-            {!isShoreOnlyWeighing(currentFishing?.type) && showWeightButtons && (
-              <>
+      {currentFishingLoading ? (
+        <LoaderComponent />
+      ) : (
+        <PopupContainer>
+          {showWeightButtons && (
+            <>
+              <MenuButton
+                label={
+                  currentFishing?.type === LocationType.ESTUARY
+                    ? 'Sverti žuvį laive'
+                    : 'Apytikslis svoris'
+                }
+                icon={IconName.scales}
+                onClick={() => {
+                  showPopup({
+                    type: PopupContentType.CAUGHT_FISH_WEIGHT,
+                    content: {
+                      location,
+                      toolsGroup,
+                    },
+                  });
+                }}
+              />
+              {showCheckButton && (
                 <MenuButton
-                  label="Sverti žuvį laive "
-                  icon={IconName.scales}
-                  onClick={() => {
-                    showPopup({
-                      type: PopupContentType.CAUGHT_FISH_WEIGHT,
-                      content: {
-                        location,
-                        toolsGroup,
-                      },
-                    });
-                  }}
+                  label="Patikrinta"
+                  icon={IconName.check}
+                  onClick={handleSubmit}
+                  loading={weighToolsIsLoading}
                 />
-                {showCheckButton && (
-                  <MenuButton
-                    label="Patikrinta"
-                    icon={IconName.check}
-                    onClick={handleSubmit}
-                    loading={weighToolsIsLoading}
-                  />
-                )}
-              </>
-            )}
+              )}
+            </>
+          )}
+          {canReturnToWarehouse && (
             <MenuButton
               label="Sugrąžinti į sandėlį"
               icon={IconName.return}
-              onClick={returnToolsMutation}
+              onClick={handleReturnTools}
               loading={removeToolLoading || loading}
               isActive={!removeToolLoading}
             />
-          </>
-        )}
-      </PopupContainer>
+          )}
+        </PopupContainer>
+      )}
     </Popup>
   );
 };

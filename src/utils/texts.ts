@@ -24,7 +24,7 @@ export const validationTexts: { [key: string]: string } = {
     'Įrankis su šiuo plombos numeriu jau egzistuoja',
   [ServerErrors.FISH_MUST_BE_WEIGHTED]:
     'Sužvejotos žuvys turi būti pasvertos krante, prieš užbaigiant žvejybą',
-  [ServerErrors.LOCATION_NOT_FOUND]: 'Nepavyo nustatyti vandens telkinio pagal įvestas koordinates',
+  [ServerErrors.LOCATION_NOT_FOUND]: 'Nepavyko nustatyti vandens telkinio pagal įvestas koordinates',
   [ServerErrors.FISH_ALREADY_WEIGHTED]: 'Žuvis krante jau buvo pasverta',
   badFileTypes: 'Blogi failų tipai',
   fileSizesExceeded: 'Viršyti failų dydžiai',
@@ -35,7 +35,8 @@ export const validationTexts: { [key: string]: string } = {
   profileUpdated: 'Profilis atnaujintas',
   fishingFinished: 'Žvejyba pabaigta',
   failedToSetLocation: 'Nepavyko nustatyti lokacijos',
-  mustAllowToSetCoordinates: 'Privalote leisti nustatyti kordinates',
+  mustAllowToSetCoordinates: 'Privalote leisti nustatyti koordinates',
+  stillLocatingPleaseWait: 'Dar nustatoma jūsų vieta. Palaukite kelias sekundes',
   provideSkipReason: 'Pateikite priežastį, dėl kurios praleidžiate žvejybą',
   [ServerErrors.AUTH_USER_EXISTS]: 'Asmuo su tokiu asmens kodu jau registruotas.',
 };

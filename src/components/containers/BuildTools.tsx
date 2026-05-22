@@ -18,7 +18,7 @@ interface BuiltToolsProps {
 const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   const queryClient = useQueryClient();
   const [selectedTool, setSelectedTool] = useState<number>();
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
   const { data: availableTools } = useQuery(['availableTools'], () => api.getAvailableTools(), {
     retry: false,
@@ -65,19 +65,24 @@ const BuildTools = ({ onClose, location }: BuiltToolsProps) => {
   };
 
   const handleBuildTools = () => {
-    const buildToolsCoordinates: any = {
-      x: location?.x || coordinates?.x,
-      y: location?.y || coordinates?.y,
-    };
+    // Only the manually-typed WGS path overrides device GPS. Picking a
+    // bar/water-body from the dropdown is just metadata — we still want
+    // the actual phone fix as the event coordinate so the admin map
+    // doesn't show every company stacked on the bar centroid.
+    const buildToolsCoordinates: any = location?.manual
+      ? { x: location?.x, y: location?.y }
+      : { x: coordinates?.x, y: coordinates?.y };
     if (buildToolsCoordinates.x && buildToolsCoordinates.y) {
       buildToolsMutation({
         tools: selectedTool,
         location,
         coordinates: buildToolsCoordinates,
+        locationManual: !!location?.manual,
       });
-    } else {
-      handleErrorToast('Nenustatyta buvimo vieta');
+      return;
     }
+    refreshGeolocation();
+    handleErrorToast('Nenustatyta buvimo vieta');
   };
 
   return (

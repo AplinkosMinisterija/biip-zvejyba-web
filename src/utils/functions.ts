@@ -3,9 +3,16 @@ import { toZonedTime } from 'date-fns-tz';
 import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
 import api from './api';
-import { LocationType, ToolTypeType } from './constants';
+import { ToolTypeType } from './constants';
 import { validationTexts } from './texts';
-import { Profile, ProfileId, ReactQueryError, ResponseProps, ToolsGroup } from './types';
+import {
+  FishingWeights,
+  Profile,
+  ProfileId,
+  ReactQueryError,
+  ResponseProps,
+  ToolsGroup,
+} from './types';
 const cookies = new Cookies();
 
 interface UpdateTokenProps {
@@ -13,6 +20,20 @@ interface UpdateTokenProps {
   error?: string;
   message?: string;
   refreshToken?: string;
+}
+
+export interface BuiltToolsGuards {
+  toolTypesCounts: Record<string, number>;
+  checkedToolTypesCounts: Record<string, number>;
+  withFishToolTypesCounts: Record<string, number>;
+  notCompletedToolType?: string;
+  blockReturnToolTypes: Set<string>;
+}
+
+export interface FishingActionGuards {
+  fishingComplete: boolean;
+  shoreWeighingDisabled: boolean;
+  finishDisabled: boolean;
 }
 
 export const clearCookies = () => {
@@ -61,7 +82,7 @@ export const handleInfoToast = (message: string) => {
 
 export const handleGeolocationToast = (loading: boolean) => {
   if (loading) {
-    toast.info('Dar nustatoma jūsų vieta. Palaukite kelias sekundes', {
+    toast.info(validationTexts.stillLocatingPleaseWait, {
       position: 'top-center',
       autoClose: 5000,
       hideProgressBar: true,
@@ -70,6 +91,30 @@ export const handleGeolocationToast = (loading: boolean) => {
     });
     return;
   }
+};
+
+// Shared shape for "I need coordinates to do X" handlers across the app.
+// The previous version stacked two toasts when a user clicked an action
+// after the safety-net settle timeout fired with no GPS fix — the refresh
+// re-triggered the Provider's "Dar nustatoma..." toast and the handler
+// dropped a second "Privalote leisti..." error toast on top of it
+// (https://github.com/AplinkosMinisterija/biip-zvejyba-web/pull/151).
+//
+// Trust the Provider to own the toast surface:
+// - `loading=true` → its "Dar nustatoma..." toast is already up; do nothing.
+// - settled with no coords → kick a refresh. The Provider shows the right
+//   toast based on internal state (permission-denied error, or another
+//   "Dar nustatoma..." while it tries again).
+//
+// Returns the coordinates so callers keep TS narrowing, or `null`.
+export const requireCoordinates = (state: {
+  coordinates: { x: number; y: number } | null;
+  loading: boolean;
+  refresh: () => void;
+}): { x: number; y: number } | null => {
+  if (state.coordinates) return state.coordinates;
+  if (!state.loading) state.refresh();
+  return null;
 };
 
 export const handleSetProfile = (profiles?: Profile[], justLoggedIn: boolean = false) => {
@@ -214,6 +259,87 @@ export const getBuiltToolInfo = (toolsGroup: ToolsGroup) => {
   };
 };
 
+// Pre-computes the per-tool-type aggregates the tool-list pages need:
+// total / checked / with-fish counts, the type that's mid-checking, and the
+// types where returning the last unchecked tool would silently lose the
+// catch. Mirrors the BE `assertSiblingsHaveFishLogged` guard so the UI can
+// hide the "Sugrąžinti į sandėlį" button before the server errors out.
+export const computeBuiltToolsGuards = (builtTools: any[]): BuiltToolsGuards => {
+  const acc = {
+    toolTypesCounts: {} as Record<string, number>,
+    checkedToolTypesCounts: {} as Record<string, number>,
+    withFishToolTypesCounts: {} as Record<string, number>,
+  };
+
+  for (const tool of builtTools ?? []) {
+    const id = tool?.tools?.[0]?.toolType?.id;
+    if (id == null) continue;
+    const key = String(id);
+    acc.toolTypesCounts[key] = (acc.toolTypesCounts[key] ?? 0) + 1;
+    if (tool.weightEvent) {
+      acc.checkedToolTypesCounts[key] = (acc.checkedToolTypesCounts[key] ?? 0) + 1;
+      const data = tool.weightEvent.data;
+      if (data && Object.keys(data).length > 0) {
+        acc.withFishToolTypesCounts[key] = (acc.withFishToolTypesCounts[key] ?? 0) + 1;
+      }
+    }
+  }
+
+  const hasAnyChecked = Object.keys(acc.checkedToolTypesCounts).length > 0;
+
+  const notCompletedToolType = hasAnyChecked
+    ? Object.keys(acc.toolTypesCounts).find(
+        (key) =>
+          (acc.checkedToolTypesCounts[key] ?? 0) > 0 &&
+          acc.checkedToolTypesCounts[key] < acc.toolTypesCounts[key],
+      )
+    : undefined;
+
+  const blockReturnToolTypes = new Set<string>();
+  for (const key of Object.keys(acc.toolTypesCounts)) {
+    const total = acc.toolTypesCounts[key];
+    const checked = acc.checkedToolTypesCounts[key] ?? 0;
+    const withFish = acc.withFishToolTypesCounts[key] ?? 0;
+    if (total - checked === 1 && checked > 0 && withFish === 0) {
+      blockReturnToolTypes.add(key);
+    }
+  }
+
+  return { ...acc, notCompletedToolType, blockReturnToolTypes };
+};
+
+// Resolves the three `LargeButton` enable/disable states on the fishing
+// actions screen off a single `fishings/weights` payload. Centralised so
+// the rules (and their relationship to the BE guards they mirror) live
+// in one place — see the matching `assertEveryToolTypeHasFishLogged`
+// and shore-weigh logic in biip-zvejyba-api `fishings.service.ts`.
+export const computeFishingActionGuards = (
+  fishingWeights?: FishingWeights,
+): FishingActionGuards => {
+  const hasFish = (record?: Record<string, unknown>) =>
+    !!record && Object.values(record).some((amount) => Number(amount) > 0);
+
+  const hasPreliminaryFish = hasFish(fishingWeights?.preliminary);
+  const hasShoreWeighedFish = hasFish(fishingWeights?.total);
+  const hasUncompletedTools = !!fishingWeights?.hasUncompletedTools;
+
+  // Shore weighing is the terminal catch step; once it's done the
+  // fishing is effectively closed and only Baigti is left.
+  const fishingComplete = hasShoreWeighedFish;
+
+  return {
+    fishingComplete,
+    // Shore weighing requires a preliminary catch and is locked once
+    // it's been performed.
+    shoreWeighingDisabled: fishingComplete || !hasPreliminaryFish,
+    // Two server-enforced rules block Baigti:
+    // - preliminary catch must be shore-weighed
+    // - no (tool type, location) bucket left in Patikrinta-without-fish state
+    finishDisabled:
+      (hasPreliminaryFish && !hasShoreWeighedFish) || hasUncompletedTools,
+  };
+};
+
 export const getReactQueryErrorMessage = (response?: ReactQueryError) =>
   response?.data?.type || response?.data?.message || 'error';
 
@@ -241,8 +367,3 @@ export const formatDateTo = (date: Date) => {
 export const formatDateFrom = (date: Date) => {
   return toZonedTime(startOfDay(new Date(date)), 'Europe/Vilnius');
 };
-
-// Polders and inland-water fishings only weigh fish on shore — no on-boat
-// preliminary step. Used to gate the boat-weighing UI consistently.
-export const isShoreOnlyWeighing = (type?: LocationType) =>
-  type === LocationType.INLAND_WATERS || type === LocationType.POLDERS;

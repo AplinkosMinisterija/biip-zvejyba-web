@@ -10,39 +10,45 @@ import { PopupContext, PopupContextProps } from '../components/providers/PopupPr
 import {
   FishingWeighType,
   handleErrorToast,
-  isShoreOnlyWeighing,
   PopupContentType,
+  requireCoordinates,
   useCurrentFishing,
   useFishingWeightMutation,
   useFishTypes,
   useFishWeights,
   useGeolocation,
-  validationTexts,
 } from '../utils';
 
 const FishingWeight = () => {
   const [type, setType] = useState<FishingWeighType>(FishingWeighType.CAUGHT);
   const [isSwitching, setIsSwitching] = useState(false);
-  const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
-  const showSwitch = !isShoreOnlyWeighing(currentFishing?.type);
+  const { isLoading: currentFishingLoading } = useCurrentFishing();
   const { fishTypes, fishTypesLoading } = useFishTypes();
   const { fishingWeights, fishingWeightsLoading } = useFishWeights();
   const { fishingWeightLoading, fishingWeightMutation } = useFishingWeightMutation();
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
   if (currentFishingLoading || fishTypesLoading || fishingWeightsLoading) {
     return <LoaderComponent />;
   }
 
-  const caughtFishData = fishingWeights?.total || fishingWeights?.preliminary || {};
+  // Always include every fish the fisher registered on the boat: if the
+  // user previously submitted onshore weights without one of them, the
+  // entry would otherwise vanish from the form forever (preliminary keys
+  // missing from `total` would never re-render). Total values take
+  // precedence so already-edited rows keep the onshore amount.
+  const preliminaryData = fishingWeights?.preliminary ?? {};
+  const totalData = fishingWeights?.total ?? {};
+  const caughtFishData: { [key: string]: number } = { ...preliminaryData, ...totalData };
   const initialValues = (
-    isShoreOnlyWeighing(currentFishing?.type) || type !== FishingWeighType.CAUGHT
+    type !== FishingWeighType.CAUGHT
       ? fishTypes.map((fishType) => {
-          const amount = (fishingWeights?.total || fishingWeights?.preliminary)?.[fishType.id];
+          const amount = caughtFishData[fishType.id];
+          const preliminary = preliminaryData[fishType.id];
           return {
             ...fishType,
-            preliminaryAmount: amount ?? '',
+            preliminaryAmount: preliminary ?? '',
             amount: amount ?? '',
           };
         })
@@ -50,7 +56,7 @@ const FishingWeight = () => {
           const fishType = fishTypes.find((fishType) => fishType.id === Number(key));
           return {
             ...fishType,
-            preliminaryAmount: caughtFishData[key] ?? '',
+            preliminaryAmount: preliminaryData[key] ?? '',
             amount: caughtFishData[key] ?? '',
           };
         })
@@ -67,61 +73,17 @@ const FishingWeight = () => {
   };
 
   const handleSubmit = (values: any) => {
-    if (!coordinates) return handleErrorToast(validationTexts.mustAllowToSetCoordinates);
+    const coords = requireCoordinates({ coordinates, loading, refresh: refreshGeolocation });
+    if (!coords) return;
 
     const mappedWeights = mapWeights(values);
 
     fishingWeightMutation({
       data: mappedWeights,
       preliminaryData: fishingWeights?.preliminary,
-      coordinates: coordinates,
+      coordinates: coords,
       isAutoSave: false,
     });
-  };
-
-  const handleSwitchChange = (newValue: FishingWeighType, values: any, setFieldValue: any) => {
-    setIsSwitching(true);
-    setType(newValue);
-    if (!coordinates) {
-      setIsSwitching(false);
-      return;
-    }
-    try {
-      const mappedWeights = mapWeights(values);
-
-      fishingWeightMutation({
-        data: mappedWeights,
-        coordinates: coordinates,
-        isAutoSave: true,
-      });
-
-      const updatedValues =
-        newValue === FishingWeighType.CAUGHT
-          ? fishTypes.map((fishType) => {
-              const amount = fishingWeights?.preliminary?.[fishType.id];
-              return {
-                ...fishType,
-                preliminaryAmount: amount || '',
-                amount: amount || '',
-              };
-            })
-          : Object.keys(caughtFishData)?.map((key: string) => {
-              const fishType = fishTypes.find((fishType) => fishType.id === Number(key));
-              return {
-                ...fishType,
-                preliminaryAmount: caughtFishData[key] || '',
-                amount: caughtFishData[key] || '',
-              };
-            });
-
-      updatedValues.forEach((item: any, index: number) => {
-        setFieldValue(`${index}.amount`, item.amount);
-      });
-    } catch (error) {
-      console.error('Klaida keičiant tipą:', error);
-    } finally {
-      setIsSwitching(false);
-    }
   };
 
   const fishingWeightLoadingOrSwitching = fishingWeightLoading || isSwitching || loading;
@@ -138,6 +100,26 @@ const FishingWeight = () => {
 
           if (!hasAtLeastOneFilled) {
             handleErrorToast('Bent viena žuvis turi būti įvesta');
+            return;
+          }
+
+          // Onshore weighing requires a value (0 is fine) for every fish
+          // the fisher registered on the boat — otherwise the boat-side
+          // preliminary entry would have no counterpart in the final
+          // report. Only enforce on rows that carry a server-provided
+          // `preliminaryAmount`.
+          const missing = data.filter(
+            (item: any) =>
+              item.preliminaryAmount !== undefined &&
+              item.preliminaryAmount !== null &&
+              item.preliminaryAmount !== '' &&
+              (item.amount === undefined || item.amount === null || item.amount === ''),
+          );
+          if (missing.length > 0) {
+            const labels = missing.map((m: any) => m.label).join(', ');
+            handleErrorToast(
+              `Užpildykite šių žuvų iškrovimą: ${labels}. Jei paleidote atgal, įveskite 0 kg.`,
+            );
             return;
           }
 

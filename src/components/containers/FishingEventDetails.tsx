@@ -17,8 +17,10 @@ const FishingEventDetails = ({ event }: any) => {
     (e) => e === event.type,
   );
 
-  //TODO: should be converted to wgs
-  const coordinates = event.coordinates ? `${event.coordinates.x?.toFixed(6)}, ${event.coordinates.y?.toFixed(6)}` : '-';
+  // `getHistory` returns `{ lat, lng }` in WGS84 (see geomToWgs).
+  const coordinates = event.coordinates
+    ? `${event.coordinates.lat?.toFixed(6)}, ${event.coordinates.lng?.toFixed(6)}`
+    : '-';
 
   return (
     <Container>

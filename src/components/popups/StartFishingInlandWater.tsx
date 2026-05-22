@@ -4,11 +4,10 @@ import styled from 'styled-components';
 import {
   buttonLabels,
   getLocationList,
-  handleErrorToast,
   handleErrorToastFromServer,
   LocationType,
+  requireCoordinates,
   useGeolocation,
-  validationTexts,
 } from '../../utils';
 import api from '../../utils/api';
 import Button from '../buttons/Button';
@@ -20,7 +19,7 @@ import { IconName } from '../other/Icon';
 const StartFishingInlandWater = ({ onClose }: any) => {
   const queryClient = useQueryClient();
   const [selectedLocation, setSelectedLocation] = useState<any>();
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
   const getInputValue = (location: any) =>
     location ? `${location?.name}, ${location?.cadastralId}` : '';
@@ -37,15 +36,13 @@ const StartFishingInlandWater = ({ onClose }: any) => {
   });
 
   const handleStartFishing = () => {
-    if (coordinates) {
-      startFishing({
-        type: LocationType.INLAND_WATERS,
-        coordinates: { x: coordinates?.x, y: coordinates?.y },
-        uetkCadastralId: selectedLocation?.cadastralId,
-      });
-    } else {
-      handleErrorToast(validationTexts.mustAllowToSetCoordinates);
-    }
+    const coords = requireCoordinates({ coordinates, loading, refresh: refreshGeolocation });
+    if (!coords) return;
+    startFishing({
+      type: LocationType.INLAND_WATERS,
+      coordinates: { x: coords.x, y: coords.y },
+      uetkCadastralId: selectedLocation?.cadastralId,
+    });
   };
 
   return (

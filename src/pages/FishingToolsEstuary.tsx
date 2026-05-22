@@ -12,6 +12,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import LocationInfo from '../components/other/LocationInfo';
 import { NotFound } from '../components/other/NotFound';
 import {
+  computeBuiltToolsGuards,
   handleErrorToastFromServer,
   LocationType,
   useCurrentFishing,
@@ -22,7 +23,7 @@ import api from '../utils/api';
 const FishingToolsEstuary = () => {
   const [showBuildTools, setShowBuildTools] = useState(false);
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
-  const { coordinates } = useGeolocation();
+  const { coordinates, refresh: refreshGeolocation } = useGeolocation();
 
   const locationType = currentFishing?.type;
   const [manualLocation, setManualLocation] = useState<any>();
@@ -31,7 +32,12 @@ const FishingToolsEstuary = () => {
     isLoading: locationLoading,
     refetch,
   } = useQuery({
-    queryKey: ['location', currentFishing?.id, coordinates?.x, coordinates?.y],
+    // Coordinates intentionally NOT in the queryKey — a moving boat would
+    // otherwise re-fire this query on every GPS tick and put the page back
+    // into the fetching state, blocking tool placement. The queryFn closure
+    // still uses the latest `coordinates` value, and the user can force a
+    // re-detect via the "Atnaujinti lokaciją" button (`refetch`).
+    queryKey: ['location', currentFishing?.id],
     queryFn: () => {
       return api.getLocation({
         query: JSON.stringify({
@@ -71,34 +77,8 @@ const FishingToolsEstuary = () => {
   const currentLocation = manualLocation || location;
   const showBuildToolsButton = !!currentLocation?.id;
 
-  const { toolTypesCounts, checkedToolTypesCounts } = builtTools.reduce(
-    (acc, tool) => {
-      const id = tool.tools?.[0]?.toolType?.id;
-      if (!id) return acc;
-
-      acc.toolTypesCounts[id] = (acc.toolTypesCounts[id] ?? 0) + 1;
-
-      if (tool.weightEvent) {
-        acc.checkedToolTypesCounts[id] = (acc.checkedToolTypesCounts[id] ?? 0) + 1;
-      }
-
-      return acc;
-    },
-    {
-      checkedToolTypesCounts: {} as Record<string, number>,
-      toolTypesCounts: {} as Record<string, number>,
-    },
-  );
-
-  const hasAnyChecked = Object.keys(checkedToolTypesCounts).length > 0;
-
-  const notCompletedToolType = hasAnyChecked
-    ? Object.keys(toolTypesCounts).find(
-        (key) =>
-          (checkedToolTypesCounts[key] ?? 0) > 0 &&
-          checkedToolTypesCounts[key] < toolTypesCounts[key],
-      )
-    : undefined;
+  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType, blockReturnToolTypes } =
+    computeBuiltToolsGuards(builtTools);
 
   return (
     <DefaultLayout>
@@ -107,7 +87,13 @@ const FishingToolsEstuary = () => {
         locationLoading={locationLoading}
         setLocationManually={setManualLocation}
         locationType={LocationType.ESTUARY}
-        renewLocation={refetch}
+        renewLocation={() => {
+          // Also kick the geolocation provider — the query is gated on
+          // `!!coordinates`, so refetching alone is a no-op when GPS hasn't
+          // produced a fix yet.
+          refreshGeolocation();
+          refetch();
+        }}
       />
       <Container>
         {builtToolsFetching || (builtTools === undefined && !!showBuildToolsButton) ? (
@@ -117,11 +103,19 @@ const FishingToolsEstuary = () => {
         ) : (
           map(builtTools, (toolsGroup: any) => {
             const toolTypeId = toolsGroup.tools[0].toolType.id;
+            const typeKey = String(toolTypeId);
             const disableTool =
-              !!notCompletedToolType && notCompletedToolType !== toolTypeId.toString();
+              !!notCompletedToolType && notCompletedToolType !== typeKey;
 
             const showCheckButton =
-              toolTypesCounts[toolTypeId] - (checkedToolTypesCounts?.[toolTypeId] || 0) > 1;
+              toolTypesCounts[typeKey] - (checkedToolTypesCounts?.[typeKey] || 0) > 1;
+
+            // Mirror of BE `assertSiblingsHaveFishLogged` — hide the
+            // "Sugrąžinti į sandėlį" option when returning this tool would
+            // be rejected (last unchecked of a type with only empty
+            // Patikrinta siblings, no fish anywhere).
+            const canReturnToWarehouse =
+              !!toolsGroup.weightEvent || !blockReturnToolTypes.has(typeKey);
 
             return (
               <ToolsGroupCard
@@ -130,6 +124,7 @@ const FishingToolsEstuary = () => {
                 toolsGroup={toolsGroup}
                 location={currentLocation}
                 showCheckButton={showCheckButton}
+                canReturnToWarehouse={canReturnToWarehouse}
                 isDisabled={disableTool}
               />
             );

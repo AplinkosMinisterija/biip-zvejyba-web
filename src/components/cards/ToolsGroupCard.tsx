@@ -18,6 +18,7 @@ interface ToolsGroupCardProps {
   isDisabled?: boolean;
   location?: any;
   showCheckButton: boolean;
+  canReturnToWarehouse?: boolean;
 }
 const ToolsGroupCard = ({
   toolsGroup,
@@ -26,6 +27,7 @@ const ToolsGroupCard = ({
   isDisabled = false,
   location,
   showCheckButton,
+  canReturnToWarehouse = true,
 }: ToolsGroupCardProps) => {
   const isCheckedTool = !!toolsGroup?.weightEvent;
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
@@ -44,6 +46,7 @@ const ToolsGroupCard = ({
                   toolsGroup,
                   showWeightButtons: !isCheckedTool,
                   showCheckButton,
+                  canReturnToWarehouse,
                 },
               });
             } else {

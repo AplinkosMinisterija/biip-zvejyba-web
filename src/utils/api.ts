@@ -312,6 +312,7 @@ class Api {
     params: {
       coordinates: Coordinates;
       location: Location;
+      locationManual?: boolean;
     },
     id: string,
   ) => {
@@ -327,6 +328,7 @@ class Api {
       data: { [key: number]: number };
       coordinates: Coordinates;
       location: Location;
+      locationManual?: boolean;
       preliminaryData: { [key: number]: number };
     },
     id: string,
@@ -356,6 +358,7 @@ class Api {
     params: {
       coordinates: { x: number; y: number };
       location: Location;
+      locationManual?: boolean;
     },
     id: string,
   ) => {

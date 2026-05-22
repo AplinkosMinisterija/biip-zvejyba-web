@@ -19,6 +19,7 @@ export interface Location {
   municipality: { id: number; name: string };
   x?: number;
   y?: number;
+  manual?: boolean;
 }
 
 export interface Coordinates {
@@ -94,6 +95,7 @@ export interface ToolsGroupEvent {
 export interface FishingWeights {
   preliminary: { [key: string]: number };
   total: { [key: string]: number };
+  hasUncompletedTools?: boolean;
 }
 
 export interface WeightEvent {

@@ -7,6 +7,7 @@ import {
   buttonLabels,
   handleErrorToast,
   handleErrorToastFromServer,
+  requireCoordinates,
   SickReasons,
   skipOptions,
   useGeolocation,
@@ -22,7 +23,7 @@ export const SkipFishing = ({ content, onClose }: any) => {
 
   const [skipReason, setSkipReason] = useState<any>(SickReasons.BAD_WEATHER);
   const [skipReasonNote, setSkipReasonNote] = useState<string>();
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
   const { isLoading: skipLoading, mutateAsync: skipFishing } = useMutation(api.skipFishing, {
     onError: ({ response }: any) => {
@@ -36,15 +37,14 @@ export const SkipFishing = ({ content, onClose }: any) => {
     if (skipReason.value === SickReasons.OTHER && !skipReasonNote) {
       return handleErrorToast(validationTexts.provideSkipReason);
     }
-    if (locationType && coordinates) {
-      skipFishing({
-        type: locationType,
-        coordinates,
-        note: skipReason.value === SickReasons.OTHER ? skipReasonNote : skipReason.label,
-      });
-    } else {
-      handleErrorToast(validationTexts.mustAllowToSetCoordinates);
-    }
+    if (!locationType) return;
+    const coords = requireCoordinates({ coordinates, loading, refresh: refreshGeolocation });
+    if (!coords) return;
+    skipFishing({
+      type: locationType,
+      coordinates: coords,
+      note: skipReason.value === SickReasons.OTHER ? skipReasonNote : skipReason.label,
+    });
   };
 
   return (

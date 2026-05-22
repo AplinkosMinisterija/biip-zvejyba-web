@@ -12,6 +12,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import LocationInfo from '../components/other/LocationInfo';
 import { NotFound } from '../components/other/NotFound';
 import {
+  computeBuiltToolsGuards,
   device,
   handleErrorToastFromServer,
   LocationType,
@@ -25,14 +26,19 @@ const FishingTools = () => {
   const { data: currentFishing, isLoading: currentFishingLoading } = useCurrentFishing();
   const locationType = currentFishing?.type;
   const [manualLocation, setManualLocation] = useState<any>();
-  const { coordinates, loading } = useGeolocation();
+  const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
   const {
     data: location,
     isFetching: locationLoading,
     refetch,
   } = useQuery({
-    queryKey: ['location', currentFishing?.id, coordinates?.x, coordinates?.y],
+    // Coordinates intentionally NOT in the queryKey — a moving boat would
+    // otherwise re-fire this query on every GPS tick and put the page back
+    // into the fetching state, blocking tool placement. The queryFn closure
+    // still uses the latest `coordinates` value, and the user can force a
+    // re-detect via the "Atnaujinti lokaciją" button (`refetch`).
+    queryKey: ['location', currentFishing?.id],
     queryFn: () => {
       return api.getLocation({
         query: JSON.stringify({
@@ -73,34 +79,8 @@ const FishingTools = () => {
     return <LoaderComponent />;
   }
 
-  const { toolTypesCounts, checkedToolTypesCounts } = builtTools.reduce(
-    (acc, tool) => {
-      const id = tool.tools?.[0]?.toolType?.id;
-      if (!id) return acc;
-
-      acc.toolTypesCounts[id] = (acc.toolTypesCounts[id] ?? 0) + 1;
-
-      if (tool.weightEvent) {
-        acc.checkedToolTypesCounts[id] = (acc.checkedToolTypesCounts[id] ?? 0) + 1;
-      }
-
-      return acc;
-    },
-    {
-      checkedToolTypesCounts: {} as Record<string, number>,
-      toolTypesCounts: {} as Record<string, number>,
-    },
-  );
-
-  const hasAnyChecked = Object.keys(checkedToolTypesCounts).length > 0;
-
-  const notCompletedToolType = hasAnyChecked
-    ? Object.keys(toolTypesCounts).find(
-        (key) =>
-          (checkedToolTypesCounts[key] ?? 0) > 0 &&
-          checkedToolTypesCounts[key] < toolTypesCounts[key],
-      )
-    : undefined;
+  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType, blockReturnToolTypes } =
+    computeBuiltToolsGuards(builtTools);
 
   return (
     <DefaultLayout>
@@ -117,7 +97,14 @@ const FishingTools = () => {
             municipality: picked?.municipality || location?.municipality,
           });
         }}
-        renewLocation={refetch}
+        renewLocation={() => {
+          // The location query is gated on `!!coordinates`; if GPS hasn't
+          // produced a fix yet, refetch alone is a no-op. Re-trigger the
+          // geolocation provider too so the user can recover from a stuck
+          // "no fix" state.
+          refreshGeolocation();
+          refetch();
+        }}
       />
       {polderPicked && (
         <Container>
@@ -128,11 +115,15 @@ const FishingTools = () => {
           ) : (
             map(builtTools, (toolsGroup: any) => {
               const toolTypeId = toolsGroup.tools[0].toolType.id;
+              const typeKey = String(toolTypeId);
               const disableTool =
-                !!notCompletedToolType && notCompletedToolType !== toolTypeId.toString();
+                !!notCompletedToolType && notCompletedToolType !== typeKey;
 
               const showCheckButton =
-                toolTypesCounts[toolTypeId] - (checkedToolTypesCounts?.[toolTypeId] || 0) > 1;
+                toolTypesCounts[typeKey] - (checkedToolTypesCounts?.[typeKey] || 0) > 1;
+
+              const canReturnToWarehouse =
+                !!toolsGroup.weightEvent || !blockReturnToolTypes.has(typeKey);
 
               return (
                 <ToolsGroupCard
@@ -141,6 +132,7 @@ const FishingTools = () => {
                   toolsGroup={toolsGroup}
                   location={currentLocation}
                   showCheckButton={showCheckButton}
+                  canReturnToWarehouse={canReturnToWarehouse}
                   isDisabled={disableTool}
                 />
               );
@@ -156,7 +148,10 @@ const FishingTools = () => {
             </StyledButton>
           </Footer>
           <Popup visible={showBuildTools} onClose={() => setShowBuildTools(false)}>
-            <BuildTools location={currentLocation} onClose={() => setShowBuildTools(false)} />
+            <BuildTools
+              location={currentLocation}
+              onClose={() => setShowBuildTools(false)}
+            />
           </Popup>
         </>
       )}

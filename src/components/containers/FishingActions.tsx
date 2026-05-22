@@ -3,9 +3,9 @@ import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {
+  computeFishingActionGuards,
   Fishing,
   FishingTypeRoute,
-  isShoreOnlyWeighing,
   PopupContentType,
   slugs,
 } from '../../utils';
@@ -40,19 +40,9 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
   );
 
   const locationType = fishing?.type;
-
   const loading = fishingWeightsLoading;
-
-  const hasFishAmount = (record?: Record<string, unknown>) =>
-    !!record && Object.values(record).some((amount) => Number(amount) > 0);
-
-  const weightOnBoatExist = hasFishAmount(fishingWeights?.preliminary);
-
-  const weightOnShoreExist = hasFishAmount(fishingWeights?.total);
-
-  const isDisabled = !isShoreOnlyWeighing(locationType) && weightOnShoreExist;
-
-  const shoreWeighingDisabled = isDisabled || !weightOnBoatExist;
+  const { fishingComplete, shoreWeighingDisabled, finishDisabled } =
+    computeFishingActionGuards(fishingWeights);
 
   return loading ? (
     <LoaderComponent />
@@ -61,21 +51,17 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
       <Container>
         <LargeButton
           variant={Variant.FLORAL_WHITE}
-          title={
-            isShoreOnlyWeighing(locationType)
-              ? 'Statykite arba</br>ištraukite įrankius'
-              : 'Tikrinkite arba</br>statykite įrankius'
-          }
+          title="Tikrinkite arba</br>statykite įrankius"
           subtitle="Esate žvejybos vietoje"
           buttonLabel="Atidaryti"
           onClick={() => {
             navigate(slugs.fishingTools(FishingTypeRoute[locationType]));
           }}
-          isDisabled={isDisabled}
+          isDisabled={fishingComplete}
         />
         <LargeButton
           variant={Variant.GHOST_WHITE}
-          title="Žuvies svoris</br>krante"
+          title="Žuvų svoris</br>krante"
           subtitle="Pasverkite bendrą svorį"
           buttonLabel="Sverti"
           isDisabled={shoreWeighingDisabled}
@@ -89,9 +75,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           subtitle="Užbaikite žvejybą"
           buttonLabel="Baigti"
           onClick={() => showPopup({ type: PopupContentType.END_FISHING })}
-          isDisabled={
-            !isShoreOnlyWeighing(locationType) && weightOnBoatExist && !weightOnShoreExist
-          }
+          isDisabled={finishDisabled}
         />
       </Container>
     </>
