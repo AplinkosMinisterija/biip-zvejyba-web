@@ -15,6 +15,20 @@ import {
 } from './types';
 const cookies = new Cookies();
 
+// Cookie security baseline. Until this PR every cookie used by the app
+// (`token`, `refreshToken`, `profileId`, `module`) was stored with only
+// `{ path: '/' }` — readable to any JS on the origin and sent on every
+// cross-site navigation. `secure: true` forces TLS-only delivery (we
+// auto-skip it on http://localhost so Vite dev still works), and
+// `sameSite: 'lax'` blocks the cookie from being sent on cross-site
+// POSTs while still allowing the E-vartai redirect chain (which is a
+// top-level GET back to our origin). See security audit #C8.
+const SECURE_COOKIE_OPTS = {
+  path: '/' as const,
+  secure: typeof window !== 'undefined' && window.location.protocol === 'https:',
+  sameSite: 'lax' as const,
+};
+
 interface UpdateTokenProps {
   token?: string;
   error?: string;
@@ -136,7 +150,7 @@ export const handleSetProfile = (profiles?: Profile[], justLoggedIn: boolean = f
 
 export const handleSelectProfile = (profileId: ProfileId) => {
   if (cookies.get('profileId') == profileId) return;
-  cookies.set('profileId', `${profileId}`, { path: '/' });
+  cookies.set('profileId', `${profileId}`, SECURE_COOKIE_OPTS);
   window.location.reload();
 };
 
@@ -145,14 +159,14 @@ export const handleUpdateTokens = (data: UpdateTokenProps) => {
 
   if (token) {
     cookies.set('token', `${token}`, {
-      path: '/',
+      ...SECURE_COOKIE_OPTS,
       expires: new Date(new Date().getTime() + 60 * 60 * 24 * 1000),
     });
   }
 
   if (refreshToken) {
     cookies.set('refreshToken', `${refreshToken}`, {
-      path: '/',
+      ...SECURE_COOKIE_OPTS,
       expires: new Date(new Date().getTime() + 60 * 60 * 24 * 1000 * 30),
     });
   }
