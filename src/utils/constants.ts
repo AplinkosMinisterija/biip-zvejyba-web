@@ -11,6 +11,8 @@ export enum ServerErrors {
   FISH_ALREADY_WEIGHTED = 'Fish already weighted',
   LOCATION_NOT_FOUND = 'Location not found',
   WEIGHT_DIFFERENCE = 'Weight difference greater than 20%',
+  // Must match the BE message in biip-zvejyba-api toolsGroups.removeTools.
+  PREVIOUS_FISHING_TOOL_NOT_WEIGHTED = 'Previous fishing tool not weighted',
 }
 const mapsHost = import.meta.env.VITE_MAPS_HOST;
 

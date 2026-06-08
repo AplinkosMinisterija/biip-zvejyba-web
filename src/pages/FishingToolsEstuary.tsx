@@ -12,6 +12,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import LocationInfo from '../components/other/LocationInfo';
 import { NotFound } from '../components/other/NotFound';
 import {
+  canReturnToolToWarehouse,
   computeBuiltToolsGuards,
   handleErrorToastFromServer,
   LocationType,
@@ -77,7 +78,7 @@ const FishingToolsEstuary = () => {
   const currentLocation = manualLocation || location;
   const showBuildToolsButton = !!currentLocation?.id;
 
-  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType, blockReturnToolTypes } =
+  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType } =
     computeBuiltToolsGuards(builtTools);
 
   return (
@@ -110,12 +111,7 @@ const FishingToolsEstuary = () => {
             const showCheckButton =
               toolTypesCounts[typeKey] - (checkedToolTypesCounts?.[typeKey] || 0) > 1;
 
-            // Mirror of BE `assertSiblingsHaveFishLogged` — hide the
-            // "Sugrąžinti į sandėlį" option when returning this tool would
-            // be rejected (last unchecked of a type with only empty
-            // Patikrinta siblings, no fish anywhere).
-            const canReturnToWarehouse =
-              !!toolsGroup.weightEvent || !blockReturnToolTypes.has(typeKey);
+            const canReturnToWarehouse = canReturnToolToWarehouse(toolsGroup);
 
             return (
               <ToolsGroupCard
