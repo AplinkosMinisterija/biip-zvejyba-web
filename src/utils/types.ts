@@ -90,6 +90,7 @@ export interface ToolsGroupEvent {
   location: Location;
   user: User;
   tenant: Tenant;
+  fishing?: Fishing;
 }
 
 export interface FishingWeights {

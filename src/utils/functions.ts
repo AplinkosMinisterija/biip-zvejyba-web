@@ -308,6 +308,30 @@ export const computeBuiltToolsGuards = (builtTools: any[]): BuiltToolsGuards => 
   return { ...acc, notCompletedToolType, blockReturnToolTypes };
 };
 
+// Whether the "Sugrąžinti į sandėlį" option may be shown for a built tool.
+// Mirrors the BE `removeTools` guards in biip-zvejyba-api:
+//   1. A tool checked/weighed this session (`weightEvent`) is always returnable.
+//   2. A tool deployed in an earlier, already-ended fishing must be
+//      checked/weighed in the CURRENT session first — otherwise its catch
+//      would be lost on return (BE: "Previous fishing tool not weighted").
+//   3. Otherwise mirror `assertSiblingsHaveFishLogged` (last unchecked of a
+//      type whose siblings only got empty "Patikrinta" events).
+export const canReturnToolToWarehouse = (
+  toolsGroup: ToolsGroup,
+  blockReturnToolTypes: Set<string>,
+  currentFishingId?: number,
+): boolean => {
+  if (toolsGroup?.weightEvent) return true;
+
+  const builtFishingId = toolsGroup?.buildEvent?.fishing?.id;
+  if (currentFishingId && builtFishingId && builtFishingId !== currentFishingId) {
+    return false;
+  }
+
+  const typeKey = String(toolsGroup?.tools?.[0]?.toolType?.id);
+  return !blockReturnToolTypes.has(typeKey);
+};
+
 // Resolves the three `LargeButton` enable/disable states on the fishing
 // actions screen off a single `fishings/weights` payload. Centralised so
 // the rules (and their relationship to the BE guards they mirror) live
