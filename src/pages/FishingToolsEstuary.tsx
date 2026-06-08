@@ -78,7 +78,7 @@ const FishingToolsEstuary = () => {
   const currentLocation = manualLocation || location;
   const showBuildToolsButton = !!currentLocation?.id;
 
-  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType, blockReturnToolTypes } =
+  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType } =
     computeBuiltToolsGuards(builtTools);
 
   return (
@@ -111,11 +111,7 @@ const FishingToolsEstuary = () => {
             const showCheckButton =
               toolTypesCounts[typeKey] - (checkedToolTypesCounts?.[typeKey] || 0) > 1;
 
-            const canReturnToWarehouse = canReturnToolToWarehouse(
-              toolsGroup,
-              blockReturnToolTypes,
-              currentFishing?.id,
-            );
+            const canReturnToWarehouse = canReturnToolToWarehouse(toolsGroup);
 
             return (
               <ToolsGroupCard

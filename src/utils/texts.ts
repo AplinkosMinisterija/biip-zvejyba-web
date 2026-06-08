@@ -27,7 +27,7 @@ export const validationTexts: { [key: string]: string } = {
   [ServerErrors.LOCATION_NOT_FOUND]: 'Nepavyko nustatyti vandens telkinio pagal įvestas koordinates',
   [ServerErrors.FISH_ALREADY_WEIGHTED]: 'Žuvis krante jau buvo pasverta',
   [ServerErrors.PREVIOUS_FISHING_TOOL_NOT_WEIGHTED]:
-    'Šis įrankis pastatytas ankstesnėje žvejyboje. Prieš grąžinant į sandėlį, patikrinkite arba pasverkite žuvį.',
+    'Prieš grąžinant įrankį į sandėlį, jį reikia patikrinti arba pasverti.',
   badFileTypes: 'Blogi failų tipai',
   fileSizesExceeded: 'Viršyti failų dydžiai',
   personalCode: 'Neteisingas asmens kodo formatas',

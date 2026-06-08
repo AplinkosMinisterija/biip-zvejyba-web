@@ -78,7 +78,7 @@ const FishingTools = () => {
     return <LoaderComponent />;
   }
 
-  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType, blockReturnToolTypes } =
+  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType } =
     computeBuiltToolsGuards(builtTools);
 
   return (
@@ -112,11 +112,7 @@ const FishingTools = () => {
             const showCheckButton =
               toolTypesCounts[typeKey] - (checkedToolTypesCounts?.[typeKey] || 0) > 1;
 
-            const canReturnToWarehouse = canReturnToolToWarehouse(
-              toolsGroup,
-              blockReturnToolTypes,
-              currentFishing?.id,
-            );
+            const canReturnToWarehouse = canReturnToolToWarehouse(toolsGroup);
 
             return (
               <ToolsGroupCard
