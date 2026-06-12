@@ -231,7 +231,6 @@ export interface ReactQueryError {
 export interface FishingLocationOption {
   id: string | number;
   name: string;
-  polder: boolean;
 }
 
 export interface FishingFilters {

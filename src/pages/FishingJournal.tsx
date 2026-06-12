@@ -108,13 +108,11 @@ const FishingJournal = () => {
         params.user = filters.person.user.id;
       }
 
-      // A location option maps to one of the two columns a fishing stores.
+      // Location is event-based (a specific bar / water body / polder); the
+      // backend resolves the fishings that have an event there.
       if (filters.location) {
-        if (filters.location.polder) {
-          params.polderId = filters.location.id;
-        } else {
-          params.uetkCadastralId = String(filters.location.id);
-        }
+        params.locationId = filters.location.id;
+        params.locationName = filters.location.name;
       }
     }
 
