@@ -232,4 +232,5 @@ export interface FishingFilters {
   createdFrom?: string;
   createdTo?: string;
   type?: { id: LocationType; label: string };
+  person?: TenantUser;
 }
