@@ -1,6 +1,6 @@
 import { DynamicFilter, FilterInputTypes, useStorage } from '@aplinkosministerija/design-system';
 import { useRef } from 'react';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FishingCard from '../components/cards/FishingCard';
@@ -37,6 +37,12 @@ const FishingJournal = () => {
   const currentProfile = useGetCurrentProfile();
   const isCompany = !!currentProfile && currentProfile.id !== 'personal';
 
+  // Locations that actually have fishings — fetched once (backend cached); the
+  // SelectField searches them client-side, so no async select is needed.
+  const { data: locationOptions = [] } = useQuery(['fishingLocations'], () =>
+    api.getFishingLocations(),
+  );
+
   const filterConfig = {
     type: {
       label: journalTableFilters.type,
@@ -58,9 +64,9 @@ const FishingJournal = () => {
     location: {
       label: journalTableFilters.location,
       key: 'location',
-      inputType: FilterInputTypes.asyncSingleSelect,
+      inputType: FilterInputTypes.singleSelect,
       optionLabel: (item: FishingLocationOption) => item?.name || '-',
-      optionsApi: api.getFishingLocations,
+      options: locationOptions,
     },
     createdFrom: {
       label: journalTableFilters.createdFrom,

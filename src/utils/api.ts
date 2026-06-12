@@ -563,17 +563,12 @@ class Api {
     });
   };
 
-  // Options for the journal "location" filter — the distinct places that have
-  // fishings, scoped to the caller. The endpoint returns the full bounded
-  // list, so we filter by the typed input client-side and hand it to the
-  // async select as a single page.
-  getFishingLocations = async (input: string, page: number) => {
+  // Options for the journal "location" filter — the distinct places the caller
+  // fished (backend-cached). The full bounded list is fetched once; the
+  // SelectField searches it client-side, so no async select is needed.
+  getFishingLocations = async (): Promise<FishingLocationOption[]> => {
     const data = await this.get({ resource: 'fishings/locations' });
-    const rows: FishingLocationOption[] = Array.isArray(data) ? data : [];
-    const filtered = input
-      ? rows.filter((row) => row?.name?.toLowerCase().includes(input.toLowerCase()))
-      : rows;
-    return { rows: filtered, totalPages: 1, page };
+    return Array.isArray(data) ? data : [];
   };
 
   getFishingHistory = async ({ id }: { id: string }): Promise<FishingHistoryResponse> =>
