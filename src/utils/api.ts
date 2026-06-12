@@ -8,6 +8,7 @@ import {
   Coordinates,
   Fishing,
   FishingHistoryResponse,
+  FishingLocationOption,
   FishingWeights,
   FishType,
   Location,
@@ -560,6 +561,19 @@ class Api {
       populate: ['startEvent', 'endEvent', 'skipEvent', 'weightEvents'],
       page,
     });
+  };
+
+  // Options for the journal "location" filter — the distinct places that have
+  // fishings, scoped to the caller. The endpoint returns the full bounded
+  // list, so we filter by the typed input client-side and hand it to the
+  // async select as a single page.
+  getFishingLocations = async (input: string, page: number) => {
+    const data = await this.get({ resource: 'fishings/locations' });
+    const rows: FishingLocationOption[] = Array.isArray(data) ? data : [];
+    const filtered = input
+      ? rows.filter((row) => row?.name?.toLowerCase().includes(input.toLowerCase()))
+      : rows;
+    return { rows: filtered, totalPages: 1, page };
   };
 
   getFishingHistory = async ({ id }: { id: string }): Promise<FishingHistoryResponse> =>

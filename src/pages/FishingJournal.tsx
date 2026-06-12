@@ -10,6 +10,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import {
   filtersTexts,
   FishingFilters,
+  FishingLocationOption,
   formatDateFrom,
   formatDateTo,
   getLocationTypeOptions,
@@ -54,6 +55,13 @@ const FishingJournal = () => {
         optionsApi: getCompanyUsersList,
       },
     }),
+    location: {
+      label: journalTableFilters.location,
+      key: 'location',
+      inputType: FilterInputTypes.asyncSingleSelect,
+      optionLabel: (item: FishingLocationOption) => item?.name || '-',
+      optionsApi: api.getFishingLocations,
+    },
     createdFrom: {
       label: journalTableFilters.createdFrom,
       key: 'createdFrom',
@@ -67,8 +75,8 @@ const FishingJournal = () => {
   };
 
   const rowConfig = isCompany
-    ? [['type'], ['person'], ['createdFrom', 'createdTo']]
-    : [['type'], ['createdFrom', 'createdTo']];
+    ? [['type'], ['person'], ['location'], ['createdFrom', 'createdTo']]
+    : [['type'], ['location'], ['createdFrom', 'createdTo']];
 
   const mapFilters = (filters: FishingFilters) => {
     const params: any = {};
@@ -92,6 +100,15 @@ const FishingJournal = () => {
       // the caller's own tenant, so it can never cross companies.
       if (isCompany && filters.person?.user?.id) {
         params.user = filters.person.user.id;
+      }
+
+      // A location option maps to one of the two columns a fishing stores.
+      if (filters.location) {
+        if (filters.location.polder) {
+          params.polderId = filters.location.id;
+        } else {
+          params.uetkCadastralId = String(filters.location.id);
+        }
       }
     }
 

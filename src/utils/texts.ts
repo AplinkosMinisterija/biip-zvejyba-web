@@ -132,6 +132,7 @@ export const journalTableFilters = {
   createdFrom: 'Žvejybos sukūrimo data nuo',
   createdTo: 'Žvejybos sukūrimo data iki',
   person: 'Žvejys',
+  location: 'Vandens telkinys / polderis',
 };
 
 export const filtersTexts = {
