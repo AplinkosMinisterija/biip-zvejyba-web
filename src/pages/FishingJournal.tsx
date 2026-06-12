@@ -1,6 +1,6 @@
 import { DynamicFilter, FilterInputTypes, useStorage } from '@aplinkosministerija/design-system';
 import { useRef } from 'react';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FishingCard from '../components/cards/FishingCard';
@@ -10,6 +10,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import {
   filtersTexts,
   FishingFilters,
+  FishingLocationOption,
   formatDateFrom,
   formatDateTo,
   getLocationTypeOptions,
@@ -17,11 +18,31 @@ import {
   journalTableFilters,
   LocationType,
   slugs,
+  TenantUser,
+  useGetCurrentProfile,
   useInfinityLoad,
 } from '../utils';
 import api from '../utils/api';
 
+// Company-member options for the "Žvejys" filter. The list is the tenant's
+// members (tenantUsers, user populated); companies have few employees, so a
+// plain paginated list (no server-side name search) is enough.
+const getCompanyUsersList = (_input: string, page: number) => api.getUsers({ page });
+
 const FishingJournal = () => {
+  // The "Žvejys" filter only makes sense under a company profile — a
+  // freelancer has only their own fishings. A non-'personal' profile id is a
+  // tenant (company). The backend allows a tenant member to narrow the journal
+  // to a colleague (own-tenant scoped).
+  const currentProfile = useGetCurrentProfile();
+  const isCompany = !!currentProfile && currentProfile.id !== 'personal';
+
+  // Locations that actually have fishings — fetched once (backend cached); the
+  // SelectField searches them client-side, so no async select is needed.
+  const { data: locationOptions = [] } = useQuery(['fishingLocations'], () =>
+    api.getFishingLocations(),
+  );
+
   const filterConfig = {
     type: {
       label: journalTableFilters.type,
@@ -29,6 +50,23 @@ const FishingJournal = () => {
       inputType: FilterInputTypes.singleSelect,
       optionLabel: (option: { id: LocationType; label: string }) => option?.label,
       options: getLocationTypeOptions(),
+    },
+    ...(isCompany && {
+      person: {
+        label: journalTableFilters.person,
+        key: 'person',
+        inputType: FilterInputTypes.asyncSingleSelect,
+        optionLabel: (item: TenantUser) =>
+          `${item?.user?.firstName || ''} ${item?.user?.lastName || ''}`.trim() || '-',
+        optionsApi: getCompanyUsersList,
+      },
+    }),
+    location: {
+      label: journalTableFilters.location,
+      key: 'location',
+      inputType: FilterInputTypes.singleSelect,
+      optionLabel: (item: FishingLocationOption) => item?.name || '-',
+      options: locationOptions,
     },
     createdFrom: {
       label: journalTableFilters.createdFrom,
@@ -42,7 +80,9 @@ const FishingJournal = () => {
     },
   };
 
-  const rowConfig = [['type'], ['createdFrom', 'createdTo']];
+  const rowConfig = isCompany
+    ? [['type'], ['person'], ['location'], ['createdFrom', 'createdTo']]
+    : [['type'], ['location'], ['createdFrom', 'createdTo']];
 
   const mapFilters = (filters: FishingFilters) => {
     const params: any = {};
@@ -60,6 +100,19 @@ const FishingJournal = () => {
 
       if (filters.type?.id) {
         params.type = filters.type?.id;
+      }
+
+      // Only meaningful for a company profile; the backend re-scopes this to
+      // the caller's own tenant, so it can never cross companies.
+      if (isCompany && filters.person?.user?.id) {
+        params.user = filters.person.user.id;
+      }
+
+      // Location is event-based (a specific bar / water body / polder); the
+      // backend resolves the fishings that have an event there.
+      if (filters.location) {
+        params.locationId = filters.location.id;
+        params.locationName = filters.location.name;
       }
     }
 

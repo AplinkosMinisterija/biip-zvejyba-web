@@ -8,6 +8,7 @@ import {
   Coordinates,
   Fishing,
   FishingHistoryResponse,
+  FishingLocationOption,
   FishingWeights,
   FishType,
   Location,
@@ -560,6 +561,14 @@ class Api {
       populate: ['startEvent', 'endEvent', 'skipEvent', 'weightEvents'],
       page,
     });
+  };
+
+  // Options for the journal "location" filter — the distinct places the caller
+  // fished (backend-cached). The full bounded list is fetched once; the
+  // SelectField searches it client-side, so no async select is needed.
+  getFishingLocations = async (): Promise<FishingLocationOption[]> => {
+    const data = await this.get({ resource: 'fishings/locations' });
+    return Array.isArray(data) ? data : [];
   };
 
   getFishingHistory = async ({ id }: { id: string }): Promise<FishingHistoryResponse> =>
