@@ -13,35 +13,32 @@ import {
   FishingLocationOption,
   formatDateFrom,
   formatDateTo,
+  getCompanyUsers,
   getLocationTypeOptions,
   handleGetCaughtFishExcel,
   journalTableFilters,
   LocationType,
   slugs,
   TenantUser,
-  useGetCurrentProfile,
+  useAppSelector,
   useInfinityLoad,
 } from '../utils';
 import api from '../utils/api';
 
-// Company-member options for the "Žvejys" filter. The list is the tenant's
-// members (tenantUsers, user populated); companies have few employees, so a
-// plain paginated list (no server-side name search) is enough.
-const getCompanyUsersList = (_input: string, page: number) => api.getUsers({ page });
-
 const FishingJournal = () => {
-  // The "Žvejys" filter only makes sense under a company profile — a
-  // freelancer has only their own fishings. A non-'personal' profile id is a
-  // tenant (company). The backend allows a tenant member to narrow the journal
-  // to a colleague (own-tenant scoped).
-  const currentProfile = useGetCurrentProfile();
-  const isCompany = !!currentProfile && currentProfile.id !== 'personal';
+  // The "Žvejys" filter only applies under a company — a freelancer has only
+  // their own fishings. `freelancer` lives on the user, not the profile.
+  const freelancer = useAppSelector((state) => state.user.userData.freelancer);
+  const isCompany = !freelancer;
 
-  // Locations that actually have fishings — fetched once (backend cached); the
-  // SelectField searches them client-side, so no async select is needed.
+  // Both option lists are bounded → fetched once; the SelectField searches
+  // them client-side, so no async select is needed.
   const { data: locationOptions = [] } = useQuery(['fishingLocations'], () =>
     api.getFishingLocations(),
   );
+  const { data: companyUsers = [] } = useQuery(['companyUsers'], getCompanyUsers, {
+    enabled: isCompany,
+  });
 
   const filterConfig = {
     type: {
@@ -55,10 +52,10 @@ const FishingJournal = () => {
       person: {
         label: journalTableFilters.person,
         key: 'person',
-        inputType: FilterInputTypes.asyncSingleSelect,
+        inputType: FilterInputTypes.singleSelect,
         optionLabel: (item: TenantUser) =>
           `${item?.user?.firstName || ''} ${item?.user?.lastName || ''}`.trim() || '-',
-        optionsApi: getCompanyUsersList,
+        options: companyUsers,
       },
     }),
     location: {
@@ -80,9 +77,12 @@ const FishingJournal = () => {
     },
   };
 
-  const rowConfig = isCompany
-    ? [['type'], ['person'], ['location'], ['createdFrom', 'createdTo']]
-    : [['type'], ['location'], ['createdFrom', 'createdTo']];
+  const rowConfig = [
+    ['type'],
+    ...(isCompany ? [['person']] : []),
+    ['location'],
+    ['createdFrom', 'createdTo'],
+  ];
 
   const mapFilters = (filters: FishingFilters) => {
     const params: any = {};

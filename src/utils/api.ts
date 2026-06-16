@@ -403,11 +403,12 @@ class Api {
       params,
     });
 
-  getUsers = async ({ page }: any): Promise<GetAllResponse<TenantUser>> =>
+  getUsers = async ({ page, pageSize }: any): Promise<GetAllResponse<TenantUser>> =>
     await this.get({
       resource: 'tenantUsers',
       populate: [Populations.USER],
       page,
+      pageSize,
     });
 
   getUser = async (id: string): Promise<TenantUser> =>
