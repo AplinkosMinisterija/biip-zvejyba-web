@@ -20,16 +20,17 @@ import {
   LocationType,
   slugs,
   TenantUser,
-  useAppSelector,
+  useGetCurrentProfile,
   useInfinityLoad,
 } from '../utils';
 import api from '../utils/api';
 
 const FishingJournal = () => {
-  // The "Žvejys" filter only applies under a company — a freelancer has only
-  // their own fishings. `freelancer` lives on the user, not the profile.
-  const freelancer = useAppSelector((state) => state.user.userData.freelancer);
-  const isCompany = !freelancer;
+  // The "Grandininkas" filter only applies under a company — a freelancer has
+  // only their own fishings. `freelancer` is a flag on the active PROFILE (the
+  // user has a company profile and a separate freelancer profile).
+  const currentProfile = useGetCurrentProfile();
+  const isCompany = !!currentProfile && !currentProfile.freelancer;
 
   // Both option lists are bounded → fetched once; the SelectField searches
   // them client-side, so no async select is needed.
