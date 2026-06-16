@@ -228,8 +228,15 @@ export interface ReactQueryError {
   };
 }
 
+export interface FishingLocationOption {
+  id: string | number;
+  name: string;
+}
+
 export interface FishingFilters {
   createdFrom?: string;
   createdTo?: string;
   type?: { id: LocationType; label: string };
+  person?: TenantUser;
+  location?: FishingLocationOption;
 }

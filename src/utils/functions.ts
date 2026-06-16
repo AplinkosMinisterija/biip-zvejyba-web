@@ -11,9 +11,18 @@ import {
   ProfileId,
   ReactQueryError,
   ResponseProps,
+  TenantUser,
   ToolsGroup,
 } from './types';
 const cookies = new Cookies();
+
+// Members of the current company (tenantUsers, user populated) — options for
+// the journal "Žvejys" filter. A company's member list is small and bounded,
+// so it's fetched once; the SelectField then searches it client-side.
+export const getCompanyUsers = async (): Promise<TenantUser[]> => {
+  const { rows } = await api.getUsers({ page: 1, pageSize: 100 });
+  return rows ?? [];
+};
 
 interface UpdateTokenProps {
   token?: string;
