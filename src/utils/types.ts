@@ -45,6 +45,7 @@ export interface Profile {
   email?: string;
   role: RoleTypes;
   isInvestigator: boolean;
+  freelancer: boolean;
   phone: string;
 }
 
