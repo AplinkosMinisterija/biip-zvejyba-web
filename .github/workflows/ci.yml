@@ -8,7 +8,7 @@ on:
 jobs:
   validate-docker-build:
     name: Validate if docker image builds
-    runs-on: ubuntu-latest
+    runs-on: am-github-runner
     steps:
       - uses: actions/checkout@v3
 
