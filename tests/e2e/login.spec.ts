@@ -86,26 +86,31 @@ test.describe('Login page', () => {
     expect(loginRequests).toHaveLength(0);
   });
 
-  test('unknown email is rejected with a visible error', async ({ page }) => {
+  test('rejected login shows a visible error', async ({ page }) => {
     await openPasswordLogin(page);
 
-    await emailInput(page).fill('e2e-neegzistuojantis-naudotojas@biip.lt');
-    await passwordInput(page).fill('BetKoksSlaptazodis1!');
-    await submitButton(page).click();
+    // Mocked with the exact staging payload (staging auth returns
+    // WRONG_PASSWORD for unknown emails too) so this required check never
+    // depends on staging uptime and burns no failed attempts on the real
+    // e2e account — only the happy-path test talks to the live backend.
+    await page.route('**/auth/login', (route) =>
+      route.fulfill({
+        status: 400,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          name: 'AuthError',
+          message: 'Wrong password.',
+          code: 400,
+          type: 'WRONG_PASSWORD',
+        }),
+      }),
+    );
 
-    await expect(page.getByText(texts.loginRejected)).toBeVisible({ timeout: 15_000 });
-    await expect(page).toHaveURL(new RegExp(LOGIN_PATH));
-  });
-
-  test('wrong password is rejected with a visible error', async ({ page }) => {
-    test.skip(!hasCredentials, 'E2E_USER_EMAIL / E2E_USER_PASSWORD are not set');
-    await openPasswordLogin(page);
-
-    await emailInput(page).fill(E2E_USER_EMAIL!);
+    await emailInput(page).fill('e2e-testas@biip.lt');
     await passwordInput(page).fill('TyciaBlogasSlaptazodis1!');
     await submitButton(page).click();
 
-    await expect(page.getByText(texts.loginRejected)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText(texts.loginRejected)).toBeVisible();
     await expect(page).toHaveURL(new RegExp(LOGIN_PATH));
   });
 
