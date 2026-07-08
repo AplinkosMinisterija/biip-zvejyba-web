@@ -7,7 +7,9 @@
     "start": "vite --host",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@aplinkosministerija/design-system": "^1.2.34",
@@ -37,6 +39,7 @@
   "devDependencies": {
     "@aplinkosministerija/biip-prettier-config": "^1.1.0",
     "@aplinkosministerija/eslint-config-biip-react": "^1.0.0",
+    "@playwright/test": "^1.61.1",
     "@types/lodash": "^4.14.200",
     "@types/react": "^18.2.15",
     "@types/react-datepicker": "^4.19.3",

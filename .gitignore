@@ -134,3 +134,6 @@ dist
 .idea
 
 eslint-results.sarif
+# Playwright
+test-results/
+playwright-report/
