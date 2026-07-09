@@ -45,6 +45,7 @@ export interface Profile {
   email?: string;
   role: RoleTypes;
   isInvestigator: boolean;
+  freelancer: boolean;
   phone: string;
 }
 
@@ -90,6 +91,7 @@ export interface ToolsGroupEvent {
   location: Location;
   user: User;
   tenant: Tenant;
+  fishing?: Fishing;
 }
 
 export interface FishingWeights {
@@ -227,8 +229,15 @@ export interface ReactQueryError {
   };
 }
 
+export interface FishingLocationOption {
+  id: string | number;
+  name: string;
+}
+
 export interface FishingFilters {
   createdFrom?: string;
   createdTo?: string;
   type?: { id: LocationType; label: string };
+  person?: TenantUser;
+  location?: FishingLocationOption;
 }

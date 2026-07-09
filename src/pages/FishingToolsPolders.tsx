@@ -12,6 +12,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import LocationInfo from '../components/other/LocationInfo';
 import { NotFound } from '../components/other/NotFound';
 import {
+  canReturnToolToWarehouse,
   computeBuiltToolsGuards,
   device,
   handleErrorToastFromServer,
@@ -79,7 +80,7 @@ const FishingTools = () => {
     return <LoaderComponent />;
   }
 
-  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType, blockReturnToolTypes } =
+  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType } =
     computeBuiltToolsGuards(builtTools);
 
   return (
@@ -122,8 +123,7 @@ const FishingTools = () => {
               const showCheckButton =
                 toolTypesCounts[typeKey] - (checkedToolTypesCounts?.[typeKey] || 0) > 1;
 
-              const canReturnToWarehouse =
-                !!toolsGroup.weightEvent || !blockReturnToolTypes.has(typeKey);
+              const canReturnToWarehouse = canReturnToolToWarehouse(toolsGroup);
 
               return (
                 <ToolsGroupCard

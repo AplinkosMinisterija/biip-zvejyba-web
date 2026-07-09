@@ -13,7 +13,7 @@
     "@aplinkosministerija/design-system": "^1.2.34",
     "@reduxjs/toolkit": "^1.9.7",
     "@sentry/react": "^7.77.0",
-    "axios": "^1.7.9",
+    "axios": "^1.16.1",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "formik": "^2.4.5",

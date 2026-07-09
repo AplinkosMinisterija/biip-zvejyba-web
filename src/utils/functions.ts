@@ -11,6 +11,7 @@ import {
   ProfileId,
   ReactQueryError,
   ResponseProps,
+  TenantUser,
   ToolsGroup,
 } from './types';
 const cookies = new Cookies();
@@ -27,6 +28,14 @@ const SECURE_COOKIE_OPTS = {
   path: '/' as const,
   secure: typeof window !== 'undefined' && window.location.protocol === 'https:',
   sameSite: 'lax' as const,
+};
+
+// Members of the current company (tenantUsers, user populated) — options for
+// the journal "Žvejys" filter. A company's member list is small and bounded,
+// so it's fetched once; the SelectField then searches it client-side.
+export const getCompanyUsers = async (): Promise<TenantUser[]> => {
+  const { rows } = await api.getUsers({ page: 1, pageSize: 100 });
+  return rows ?? [];
 };
 
 interface UpdateTokenProps {
@@ -320,6 +329,16 @@ export const computeBuiltToolsGuards = (builtTools: any[]): BuiltToolsGuards => 
   }
 
   return { ...acc, notCompletedToolType, blockReturnToolTypes };
+};
+
+// Whether the "Sugrąžinti į sandėlį" option may be shown for a built tool.
+// Mirrors the BE `removeTools` guard in biip-zvejyba-api: a tool can only be
+// returned once it has been checked ("Patikrinta") or weighed — both write a
+// `weightEvent` scoped to the current session. This holds whether the tool was
+// set during this fishing or an earlier, already-ended one; returning an
+// unchecked net would silently lose its catch.
+export const canReturnToolToWarehouse = (toolsGroup: ToolsGroup): boolean => {
+  return !!toolsGroup?.weightEvent;
 };
 
 // Resolves the three `LargeButton` enable/disable states on the fishing

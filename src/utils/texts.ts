@@ -26,6 +26,8 @@ export const validationTexts: { [key: string]: string } = {
     'Sužvejotos žuvys turi būti pasvertos krante, prieš užbaigiant žvejybą',
   [ServerErrors.LOCATION_NOT_FOUND]: 'Nepavyko nustatyti vandens telkinio pagal įvestas koordinates',
   [ServerErrors.FISH_ALREADY_WEIGHTED]: 'Žuvis krante jau buvo pasverta',
+  [ServerErrors.PREVIOUS_FISHING_TOOL_NOT_WEIGHTED]:
+    'Prieš grąžinant įrankį į sandėlį, jį reikia patikrinti arba pasverti.',
   badFileTypes: 'Blogi failų tipai',
   fileSizesExceeded: 'Viršyti failų dydžiai',
   personalCode: 'Neteisingas asmens kodo formatas',
@@ -129,6 +131,8 @@ export const journalTableFilters = {
   type: 'Žvejybos vieta',
   createdFrom: 'Žvejybos sukūrimo data nuo',
   createdTo: 'Žvejybos sukūrimo data iki',
+  person: 'Grandininkas',
+  location: 'Vandens telkinys / polderis',
 };
 
 export const filtersTexts = {
