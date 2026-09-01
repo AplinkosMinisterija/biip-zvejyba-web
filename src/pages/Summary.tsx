@@ -2,10 +2,9 @@ import { DynamicFilter, FilterInputTypes, useStorage } from '@aplinkosministerij
 import { useMemo } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import styled from 'styled-components';
-import Button from '../components/buttons/Button';
 import DefaultLayout from '../components/layouts/DefaultLayout';
+import Icon, { IconName } from '../components/other/Icon';
 import {
-  device,
   filtersTexts,
   formatDateFrom,
   formatDateTo,
@@ -137,15 +136,10 @@ const Summary = () => {
           Atsisiųskite pasirinkto laikotarpio verslinės žvejybos sugavimų suvestinę. Duomenys
           sumuojami pagal įmonę, žuvų rūšį ir žvejybos zoną.
         </Description>
-        <Footer>
-          <StyledButton
-            onClick={() => handleDownload()}
-            loading={downloading}
-            disabled={downloading}
-          >
-            Atsisiųsti suvestinę
-          </StyledButton>
-        </Footer>
+        <DownloadButton onClick={() => handleDownload()} disabled={downloading}>
+          <Icon name={downloading ? IconName.loader : IconName.excel} />
+          {downloading ? 'Ruošiama...' : 'Atsisiųsti suvestinę'}
+        </DownloadButton>
       </Container>
     </DefaultLayout>
   );
@@ -167,21 +161,21 @@ const Description = styled.p`
   margin: 16px 0 0 0;
 `;
 
-const StyledButton = styled(Button)`
-  width: 720px;
-`;
-
-const Footer = styled.div`
+const DownloadButton = styled.button`
   display: flex;
-  padding: 16px;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: 100%;
-  box-sizing: border-box;
-  justify-content: center;
-  @media ${device.desktop} {
-    width: calc(100% - 320px);
-    bottom: 16px;
+  align-items: center;
+  gap: 8px;
+  height: ${({ theme }) => theme.height?.buttons || 4}rem;
+  padding: 0 16px;
+  margin-top: 16px;
+  background-color: white;
+  color: ${({ theme }) => theme.colors.text.primary};
+  border: 1px solid ${({ theme }) => theme.colors.tertiary};
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 `;
