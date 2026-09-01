@@ -19,7 +19,13 @@ import { CantLogin } from './pages/CantLogin';
 import { Login } from './pages/Login';
 import api from './utils/api';
 import { clearCookies, handleUpdateTokens } from './utils/functions';
-import { useAppSelector, useCheckUserInfo, useEGatesSign, useFilteredRoutes } from './utils/hooks';
+import {
+  useAppSelector,
+  useCheckUserInfo,
+  useDefaultSlug,
+  useEGatesSign,
+  useFilteredRoutes,
+} from './utils/hooks';
 import { slugs } from './utils/routes';
 import { ProfileId } from './utils/types';
 const cookies = new Cookies();
@@ -27,6 +33,9 @@ interface RouteProps {
   loggedIn: boolean;
   profileId?: ProfileId;
   location?: Location;
+  // Mokslininkui žvejybos route'o nebėra, tad startinis puslapis parenkamas
+  // pagal rolę, o ne kietai užkoduojamas (žr. useDefaultSlug).
+  defaultSlug: string;
 }
 
 function App() {
@@ -39,6 +48,7 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const routes = useFilteredRoutes();
+  const defaultSlug = useDefaultSlug();
   const navigateRef = useRef(navigate);
 
   const isInvalidProfile =
@@ -133,13 +143,24 @@ function App() {
   return (
     <>
       <Routes>
-        <Route element={<PublicRoute profileId={profileId} loggedIn={loggedIn} />}>
+        <Route
+          element={
+            <PublicRoute profileId={profileId} loggedIn={loggedIn} defaultSlug={defaultSlug} />
+          }
+        >
           <Route path={slugs.login} element={<Login />} />
           <Route path={slugs.cantLogin} element={<CantLogin />} />
         </Route>
 
         <Route
-          element={<ProtectedRoute location={location} profileId={profileId} loggedIn={loggedIn} />}
+          element={
+            <ProtectedRoute
+              location={location}
+              profileId={profileId}
+              loggedIn={loggedIn}
+              defaultSlug={defaultSlug}
+            />
+          }
         >
           {(routes || []).map((route, index) => (
             <Route key={`route-${index}`} path={route.slug} element={route.component} />
@@ -149,7 +170,7 @@ function App() {
           path="*"
           element={
             <Navigate
-              to={loggedIn ? (profileId ? slugs.fishingLocation : slugs.profiles) : slugs.login}
+              to={loggedIn ? (profileId ? defaultSlug : slugs.profiles) : slugs.login}
             />
           }
         />
@@ -159,11 +180,11 @@ function App() {
   );
 }
 
-const PublicRoute = ({ loggedIn, profileId }: RouteProps) => {
+const PublicRoute = ({ loggedIn, profileId, defaultSlug }: RouteProps) => {
   if (loggedIn) {
     return (
       <DefaultLayout>
-        <Navigate to={profileId ? slugs.fishingLocation : slugs.profiles} replace />
+        <Navigate to={profileId ? defaultSlug : slugs.profiles} replace />
       </DefaultLayout>
     );
   }
@@ -171,13 +192,13 @@ const PublicRoute = ({ loggedIn, profileId }: RouteProps) => {
   return <Outlet />;
 };
 
-const ProtectedRoute = ({ loggedIn, profileId, location }: RouteProps) => {
+const ProtectedRoute = ({ loggedIn, profileId, location, defaultSlug }: RouteProps) => {
   if (!loggedIn) {
     return <Navigate to={slugs.login} replace />;
   }
 
   if (location?.pathname === slugs.profiles && !!profileId) {
-    return <Navigate to={slugs.fishingLocation} replace />;
+    return <Navigate to={defaultSlug} replace />;
   }
 
   return <Outlet />;
