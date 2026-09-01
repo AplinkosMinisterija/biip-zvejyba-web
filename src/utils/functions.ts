@@ -398,7 +398,7 @@ export const handleGetCatchSummaryExcel = async (params: Record<string, any>) =>
   const url = window.URL.createObjectURL(data);
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', 'Versliniu sugavimu suvestine.xlsx');
+  link.setAttribute('download', 'Verslinių sugavimų suvestinė.xlsx');
   link.target = '_blank';
   document.body.appendChild(link);
   link.click();
