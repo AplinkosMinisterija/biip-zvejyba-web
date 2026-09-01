@@ -393,6 +393,18 @@ export const handleGetCaughtFishExcel = async (query: any) => {
   window.URL.revokeObjectURL(url);
 };
 
+export const handleGetCatchSummaryExcel = async (params: Record<string, any>) => {
+  const data = await api.getCatchSummary(params);
+  const url = window.URL.createObjectURL(data);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', 'Versliniu sugavimu suvestine.xlsx');
+  link.target = '_blank';
+  document.body.appendChild(link);
+  link.click();
+  window.URL.revokeObjectURL(url);
+};
+
 export const formatDateTo = (date: Date) => {
   return toZonedTime(endOfDay(new Date(date)), 'Europe/Vilnius');
 };

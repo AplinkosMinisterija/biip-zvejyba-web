@@ -584,6 +584,36 @@ class Api {
       id,
     });
 
+  // Mokslininko suvestinė. Filtrai keliauja atskirais query parametrais (ne
+  // JSON'u kaip `exportLoots`), nes `fishTypes` yra masyvas — moleculer-web
+  // naudoja `qs`, tad kartojamas raktas serveryje virsta masyvu.
+  getCatchSummary = async (params: Record<string, any>): Promise<Blob> => {
+    const token = cookies.get('token');
+    const profileId = cookies.get('profileId');
+
+    const queryParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === '') return;
+
+      if (Array.isArray(value)) {
+        value.forEach((item) => queryParams.append(key, String(item)));
+        return;
+      }
+
+      queryParams.append(key, String(value));
+    });
+
+    const response = await fetch(`/api/researches/catchSummary?${queryParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+        ...(!isNaN(profileId) && { 'X-Profile': profileId }),
+      },
+    });
+
+    return await response.blob();
+  };
+
   exportLoots = async ({ query = {} }: any): Promise<any> => {
     const token = cookies.get('token');
     const profileId = cookies.get('profileId');

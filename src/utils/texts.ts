@@ -135,6 +135,14 @@ export const journalTableFilters = {
   location: 'Vandens telkinys / polderis',
 };
 
+export const summaryFilters = {
+  type: 'Žvejybos vieta',
+  location: 'Kuršių marių kvadratas / telkinys / polderis',
+  fishTypes: 'Žuvų rūšys',
+  createdFrom: 'Sugavimo data nuo',
+  createdTo: 'Sugavimo data iki',
+};
+
 export const filtersTexts = {
   clearAll: 'Išvalyti visus',
   filter: 'Filtruoti',
