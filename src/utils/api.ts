@@ -584,14 +584,29 @@ class Api {
       id,
     });
 
-  // Mokslininko suvestinė. Filtrai keliauja atskirais query parametrais (ne
-  // JSON'u kaip `exportLoots`), nes `fishTypes` yra masyvas — moleculer-web
-  // naudoja `qs`, tad kartojamas raktas serveryje virsta masyvu.
-  getCatchSummary = async (params: Record<string, any>): Promise<Blob> => {
+  // Eksportai eina pro `fetch`, o ne pro axios instanciją, nes reikia `blob()`
+  // atsakymo. Bendra tik autorizacija — query kiekvienas susideda savaip.
+  private downloadBlob = async (resource: string, queryParams: URLSearchParams): Promise<Blob> => {
     const token = cookies.get('token');
     const profileId = cookies.get('profileId');
 
+    const response = await fetch(`${this.fishingProxy}/${resource}?${queryParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+        ...(!isNaN(profileId) && { 'X-Profile': profileId }),
+      },
+    });
+
+    return await response.blob();
+  };
+
+  // Filtrai keliauja atskirais query parametrais (ne JSON'u kaip `exportLoots`),
+  // nes `fishTypes` yra masyvas — moleculer-web naudoja `qs`, tad kartojamas
+  // raktas serveryje virsta masyvu.
+  getCatchSummary = async (params: Record<string, any>): Promise<Blob> => {
     const queryParams = new URLSearchParams();
+
     Object.entries(params).forEach(([key, value]) => {
       if (value === undefined || value === null || value === '') return;
 
@@ -603,37 +618,14 @@ class Api {
       queryParams.append(key, String(value));
     });
 
-    const response = await fetch(`/api/researches/catchSummary?${queryParams.toString()}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + token,
-        ...(!isNaN(profileId) && { 'X-Profile': profileId }),
-      },
-    });
-
-    return await response.blob();
+    return this.downloadBlob('researches/catchSummary', queryParams);
   };
 
-  exportLoots = async ({ query = {} }: any): Promise<any> => {
-    const token = cookies.get('token');
-    const profileId = cookies.get('profileId');
-
-    const queryParams = new URLSearchParams({
-      query: JSON.stringify(query),
-    }).toString();
-
-    const response = await fetch(`/api/fishings/exportCaughtFishes?${queryParams}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + token,
-        ...(!isNaN(profileId) && { 'X-Profile': profileId }),
-      },
-    });
-
-    const data = await response.blob();
-
-    return data;
-  };
+  exportLoots = async ({ query = {} }: any): Promise<Blob> =>
+    this.downloadBlob(
+      'fishings/exportCaughtFishes',
+      new URLSearchParams({ query: JSON.stringify(query) }),
+    );
 }
 
 export default new Api();
