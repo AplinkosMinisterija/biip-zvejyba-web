@@ -2,9 +2,10 @@ import { DynamicFilter, FilterInputTypes, useStorage } from '@aplinkosministerij
 import { useMemo } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import styled from 'styled-components';
+import Button from '../components/buttons/Button';
 import DefaultLayout from '../components/layouts/DefaultLayout';
-import Icon, { IconName } from '../components/other/Icon';
 import {
+  device,
   filtersTexts,
   formatDateFrom,
   formatDateTo,
@@ -124,24 +125,27 @@ const Summary = () => {
   return (
     <DefaultLayout>
       <Container>
-        <Row>
-          <DynamicFilter
-            filters={filters}
-            filterConfig={filterConfig}
-            rowConfig={rowConfig}
-            onSetFilters={setFilters}
-            disabled={downloading}
-            texts={filtersTexts}
-          />
-        </Row>
+        <DynamicFilter
+          filters={filters}
+          filterConfig={filterConfig}
+          rowConfig={rowConfig}
+          onSetFilters={setFilters}
+          disabled={downloading}
+          texts={filtersTexts}
+        />
         <Description>
           Atsisiųskite pasirinkto laikotarpio verslinės žvejybos sugavimų suvestinę. Duomenys
           sumuojami pagal įmonę, žuvų rūšį ir žvejybos zoną.
         </Description>
-        <DownloadButton onClick={() => handleDownload()} disabled={downloading}>
-          <Icon name={downloading ? IconName.loader : IconName.excel} />
-          {downloading ? 'Ruošiama...' : 'Atsisiųsti suvestinę'}
-        </DownloadButton>
+        <Footer>
+          <StyledButton
+            onClick={() => handleDownload()}
+            loading={downloading}
+            disabled={downloading}
+          >
+            Atsisiųsti suvestinę
+          </StyledButton>
+        </Footer>
       </Container>
     </DefaultLayout>
   );
@@ -157,32 +161,27 @@ const Container = styled.div`
   overflow-x: hidden;
 `;
 
-const Row = styled.div`
-  display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
-`;
-
 const Description = styled.p`
-  color: #4b5563;
+  color: ${({ theme }) => theme.colors.text.secondary};
   font-size: 1.4rem;
-  margin: 0 0 16px 0;
+  margin: 16px 0 0 0;
 `;
 
-const DownloadButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: ${({ theme }) => theme.height?.buttons || 4}rem;
-  padding: 0 16px;
-  background-color: white;
-  color: #7b8b90;
-  border: 1px solid ${({ theme }) => theme.colors.tertiary};
-  border-radius: 8px;
-  cursor: pointer;
+const StyledButton = styled(Button)`
+  width: 720px;
+`;
 
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
+const Footer = styled.div`
+  display: flex;
+  padding: 16px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: center;
+  @media ${device.desktop} {
+    width: calc(100% - 320px);
+    bottom: 16px;
   }
 `;
