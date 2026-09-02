@@ -1,41 +1,38 @@
 import { Form, Formik } from 'formik';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import {
   cumulativeToDeltas,
   FishWeightsById,
   getBuiltToolInfo,
-  roundWeight,
   handleErrorToast,
   handleErrorToastFromServer,
   otherToolsPreliminary,
   PopupContentType,
+  roundWeight,
   useFishTypes,
   useGeolocation,
   useGetCurrentRoute,
 } from '../../utils';
 import api from '../../utils/api';
 import Button from '../buttons/Button';
-import SwitchButton from '../buttons/SwitchButton';
 import Popup from '../layouts/Popup';
 import { Footer } from '../other/CommonStyles';
 import FishRow from '../other/FishRow';
 import LoaderComponent from '../other/LoaderComponent';
 import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
-const weighModeOptions = [
-  { label: 'Šio įrankio svoris', value: false },
-  { label: 'Bendras svoris laive', value: true },
-];
-
+// The fisher always enters the scale's reading — the boat's cumulative
+// weight per species. The app subtracts what OTHER tools groups of this
+// fishing already recorded and stores only this group's own catch, so
+// nobody needs paper notes between bars.
 const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) => {
   const queryClient = useQueryClient();
   const currentRoute = useGetCurrentRoute();
   const { fishTypes, fishTypesLoading } = useFishTypes();
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
   const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
-  const [cumulative, setCumulative] = useState(false);
 
   const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
     ['fishingWeights', toolsGroup?.id],
@@ -48,8 +45,7 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     },
   );
 
-  // Fishing-wide aggregate — needed to know what OTHER tools groups already
-  // recorded, so the scale's cumulative reading can be split automatically.
+  // Fishing-wide aggregate — what the whole boat's recorded catch weighs.
   const { data: allFishingWeights, isLoading: allWeightsLoading } = useQuery(
     ['fishingWeights'],
     () => api.getFishingWeights(),
@@ -88,7 +84,6 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     [allFishingWeights?.preliminary, fishingWeights?.preliminary],
   );
   const hasOtherWeights = Object.keys(otherWeights).length > 0;
-  const cumulativeMode = cumulative && hasOtherWeights;
 
   const initialValues = useMemo(() => {
     const list = [...(fishTypes ?? [])].sort((a, b) => b.priority - a.priority);
@@ -96,21 +91,20 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     return list.map((fishType) => {
       const preliminaryAmount = fishingWeights?.preliminary?.[fishType.id];
 
-      // In cumulative mode the input holds the scale reading, so an already
-      // weighed species is prefilled as "others + own" — leaving it untouched
-      // resubmits the same own catch, mirroring the plain mode's prefill.
-      const amount = cumulativeMode
-        ? preliminaryAmount != null
+      // The input holds the scale reading, so an already weighed species is
+      // prefilled as "others + own" — leaving it untouched resubmits the
+      // same own catch.
+      const amount =
+        preliminaryAmount != null
           ? roundWeight(preliminaryAmount + (otherWeights[fishType.id] ?? 0))
-          : ''
-        : preliminaryAmount ?? '';
+          : '';
 
       return {
         ...fishType,
         amount,
       };
     });
-  }, [fishTypes, fishingWeights?.preliminary, cumulativeMode, otherWeights]);
+  }, [fishTypes, fishingWeights?.preliminary, otherWeights]);
 
   // Gate only on the FIRST load — `isFetching` would unmount the form (and
   // drop the fisher's typed input) on every background refetch, e.g. when the
@@ -143,18 +137,15 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
       <Title>{currentRoute?.title}</Title>
       <Heading>{label}</Heading>
       <SealNumbers>Plombos Nr. {sealNr}</SealNumbers>
+      <Message>Apytikslis bendras svoris laive, kg</Message>
       {hasOtherWeights && (
-        <StyledSwitchButton options={weighModeOptions} value={cumulative} onChange={setCumulative} />
-      )}
-      <Message>{cumulativeMode ? 'Bendras svoris laive, kg' : 'Apytikslis svoris, kg'}</Message>
-      {cumulativeMode && (
         <Hint>
           Įveskite svarstyklių rodomą bendrą svorį — šio įrankio laimikį apskaičiuosime atėmę
           kituose įrankiuose jau užfiksuotą kiekį.
         </Hint>
       )}
       <Formik
-        key={`${toolsGroup?.id}_${cumulativeMode}`}
+        key={toolsGroup?.id}
         initialValues={initialValues}
         enableReinitialize={true}
         onSubmit={(data) => {
@@ -172,33 +163,34 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
             return obj;
           }, {});
 
-          const weights = cumulativeMode ? cumulativeToDeltas(entered, otherWeights) : entered;
+          const weights = cumulativeToDeltas(entered, otherWeights);
 
-          if (cumulativeMode) {
-            // A new weight event fully replaces the group's previous one, so a
-            // species whose prefilled cumulative value was cleared would
-            // silently vanish from this group's record.
-            const clearedRow = data.find(
-              (row: any) =>
-                fishingWeights?.preliminary?.[row.id] != null &&
-                (row.amount === '' || row.amount == null),
+          // A new weight event fully replaces the group's previous one, and a
+          // cleared cumulative field is ambiguous (skip vs. remove), so a
+          // species whose prefilled value was cleared would silently vanish
+          // from this group's record. When nothing is recorded elsewhere the
+          // reading equals the own catch, so clearing keeps its old meaning.
+          const clearedRow = data.find(
+            (row: any) =>
+              fishingWeights?.preliminary?.[row.id] != null &&
+              otherWeights[row.id] > 0 &&
+              (row.amount === '' || row.amount == null),
+          );
+          if (clearedRow) {
+            handleErrorToast(
+              `${clearedRow.label}: šis įrankis jau turi užfiksuotą laimikį — įveskite bendrą svorį laive`,
             );
-            if (clearedRow) {
-              handleErrorToast(
-                `${clearedRow.label}: šis įrankis jau turi užfiksuotą laimikį — įveskite bendrą svorį arba perjunkite į „Šio įrankio svoris“ režimą`,
-              );
-              return;
-            }
+            return;
+          }
 
-            const negativeRow = filledRows.find((row: any) => weights[row.id] < 0);
-            if (negativeRow) {
-              handleErrorToast(
-                `${negativeRow.label}: bendras svoris negali būti mažesnis nei kituose įrankiuose užfiksuota (${
-                  otherWeights[negativeRow.id]
-                } kg)`,
-              );
-              return;
-            }
+          const negativeRow = filledRows.find((row: any) => weights[row.id] < 0);
+          if (negativeRow) {
+            handleErrorToast(
+              `${negativeRow.label}: bendras svoris negali būti mažesnis nei kituose įrankiuose užfiksuota (${
+                otherWeights[negativeRow.id]
+              } kg)`,
+            );
+            return;
           }
 
           showPopup({
@@ -215,10 +207,8 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
               {values?.map((value: any, index: number) => {
                 const other = otherWeights[value.id];
                 const delta =
-                  cumulativeMode && value.amount !== '' && value.amount != null
-                    ? cumulativeToDeltas({ [value.id]: Number(value.amount) }, otherWeights)[
-                        value.id
-                      ]
+                  other > 0 && value.amount !== '' && value.amount != null
+                    ? roundWeight(Number(value.amount) - other)
                     : null;
 
                 return (
@@ -289,10 +279,6 @@ const SubLabel = styled.div`
 const NegativeDelta = styled.div`
   font-size: 1.4rem;
   color: ${({ theme }) => theme.colors.error};
-`;
-
-const StyledSwitchButton = styled(SwitchButton)`
-  padding: 16px 0 0;
 `;
 
 const StyledButton = styled(Button)`
