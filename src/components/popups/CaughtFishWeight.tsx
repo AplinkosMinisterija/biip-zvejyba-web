@@ -6,6 +6,7 @@ import {
   cumulativeToDeltas,
   FishWeightsById,
   getBuiltToolInfo,
+  roundWeight,
   handleErrorToast,
   handleErrorToastFromServer,
   otherToolsPreliminary,
@@ -36,28 +37,28 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
   const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
   const [cumulative, setCumulative] = useState(false);
 
-  const {
-    data: fishingWeights,
-    isLoading: fishingWeightsLoading,
-    isFetching: fishingWeightsFetching,
-  } = useQuery(['fishingWeights', toolsGroup?.id], () => api.getFishingWeights(toolsGroup?.id), {
-    retry: false,
-    enabled: !!toolsGroup?.id,
-    staleTime: 0,
-    refetchOnMount: 'always',
-  });
+  const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
+    ['fishingWeights', toolsGroup?.id],
+    () => api.getFishingWeights(toolsGroup?.id),
+    {
+      retry: false,
+      enabled: !!toolsGroup?.id,
+      staleTime: 0,
+      refetchOnMount: 'always',
+    },
+  );
 
   // Fishing-wide aggregate — needed to know what OTHER tools groups already
   // recorded, so the scale's cumulative reading can be split automatically.
-  const {
-    data: allFishingWeights,
-    isLoading: allWeightsLoading,
-    isFetching: allWeightsFetching,
-  } = useQuery(['fishingWeights'], () => api.getFishingWeights(), {
-    retry: false,
-    staleTime: 0,
-    refetchOnMount: 'always',
-  });
+  const { data: allFishingWeights, isLoading: allWeightsLoading } = useQuery(
+    ['fishingWeights'],
+    () => api.getFishingWeights(),
+    {
+      retry: false,
+      staleTime: 0,
+      refetchOnMount: 'always',
+    },
+  );
 
   useEffect(() => {
     return () => {
@@ -72,7 +73,7 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     {
       onSuccess: async () => {
         queryClient.invalidateQueries(['builtTools', location.id]);
-        queryClient.invalidateQueries(['fishingWeights', toolsGroup.id]);
+        // Prefix-matches the per-group key too.
         queryClient.invalidateQueries(['fishingWeights']);
         onClose();
       },
@@ -100,7 +101,7 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
       // resubmits the same own catch, mirroring the plain mode's prefill.
       const amount = cumulativeMode
         ? preliminaryAmount != null
-          ? preliminaryAmount + (otherWeights[fishType.id] ?? 0)
+          ? roundWeight(preliminaryAmount + (otherWeights[fishType.id] ?? 0))
           : ''
         : preliminaryAmount ?? '';
 
@@ -111,14 +112,12 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     });
   }, [fishTypes, fishingWeights?.preliminary, cumulativeMode, otherWeights]);
 
-  if (
-    fishTypesLoading ||
-    fishingWeightsLoading ||
-    fishingWeightsFetching ||
-    allWeightsLoading ||
-    allWeightsFetching
-  )
-    return <LoaderComponent />;
+  // Gate only on the FIRST load — `isFetching` would unmount the form (and
+  // drop the fisher's typed input) on every background refetch, e.g. when the
+  // window regains focus or another observer invalidates ['fishingWeights'].
+  // Fresh-on-open is still guaranteed: the per-group query is removed from the
+  // cache on unmount (above), so reopening always starts with isLoading.
+  if (fishTypesLoading || fishingWeightsLoading || allWeightsLoading) return <LoaderComponent />;
 
   const { label, sealNr } = getBuiltToolInfo(toolsGroup);
 
@@ -175,14 +174,31 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
 
           const weights = cumulativeMode ? cumulativeToDeltas(entered, otherWeights) : entered;
 
-          const negativeRow = filledRows.find((row: any) => weights[row.id] < 0);
-          if (negativeRow) {
-            handleErrorToast(
-              `${negativeRow.label}: bendras svoris negali būti mažesnis nei kituose įrankiuose užfiksuota (${
-                otherWeights[negativeRow.id]
-              } kg)`,
+          if (cumulativeMode) {
+            // A new weight event fully replaces the group's previous one, so a
+            // species whose prefilled cumulative value was cleared would
+            // silently vanish from this group's record.
+            const clearedRow = data.find(
+              (row: any) =>
+                fishingWeights?.preliminary?.[row.id] != null &&
+                (row.amount === '' || row.amount == null),
             );
-            return;
+            if (clearedRow) {
+              handleErrorToast(
+                `${clearedRow.label}: šis įrankis jau turi užfiksuotą laimikį — įveskite bendrą svorį arba perjunkite į „Šio įrankio svoris“ režimą`,
+              );
+              return;
+            }
+
+            const negativeRow = filledRows.find((row: any) => weights[row.id] < 0);
+            if (negativeRow) {
+              handleErrorToast(
+                `${negativeRow.label}: bendras svoris negali būti mažesnis nei kituose įrankiuose užfiksuota (${
+                  otherWeights[negativeRow.id]
+                } kg)`,
+              );
+              return;
+            }
           }
 
           showPopup({

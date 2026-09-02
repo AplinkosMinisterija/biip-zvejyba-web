@@ -2,7 +2,7 @@ export type FishWeightsById = { [fishTypeId: string]: number };
 
 // Weights come from numeric inputs; guard against float artifacts when
 // subtracting (e.g. 17.1 - 12.3).
-const roundWeight = (value: number) => Math.round(value * 1000) / 1000;
+export const roundWeight = (value: number) => Math.round(value * 1000) / 1000;
 
 /**
  * Weight already recorded in OTHER tools groups of the current fishing.
