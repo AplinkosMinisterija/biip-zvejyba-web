@@ -3,14 +3,11 @@ import { useContext, useEffect, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import {
-  cumulativeToDeltas,
-  FishWeightsById,
   getBuiltToolInfo,
   handleErrorToast,
   handleErrorToastFromServer,
   otherToolsPreliminary,
   PopupContentType,
-  roundWeight,
   useFishTypes,
   useGeolocation,
   useGetCurrentRoute,
@@ -23,10 +20,6 @@ import FishRow from '../other/FishRow';
 import LoaderComponent from '../other/LoaderComponent';
 import { PopupContext, PopupContextProps } from '../providers/PopupProvider';
 
-// The fisher always enters the scale's reading — the boat's cumulative
-// weight per species. The app subtracts what OTHER tools groups of this
-// fishing already recorded and stores only this group's own catch, so
-// nobody needs paper notes between bars.
 const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) => {
   const queryClient = useQueryClient();
   const currentRoute = useGetCurrentRoute();
@@ -45,7 +38,8 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     },
   );
 
-  // Fishing-wide aggregate — what the whole boat's recorded catch weighs.
+  // Fishing-wide aggregate — lets each row show what OTHER tools groups of
+  // this fishing already recorded, replacing the fisher's paper notes.
   const { data: allFishingWeights, isLoading: allWeightsLoading } = useQuery(
     ['fishingWeights'],
     () => api.getFishingWeights(),
@@ -83,7 +77,6 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     () => otherToolsPreliminary(allFishingWeights?.preliminary, fishingWeights?.preliminary),
     [allFishingWeights?.preliminary, fishingWeights?.preliminary],
   );
-  const hasOtherWeights = Object.keys(otherWeights).length > 0;
 
   const initialValues = useMemo(() => {
     const list = [...(fishTypes ?? [])].sort((a, b) => b.priority - a.priority);
@@ -91,20 +84,12 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     return list.map((fishType) => {
       const preliminaryAmount = fishingWeights?.preliminary?.[fishType.id];
 
-      // The input holds the scale reading, so an already weighed species is
-      // prefilled as "others + own" — leaving it untouched resubmits the
-      // same own catch.
-      const amount =
-        preliminaryAmount != null
-          ? roundWeight(preliminaryAmount + (otherWeights[fishType.id] ?? 0))
-          : '';
-
       return {
         ...fishType,
-        amount,
+        amount: preliminaryAmount ?? '',
       };
     });
-  }, [fishTypes, fishingWeights?.preliminary, otherWeights]);
+  }, [fishTypes, fishingWeights?.preliminary]);
 
   // Gate only on the FIRST load — `isFetching` would unmount the form (and
   // drop the fisher's typed input) on every background refetch, e.g. when the
@@ -115,10 +100,19 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
 
   const { label, sealNr } = getBuiltToolInfo(toolsGroup);
 
-  const handleSubmit = (weights: FishWeightsById) => {
+  const handleSubmit = (data: any) => {
     if (coordinates?.x && coordinates?.y) {
+      const filteredData = data.filter(
+        (fishType: any) => fishType.amount != null && fishType.amount !== '',
+      );
+
+      const mappedWeights = filteredData.reduce((obj: any, curr: any) => {
+        obj[curr.id] = curr.amount;
+        return obj;
+      }, {});
+
       const params = {
-        data: weights,
+        data: mappedWeights,
         coordinates,
         location,
         locationManual: !!location?.manual,
@@ -137,66 +131,25 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
       <Title>{currentRoute?.title}</Title>
       <Heading>{label}</Heading>
       <SealNumbers>Plombos Nr. {sealNr}</SealNumbers>
-      <Message>Apytikslis bendras svoris laive, kg</Message>
-      {hasOtherWeights && (
-        <Hint>
-          Įveskite svarstyklių rodomą bendrą svorį — šio įrankio laimikį apskaičiuosime atėmę
-          kituose įrankiuose jau užfiksuotą kiekį.
-        </Hint>
-      )}
+      <Message>Apytikslis svoris, kg</Message>
       <Formik
         key={toolsGroup?.id}
         initialValues={initialValues}
         enableReinitialize={true}
         onSubmit={(data) => {
-          const filledRows = data.filter(
+          const hasAtLeastOneFilled = data.some(
             (item: any) => item.amount !== undefined && item.amount !== null && item.amount !== '',
           );
 
-          if (!filledRows.length) {
+          if (!hasAtLeastOneFilled) {
             handleErrorToast('Bent viena žuvis turi būti įvesta');
-            return;
-          }
-
-          const entered = filledRows.reduce((obj: FishWeightsById, curr: any) => {
-            obj[curr.id] = Number(curr.amount);
-            return obj;
-          }, {});
-
-          const weights = cumulativeToDeltas(entered, otherWeights);
-
-          // A new weight event fully replaces the group's previous one, and a
-          // cleared cumulative field is ambiguous (skip vs. remove), so a
-          // species whose prefilled value was cleared would silently vanish
-          // from this group's record. When nothing is recorded elsewhere the
-          // reading equals the own catch, so clearing keeps its old meaning.
-          const clearedRow = data.find(
-            (row: any) =>
-              fishingWeights?.preliminary?.[row.id] != null &&
-              otherWeights[row.id] > 0 &&
-              (row.amount === '' || row.amount == null),
-          );
-          if (clearedRow) {
-            handleErrorToast(
-              `${clearedRow.label}: šis įrankis jau turi užfiksuotą laimikį — įveskite bendrą svorį laive`,
-            );
-            return;
-          }
-
-          const negativeRow = filledRows.find((row: any) => weights[row.id] < 0);
-          if (negativeRow) {
-            handleErrorToast(
-              `${negativeRow.label}: bendras svoris negali būti mažesnis nei kituose įrankiuose užfiksuota (${
-                otherWeights[negativeRow.id]
-              } kg)`,
-            );
             return;
           }
 
           showPopup({
             type: PopupContentType.CONFIRM_WEIGHT,
             content: {
-              submit: () => handleSubmit(weights),
+              submit: () => handleSubmit(data),
             },
           });
         }}
@@ -206,27 +159,13 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
             <StyledForm>
               {values?.map((value: any, index: number) => {
                 const other = otherWeights[value.id];
-                const delta =
-                  other > 0 && value.amount !== '' && value.amount != null
-                    ? roundWeight(Number(value.amount) - other)
-                    : null;
 
                 return (
                   <FishRow
                     key={`fish_type_${value.id}`}
                     fish={value}
                     subLabel={
-                      <>
-                        {other > 0 && <SubLabel>Kituose įrankiuose: {other} kg</SubLabel>}
-                        {delta != null &&
-                          (delta < 0 ? (
-                            <NegativeDelta>
-                              Bendras svoris negali būti mažesnis nei {other} kg
-                            </NegativeDelta>
-                          ) : (
-                            <SubLabel>Šio įrankio laimikis: {delta} kg</SubLabel>
-                          ))}
-                      </>
+                      other > 0 && <SubLabel>Kituose įrankiuose: {other} kg</SubLabel>
                     }
                     onChange={(value) =>
                       setFieldValue(`${index}.amount`, value === '' ? '' : Number(value))
@@ -263,22 +202,9 @@ const Message = styled.div`
   margin: 16px 0;
 `;
 
-const Hint = styled.div`
-  width: 100%;
-  text-align: center;
-  font-size: 1.4rem;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  margin-bottom: 8px;
-`;
-
 const SubLabel = styled.div`
   font-size: 1.4rem;
   color: ${({ theme }) => theme.colors.text.secondary};
-`;
-
-const NegativeDelta = styled.div`
-  font-size: 1.4rem;
-  color: ${({ theme }) => theme.colors.error};
 `;
 
 const StyledButton = styled(Button)`

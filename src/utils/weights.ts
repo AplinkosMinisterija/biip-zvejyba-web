@@ -2,7 +2,7 @@ export type FishWeightsById = { [fishTypeId: string]: number };
 
 // Weights come from numeric inputs; guard against float artifacts when
 // subtracting (e.g. 17.1 - 12.3).
-export const roundWeight = (value: number) => Math.round(value * 1000) / 1000;
+const roundWeight = (value: number) => Math.round(value * 1000) / 1000;
 
 /**
  * Weight already recorded in OTHER tools groups of the current fishing.
@@ -21,23 +21,6 @@ export const otherToolsPreliminary = (
     if (rest > 0) {
       result[key] = rest;
     }
-  }
-  return result;
-};
-
-/**
- * Convert scale readings (cumulative boat weight per species) into this
- * tools group's own catch by subtracting what other groups already
- * recorded. Negative deltas are returned as-is — the caller blocks the
- * submit and tells the user which species is off.
- */
-export const cumulativeToDeltas = (
-  entered: FishWeightsById,
-  other: FishWeightsById,
-): FishWeightsById => {
-  const result: FishWeightsById = {};
-  for (const key in entered) {
-    result[key] = roundWeight((Number(entered[key]) || 0) - (Number(other[key]) || 0));
   }
   return result;
 };
