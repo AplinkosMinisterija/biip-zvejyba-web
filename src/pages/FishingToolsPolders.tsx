@@ -80,8 +80,7 @@ const FishingTools = () => {
     return <LoaderComponent />;
   }
 
-  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType } =
-    computeBuiltToolsGuards(builtTools);
+  const { toolTypesCounts, checkedToolTypesCounts } = computeBuiltToolsGuards(builtTools);
 
   return (
     <DefaultLayout>
@@ -117,8 +116,6 @@ const FishingTools = () => {
             map(builtTools, (toolsGroup: any) => {
               const toolTypeId = toolsGroup.tools[0].toolType.id;
               const typeKey = String(toolTypeId);
-              const disableTool =
-                !!notCompletedToolType && notCompletedToolType !== typeKey;
 
               const showCheckButton =
                 toolTypesCounts[typeKey] - (checkedToolTypesCounts?.[typeKey] || 0) > 1;
@@ -133,7 +130,6 @@ const FishingTools = () => {
                   location={currentLocation}
                   showCheckButton={showCheckButton}
                   canReturnToWarehouse={canReturnToWarehouse}
-                  isDisabled={disableTool}
                 />
               );
             })
