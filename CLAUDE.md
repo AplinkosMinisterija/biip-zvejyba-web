@@ -226,6 +226,15 @@ expects string ids).
    inside the click handler closure, not via deps. Same for
    `ToolGroupAction.tsx`, `CaughtFishWeight.tsx`, `StartFishingInlandWater.tsx`.
    This is fine — closures aren't re-render triggers.
+7. **`notCompletedToolType` is deliberately unused on polders.**
+   `computeBuiltToolsGuards` still computes it, but only
+   `FishingToolsEstuary` / `FishingToolsInlandWaters` pass it down as
+   `isDisabled`. In a polder the gear of different types sits mixed
+   together, so the fisher checks tools in the order they physically
+   find them; forcing one type at a time made the screen unusable. The
+   backend never enforced an order — only "no returning to the warehouse
+   before weighing". Don't re-align the three pages for consistency.
+   Covered by `tests/e2e/fishing-tools-check-order.spec.ts`.
 
 ## Dev workflow
 
