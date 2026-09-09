@@ -5,6 +5,7 @@ import FishingJournal from '../pages/FishingJournal';
 import Profile from '../pages/Profile';
 import Profiles from '../pages/Profiles';
 import Research from '../pages/Research';
+import Summary from '../pages/Summary';
 import Tool from '../pages/Tool';
 import Tools from '../pages/Tools';
 import UserForm from '../pages/User';
@@ -30,6 +31,7 @@ export const slugs = {
   users: '/nariai',
   user: (id: string) => `/nariai/${id}`,
   profile: '/profilis',
+  summary: '/suvestine',
   researches: '/moksliniai-tyrimai',
   updateResearch: (id: number | string) => `/moksliniai-tyrimai/${id}`,
   newResearch: `/moksliniai-tyrimai/naujas`,
@@ -134,6 +136,15 @@ export const routes = [
     title: 'Įrankio informacija',
     slug: slugs.tool(Ids.ID),
     component: <Tool />,
+  },
+  {
+    title: 'Suvestinė',
+    subtitle: 'Verslinių sugavimų suvestinė',
+    slug: slugs.summary,
+    component: <Summary />,
+    regExp: new RegExp('^/suvestine$'),
+    iconName: IconName.excel,
+    isInvestigator: true,
   },
   {
     title: 'Moksliniai tyrimai',

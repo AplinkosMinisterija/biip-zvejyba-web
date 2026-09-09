@@ -95,18 +95,36 @@ export const useGetCurrentProfile = () => {
 };
 export const useFilteredRoutes = () => {
   const profile = useGetCurrentProfile();
+
   return routes.filter((route: any) => {
     if (!route?.slug) return false;
+
+    // Mokslininkas naudojasi ta pačia aplikacija kaip žvejys, bet žvejybos
+    // funkcionalumo jam nereikia — lieka tik suvestinė, moksliniai tyrimai ir
+    // paskyros valdymas. Tai UX, ne apsauga: žvejybos endpoint'ai ir taip
+    // apriboti pagal profilį, o vienintelė mokslininko cross-tenant prieiga
+    // (suvestinė) užrakinta INVESTIGATOR rolės backend'e.
+    if (profile?.isInvestigator) {
+      return !!route.isInvestigator || [slugs.profile, slugs.profiles].includes(route.slug);
+    }
 
     if (route.tenantOwner) {
       return [RoleTypes.USER_ADMIN, RoleTypes.OWNER].some((r) => r === profile?.role);
     }
 
     if (route.isInvestigator) {
-      return !!profile?.isInvestigator;
+      return false;
     }
+
     return true;
   });
+};
+
+// Startinis puslapis priklauso nuo rolės: mokslininkui `/zvejyba` route'o
+// nebėra, tad kietai užkoduotas nukreipimas ten įstrigtų prie „*" fallback'o.
+export const useDefaultSlug = () => {
+  const filteredRoutes = useFilteredRoutes();
+  return filteredRoutes.find((route: any) => !!route.iconName)?.slug || slugs.profile;
 };
 
 export const useMenuRouters = () => {
