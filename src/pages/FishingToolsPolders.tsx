@@ -12,6 +12,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import LocationInfo from '../components/other/LocationInfo';
 import { NotFound } from '../components/other/NotFound';
 import {
+  canCheckTool,
   canReturnToolToWarehouse,
   computeBuiltToolsGuards,
   device,
@@ -80,7 +81,10 @@ const FishingTools = () => {
     return <LoaderComponent />;
   }
 
-  const { toolTypesCounts, checkedToolTypesCounts } = computeBuiltToolsGuards(builtTools);
+  const { toolTypesCounts, checkedToolTypesCounts } = computeBuiltToolsGuards(
+    builtTools,
+    currentFishing?.id,
+  );
 
   return (
     <DefaultLayout>
@@ -118,6 +122,7 @@ const FishingTools = () => {
               const typeKey = String(toolTypeId);
 
               const showCheckButton =
+                canCheckTool(toolsGroup, currentFishing?.id) &&
                 toolTypesCounts[typeKey] - (checkedToolTypesCounts?.[typeKey] || 0) > 1;
 
               const canReturnToWarehouse = canReturnToolToWarehouse(toolsGroup);
