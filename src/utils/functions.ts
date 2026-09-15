@@ -282,12 +282,26 @@ export const getBuiltToolInfo = (toolsGroup: ToolsGroup) => {
   };
 };
 
+// Whether "Patikrinta" may be offered for a built tool. A net set on this very
+// trip cannot hold fish yet, so checking it records nothing — while the empty
+// `weightEvent` it writes is what the BE guard reads when it refuses to end the
+// fishing. Gear left in the water by an earlier trip stays checkable.
+export const canCheckTool = (toolsGroup: ToolsGroup, currentFishingId?: string | number): boolean =>
+  String(toolsGroup?.buildEvent?.fishing?.id ?? '') !== String(currentFishingId ?? '');
+
 // Pre-computes the per-tool-type aggregates the tool-list pages need:
 // total / checked / with-fish counts, the type that's mid-checking, and the
 // types where returning the last unchecked tool would silently lose the
 // catch. Mirrors the BE `assertSiblingsHaveFishLogged` guard so the UI can
 // hide the "Sugrąžinti į sandėlį" button before the server errors out.
-export const computeBuiltToolsGuards = (builtTools: any[]): BuiltToolsGuards => {
+// Tools set during this fishing stay out of every count: they cannot be
+// checked, so counting them would keep a type "mid-checking" forever — every
+// other type locked behind a tool whose only remaining action is weighing a
+// net dropped minutes ago.
+export const computeBuiltToolsGuards = (
+  builtTools: any[],
+  currentFishingId?: string | number,
+): BuiltToolsGuards => {
   const acc = {
     toolTypesCounts: {} as Record<string, number>,
     checkedToolTypesCounts: {} as Record<string, number>,
@@ -295,6 +309,7 @@ export const computeBuiltToolsGuards = (builtTools: any[]): BuiltToolsGuards => 
   };
 
   for (const tool of builtTools ?? []) {
+    if (!canCheckTool(tool, currentFishingId)) continue;
     const id = tool?.tools?.[0]?.toolType?.id;
     if (id == null) continue;
     const key = String(id);
