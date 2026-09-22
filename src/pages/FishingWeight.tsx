@@ -52,7 +52,7 @@ const FishingWeight = () => {
             amount: amount ?? '',
           };
         })
-      : Object.keys(caughtFishData)?.map((key: string) => {
+      : Object.keys(caughtFishData).map((key: string) => {
           const fishType = fishTypes.find((fishType) => fishType.id === Number(key));
           return {
             ...fishType,
