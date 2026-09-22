@@ -213,18 +213,18 @@ export const useFishingWeightMutation = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { mutateAsync: fishingWeightMutation, isLoading: fishingWeightLoading } = useMutation(
-    async (data: any) => {
-      const res = await api.createFishingFishWeights(data);
-
-      if (!res.success) {
-        return handleErrorToastFromServer();
-      }
-
-      return res;
-    },
+  const { mutate: fishingWeightMutation, isLoading: fishingWeightLoading } = useMutation(
+    (data: any) => api.createFishingFishWeights(data),
     {
-      onSuccess: (_, variables) => {
+      // Errors `api.errorWrapper` could not map (500, offline) are rethrown by
+      // it and would otherwise leave the fisher with no feedback at all.
+      onError: () => handleErrorToastFromServer(),
+      onSuccess: (res, variables) => {
+        // `api.errorWrapper` already toasted a known server error (e.g. the 20%
+        // guard, which names the fish) and resolved with nothing — don't report
+        // the catch as saved on top of that.
+        if (!res?.success) return;
+
         queryClient.invalidateQueries(['fishingWeights']);
 
         if (variables.isAutoSave) {

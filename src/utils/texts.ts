@@ -19,6 +19,7 @@ export const validationTexts: { [key: string]: string } = {
   [ServerErrors.TOO_MANY_TOOLS]: 'Galimos tik vieno  tipo  įrankių grupės',
   [ServerErrors.WEIGHT_DIFFERENCE]:
     'Kiekvienos žuvies svoris krante negali skirtis daugiau nei 20 % nuo svorio laive.',
+  weightDifferenceRule: 'Svoris krante negali skirtis daugiau nei 20 % nuo svorio laive.',
   [ServerErrors.NO_TOOLS_IN_STORAGE]: 'Neturite įrankių sandėlyje',
   [ServerErrors.TOOL_WITH_THIS_SEAL_NUMBER_ALREADY_EXISTS]:
     'Įrankis su šiuo plombos numeriu jau egzistuoja',

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { canCheckTool, computeBuiltToolsGuards } from './functions';
+import { ServerErrors } from './constants';
+import { canCheckTool, computeBuiltToolsGuards, getServerErrorMessage } from './functions';
+import { validationTexts } from './texts';
 import { ToolsGroup } from './types';
 
 const NETS = 1;
@@ -73,5 +75,45 @@ describe('computeBuiltToolsGuards', () => {
     );
 
     expect(guards.notCompletedToolType).toBe(String(NETS));
+  });
+});
+
+describe('getServerErrorMessage', () => {
+  const weightDifference = (invalidFish: any) =>
+    getServerErrorMessage(ServerErrors.WEIGHT_DIFFERENCE, { invalidFish });
+
+  it('names every fish that broke the 20% rule, with both weights', () => {
+    const message = weightDifference([
+      { id: 1, label: 'Karšis', preliminaryAmount: 30, amount: 20 },
+      { id: 2, label: 'Stinta', preliminaryAmount: 12, amount: 5 },
+    ]);
+
+    expect(message).toContain('Karšis: laive 30 kg, krante 20 kg');
+    expect(message).toContain('Stinta: laive 12 kg, krante 5 kg');
+    expect(message).toContain('20 %');
+  });
+
+  it('falls back to the generic sentence when the API sends no species', () => {
+    expect(weightDifference(undefined)).toBe(validationTexts[ServerErrors.WEIGHT_DIFFERENCE]);
+    expect(weightDifference([])).toBe(validationTexts[ServerErrors.WEIGHT_DIFFERENCE]);
+  });
+
+  it('stays generic rather than naming only part of the species', () => {
+    expect(weightDifference([{ id: 1, preliminaryAmount: 30, amount: 20 }])).toBe(
+      validationTexts[ServerErrors.WEIGHT_DIFFERENCE],
+    );
+    expect(
+      weightDifference([
+        { id: 1, label: 'Karšis', preliminaryAmount: 30, amount: 20 },
+        { id: 2, preliminaryAmount: 12, amount: 5 },
+      ]),
+    ).toBe(validationTexts[ServerErrors.WEIGHT_DIFFERENCE]);
+  });
+
+  it('leaves other server errors untouched and skips unknown ones', () => {
+    expect(getServerErrorMessage(ServerErrors.NO_TOOLS_IN_STORAGE)).toBe(
+      validationTexts[ServerErrors.NO_TOOLS_IN_STORAGE],
+    );
+    expect(getServerErrorMessage('Some unmapped backend error')).toBeUndefined();
   });
 });

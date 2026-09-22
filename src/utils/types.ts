@@ -229,6 +229,19 @@ export interface ReactQueryError {
   };
 }
 
+// Fish that broke the backend's 20% boat-vs-shore weight rule.
+export interface WeightDifferenceFish {
+  id: number;
+  label?: string;
+  preliminaryAmount: number;
+  amount: number;
+}
+
+export interface ServerErrorResponse {
+  message?: string;
+  data?: { invalidFish?: WeightDifferenceFish[] };
+}
+
 export interface FishingLocationOption {
   id: string | number;
   name: string;
