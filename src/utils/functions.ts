@@ -3,7 +3,7 @@ import { toZonedTime } from 'date-fns-tz';
 import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
 import api from './api';
-import { ToolTypeType } from './constants';
+import { ServerErrors, ToolTypeType } from './constants';
 import { validationTexts } from './texts';
 import {
   FishingWeights,
@@ -11,6 +11,7 @@ import {
   ProfileId,
   ReactQueryError,
   ResponseProps,
+  ServerErrorResponse,
   TenantUser,
   ToolsGroup,
 } from './types';
@@ -68,6 +69,30 @@ export const clearCookies = () => {
 
 export const getErrorMessage = (errorMessage: string) =>
   validationTexts[errorMessage as keyof typeof validationTexts] || validationTexts.error;
+
+// The 20% guard is the one server error worth spelling out: the fisher needs
+// to know WHICH species to re-weigh. Falls back to the generic sentence when
+// the API doesn't send the species (older deploy).
+export const getServerErrorMessage = (
+  errorMessage?: string,
+  errorData?: ServerErrorResponse['data'],
+) => {
+  const text = validationTexts[errorMessage as keyof typeof validationTexts];
+  if (!text) return;
+
+  if (errorMessage !== ServerErrors.WEIGHT_DIFFERENCE) return text;
+
+  // All or nothing: a partial list would send the fisher back to fix one fish
+  // only to be rejected again by the species that could not be named.
+  const invalidFish = errorData?.invalidFish || [];
+  if (!invalidFish.length || invalidFish.some((fish) => !fish.label)) return text;
+
+  const lines = invalidFish
+    .map((fish) => `${fish.label}: laive ${fish.preliminaryAmount} kg, krante ${fish.amount} kg`)
+    .join('\n');
+
+  return `${lines}\n\n${validationTexts.weightDifferenceRule}`;
+};
 
 export const handleErrorToastFromServer = (responseError?: ReactQueryError) => {
   handleErrorToast(getErrorMessage(getReactQueryErrorMessage(responseError)));

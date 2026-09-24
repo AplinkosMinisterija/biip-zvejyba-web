@@ -1,9 +1,8 @@
-import Axios, { AxiosInstance, AxiosResponse } from 'axios';
+import Axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { isEmpty } from 'lodash';
 import Cookies from 'universal-cookie';
 import { LocationType } from './constants';
-import { handleErrorToast } from './functions';
-import { validationTexts } from './texts';
+import { getServerErrorMessage, handleErrorToast } from './functions';
 import {
   Coordinates,
   Fishing,
@@ -14,6 +13,7 @@ import {
   Location,
   Polder,
   Research,
+  ServerErrorResponse,
   TenantUser,
   Tool,
   ToolFormRequest,
@@ -123,8 +123,8 @@ class Api {
       const { data } = await endpoint();
       return data;
     } catch (error) {
-      const errorMessage = (error as any)?.response?.data?.message;
-      const message = validationTexts[errorMessage];
+      const response = (error as AxiosError<ServerErrorResponse>)?.response?.data;
+      const message = getServerErrorMessage(response?.message, response?.data);
       if (message) {
         handleErrorToast(message);
       } else {
