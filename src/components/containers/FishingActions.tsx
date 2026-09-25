@@ -34,6 +34,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
   const navigate = useNavigate();
   const [notCheckedLocations, setNotCheckedLocations] = useState<FishingLocationOption[]>([]);
   const checkingTools = useRef(false);
+  const warnedAboutUnchecked = useRef(false);
 
   const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
     ['fishingWeights'],
@@ -50,16 +51,16 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
 
   const openShoreWeighing = async () => {
     if (checkingTools.current) return;
-    checkingTools.current = true;
-    const locations = await api.getNotCheckedToolsLocations().catch(() => []);
-    checkingTools.current = false;
-    if (locations?.length) setNotCheckedLocations(locations);
-    else navigate(slugs.fishingWeight);
-  };
-
-  const closeNotCheckedWarning = () => {
-    if (!notCheckedLocations.length) return;
-    setNotCheckedLocations([]);
+    if (!warnedAboutUnchecked.current) {
+      checkingTools.current = true;
+      const locations = await api.getNotCheckedToolsLocations().catch(() => []);
+      checkingTools.current = false;
+      if (locations?.length) {
+        warnedAboutUnchecked.current = true;
+        setNotCheckedLocations(locations);
+        return;
+      }
+    }
     navigate(slugs.fishingWeight);
   };
 
@@ -67,7 +68,10 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
     <LoaderComponent />
   ) : (
     <>
-      <NotCheckedToolsPopup locations={notCheckedLocations} onClose={closeNotCheckedWarning} />
+      <NotCheckedToolsPopup
+        locations={notCheckedLocations}
+        onClose={() => setNotCheckedLocations([])}
+      />
       <Container>
         <LargeButton
           variant={Variant.FLORAL_WHITE}

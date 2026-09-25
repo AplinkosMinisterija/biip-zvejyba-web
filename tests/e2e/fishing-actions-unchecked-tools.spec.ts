@@ -59,7 +59,7 @@ test.use({
 test.describe('Unchecked tools warning before shore weighing', () => {
   const notChecked = [{ id: '7', name: texts.barName }];
 
-  test('"Sverti" warns first, then opens the weighing page', async ({ page }) => {
+  test('"Sverti" warns first; a second tap opens the weighing page', async ({ page }) => {
     await mockFishing(page, notChecked);
     await page.goto(CURRENT_FISHING_PATH);
 
@@ -67,9 +67,13 @@ test.describe('Unchecked tools warning before shore weighing', () => {
 
     await expect(page.getByText(texts.notCheckedTitle)).toBeVisible();
     await expect(page.getByText(texts.barName)).toBeVisible();
-    expect(new URL(page.url()).pathname).toBe(CURRENT_FISHING_PATH);
 
     await page.getByRole('button', { name: 'Uždaryti' }).click();
+
+    await expect(page.getByText(texts.notCheckedTitle)).toHaveCount(0);
+    expect(new URL(page.url()).pathname).toBe(CURRENT_FISHING_PATH);
+
+    await largeButton(page, 'Sverti').click();
 
     await expect(page).toHaveURL(new RegExp(`${WEIGHT_PATH}$`));
   });
