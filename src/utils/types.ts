@@ -98,7 +98,6 @@ export interface FishingWeights {
   preliminary: { [key: string]: number };
   total: { [key: string]: number };
   hasUncompletedTools?: boolean;
-  unfinishedCheckLocations?: FishingLocationOption[];
 }
 
 export interface WeightEvent {

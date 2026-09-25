@@ -28,10 +28,8 @@ const user = {
   profiles: [profile],
 };
 
-type Weights = { preliminary: Record<string, number>; unfinishedCheckLocations: unknown[] };
-
-async function mockFishing(page: Page, weights: Weights, firstWeights?: Weights) {
-  let weightsCalls = 0;
+// Boat fish enable "Sverti" but disable "Baigti" until the shore weighing.
+async function mockFishing(page: Page, notChecked: unknown[], preliminary = { 5: 3 }) {
   await page.context().addCookies([
     { name: 'token', value: 'e2e-token', domain: 'localhost', path: '/' },
     { name: 'profileId', value: 'freelancer', domain: 'localhost', path: '/' },
@@ -44,10 +42,8 @@ async function mockFishing(page: Page, weights: Weights, firstWeights?: Weights)
 
     if (path === '/auth/me') return body(user);
     if (path === '/fishings/current') return body({ id: 1, type: 'ESTUARY' });
-    if (path === '/fishings/weights') {
-      const current = weightsCalls++ === 0 && firstWeights ? firstWeights : weights;
-      return body({ total: {}, hasUncompletedTools: false, ...current });
-    }
+    if (path === '/fishings/weights') return body({ preliminary, total: {} });
+    if (path === '/toolsGroups/notChecked') return body(notChecked);
     return body([]);
   });
 }
@@ -61,10 +57,10 @@ test.use({
 });
 
 test.describe('Unchecked tools warning before shore weighing', () => {
-  const unfinished = [{ id: '7', name: texts.barName }];
+  const notChecked = [{ id: '7', name: texts.barName }];
 
   test('"Sverti" warns first, then opens the weighing page', async ({ page }) => {
-    await mockFishing(page, { preliminary: { 5: 3 }, unfinishedCheckLocations: unfinished });
+    await mockFishing(page, notChecked);
     await page.goto(CURRENT_FISHING_PATH);
 
     await largeButton(page, 'Sverti').click();
@@ -81,7 +77,7 @@ test.describe('Unchecked tools warning before shore weighing', () => {
   test('"Sverti" goes straight to the weighing page when nothing is left unchecked', async ({
     page,
   }) => {
-    await mockFishing(page, { preliminary: { 5: 3 }, unfinishedCheckLocations: [] });
+    await mockFishing(page, []);
     await page.goto(CURRENT_FISHING_PATH);
 
     await largeButton(page, 'Sverti').click();
@@ -90,30 +86,14 @@ test.describe('Unchecked tools warning before shore weighing', () => {
     await expect(page.getByText(texts.notCheckedTitle)).toHaveCount(0);
   });
 
-  test('"Sverti" decides on fresh data, not the payload cached before the checks', async ({
-    page,
-  }) => {
-    await mockFishing(
-      page,
-      { preliminary: { 5: 3 }, unfinishedCheckLocations: unfinished },
-      { preliminary: { 5: 3 }, unfinishedCheckLocations: [] },
-    );
-    await page.goto(CURRENT_FISHING_PATH);
-
-    await largeButton(page, 'Sverti').click();
-
-    await expect(page.getByText(texts.notCheckedTitle)).toBeVisible();
-    expect(new URL(page.url()).pathname).toBe(CURRENT_FISHING_PATH);
-  });
-
   test('a repeated tap while the check is loading opens the weighing page once', async ({
     page,
   }) => {
-    await mockFishing(page, { preliminary: { 5: 3 }, unfinishedCheckLocations: [] });
+    await mockFishing(page, []);
     await page.goto(CURRENT_FISHING_PATH);
     await largeButton(page, 'Sverti').waitFor();
     await page.route(
-      (url) => url.pathname.endsWith('/fishings/weights'),
+      (url) => url.pathname.endsWith('/toolsGroups/notChecked'),
       async (route) => {
         await new Promise((resolve) => setTimeout(resolve, 500));
         await route.fallback();
@@ -129,7 +109,7 @@ test.describe('Unchecked tools warning before shore weighing', () => {
   });
 
   test('"Baigti" does not warn', async ({ page }) => {
-    await mockFishing(page, { preliminary: {}, unfinishedCheckLocations: unfinished });
+    await mockFishing(page, notChecked, {});
     await page.goto(CURRENT_FISHING_PATH);
 
     await largeButton(page, 'Baigti').click();

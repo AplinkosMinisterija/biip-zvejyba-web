@@ -32,46 +32,42 @@ interface FishingActionsProps {
 const FishingActions = ({ fishing }: FishingActionsProps) => {
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
   const navigate = useNavigate();
-  const [warning, setWarning] = useState<{
-    locations: FishingLocationOption[];
-    continueAction: () => void;
-  }>();
-  const refetching = useRef(false);
+  const [notCheckedLocations, setNotCheckedLocations] = useState<FishingLocationOption[]>([]);
+  const checkingTools = useRef(false);
 
-  const {
-    data: fishingWeights,
-    isLoading: fishingWeightsLoading,
-    refetch: refetchFishingWeights,
-  } = useQuery(['fishingWeights'], () => api.getFishingWeights(), {
-    retry: false,
-  });
+  const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
+    ['fishingWeights'],
+    () => api.getFishingWeights(),
+    {
+      retry: false,
+    },
+  );
 
   const locationType = fishing?.type;
   const loading = fishingWeightsLoading;
   const { fishingComplete, shoreWeighingDisabled, finishDisabled } =
     computeFishingActionGuards(fishingWeights);
 
-  // Refetch on click: the cached payload predates checks made on the tools screen.
-  const warnIfToolsUnchecked = (continueAction: () => void) => async () => {
-    if (refetching.current) return;
-    refetching.current = true;
-    const { data } = await refetchFishingWeights();
-    refetching.current = false;
-    const locations = data?.unfinishedCheckLocations ?? [];
-    if (locations.length) setWarning({ locations, continueAction });
-    else continueAction();
+  const openShoreWeighing = async () => {
+    if (checkingTools.current) return;
+    checkingTools.current = true;
+    const locations = await api.getNotCheckedToolsLocations().catch(() => []);
+    checkingTools.current = false;
+    if (locations?.length) setNotCheckedLocations(locations);
+    else navigate(slugs.fishingWeight);
   };
 
-  const closeWarning = () => {
-    setWarning(undefined);
-    warning?.continueAction();
+  const closeNotCheckedWarning = () => {
+    if (!notCheckedLocations.length) return;
+    setNotCheckedLocations([]);
+    navigate(slugs.fishingWeight);
   };
 
   return loading ? (
     <LoaderComponent />
   ) : (
     <>
-      <NotCheckedToolsPopup locations={warning?.locations ?? []} onClose={closeWarning} />
+      <NotCheckedToolsPopup locations={notCheckedLocations} onClose={closeNotCheckedWarning} />
       <Container>
         <LargeButton
           variant={Variant.FLORAL_WHITE}
@@ -89,7 +85,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           subtitle="Pasverkite bendrą svorį"
           buttonLabel="Sverti"
           isDisabled={shoreWeighingDisabled}
-          onClick={warnIfToolsUnchecked(() => navigate(slugs.fishingWeight))}
+          onClick={openShoreWeighing}
         />
         <LargeButton
           variant={Variant.AZURE}
