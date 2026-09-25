@@ -96,7 +96,7 @@ const FishingActions = ({ fishing }: FishingActionsProps) => {
           title="Žvejybos baigimo</br>nustatymas"
           subtitle="Užbaikite žvejybą"
           buttonLabel="Baigti"
-          onClick={warnIfToolsUnchecked(() => showPopup({ type: PopupContentType.END_FISHING }))}
+          onClick={() => showPopup({ type: PopupContentType.END_FISHING })}
           isDisabled={finishDisabled}
         />
       </Container>
