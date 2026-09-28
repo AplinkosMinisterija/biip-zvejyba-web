@@ -10,7 +10,7 @@ import {
   handleSuccessToast,
 } from './functions';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { matchPath, useLocation } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
@@ -20,7 +20,8 @@ import {
 } from '../components/providers/GeolocationProvider';
 import { AppDispatch, RootState } from '../state/store';
 import { routes, slugs } from './routes';
-import { User } from './types';
+import { SummaryFilterOptions } from './summary';
+import { Polder, User } from './types';
 
 const cookies = new Cookies();
 
@@ -78,6 +79,30 @@ export const useFishTypes = () => {
     retry: false,
   });
   return { fishTypes: data, fishTypesLoading };
+};
+
+export const useSummaryFilterOptions = (): SummaryFilterOptions => {
+  const { fishTypes } = useFishTypes();
+  const { data: bars = [] } = useQuery(['bars'], () => api.getFishinSections(), { retry: false });
+  const { data: polders = [] } = useQuery<Polder[]>(['polders'], () => api.getPolders(), {
+    retry: false,
+  });
+  const { data: toolTypes = [] } = useQuery(['toolTypes'], () => api.getToolTypes(), {
+    retry: false,
+  });
+
+  return useMemo(
+    () => ({
+      bars: bars.map((bar: { id: number | string; name: string }) => ({
+        id: String(bar.id),
+        name: bar.name,
+      })),
+      polders: polders.map((polder) => ({ id: String(polder.id), name: polder.name })),
+      fishTypes,
+      toolTypes,
+    }),
+    [bars, polders, fishTypes, toolTypes],
+  );
 };
 
 export const useFishWeights = () => {

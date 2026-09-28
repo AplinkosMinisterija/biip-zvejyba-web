@@ -5,6 +5,7 @@ import Cookies from 'universal-cookie';
 import api from './api';
 import { ServerErrors, ToolTypeType } from './constants';
 import { validationTexts } from './texts';
+import type { CatchSummaryParams } from './summary';
 import {
   FishingWeights,
   Profile,
@@ -408,8 +409,7 @@ export const computeFishingActionGuards = (
     // Two server-enforced rules block Baigti:
     // - preliminary catch must be shore-weighed
     // - no (tool type, location) bucket left in Patikrinta-without-fish state
-    finishDisabled:
-      (hasPreliminaryFish && !hasShoreWeighedFish) || hasUncompletedTools,
+    finishDisabled: (hasPreliminaryFish && !hasShoreWeighedFish) || hasUncompletedTools,
   };
 };
 
@@ -433,7 +433,7 @@ export const handleGetCaughtFishExcel = async (query: any) => {
   window.URL.revokeObjectURL(url);
 };
 
-export const handleGetCatchSummaryExcel = async (params: Record<string, any>) => {
+export const handleGetCatchSummaryExcel = async (params: CatchSummaryParams) => {
   const data = await api.getCatchSummary(params);
   const url = window.URL.createObjectURL(data);
   const link = document.createElement('a');

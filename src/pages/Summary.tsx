@@ -1,115 +1,25 @@
-import { DynamicFilter, FilterInputTypes, useStorage } from '@aplinkosministerija/design-system';
-import { useMemo } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useStorage } from '@aplinkosministerija/design-system';
+import { useState } from 'react';
+import { useMutation } from 'react-query';
 import styled from 'styled-components';
+import SwitchField from '../components/fields/SwitchField';
+import SummaryFilterForm from '../components/forms/SummaryFilterForm';
 import DefaultLayout from '../components/layouts/DefaultLayout';
 import Icon, { IconName } from '../components/other/Icon';
 import {
-  filtersTexts,
-  formatDateFrom,
-  formatDateTo,
-  getLocationTypeOptions,
+  describeSummaryFilters,
   handleGetCatchSummaryExcel,
-  LocationType,
-  Polder,
-  summaryFilters,
-  useFishTypes,
+  mapSummaryParams,
+  SummaryFilterValues,
+  SummaryReportForm,
+  summaryTexts,
+  useSummaryFilterOptions,
 } from '../utils';
-import api from '../utils/api';
-import { FishType } from '../utils/types';
-
-type SummaryFilterValues = {
-  type?: { id: LocationType; label: string };
-  location?: { id: string; name: string };
-  fishTypes?: FishType[];
-  createdFrom?: string;
-  createdTo?: string;
-};
 
 const Summary = () => {
-  const { fishTypes } = useFishTypes();
-
-  // Abu sąrašai riboti ir serverio pusėje kešuojami, tad paimam vieną kartą —
-  // SelectField ieško juose kliento pusėje.
-  const { data: bars = [] } = useQuery(['bars'], () => api.getFishinSections(), { retry: false });
-  const { data: polders = [] } = useQuery<Polder[]>(['polders'], () => api.getPolders(), {
-    retry: false,
-  });
-
-  // Barų ir polderių id gali sutapti, todėl backend'as suderina id IR
-  // pavadinimą — abu ir siunčiam.
-  const locationOptions = useMemo(
-    () => [
-      ...(bars || []).map((bar: any) => ({ id: String(bar.id), name: bar.name })),
-      ...(polders || []).map((polder: any) => ({ id: String(polder.id), name: polder.name })),
-    ],
-    [bars, polders],
-  );
-
-  const filterConfig = {
-    type: {
-      label: summaryFilters.type,
-      key: 'type',
-      inputType: FilterInputTypes.singleSelect,
-      optionLabel: (option: { id: LocationType; label: string }) => option?.label,
-      options: getLocationTypeOptions(),
-    },
-    location: {
-      label: summaryFilters.location,
-      key: 'location',
-      inputType: FilterInputTypes.singleSelect,
-      optionLabel: (item: { id: string; name: string }) => item?.name || '-',
-      options: locationOptions,
-    },
-    fishTypes: {
-      label: summaryFilters.fishTypes,
-      key: 'fishTypes',
-      inputType: FilterInputTypes.multiselect,
-      optionLabel: (item: FishType) => item?.label || '-',
-      options: fishTypes,
-    },
-    createdFrom: {
-      label: summaryFilters.createdFrom,
-      key: 'createdFrom',
-      inputType: FilterInputTypes.date,
-    },
-    createdTo: {
-      label: summaryFilters.createdTo,
-      key: 'createdTo',
-      inputType: FilterInputTypes.date,
-    },
-  };
-
-  const rowConfig = [['type'], ['location'], ['fishTypes'], ['createdFrom', 'createdTo']];
-
-  const mapFilters = (filters: SummaryFilterValues) => {
-    const params: any = {};
-
-    if (!filters) return params;
-
-    if (filters.createdFrom) {
-      params.dateFrom = formatDateFrom(new Date(filters.createdFrom)).toISOString();
-    }
-
-    if (filters.createdTo) {
-      params.dateTo = formatDateTo(new Date(filters.createdTo)).toISOString();
-    }
-
-    if (filters.type?.id) {
-      params.type = filters.type.id;
-    }
-
-    if (filters.location?.id) {
-      params.locationId = filters.location.id;
-      params.locationName = filters.location.name;
-    }
-
-    if (filters.fishTypes?.length) {
-      params.fishTypes = filters.fishTypes.map((fishType) => fishType.id);
-    }
-
-    return params;
-  };
+  const filterOptions = useSummaryFilterOptions();
+  const [filtersVisible, setFiltersVisible] = useState(false);
+  const [report, setReport] = useState<SummaryReportForm>({ byMonths: false, byToolTypes: false });
 
   const { value: filters, setValue: setFilters } = useStorage<SummaryFilterValues>(
     'catch_summary_filters',
@@ -117,29 +27,55 @@ const Summary = () => {
     true,
   );
 
+  const appliedFilters = describeSummaryFilters(filters || {});
+
   const { isLoading: downloading, mutateAsync: handleDownload } = useMutation({
-    mutationFn: () => handleGetCatchSummaryExcel(mapFilters(filters)),
+    mutationFn: () => handleGetCatchSummaryExcel(mapSummaryParams(filters || {}, report)),
   });
 
   return (
     <DefaultLayout>
       <Container>
-        <DynamicFilter
-          filters={filters}
-          filterConfig={filterConfig}
-          rowConfig={rowConfig}
-          onSetFilters={setFilters}
-          disabled={downloading}
-          texts={filtersTexts}
-        />
-        <Description>
-          Atsisiųskite pasirinkto laikotarpio verslinės žvejybos sugavimų suvestinę. Duomenys
-          sumuojami pagal įmonę, žuvų rūšį ir žvejybos zoną.
-        </Description>
-        <DownloadButton onClick={() => handleDownload()} disabled={downloading}>
+        <FilterButton type="button" onClick={() => setFiltersVisible(true)} disabled={downloading}>
+          {summaryTexts.filters}
+          <FilterCount aria-label={`Pritaikyta filtrų: ${appliedFilters.length}`}>
+            {appliedFilters.length}
+          </FilterCount>
+        </FilterButton>
+        {appliedFilters.length > 0 && <AppliedFilters>{appliedFilters.join(' · ')}</AppliedFilters>}
+
+        <ReportForm>
+          <legend>{summaryTexts.reportForm}</legend>
+          <SwitchField
+            label={summaryTexts.byMonths}
+            value={report.byMonths}
+            disabled={downloading}
+            onChange={(byMonths) => setReport({ ...report, byMonths })}
+          />
+          <SwitchField
+            label={summaryTexts.byToolTypes}
+            value={report.byToolTypes}
+            disabled={downloading}
+            onChange={(byToolTypes) => setReport({ ...report, byToolTypes })}
+          />
+        </ReportForm>
+
+        <Description>{summaryTexts.description}</Description>
+        <DownloadButton type="button" onClick={() => handleDownload()} disabled={downloading}>
           <Icon name={downloading ? IconName.loader : IconName.excel} />
-          {downloading ? 'Ruošiama...' : 'Atsisiųsti suvestinę'}
+          {downloading ? summaryTexts.preparing : summaryTexts.download}
         </DownloadButton>
+
+        <SummaryFilterForm
+          visible={filtersVisible}
+          values={filters || {}}
+          options={filterOptions}
+          onClose={() => setFiltersVisible(false)}
+          onSubmit={(values) => {
+            setFilters(values);
+            setFiltersVisible(false);
+          }}
+        />
       </Container>
     </DefaultLayout>
   );
@@ -153,6 +89,62 @@ const Container = styled.div`
   max-height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+`;
+
+const FilterButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: ${({ theme }) => theme.height?.buttons || 4}rem;
+  padding: 0 16px;
+  background-color: white;
+  color: ${({ theme }) => theme.colors.text.primary};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: 8px;
+  font-size: 1.6rem;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+`;
+
+const FilterCount = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 12px;
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: white;
+  font-size: 1.3rem;
+`;
+
+const AppliedFilters = styled.p`
+  margin: 12px 0 0 0;
+  color: ${({ theme }) => theme.colors.text.secondary};
+  font-size: 1.4rem;
+`;
+
+const ReportForm = styled.fieldset`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 24px 0 0 0;
+  padding: 16px 20px 20px;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: 12px;
+
+  legend {
+    padding: 0 4px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: ${({ theme }) => theme.colors.text.primary};
+  }
 `;
 
 const Description = styled.p`

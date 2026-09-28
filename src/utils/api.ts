@@ -18,8 +18,10 @@ import {
   Tool,
   ToolFormRequest,
   ToolsGroup,
+  ToolType,
   User,
 } from './types';
+import type { CatchSummaryParams } from './summary';
 
 enum Populations {
   USER = 'user',
@@ -273,6 +275,10 @@ class Api {
     await this.getAll({
       resource: 'polders',
       pageSize: '100',
+    });
+  getToolTypes = async (): Promise<ToolType[]> =>
+    await this.getAll({
+      resource: 'toolTypes',
     });
   toolTypes = async (params: any) => {
     return this.get({
@@ -604,7 +610,7 @@ class Api {
   // Filtrai keliauja atskirais query parametrais (ne JSON'u kaip `exportLoots`),
   // nes `fishTypes` yra masyvas — moleculer-web naudoja `qs`, tad kartojamas
   // raktas serveryje virsta masyvu.
-  getCatchSummary = async (params: Record<string, any>): Promise<Blob> => {
+  getCatchSummary = async (params: CatchSummaryParams): Promise<Blob> => {
     const queryParams = new URLSearchParams();
 
     Object.entries(params).forEach(([key, value]) => {
