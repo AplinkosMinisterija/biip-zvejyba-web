@@ -6,9 +6,10 @@ interface FishRowProp {
   onChange: (value: any) => void;
   fish: { label: string; photo: any; amount: number; preliminaryAmount?: number };
   index?: number;
+  subLabel?: React.ReactNode;
 }
 
-const FishRow = React.memo(({ onChange, fish, index }: FishRowProp) => {
+const FishRow = React.memo(({ onChange, fish, index, subLabel }: FishRowProp) => {
   const preventNumInputFromScrolling = (e: any) =>
     e.target.addEventListener(
       'wheel',
@@ -31,6 +32,7 @@ const FishRow = React.memo(({ onChange, fish, index }: FishRowProp) => {
           {preliminaryAmount !== undefined && preliminaryAmount !== null && (
             <Caught>{`Sugauta ${preliminaryAmount} kg`}</Caught>
           )}
+          {subLabel}
         </TextColumn>
         <InnerRow>
           <Button type="button" onClick={() => amount > 0 && onChange(amount - 1)}>

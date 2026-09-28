@@ -3,7 +3,7 @@ import { toZonedTime } from 'date-fns-tz';
 import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
 import api from './api';
-import { ToolTypeType } from './constants';
+import { ServerErrors, ToolTypeType } from './constants';
 import { validationTexts } from './texts';
 import {
   FishingWeights,
@@ -11,6 +11,7 @@ import {
   ProfileId,
   ReactQueryError,
   ResponseProps,
+  ServerErrorResponse,
   TenantUser,
   ToolsGroup,
 } from './types';
@@ -68,6 +69,30 @@ export const clearCookies = () => {
 
 export const getErrorMessage = (errorMessage: string) =>
   validationTexts[errorMessage as keyof typeof validationTexts] || validationTexts.error;
+
+// The 20% guard is the one server error worth spelling out: the fisher needs
+// to know WHICH species to re-weigh. Falls back to the generic sentence when
+// the API doesn't send the species (older deploy).
+export const getServerErrorMessage = (
+  errorMessage?: string,
+  errorData?: ServerErrorResponse['data'],
+) => {
+  const text = validationTexts[errorMessage as keyof typeof validationTexts];
+  if (!text) return;
+
+  if (errorMessage !== ServerErrors.WEIGHT_DIFFERENCE) return text;
+
+  // All or nothing: a partial list would send the fisher back to fix one fish
+  // only to be rejected again by the species that could not be named.
+  const invalidFish = errorData?.invalidFish || [];
+  if (!invalidFish.length || invalidFish.some((fish) => !fish.label)) return text;
+
+  const lines = invalidFish
+    .map((fish) => `${fish.label}: laive ${fish.preliminaryAmount} kg, krante ${fish.amount} kg`)
+    .join('\n');
+
+  return `${lines}\n\n${validationTexts.weightDifferenceRule}`;
+};
 
 export const handleErrorToastFromServer = (responseError?: ReactQueryError) => {
   handleErrorToast(getErrorMessage(getReactQueryErrorMessage(responseError)));
@@ -282,12 +307,26 @@ export const getBuiltToolInfo = (toolsGroup: ToolsGroup) => {
   };
 };
 
+// Whether "Patikrinta" may be offered for a built tool. A net set on this very
+// trip cannot hold fish yet, so checking it records nothing — while the empty
+// `weightEvent` it writes is what the BE guard reads when it refuses to end the
+// fishing. Gear left in the water by an earlier trip stays checkable.
+export const canCheckTool = (toolsGroup: ToolsGroup, currentFishingId?: string | number): boolean =>
+  String(toolsGroup?.buildEvent?.fishing?.id ?? '') !== String(currentFishingId ?? '');
+
 // Pre-computes the per-tool-type aggregates the tool-list pages need:
 // total / checked / with-fish counts, the type that's mid-checking, and the
 // types where returning the last unchecked tool would silently lose the
 // catch. Mirrors the BE `assertSiblingsHaveFishLogged` guard so the UI can
 // hide the "Sugrąžinti į sandėlį" button before the server errors out.
-export const computeBuiltToolsGuards = (builtTools: any[]): BuiltToolsGuards => {
+// Tools set during this fishing stay out of every count: they cannot be
+// checked, so counting them would keep a type "mid-checking" forever — every
+// other type locked behind a tool whose only remaining action is weighing a
+// net dropped minutes ago.
+export const computeBuiltToolsGuards = (
+  builtTools: any[],
+  currentFishingId?: string | number,
+): BuiltToolsGuards => {
   const acc = {
     toolTypesCounts: {} as Record<string, number>,
     checkedToolTypesCounts: {} as Record<string, number>,
@@ -295,6 +334,7 @@ export const computeBuiltToolsGuards = (builtTools: any[]): BuiltToolsGuards => 
   };
 
   for (const tool of builtTools ?? []) {
+    if (!canCheckTool(tool, currentFishingId)) continue;
     const id = tool?.tools?.[0]?.toolType?.id;
     if (id == null) continue;
     const key = String(id);

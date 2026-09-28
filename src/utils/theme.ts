@@ -148,6 +148,9 @@ export const GlobalStyle = createGlobalStyle`
     background: transparent;
     border: none;
   }
+  .Toastify__toast-body {
+    white-space: pre-line;
+  }
 `;
 
 export const device = {

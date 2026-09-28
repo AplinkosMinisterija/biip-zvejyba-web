@@ -3,6 +3,7 @@ export * from './functions';
 export * from './hooks';
 export * from './texts';
 export * from './validations';
+export * from './weights';
 export * from './theme';
 export * from './types';
 export * from './routes';

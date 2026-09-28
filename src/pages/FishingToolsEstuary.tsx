@@ -12,6 +12,7 @@ import LoaderComponent from '../components/other/LoaderComponent';
 import LocationInfo from '../components/other/LocationInfo';
 import { NotFound } from '../components/other/NotFound';
 import {
+  canCheckTool,
   canReturnToolToWarehouse,
   computeBuiltToolsGuards,
   handleErrorToastFromServer,
@@ -78,8 +79,10 @@ const FishingToolsEstuary = () => {
   const currentLocation = manualLocation || location;
   const showBuildToolsButton = !!currentLocation?.id;
 
-  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType } =
-    computeBuiltToolsGuards(builtTools);
+  const { toolTypesCounts, checkedToolTypesCounts, notCompletedToolType } = computeBuiltToolsGuards(
+    builtTools,
+    currentFishing?.id,
+  );
 
   return (
     <DefaultLayout>
@@ -109,6 +112,7 @@ const FishingToolsEstuary = () => {
               !!notCompletedToolType && notCompletedToolType !== typeKey;
 
             const showCheckButton =
+              canCheckTool(toolsGroup, currentFishing?.id) &&
               toolTypesCounts[typeKey] - (checkedToolTypesCounts?.[typeKey] || 0) > 1;
 
             const canReturnToWarehouse = canReturnToolToWarehouse(toolsGroup);

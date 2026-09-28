@@ -6,6 +6,7 @@ import {
   getBuiltToolInfo,
   handleErrorToast,
   handleErrorToastFromServer,
+  otherToolsPreliminary,
   PopupContentType,
   useFishTypes,
   useGeolocation,
@@ -26,16 +27,28 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
   const { showPopup } = useContext<PopupContextProps>(PopupContext);
   const { coordinates, loading, refresh: refreshGeolocation } = useGeolocation();
 
-  const {
-    data: fishingWeights,
-    isLoading: fishingWeightsLoading,
-    isFetching: fishingWeightsFetching,
-  } = useQuery(['fishingWeights', toolsGroup?.id], () => api.getFishingWeights(toolsGroup?.id), {
-    retry: false,
-    enabled: !!toolsGroup?.id,
-    staleTime: 0,
-    refetchOnMount: 'always',
-  });
+  const { data: fishingWeights, isLoading: fishingWeightsLoading } = useQuery(
+    ['fishingWeights', toolsGroup?.id],
+    () => api.getFishingWeights(toolsGroup?.id),
+    {
+      retry: false,
+      enabled: !!toolsGroup?.id,
+      staleTime: 0,
+      refetchOnMount: 'always',
+    },
+  );
+
+  // Fishing-wide aggregate — lets each row show what OTHER tools groups of
+  // this fishing already recorded, replacing the fisher's paper notes.
+  const { data: allFishingWeights, isLoading: allWeightsLoading } = useQuery(
+    ['fishingWeights'],
+    () => api.getFishingWeights(),
+    {
+      retry: false,
+      staleTime: 0,
+      refetchOnMount: 'always',
+    },
+  );
 
   useEffect(() => {
     return () => {
@@ -50,13 +63,19 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     {
       onSuccess: async () => {
         queryClient.invalidateQueries(['builtTools', location.id]);
-        queryClient.invalidateQueries(['fishingWeights', toolsGroup.id]);
+        // Prefix-matches the per-group key too.
+        queryClient.invalidateQueries(['fishingWeights']);
         onClose();
       },
       onError: ({ response }: any) => {
         handleErrorToastFromServer(response);
       },
     },
+  );
+
+  const otherWeights = useMemo(
+    () => otherToolsPreliminary(allFishingWeights?.preliminary, fishingWeights?.preliminary),
+    [allFishingWeights?.preliminary, fishingWeights?.preliminary],
   );
 
   const initialValues = useMemo(() => {
@@ -72,8 +91,12 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
     });
   }, [fishTypes, fishingWeights?.preliminary]);
 
-  if (fishTypesLoading || fishingWeightsLoading || fishingWeightsFetching)
-    return <LoaderComponent />;
+  // Gate only on the FIRST load — `isFetching` would unmount the form (and
+  // drop the fisher's typed input) on every background refetch, e.g. when the
+  // window regains focus or another observer invalidates ['fishingWeights'].
+  // Fresh-on-open is still guaranteed: the per-group query is removed from the
+  // cache on unmount (above), so reopening always starts with isLoading.
+  if (fishTypesLoading || fishingWeightsLoading || allWeightsLoading) return <LoaderComponent />;
 
   const { label, sealNr } = getBuiltToolInfo(toolsGroup);
 
@@ -134,16 +157,23 @@ const CaughtFishWeight = ({ content: { location, toolsGroup }, onClose }: any) =
         {({ values, setFieldValue }) => {
           return (
             <StyledForm>
-              {values?.map((value: any, index: number) => (
-                <FishRow
-                  key={`fish_type_${value.id}`}
-                  fish={value}
-                  onChange={(value) =>
-                    setFieldValue(`${index}.amount`, value === '' ? '' : Number(value))
-                  }
-                  index={index}
-                />
-              ))}
+              {values?.map((value: any, index: number) => {
+                const other = otherWeights[value.id];
+
+                return (
+                  <FishRow
+                    key={`fish_type_${value.id}`}
+                    fish={value}
+                    subLabel={
+                      other > 0 && <SubLabel>Kituose įrankiuose: {other} kg</SubLabel>
+                    }
+                    onChange={(value) =>
+                      setFieldValue(`${index}.amount`, value === '' ? '' : Number(value))
+                    }
+                    index={index}
+                  />
+                );
+              })}
               <Footer>
                 <StyledButton
                   loading={weighToolsIsLoading}
@@ -171,6 +201,12 @@ const Message = styled.div`
   font-size: 2rem;
   margin: 16px 0;
 `;
+
+const SubLabel = styled.div`
+  font-size: 1.4rem;
+  color: ${({ theme }) => theme.colors.text.secondary};
+`;
+
 const StyledButton = styled(Button)`
   width: 100%;
   border-radius: 28px;
