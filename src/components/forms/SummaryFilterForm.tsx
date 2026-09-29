@@ -89,13 +89,6 @@ const SummaryFilterForm = ({
             getOptionLabel={optionLabel}
             onChange={(fishTypes: SummaryLabeledOption[]) => setFieldValue('fishTypes', fishTypes)}
           />
-          <MultiSelectField
-            label={summaryFilters.toolTypes}
-            values={values.toolTypes || []}
-            options={options.toolTypes}
-            getOptionLabel={optionLabel}
-            onChange={(toolTypes: SummaryLabeledOption[]) => setFieldValue('toolTypes', toolTypes)}
-          />
           <Dates>
             <DatePicker
               label={summaryFilters.createdFrom}

@@ -11,7 +11,6 @@ const ESTUARY = { id: LocationType.ESTUARY, label: 'Kuršių marios' };
 const POLDERS = { id: LocationType.POLDERS, label: 'Polderiai' };
 const INLAND = { id: LocationType.INLAND_WATERS, label: 'Nemuno žemupys, Šventoji' };
 const BAR = { id: '12', name: '12' };
-const NETS = { id: 3, label: 'Statomieji tinklaičiai 45-50 mm' };
 
 const report = { byMonths: true, byToolTypes: false };
 
@@ -35,7 +34,6 @@ describe('mapSummaryParams', () => {
       types: [ESTUARY],
       location: BAR,
       fishTypes: [{ id: 1, label: 'Karšis' }],
-      toolTypes: [NETS],
       createdFrom: new Date(2025, 0, 1),
       createdTo: new Date(2025, 4, 31),
     };
@@ -45,7 +43,6 @@ describe('mapSummaryParams', () => {
       locationId: '12',
       locationName: '12',
       fishTypes: ['1'],
-      toolTypes: ['3'],
       dateFrom: '2025-01-01',
       dateTo: '2025-05-31',
       byMonths: true,
@@ -71,14 +68,14 @@ describe('describeSummaryFilters', () => {
       describeSummaryFilters({
         types: [ESTUARY],
         location: BAR,
-        toolTypes: [NETS],
+        fishTypes: [{ id: 1, label: 'Karšis' }],
         createdFrom: '2025-01-01T00:00:00',
         createdTo: '2025-05-31T00:00:00',
       }),
     ).toEqual([
       'Vieta: Kuršių marios',
       'Kvadratas: 12',
-      'Įrankiai: Statomieji tinklaičiai 45-50 mm',
+      'Rūšys: Karšis',
       '2025-01-01 – 2025-05-31',
     ]);
   });

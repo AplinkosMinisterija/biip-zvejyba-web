@@ -145,7 +145,6 @@ export const summaryFilters = {
   locationHidden:
     'Laukas „Kvadratas / polderis“ nerodomas – imami visi pasirinktų vietų barai ir polderiai',
   fishTypes: 'Žuvų rūšys',
-  toolTypes: 'Įrankio tipas',
   createdFrom: 'Data nuo',
   createdTo: 'Data iki',
 };
@@ -154,7 +153,6 @@ export const summaryFilterSummaryLabels = {
   types: 'Vieta',
   bar: 'Kvadratas',
   polder: 'Polderis',
-  toolTypes: 'Įrankiai',
   fishTypes: 'Rūšys',
   from: 'nuo',
   to: 'iki',

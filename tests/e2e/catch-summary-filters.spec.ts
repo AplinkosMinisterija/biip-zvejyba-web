@@ -6,6 +6,7 @@ const labels = {
   zone: 'Žvejybos vieta',
   bar: 'Kuršių marių kvadratas',
   polder: 'Polderis',
+  fishType: 'Žuvų rūšys',
   toolType: 'Įrankio tipas',
   byMonths: 'Skaidyti pagal mėnesius',
   byToolTypes: 'Rodyti pagal įrankių tipus',
@@ -21,8 +22,6 @@ const profile = {
 };
 
 const user = { id: '1', firstName: 'Linas', lastName: 'Ložys', profiles: [profile] };
-
-const NETS = { id: 3, label: 'Statomieji tinklaičiai 45-50 mm' };
 
 async function mockSummaryApi(page: Page) {
   const summaryRequests: URL[] = [];
@@ -51,7 +50,6 @@ async function mockSummaryApi(page: Page) {
     }
     if (path === '/polders/all') return body([{ id: 1, name: 'Polderis A' }]);
     if (path === '/fishTypes/all') return body([{ id: 1, label: 'Karšis' }]);
-    if (path === '/toolTypes/all') return body([NETS]);
     return body([]);
   });
 
@@ -127,11 +125,12 @@ test.describe('catch summary — filters', () => {
 
     await pick(page, labels.zone, 'Kuršių marios');
     await pick(page, labels.bar, '12');
-    await pick(page, labels.toolType, NETS.label);
+    await pick(page, labels.fishType, 'Karšis');
+    await expect(field(page, labels.toolType)).toHaveCount(0);
     await page.getByRole('button', { name: 'Filtruoti' }).click();
 
     await expect(
-      page.getByText(`Vieta: Kuršių marios · Kvadratas: 12 · Įrankiai: ${NETS.label}`),
+      page.getByText('Vieta: Kuršių marios · Kvadratas: 12 · Rūšys: Karšis'),
     ).toBeVisible();
 
     await page.getByRole('switch', { name: labels.byMonths }).check();
@@ -143,7 +142,8 @@ test.describe('catch summary — filters', () => {
     expect(params.getAll('types')).toEqual(['ESTUARY']);
     expect(params.get('locationId')).toBe('12');
     expect(params.get('locationName')).toBe('12');
-    expect(params.getAll('toolTypes')).toEqual([String(NETS.id)]);
+    expect(params.getAll('fishTypes')).toEqual(['1']);
+    expect(params.has('toolTypes')).toBe(false);
     expect(params.get('byMonths')).toBe('true');
     expect(params.get('byToolTypes')).toBe('true');
   });

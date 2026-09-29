@@ -10,7 +10,6 @@ export type SummaryFilterValues = {
   types?: SummaryZoneOption[];
   location?: SummaryLocation | null;
   fishTypes?: SummaryLabeledOption[];
-  toolTypes?: SummaryLabeledOption[];
   createdFrom?: string | Date;
   createdTo?: string | Date;
 };
@@ -19,7 +18,6 @@ export type SummaryFilterOptions = {
   bars: SummaryLocation[];
   polders: SummaryLocation[];
   fishTypes: SummaryLabeledOption[];
-  toolTypes: SummaryLabeledOption[];
 };
 
 export type SummaryReportForm = { byMonths: boolean; byToolTypes: boolean };
@@ -29,7 +27,6 @@ export type CatchSummaryParams = {
   locationId?: string;
   locationName?: string;
   fishTypes?: string[];
-  toolTypes?: string[];
   dateFrom?: string;
   dateTo?: string;
   byMonths: boolean;
@@ -68,7 +65,6 @@ export const mapSummaryParams = (
   }
 
   if (filters.fishTypes?.length) params.fishTypes = ids(filters.fishTypes);
-  if (filters.toolTypes?.length) params.toolTypes = ids(filters.toolTypes);
   if (filters.createdFrom) params.dateFrom = formatDate(filters.createdFrom);
   if (filters.createdTo) params.dateTo = formatDate(filters.createdTo);
 
@@ -97,9 +93,6 @@ export const describeSummaryFilters = (filters: SummaryFilterValues): string[] =
   [
     filters.types?.length ? `${summaryFilterSummaryLabels.types}: ${labels(filters.types)}` : null,
     describeLocation(filters),
-    filters.toolTypes?.length
-      ? `${summaryFilterSummaryLabels.toolTypes}: ${labels(filters.toolTypes)}`
-      : null,
     filters.fishTypes?.length
       ? `${summaryFilterSummaryLabels.fishTypes}: ${labels(filters.fishTypes)}`
       : null,
