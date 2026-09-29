@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { ServerErrors } from './constants';
-import { canCheckTool, computeBuiltToolsGuards, getServerErrorMessage } from './functions';
+import { RoleTypes, ServerErrors } from './constants';
+import {
+  canCheckTool,
+  canSeeRoute,
+  computeBuiltToolsGuards,
+  getServerErrorMessage,
+} from './functions';
 import { validationTexts } from './texts';
-import { ToolsGroup } from './types';
+import { Profile, ToolsGroup } from './types';
 
 const NETS = 1;
 const CATCHERS = 2;
@@ -115,5 +120,39 @@ describe('getServerErrorMessage', () => {
       validationTexts[ServerErrors.NO_TOOLS_IN_STORAGE],
     );
     expect(getServerErrorMessage('Some unmapped backend error')).toBeUndefined();
+  });
+});
+
+describe('canSeeRoute', () => {
+  const profile = (overrides: Partial<Profile>) =>
+    ({ role: RoleTypes.USER, isInvestigator: false, ...overrides }) as Profile;
+
+  const summary = { slug: '/suvestine', isInvestigator: true };
+  const fishing = { slug: '/zvejyba' };
+  const members = { slug: '/nariai', tenantOwner: true };
+  const account = { slug: '/profilis', shared: true };
+
+  it('gives an investigator only the investigator routes and the shared ones', () => {
+    const investigator = profile({ isInvestigator: true, role: RoleTypes.OWNER });
+
+    expect(
+      [summary, fishing, members, account].map((route) => canSeeRoute(route, investigator)),
+    ).toEqual([true, false, false, true]);
+  });
+
+  it('never gives a fisher an investigator route', () => {
+    expect(canSeeRoute(summary, profile({ role: RoleTypes.OWNER }))).toBe(false);
+    expect(canSeeRoute(fishing, profile({}))).toBe(true);
+    expect(canSeeRoute(account, profile({}))).toBe(true);
+  });
+
+  it('keeps tenant-owner routes for owners and user admins', () => {
+    expect(canSeeRoute(members, profile({ role: RoleTypes.OWNER }))).toBe(true);
+    expect(canSeeRoute(members, profile({ role: RoleTypes.USER_ADMIN }))).toBe(true);
+    expect(canSeeRoute(members, profile({ role: RoleTypes.USER }))).toBe(false);
+  });
+
+  it('skips a route without a slug', () => {
+    expect(canSeeRoute({ shared: true }, profile({}))).toBe(false);
   });
 });

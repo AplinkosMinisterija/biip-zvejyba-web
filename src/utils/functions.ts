@@ -3,8 +3,9 @@ import { toZonedTime } from 'date-fns-tz';
 import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
 import api from './api';
-import { ServerErrors, ToolTypeType } from './constants';
+import { RoleTypes, ServerErrors, ToolTypeType } from './constants';
 import { validationTexts } from './texts';
+import type { CatchSummaryParams } from './summary';
 import {
   FishingWeights,
   Profile,
@@ -408,8 +409,7 @@ export const computeFishingActionGuards = (
     // Two server-enforced rules block Baigti:
     // - preliminary catch must be shore-weighed
     // - no (tool type, location) bucket left in Patikrinta-without-fish state
-    finishDisabled:
-      (hasPreliminaryFish && !hasShoreWeighedFish) || hasUncompletedTools,
+    finishDisabled: (hasPreliminaryFish && !hasShoreWeighedFish) || hasUncompletedTools,
   };
 };
 
@@ -433,10 +433,42 @@ export const handleGetCaughtFishExcel = async (query: any) => {
   window.URL.revokeObjectURL(url);
 };
 
+export const handleGetCatchSummaryExcel = async (params: CatchSummaryParams) => {
+  const data = await api.getCatchSummary(params);
+  const url = window.URL.createObjectURL(data);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', 'Verslinių sugavimų suvestinė.xlsx');
+  link.target = '_blank';
+  document.body.appendChild(link);
+  link.click();
+  window.URL.revokeObjectURL(url);
+};
+
 export const formatDateTo = (date: Date) => {
   return toZonedTime(endOfDay(new Date(date)), 'Europe/Vilnius');
 };
 
 export const formatDateFrom = (date: Date) => {
   return toZonedTime(startOfDay(new Date(date)), 'Europe/Vilnius');
+};
+
+type RouteAccess = {
+  slug?: string;
+  shared?: boolean;
+  isInvestigator?: boolean;
+  tenantOwner?: boolean;
+};
+
+// UX only: fisher endpoints are profile-scoped anyway, and the one
+// cross-tenant view (the summary) is gated by INVESTIGATOR on the API.
+export const canSeeRoute = (route: RouteAccess, profile?: Profile) => {
+  if (!route.slug) return false;
+  if (route.shared) return true;
+  if (profile?.isInvestigator) return !!route.isInvestigator;
+  if (route.isInvestigator) return false;
+  if (route.tenantOwner) {
+    return [RoleTypes.USER_ADMIN, RoleTypes.OWNER].some((role) => role === profile?.role);
+  }
+  return true;
 };

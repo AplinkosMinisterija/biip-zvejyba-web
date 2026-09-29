@@ -25,7 +25,8 @@ export const validationTexts: { [key: string]: string } = {
     'Įrankis su šiuo plombos numeriu jau egzistuoja',
   [ServerErrors.FISH_MUST_BE_WEIGHTED]:
     'Sužvejotos žuvys turi būti pasvertos krante, prieš užbaigiant žvejybą',
-  [ServerErrors.LOCATION_NOT_FOUND]: 'Nepavyko nustatyti vandens telkinio pagal įvestas koordinates',
+  [ServerErrors.LOCATION_NOT_FOUND]:
+    'Nepavyko nustatyti vandens telkinio pagal įvestas koordinates',
   [ServerErrors.FISH_ALREADY_WEIGHTED]: 'Žuvis krante jau buvo pasverta',
   [ServerErrors.PREVIOUS_FISHING_TOOL_NOT_WEIGHTED]:
     'Prieš grąžinant įrankį į sandėlį, jį reikia patikrinti arba pasverti.',
@@ -134,6 +135,32 @@ export const journalTableFilters = {
   createdTo: 'Žvejybos sukūrimo data iki',
   person: 'Grandininkas',
   location: 'Vandens telkinys / polderis',
+};
+
+export const summaryFilters = {
+  types: 'Žvejybos vieta',
+  bar: 'Kuršių marių kvadratas',
+  polder: 'Polderis',
+  fishTypes: 'Žuvų rūšys',
+  createdFrom: 'Data nuo',
+  createdTo: 'Data iki',
+};
+
+export const summaryZoneLabels = {
+  [LocationType.ESTUARY]: 'Kuršių marios',
+  [LocationType.INLAND_WATERS]: 'Nemuno žemupys, Šventoji',
+  [LocationType.POLDERS]: 'Polderiai',
+};
+
+export const summaryTexts = {
+  reportForm: 'Ataskaitos forma',
+  byMonths: 'Skaidyti pagal mėnesius',
+  byToolTypes: 'Rodyti pagal įrankių tipus',
+  description:
+    'Atsisiųskite pasirinkto laikotarpio verslinės žvejybos sugavimų suvestinę. Duomenys ' +
+    'sumuojami pagal įmonę, žuvų rūšį ir žvejybos zoną.',
+  download: 'Atsisiųsti suvestinę',
+  preparing: 'Ruošiama...',
 };
 
 export const filtersTexts = {

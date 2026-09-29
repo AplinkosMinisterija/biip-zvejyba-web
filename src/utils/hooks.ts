@@ -2,15 +2,16 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from 'react-q
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { actions } from '../state/user/reducer';
 import api from './api';
-import { intersectionObserverConfig, RoleTypes } from './constants';
+import { intersectionObserverConfig } from './constants';
 import {
+  canSeeRoute,
   clearCookies,
   handleErrorToastFromServer,
   handleSetProfile,
   handleSuccessToast,
 } from './functions';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { matchPath, useLocation } from 'react-router';
 import { useNavigate } from 'react-router';
 import Cookies from 'universal-cookie';
@@ -20,7 +21,8 @@ import {
 } from '../components/providers/GeolocationProvider';
 import { AppDispatch, RootState } from '../state/store';
 import { routes, slugs } from './routes';
-import { User } from './types';
+import { SummaryFilterOptions } from './summary';
+import { Polder, User } from './types';
 
 const cookies = new Cookies();
 
@@ -80,6 +82,26 @@ export const useFishTypes = () => {
   return { fishTypes: data, fishTypesLoading };
 };
 
+export const useSummaryFilterOptions = (): SummaryFilterOptions => {
+  const { fishTypes } = useFishTypes();
+  const { data: bars = [] } = useQuery(['bars'], () => api.getFishinSections(), { retry: false });
+  const { data: polders = [] } = useQuery<Polder[]>(['polders'], () => api.getPolders(), {
+    retry: false,
+  });
+
+  return useMemo(
+    () => ({
+      bars: bars.map((bar: { id: number | string; name: string }) => ({
+        id: String(bar.id),
+        name: bar.name,
+      })),
+      polders: polders.map((polder) => ({ id: String(polder.id), name: polder.name })),
+      fishTypes,
+    }),
+    [bars, polders, fishTypes],
+  );
+};
+
 export const useFishWeights = () => {
   const {
     data: fishingWeights = { preliminary: {}, total: {} },
@@ -95,18 +117,15 @@ export const useGetCurrentProfile = () => {
 };
 export const useFilteredRoutes = () => {
   const profile = useGetCurrentProfile();
-  return routes.filter((route: any) => {
-    if (!route?.slug) return false;
 
-    if (route.tenantOwner) {
-      return [RoleTypes.USER_ADMIN, RoleTypes.OWNER].some((r) => r === profile?.role);
-    }
+  return routes.filter((route) => canSeeRoute(route, profile));
+};
 
-    if (route.isInvestigator) {
-      return !!profile?.isInvestigator;
-    }
-    return true;
-  });
+// Investigators have no /zvejyba route; a hard-coded redirect there would
+// dead-end at the „*“ fallback.
+export const useDefaultSlug = () => {
+  const filteredRoutes = useFilteredRoutes();
+  return filteredRoutes.find((route: any) => !!route.iconName)?.slug || slugs.profile;
 };
 
 export const useMenuRouters = () => {

@@ -20,6 +20,7 @@ import {
   ToolsGroup,
   User,
 } from './types';
+import type { CatchSummaryParams } from './summary';
 
 enum Populations {
   USER = 'user',
@@ -584,15 +585,12 @@ class Api {
       id,
     });
 
-  exportLoots = async ({ query = {} }: any): Promise<any> => {
+  // `fetch`, not the axios instance: exports need the `blob()` body.
+  private downloadBlob = async (resource: string, queryParams: URLSearchParams): Promise<Blob> => {
     const token = cookies.get('token');
     const profileId = cookies.get('profileId');
 
-    const queryParams = new URLSearchParams({
-      query: JSON.stringify(query),
-    }).toString();
-
-    const response = await fetch(`/api/fishings/exportCaughtFishes?${queryParams}`, {
+    const response = await fetch(`${this.fishingProxy}/${resource}?${queryParams.toString()}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + token,
@@ -600,10 +598,33 @@ class Api {
       },
     });
 
-    const data = await response.blob();
-
-    return data;
+    return await response.blob();
   };
+
+  // Separate params, not JSON like `exportLoots`: moleculer-web parses with `qs`,
+  // so a repeated key arrives as an array.
+  getCatchSummary = async (params: CatchSummaryParams): Promise<Blob> => {
+    const queryParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === '') return;
+
+      if (Array.isArray(value)) {
+        value.forEach((item) => queryParams.append(key, String(item)));
+        return;
+      }
+
+      queryParams.append(key, String(value));
+    });
+
+    return this.downloadBlob('researches/catchSummary', queryParams);
+  };
+
+  exportLoots = async ({ query = {} }: any): Promise<Blob> =>
+    this.downloadBlob(
+      'fishings/exportCaughtFishes',
+      new URLSearchParams({ query: JSON.stringify(query) }),
+    );
 }
 
 export default new Api();
