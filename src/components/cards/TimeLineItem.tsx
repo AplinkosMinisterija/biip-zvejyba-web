@@ -1,4 +1,4 @@
-import format from 'date-fns/format';
+import { format } from 'date-fns';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { EventTypes, FishingEventLabels, theme } from '../../utils';

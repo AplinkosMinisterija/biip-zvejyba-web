@@ -1,6 +1,6 @@
-import format from 'date-fns/format';
+import { format } from 'date-fns';
 import { useQuery } from 'react-query';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import styled from 'styled-components';
 import TimeLineItem from '../components/cards/TimeLineItem';
 import DefaultLayout from '../components/layouts/DefaultLayout';

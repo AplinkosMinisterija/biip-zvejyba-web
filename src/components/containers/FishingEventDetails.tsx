@@ -1,4 +1,4 @@
-import format from 'date-fns/format';
+import { format } from 'date-fns';
 import styled from 'styled-components';
 import { EventTypes, FishingEventLabels, useFishTypes } from '../../utils';
 import PreviewMap from '../other/PreviewMap';

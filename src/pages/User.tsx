@@ -1,7 +1,7 @@
 import { Form, Formik } from 'formik';
 import { useEffect } from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import styled from 'styled-components';
 import Button, { ButtonColors } from '../components/buttons/Button';
 import SelectField from '../components/fields/SelectField';
