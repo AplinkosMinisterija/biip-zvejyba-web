@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { device } from '../../utils/theme';
 import MobileMenu from '../layouts/MobileMenu';

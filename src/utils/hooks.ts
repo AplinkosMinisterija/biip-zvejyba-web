@@ -12,7 +12,7 @@ import {
 
 import { useContext, useEffect, useState } from 'react';
 import { matchPath, useLocation } from 'react-router';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import Cookies from 'universal-cookie';
 import {
   GeolocationContext,

@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import React, { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { device, slugs, useInfinityLoad } from '../../utils';
 import api from '../../utils/api';

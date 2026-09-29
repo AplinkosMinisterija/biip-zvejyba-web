@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import lt from 'date-fns/locale/lt';
+import { lt } from 'date-fns/locale/lt';
 import React, { useEffect, useState } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -139,7 +139,9 @@ const DateField = ({
             selected={value ? new Date(value as any) : null}
             onClickOutside={() => setOpen(false)}
             onSelect={() => setOpen(false)}
-            onChange={(date: Date) => {
+            onChange={(date: Date | null) => {
+              if (!date) return;
+
               if (maxDate && date > new Date(maxDate)) {
                 return onChange(new Date(maxDate));
               }

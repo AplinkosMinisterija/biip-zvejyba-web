@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import Button from '../components/buttons/Button';
 import ToolCard from '../components/cards/ToolCard';
