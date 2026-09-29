@@ -590,8 +590,7 @@ class Api {
       id,
     });
 
-  // Eksportai eina pro `fetch`, o ne pro axios instanciją, nes reikia `blob()`
-  // atsakymo. Bendra tik autorizacija — query kiekvienas susideda savaip.
+  // `fetch`, not the axios instance: exports need the `blob()` body.
   private downloadBlob = async (resource: string, queryParams: URLSearchParams): Promise<Blob> => {
     const token = cookies.get('token');
     const profileId = cookies.get('profileId');
@@ -607,9 +606,8 @@ class Api {
     return await response.blob();
   };
 
-  // Filtrai keliauja atskirais query parametrais (ne JSON'u kaip `exportLoots`),
-  // nes `fishTypes` yra masyvas — moleculer-web naudoja `qs`, tad kartojamas
-  // raktas serveryje virsta masyvu.
+  // Separate params, not JSON like `exportLoots`: moleculer-web parses with `qs`,
+  // so a repeated key arrives as an array.
   getCatchSummary = async (params: CatchSummaryParams): Promise<Blob> => {
     const queryParams = new URLSearchParams();
 

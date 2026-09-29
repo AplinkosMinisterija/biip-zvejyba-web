@@ -33,8 +33,7 @@ interface RouteProps {
   loggedIn: boolean;
   profileId?: ProfileId;
   location?: Location;
-  // Mokslininkui žvejybos route'o nebėra, tad startinis puslapis parenkamas
-  // pagal rolę, o ne kietai užkoduojamas (žr. useDefaultSlug).
+  // Investigators have no /zvejyba route — see useDefaultSlug.
   defaultSlug: string;
 }
 
@@ -169,9 +168,7 @@ function App() {
         <Route
           path="*"
           element={
-            <Navigate
-              to={loggedIn ? (profileId ? defaultSlug : slugs.profiles) : slugs.login}
-            />
+            <Navigate to={loggedIn ? (profileId ? defaultSlug : slugs.profiles) : slugs.login} />
           }
         />
       </Routes>

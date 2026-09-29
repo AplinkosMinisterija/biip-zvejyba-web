@@ -124,11 +124,8 @@ export const useFilteredRoutes = () => {
   return routes.filter((route: any) => {
     if (!route?.slug) return false;
 
-    // Mokslininkas naudojasi ta pačia aplikacija kaip žvejys, bet žvejybos
-    // funkcionalumo jam nereikia — lieka tik suvestinė, moksliniai tyrimai ir
-    // paskyros valdymas. Tai UX, ne apsauga: žvejybos endpoint'ai ir taip
-    // apriboti pagal profilį, o vienintelė mokslininko cross-tenant prieiga
-    // (suvestinė) užrakinta INVESTIGATOR rolės backend'e.
+    // UX only: fisher endpoints are profile-scoped anyway, and the one
+    // cross-tenant view (the summary) is gated by INVESTIGATOR on the API.
     if (profile?.isInvestigator) {
       return !!route.isInvestigator || [slugs.profile, slugs.profiles].includes(route.slug);
     }
@@ -145,8 +142,8 @@ export const useFilteredRoutes = () => {
   });
 };
 
-// Startinis puslapis priklauso nuo rolės: mokslininkui `/zvejyba` route'o
-// nebėra, tad kietai užkoduotas nukreipimas ten įstrigtų prie „*" fallback'o.
+// Investigators have no /zvejyba route; a hard-coded redirect there would
+// dead-end at the „*“ fallback.
 export const useDefaultSlug = () => {
   const filteredRoutes = useFilteredRoutes();
   return filteredRoutes.find((route: any) => !!route.iconName)?.slug || slugs.profile;
