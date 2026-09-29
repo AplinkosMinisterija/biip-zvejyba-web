@@ -2,8 +2,9 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from 'react-q
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { actions } from '../state/user/reducer';
 import api from './api';
-import { intersectionObserverConfig, RoleTypes } from './constants';
+import { intersectionObserverConfig } from './constants';
 import {
+  canSeeRoute,
   clearCookies,
   handleErrorToastFromServer,
   handleSetProfile,
@@ -117,25 +118,7 @@ export const useGetCurrentProfile = () => {
 export const useFilteredRoutes = () => {
   const profile = useGetCurrentProfile();
 
-  return routes.filter((route: any) => {
-    if (!route?.slug) return false;
-
-    // UX only: fisher endpoints are profile-scoped anyway, and the one
-    // cross-tenant view (the summary) is gated by INVESTIGATOR on the API.
-    if (profile?.isInvestigator) {
-      return !!route.isInvestigator || [slugs.profile, slugs.profiles].includes(route.slug);
-    }
-
-    if (route.tenantOwner) {
-      return [RoleTypes.USER_ADMIN, RoleTypes.OWNER].some((r) => r === profile?.role);
-    }
-
-    if (route.isInvestigator) {
-      return false;
-    }
-
-    return true;
-  });
+  return routes.filter((route) => canSeeRoute(route, profile));
 };
 
 // Investigators have no /zvejyba route; a hard-coded redirect there would

@@ -3,7 +3,7 @@ import { toZonedTime } from 'date-fns-tz';
 import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
 import api from './api';
-import { ServerErrors, ToolTypeType } from './constants';
+import { RoleTypes, ServerErrors, ToolTypeType } from './constants';
 import { validationTexts } from './texts';
 import type { CatchSummaryParams } from './summary';
 import {
@@ -451,4 +451,24 @@ export const formatDateTo = (date: Date) => {
 
 export const formatDateFrom = (date: Date) => {
   return toZonedTime(startOfDay(new Date(date)), 'Europe/Vilnius');
+};
+
+type RouteAccess = {
+  slug?: string;
+  shared?: boolean;
+  isInvestigator?: boolean;
+  tenantOwner?: boolean;
+};
+
+// UX only: fisher endpoints are profile-scoped anyway, and the one
+// cross-tenant view (the summary) is gated by INVESTIGATOR on the API.
+export const canSeeRoute = (route: RouteAccess, profile?: Profile) => {
+  if (!route.slug) return false;
+  if (route.shared) return true;
+  if (profile?.isInvestigator) return !!route.isInvestigator;
+  if (route.isInvestigator) return false;
+  if (route.tenantOwner) {
+    return [RoleTypes.USER_ADMIN, RoleTypes.OWNER].some((role) => role === profile?.role);
+  }
+  return true;
 };

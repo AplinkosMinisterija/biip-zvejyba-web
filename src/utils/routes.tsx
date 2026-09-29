@@ -51,6 +51,7 @@ export const routes = [
   {
     slug: slugs.profiles,
     component: <Profiles />,
+    shared: true,
     regExp: new RegExp('^/profiliai$'),
   },
   {
@@ -175,5 +176,6 @@ export const routes = [
     slug: slugs.profile,
     component: <Profile />,
     iconName: IconName.profile,
+    shared: true,
   },
 ];
