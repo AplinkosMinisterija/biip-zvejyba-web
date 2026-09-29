@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { LocationType } from './constants';
-import {
-  describeSummaryFilters,
-  getSummaryLocationScope,
-  mapSummaryParams,
-  SummaryFilterValues,
-} from './summary';
+import { getSummaryLocationScope, mapSummaryParams, SummaryFilterValues } from './summary';
 
 const ESTUARY = { id: LocationType.ESTUARY, label: 'Kuršių marios' };
 const POLDERS = { id: LocationType.POLDERS, label: 'Polderiai' };
@@ -32,7 +27,7 @@ describe('mapSummaryParams', () => {
   it('sends every filter plus the report form', () => {
     const filters: SummaryFilterValues = {
       types: [ESTUARY],
-      location: BAR,
+      bar: BAR,
       fishTypes: [{ id: 1, label: 'Karšis' }],
       createdFrom: new Date(2025, 0, 1),
       createdTo: new Date(2025, 4, 31),
@@ -50,8 +45,17 @@ describe('mapSummaryParams', () => {
     });
   });
 
+  it('sends the polder when polders alone are picked', () => {
+    const params = mapSummaryParams(
+      { types: [POLDERS], bar: BAR, polder: { id: '1', name: 'Polderis A' } },
+      report,
+    );
+
+    expect([params.locationId, params.locationName]).toEqual(['1', 'Polderis A']);
+  });
+
   it('drops a bar left over from a zone that no longer shows the field', () => {
-    const params = mapSummaryParams({ types: [ESTUARY, POLDERS], location: BAR }, report);
+    const params = mapSummaryParams({ types: [ESTUARY, POLDERS], bar: BAR }, report);
 
     expect(params.locationId).toBeUndefined();
     expect(params.types).toEqual([LocationType.ESTUARY, LocationType.POLDERS]);
@@ -59,34 +63,5 @@ describe('mapSummaryParams', () => {
 
   it('sends only the report form when nothing is filtered', () => {
     expect(mapSummaryParams({}, report)).toEqual(report);
-  });
-});
-
-describe('describeSummaryFilters', () => {
-  it('lists the applied filters in the order of the mockup', () => {
-    expect(
-      describeSummaryFilters({
-        types: [ESTUARY],
-        location: BAR,
-        fishTypes: [{ id: 1, label: 'Karšis' }],
-        createdFrom: '2025-01-01T00:00:00',
-        createdTo: '2025-05-31T00:00:00',
-      }),
-    ).toEqual([
-      'Vieta: Kuršių marios',
-      'Kvadratas: 12',
-      'Rūšys: Karšis',
-      '2025-01-01 – 2025-05-31',
-    ]);
-  });
-
-  it('names the polder field after polders', () => {
-    expect(
-      describeSummaryFilters({ types: [POLDERS], location: { id: '1', name: 'Polderis A' } }),
-    ).toEqual(['Vieta: Polderiai', 'Polderis: Polderis A']);
-  });
-
-  it('says nothing when no filter is applied', () => {
-    expect(describeSummaryFilters({})).toEqual([]);
   });
 });

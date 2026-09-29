@@ -141,21 +141,9 @@ export const summaryFilters = {
   types: 'Žvejybos vieta',
   bar: 'Kuršių marių kvadratas',
   polder: 'Polderis',
-  allLocations: 'Visi (nepasirinkta)',
-  locationHidden:
-    'Laukas „Kvadratas / polderis“ nerodomas – imami visi pasirinktų vietų barai ir polderiai',
   fishTypes: 'Žuvų rūšys',
   createdFrom: 'Data nuo',
   createdTo: 'Data iki',
-};
-
-export const summaryFilterSummaryLabels = {
-  types: 'Vieta',
-  bar: 'Kvadratas',
-  polder: 'Polderis',
-  fishTypes: 'Rūšys',
-  from: 'nuo',
-  to: 'iki',
 };
 
 export const summaryZoneLabels = {
@@ -165,7 +153,6 @@ export const summaryZoneLabels = {
 };
 
 export const summaryTexts = {
-  filters: 'Filtrai',
   reportForm: 'Ataskaitos forma',
   byMonths: 'Skaidyti pagal mėnesius',
   byToolTypes: 'Rodyti pagal įrankių tipus',

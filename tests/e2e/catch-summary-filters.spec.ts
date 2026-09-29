@@ -10,7 +10,6 @@ const labels = {
   toolType: 'Įrankio tipas',
   byMonths: 'Skaidyti pagal mėnesius',
   byToolTypes: 'Rodyti pagal įrankių tipus',
-  hidden: 'Laukas „Kvadratas / polderis“ nerodomas',
 };
 
 const profile = {
@@ -56,17 +55,27 @@ async function mockSummaryApi(page: Page) {
   return summaryRequests;
 }
 
-const field = (page: Page, label: string) => page.locator(`input[id="${label}"]`);
+const field = (page: Page, label: string) => page.getByLabel(label, { exact: true });
 
-async function pick(page: Page, label: string, option: string) {
+const exactly = (text: string) => new RegExp(`^${text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
+
+const option = (page: Page, name: string) =>
+  page.locator('[role=option]').filter({ hasText: exactly(name) });
+
+async function pick(page: Page, label: string, name: string) {
   await field(page, label).click();
-  await page.getByRole('option', { name: option, exact: true }).click();
+  await option(page, name).click();
 }
 
 async function openFilters(page: Page) {
   await page.goto(SUMMARY_PATH);
-  await page.getByRole('button', { name: /^Filtrai/ }).click();
+  await page.getByRole('button', { name: 'Open filter menu' }).click();
 }
+
+const submitFilters = (page: Page) => page.locator('form button[type=submit]').click();
+
+const appliedFilters = (page: Page) =>
+  page.locator('[aria-label^="Applied filter"]').allInnerTexts();
 
 test.use({
   geolocation: { latitude: 55.3, longitude: 21.35 },
@@ -82,12 +91,13 @@ test.describe('catch summary — filters', () => {
 
     await pick(page, labels.zone, 'Kuršių marios');
     await expect(field(page, labels.bar)).toBeVisible();
+    await expect(field(page, labels.polder)).toHaveCount(0);
 
     await pick(page, labels.bar, '12');
     await pick(page, labels.zone, 'Polderiai');
 
     await expect(field(page, labels.bar)).toHaveCount(0);
-    await expect(page.getByText(labels.hidden)).toBeVisible();
+    await expect(field(page, labels.polder)).toHaveCount(0);
   });
 
   test('offers polders only while polders alone are picked', async ({ page }) => {
@@ -97,8 +107,8 @@ test.describe('catch summary — filters', () => {
     await pick(page, labels.zone, 'Polderiai');
     await field(page, labels.polder).click();
 
-    await expect(page.getByRole('option', { name: 'Polderis A', exact: true })).toBeVisible();
-    await expect(page.getByRole('option', { name: '12', exact: true })).toHaveCount(0);
+    await expect(option(page, 'Polderis A')).toBeVisible();
+    await expect(option(page, '12')).toHaveCount(0);
   });
 
   test('drops the picked bar once a second zone is added', async ({ page }) => {
@@ -108,10 +118,11 @@ test.describe('catch summary — filters', () => {
     await pick(page, labels.zone, 'Kuršių marios');
     await pick(page, labels.bar, '12');
     await pick(page, labels.zone, 'Polderiai');
-    await page.getByRole('button', { name: 'Filtruoti' }).click();
+    await submitFilters(page);
 
-    await expect(page.getByText('Vieta: Kuršių marios, Polderiai')).toBeVisible();
-    await expect(page.getByText(/Kvadratas:/)).toHaveCount(0);
+    await expect
+      .poll(() => appliedFilters(page))
+      .not.toContainEqual(expect.stringMatching(labels.bar));
 
     await page.getByRole('button', { name: /Atsisiųsti suvestinę/ }).click();
     await expect.poll(() => requests.length).toBe(1);
@@ -127,14 +138,20 @@ test.describe('catch summary — filters', () => {
     await pick(page, labels.bar, '12');
     await pick(page, labels.fishType, 'Karšis');
     await expect(field(page, labels.toolType)).toHaveCount(0);
-    await page.getByRole('button', { name: 'Filtruoti' }).click();
+    await submitFilters(page);
 
-    await expect(
-      page.getByText('Vieta: Kuršių marios · Kvadratas: 12 · Rūšys: Karšis'),
-    ).toBeVisible();
+    await expect
+      .poll(() => appliedFilters(page))
+      .toEqual([
+        `${labels.zone}: Kuršių marios`,
+        `${labels.bar}: 12`,
+        `${labels.fishType}: Karšis`,
+      ]);
 
-    await page.getByRole('switch', { name: labels.byMonths }).check();
-    await page.getByRole('switch', { name: labels.byToolTypes }).check();
+    for (const name of [labels.byMonths, labels.byToolTypes]) {
+      await page.getByText(name, { exact: true }).click();
+      await expect(page.getByRole('checkbox', { name })).toBeChecked();
+    }
     await page.getByRole('button', { name: /Atsisiųsti suvestinę/ }).click();
 
     await expect.poll(() => requests.length).toBe(1);

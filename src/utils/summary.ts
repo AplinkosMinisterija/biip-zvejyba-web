@@ -1,17 +1,18 @@
 import { LocationType } from './constants';
 import { formatDate } from './functions';
-import { summaryFilterSummaryLabels } from './texts';
 
 export type SummaryZoneOption = { id: LocationType; label: string };
 export type SummaryLocation = { id: string; name: string };
 export type SummaryLabeledOption = { id: string | number; label: string };
 
+// DynamicFilter clears an unset field to null.
 export type SummaryFilterValues = {
-  types?: SummaryZoneOption[];
-  location?: SummaryLocation | null;
-  fishTypes?: SummaryLabeledOption[];
-  createdFrom?: string | Date;
-  createdTo?: string | Date;
+  types?: SummaryZoneOption[] | null;
+  bar?: SummaryLocation | null;
+  polder?: SummaryLocation | null;
+  fishTypes?: SummaryLabeledOption[] | null;
+  createdFrom?: string | Date | null;
+  createdTo?: string | Date | null;
 };
 
 export type SummaryFilterOptions = {
@@ -38,7 +39,7 @@ export type SummaryLocationScope = LocationType.ESTUARY | LocationType.POLDERS;
 // Bars and polders are fixed lists worth picking from; inland water bodies come
 // from UETK, and a mix of zones has no single list — both take every location.
 export const getSummaryLocationScope = (
-  types?: SummaryZoneOption[],
+  types?: SummaryZoneOption[] | null,
 ): SummaryLocationScope | null => {
   if (types?.length !== 1) return null;
 
@@ -48,20 +49,26 @@ export const getSummaryLocationScope = (
 
 const ids = (items: SummaryLabeledOption[]) => items.map((item) => String(item.id));
 
-const labels = (items: { label: string }[]) => items.map((item) => item.label).join(', ');
+// Polder and bar ids collide, so the API matches on id AND name.
+const pickedLocation = (filters: SummaryFilterValues) => {
+  const scope = getSummaryLocationScope(filters.types);
+  if (scope === LocationType.ESTUARY) return filters.bar;
+  if (scope === LocationType.POLDERS) return filters.polder;
+  return null;
+};
 
 export const mapSummaryParams = (
   filters: SummaryFilterValues,
   report: SummaryReportForm,
 ): CatchSummaryParams => {
   const params: CatchSummaryParams = { ...report };
+  const location = pickedLocation(filters);
 
   if (filters.types?.length) params.types = filters.types.map((type) => type.id);
 
-  // Polder and bar ids collide, so the API matches on id AND name.
-  if (filters.location && getSummaryLocationScope(filters.types)) {
-    params.locationId = filters.location.id;
-    params.locationName = filters.location.name;
+  if (location) {
+    params.locationId = location.id;
+    params.locationName = location.name;
   }
 
   if (filters.fishTypes?.length) params.fishTypes = ids(filters.fishTypes);
@@ -70,31 +77,3 @@ export const mapSummaryParams = (
 
   return params;
 };
-
-const describePeriod = ({ createdFrom, createdTo }: SummaryFilterValues) => {
-  if (createdFrom && createdTo) return `${formatDate(createdFrom)} – ${formatDate(createdTo)}`;
-  if (createdFrom) return `${summaryFilterSummaryLabels.from} ${formatDate(createdFrom)}`;
-  if (createdTo) return `${summaryFilterSummaryLabels.to} ${formatDate(createdTo)}`;
-  return null;
-};
-
-const describeLocation = (filters: SummaryFilterValues) => {
-  const scope = getSummaryLocationScope(filters.types);
-  if (!scope || !filters.location) return null;
-
-  const label =
-    scope === LocationType.ESTUARY
-      ? summaryFilterSummaryLabels.bar
-      : summaryFilterSummaryLabels.polder;
-  return `${label}: ${filters.location.name}`;
-};
-
-export const describeSummaryFilters = (filters: SummaryFilterValues): string[] =>
-  [
-    filters.types?.length ? `${summaryFilterSummaryLabels.types}: ${labels(filters.types)}` : null,
-    describeLocation(filters),
-    filters.fishTypes?.length
-      ? `${summaryFilterSummaryLabels.fishTypes}: ${labels(filters.fishTypes)}`
-      : null,
-    describePeriod(filters),
-  ].filter((item): item is string => !!item);
