@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from 'react-query';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import styled from 'styled-components';
 import ToolForm from '../components/forms/ToolForm';
 import FormLayout from '../components/layouts/FormLayout';

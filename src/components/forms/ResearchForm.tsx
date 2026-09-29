@@ -1,7 +1,7 @@
 import { FieldArray, Form, Formik } from 'formik';
 import { filter, map, some } from 'lodash';
 import { useMutation, useQuery } from 'react-query';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import styled from 'styled-components';
 import * as Yup from 'yup';
 import {

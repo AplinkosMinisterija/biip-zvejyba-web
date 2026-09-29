@@ -1,7 +1,7 @@
 import { Form, Formik } from 'formik';
 import { useEffect, useRef, useState } from 'react';
 import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { PhoneField } from '@aplinkosministerija/design-system';
 import Button from '../components/buttons/Button';

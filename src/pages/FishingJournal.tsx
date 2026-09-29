@@ -1,7 +1,7 @@
 import { DynamicFilter, FilterInputTypes, useStorage } from '@aplinkosministerija/design-system';
 import { useRef } from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import FishingCard from '../components/cards/FishingCard';
 import DefaultLayout from '../components/layouts/DefaultLayout';
