@@ -32,6 +32,7 @@ const filterConfig = ({
   bars,
   polders,
   fishTypes,
+  toolTypes,
 }: SummaryFilterOptions): Record<string, FilterConfig> => ({
   types: {
     label: summaryFilters.types,
@@ -66,6 +67,12 @@ const filterConfig = ({
     inputType: FilterInputTypes.multiselect,
     options: fishTypes,
   },
+  toolTypes: {
+    label: summaryFilters.toolTypes,
+    key: 'toolTypes',
+    inputType: FilterInputTypes.multiselect,
+    options: toolTypes,
+  },
   createdFrom: {
     label: summaryFilters.createdFrom,
     key: 'createdFrom',
@@ -78,7 +85,14 @@ const filterConfig = ({
   },
 });
 
-const rowConfig = [['types'], ['bar'], ['polder'], ['fishTypes'], ['createdFrom', 'createdTo']];
+const rowConfig = [
+  ['types'],
+  ['bar'],
+  ['polder'],
+  ['fishTypes'],
+  ['toolTypes'],
+  ['createdFrom', 'createdTo'],
+];
 
 const Summary = () => {
   const filterOptions = useSummaryFilterOptions();

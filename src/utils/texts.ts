@@ -142,6 +142,7 @@ export const summaryFilters = {
   bar: 'Kuršių marių kvadratas',
   polder: 'Polderis',
   fishTypes: 'Žuvų rūšys',
+  toolTypes: 'Įrankio tipas',
   createdFrom: 'Data nuo',
   createdTo: 'Data iki',
 };

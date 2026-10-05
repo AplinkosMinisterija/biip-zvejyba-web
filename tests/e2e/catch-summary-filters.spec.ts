@@ -20,6 +20,8 @@ const profile = {
   freelancer: false,
 };
 
+const NETS = { id: 3, label: 'Statomieji tinklaičiai 45-50 mm' };
+
 const user = { id: '1', firstName: 'Linas', lastName: 'Ložys', profiles: [profile] };
 
 async function mockSummaryApi(page: Page) {
@@ -49,6 +51,7 @@ async function mockSummaryApi(page: Page) {
     }
     if (path === '/polders/all') return body([{ id: 1, name: 'Polderis A' }]);
     if (path === '/fishTypes/all') return body([{ id: 1, label: 'Karšis' }]);
+    if (path === '/toolTypes/all') return body([NETS]);
     return body([]);
   });
 
@@ -137,7 +140,7 @@ test.describe('catch summary — filters', () => {
     await pick(page, labels.zone, 'Kuršių marios');
     await pick(page, labels.bar, '12');
     await pick(page, labels.fishType, 'Karšis');
-    await expect(field(page, labels.toolType)).toHaveCount(0);
+    await pick(page, labels.toolType, NETS.label);
     await submitFilters(page);
 
     await expect
@@ -146,6 +149,7 @@ test.describe('catch summary — filters', () => {
         `${labels.zone}: Kuršių marios`,
         `${labels.bar}: 12`,
         `${labels.fishType}: Karšis`,
+        `${labels.toolType}: ${NETS.label}`,
       ]);
 
     for (const name of [labels.byMonths, labels.byToolTypes]) {
@@ -160,7 +164,7 @@ test.describe('catch summary — filters', () => {
     expect(params.get('locationId')).toBe('12');
     expect(params.get('locationName')).toBe('12');
     expect(params.getAll('fishTypes')).toEqual(['1']);
-    expect(params.has('toolTypes')).toBe(false);
+    expect(params.getAll('toolTypes')).toEqual([String(NETS.id)]);
     expect(params.get('byMonths')).toBe('true');
     expect(params.get('byToolTypes')).toBe('true');
   });
