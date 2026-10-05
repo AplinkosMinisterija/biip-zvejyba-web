@@ -29,6 +29,7 @@ describe('mapSummaryParams', () => {
       types: [ESTUARY],
       bar: BAR,
       fishTypes: [{ id: 1, label: 'Karšis' }],
+      toolTypes: [{ id: 3, label: 'Statomieji tinklaičiai 45-50 mm' }],
       createdFrom: new Date(2025, 0, 1),
       createdTo: new Date(2025, 4, 31),
     };
@@ -38,6 +39,7 @@ describe('mapSummaryParams', () => {
       locationId: '12',
       locationName: '12',
       fishTypes: ['1'],
+      toolTypes: ['3'],
       dateFrom: '2025-01-01',
       dateTo: '2025-05-31',
       byMonths: true,

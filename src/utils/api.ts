@@ -18,6 +18,7 @@ import {
   Tool,
   ToolFormRequest,
   ToolsGroup,
+  ToolType,
   User,
 } from './types';
 import type { CatchSummaryParams } from './summary';
@@ -274,6 +275,10 @@ class Api {
     await this.getAll({
       resource: 'polders',
       pageSize: '100',
+    });
+  getToolTypes = async (): Promise<ToolType[]> =>
+    await this.getAll({
+      resource: 'toolTypes',
     });
   toolTypes = async (params: any) => {
     return this.get({

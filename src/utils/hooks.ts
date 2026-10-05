@@ -88,6 +88,9 @@ export const useSummaryFilterOptions = (): SummaryFilterOptions => {
   const { data: polders = [] } = useQuery<Polder[]>(['polders'], () => api.getPolders(), {
     retry: false,
   });
+  const { data: toolTypes = [] } = useQuery(['toolTypes'], () => api.getToolTypes(), {
+    retry: false,
+  });
 
   return useMemo(
     () => ({
@@ -97,8 +100,9 @@ export const useSummaryFilterOptions = (): SummaryFilterOptions => {
       })),
       polders: polders.map((polder) => ({ id: String(polder.id), name: polder.name })),
       fishTypes,
+      toolTypes,
     }),
-    [bars, polders, fishTypes],
+    [bars, polders, fishTypes, toolTypes],
   );
 };
 
