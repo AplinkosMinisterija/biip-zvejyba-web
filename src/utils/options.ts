@@ -1,5 +1,6 @@
 import { map } from 'lodash';
 import { LocationType, RoleTypes, SickReasons } from './constants';
+import { SUMMARY_ZONE_TYPES } from './summary';
 import { buttonLabels, locationTypeLabels, summaryZoneLabels } from './texts';
 
 export const roleOptions = [RoleTypes.USER, RoleTypes.USER_ADMIN];
@@ -27,7 +28,4 @@ export const getLocationTypeOptions = () =>
   }));
 
 export const getSummaryZoneOptions = () =>
-  [LocationType.ESTUARY, LocationType.INLAND_WATERS, LocationType.POLDERS].map((type) => ({
-    id: type,
-    label: summaryZoneLabels[type],
-  }));
+  SUMMARY_ZONE_TYPES.map((type) => ({ id: type, label: summaryZoneLabels[type] }));

@@ -39,25 +39,52 @@ export type CatchSummaryParams = {
 
 export type SummaryLocationScope = LocationType.ESTUARY | LocationType.POLDERS;
 
-// Bars and polders are fixed lists worth picking from; inland water bodies come
-// from UETK, and a mix of zones has no single list — both take every location.
+// Nemuno žemupys / Šventoji is not pickable: its water bodies come from UETK, so
+// there is no list to filter by; the API draws that zone's block regardless.
+export const SUMMARY_ZONE_TYPES: SummaryLocationScope[] = [
+  LocationType.ESTUARY,
+  LocationType.POLDERS,
+];
+
+// A single zone has a fixed list of locations worth picking from; a mix of zones
+// has none, so it takes every location.
 export const getSummaryLocationScope = (
   types?: SummaryZoneOption[] | null,
 ): SummaryLocationScope | null => {
   if (types?.length !== 1) return null;
 
   const [{ id }] = types;
-  return id === LocationType.ESTUARY || id === LocationType.POLDERS ? id : null;
+  return SUMMARY_ZONE_TYPES.find((type) => type === id) ?? null;
+};
+
+const isPickableZone = (zone: SummaryZoneOption) =>
+  SUMMARY_ZONE_TYPES.some((type) => type === zone.id);
+
+// Only the field the zones actually show holds a location.
+const shownLocations = (filters: SummaryFilterValues) => {
+  const scope = getSummaryLocationScope(filters.types);
+  return {
+    bar: scope === LocationType.ESTUARY ? filters.bar ?? null : null,
+    polder: scope === LocationType.POLDERS ? filters.polder ?? null : null,
+  };
+};
+
+// A browser can still hold what an older build saved: a zone no longer offered,
+// and the bar or polder picked under it.
+export const withPickableZones = (filters: SummaryFilterValues): SummaryFilterValues => {
+  const pickable = filters.types
+    ? { ...filters, types: filters.types.filter(isPickableZone) }
+    : filters;
+
+  return { ...pickable, ...shownLocations(pickable) };
 };
 
 const ids = (items: SummaryLabeledOption[]) => items.map((item) => String(item.id));
 
 // Polder and bar ids collide, so the API matches on id AND name.
 const pickedLocation = (filters: SummaryFilterValues) => {
-  const scope = getSummaryLocationScope(filters.types);
-  if (scope === LocationType.ESTUARY) return filters.bar;
-  if (scope === LocationType.POLDERS) return filters.polder;
-  return null;
+  const { bar, polder } = shownLocations(filters);
+  return bar ?? polder;
 };
 
 export const mapSummaryParams = (
