@@ -4,7 +4,7 @@ const SUMMARY_PATH = '/suvestine';
 
 const labels = {
   zone: 'Žvejybos vieta',
-  bar: 'Kuršių marių kvadratas',
+  bar: 'Žvejybos barai',
   polder: 'Polderis',
   fishType: 'Žuvų rūšys',
   toolType: 'Įrankio tipas',
@@ -130,6 +130,38 @@ test.describe('catch summary — filters', () => {
     await page.getByRole('button', { name: /Atsisiųsti suvestinę/ }).click();
     await expect.poll(() => requests.length).toBe(1);
     expect(requests[0].searchParams.getAll('types')).toEqual(['ESTUARY', 'POLDERS']);
+    expect(requests[0].searchParams.has('locationId')).toBe(false);
+  });
+
+  test('offers the lagoon and polders only', async ({ page }) => {
+    await mockSummaryApi(page);
+    await openFilters(page);
+
+    await field(page, labels.zone).click();
+
+    await expect(option(page, 'Kuršių marios')).toBeVisible();
+    await expect(option(page, 'Polderiai')).toBeVisible();
+    await expect(option(page, 'Nemuno žemupys, Šventoji')).toHaveCount(0);
+  });
+
+  test('ignores a zone an older build left in the browser', async ({ page }) => {
+    const requests = await mockSummaryApi(page);
+    await page.addInitScript(() =>
+      localStorage.setItem(
+        'catch_summary_filters',
+        JSON.stringify({
+          types: [{ id: 'INLAND_WATERS', label: 'Nemuno žemupys, Šventoji' }],
+          bar: { id: '12', name: '12' },
+        }),
+      ),
+    );
+    await page.goto(SUMMARY_PATH);
+
+    await expect.poll(() => appliedFilters(page)).toEqual([]);
+
+    await page.getByRole('button', { name: /Atsisiųsti suvestinę/ }).click();
+    await expect.poll(() => requests.length).toBe(1);
+    expect(requests[0].searchParams.has('types')).toBe(false);
     expect(requests[0].searchParams.has('locationId')).toBe(false);
   });
 

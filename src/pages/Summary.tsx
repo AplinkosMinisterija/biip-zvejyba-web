@@ -5,7 +5,7 @@ import {
   Switch,
   useStorage,
 } from '@aplinkosministerija/design-system';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
 import DefaultLayout from '../components/layouts/DefaultLayout';
@@ -23,6 +23,7 @@ import {
   summaryFilters,
   summaryTexts,
   useSummaryFilterOptions,
+  withPickableZones,
 } from '../utils';
 
 const onlyZone = (values: SummaryFilterValues, zone: LocationType) =>
@@ -98,21 +99,22 @@ const Summary = () => {
   const filterOptions = useSummaryFilterOptions();
   const [report, setReport] = useState<SummaryReportForm>({ byMonths: false, byToolTypes: false });
 
-  const { value: filters, setValue: setFilters } = useStorage<SummaryFilterValues>(
+  const { value: savedFilters, setValue: setFilters } = useStorage<SummaryFilterValues>(
     'catch_summary_filters',
     {},
     true,
   );
+  const filters = useMemo(() => withPickableZones(savedFilters || {}), [savedFilters]);
 
   const { isLoading: downloading, mutateAsync: handleDownload } = useMutation({
-    mutationFn: () => handleGetCatchSummaryExcel(mapSummaryParams(filters || {}, report)),
+    mutationFn: () => handleGetCatchSummaryExcel(mapSummaryParams(filters, report)),
   });
 
   return (
     <DefaultLayout>
       <Container>
         <DynamicFilter
-          filters={filters || {}}
+          filters={filters}
           filterConfig={filterConfig(filterOptions)}
           rowConfig={rowConfig}
           onSetFilters={setFilters}

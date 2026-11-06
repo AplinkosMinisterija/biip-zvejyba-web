@@ -139,7 +139,7 @@ export const journalTableFilters = {
 
 export const summaryFilters = {
   types: 'Žvejybos vieta',
-  bar: 'Kuršių marių kvadratas',
+  bar: 'Žvejybos barai',
   polder: 'Polderis',
   fishTypes: 'Žuvų rūšys',
   toolTypes: 'Įrankio tipas',
@@ -149,7 +149,6 @@ export const summaryFilters = {
 
 export const summaryZoneLabels = {
   [LocationType.ESTUARY]: 'Kuršių marios',
-  [LocationType.INLAND_WATERS]: 'Nemuno žemupys, Šventoji',
   [LocationType.POLDERS]: 'Polderiai',
 };
 

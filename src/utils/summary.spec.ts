@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { LocationType } from './constants';
-import { getSummaryLocationScope, mapSummaryParams, SummaryFilterValues } from './summary';
+import {
+  getSummaryLocationScope,
+  mapSummaryParams,
+  SummaryFilterValues,
+  withPickableZones,
+} from './summary';
 
 const ESTUARY = { id: LocationType.ESTUARY, label: 'Kuršių marios' };
 const POLDERS = { id: LocationType.POLDERS, label: 'Polderiai' };
@@ -20,6 +25,40 @@ describe('getSummaryLocationScope', () => {
     expect(getSummaryLocationScope([])).toBeNull();
     expect(getSummaryLocationScope([INLAND])).toBeNull();
     expect(getSummaryLocationScope([ESTUARY, POLDERS])).toBeNull();
+  });
+});
+
+describe('withPickableZones', () => {
+  it('drops a zone the picker no longer offers, keeping a bar the rest still show', () => {
+    expect(withPickableZones({ types: [ESTUARY, INLAND], bar: BAR })).toEqual({
+      types: [ESTUARY],
+      bar: BAR,
+      polder: null,
+    });
+  });
+
+  it('drops the bar once no zone shows the field', () => {
+    expect(withPickableZones({ types: [INLAND], bar: BAR })).toEqual({
+      types: [],
+      bar: null,
+      polder: null,
+    });
+  });
+
+  it('keeps the filters the form still shows', () => {
+    const filters: SummaryFilterValues = {
+      types: [POLDERS],
+      polder: { id: '1', name: 'Polderis A' },
+      fishTypes: [{ id: 1, label: 'Karšis' }],
+    };
+
+    expect(withPickableZones(filters)).toEqual({ ...filters, bar: null });
+  });
+
+  it('asks for every zone when the saved one is gone, bar included', () => {
+    const saved: SummaryFilterValues = { types: [INLAND], bar: BAR };
+
+    expect(mapSummaryParams(withPickableZones(saved), report)).toEqual(report);
   });
 });
 
